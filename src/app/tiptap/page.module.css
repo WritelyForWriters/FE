@@ -1,0 +1,24 @@
+.editorContainer {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.editor {
+  background: var(--background);
+  border: 1px solid var(--foreground);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.contentEditable {
+  min-height: 300px;
+  padding: 1rem;
+  outline: none;
+}
+
+/* Tiptap 기본 스타일 오버라이드 */
+.contentEditable p {
+  margin: 0;
+  line-height: 1.5;
+}

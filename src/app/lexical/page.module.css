@@ -1,0 +1,99 @@
+.pageContainer {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  padding: 2rem;
+  border-right: 1px solid var(--foreground);
+}
+
+.sidebar nav h2 {
+  margin-bottom: 1rem;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.heading1 {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.heading2 {
+  padding-left: 1rem !important;
+}
+
+.heading3 {
+  padding-left: 2rem !important;
+}
+
+.editorContainer {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.editor {
+  background: var(--background);
+  border: 1px solid var(--foreground);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.editorInner {
+  position: relative;
+  height: 100%;
+}
+
+.contentEditable {
+  min-height: 300px;
+  padding: 1rem;
+  outline: none;
+  white-space: pre-wrap;
+}
+
+.placeholder {
+  color: #999;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
+  top: 1rem;
+  left: 1rem;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.editor-paragraph {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.toolbar {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--foreground);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toolbar button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--foreground);
+  background: var(--background);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toolbar button:hover {
+  background: var(--foreground);
+  color: var(--background);
+}

@@ -1,0 +1,17 @@
+.editor-container {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 200px;
+}
+
+.editor-input {
+  min-height: 150px;
+  outline: none;
+  resize: none;
+}
+
+.editor-paragraph {
+  margin: 0;
+  line-height: 1.5;
+}
