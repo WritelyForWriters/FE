@@ -115,25 +115,45 @@ function ScrollToPlugin() {
 function SelectionPlugin() {
   const [editor] = useLexicalComposerContext();
 
+  const replaceSelectedText = (newText: string) => {
+    editor.update(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        selection.insertText(newText);
+      }
+    });
+  };
+
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
           const selectedText = selection.getTextContent();
-          const anchor = selection.anchor;
-          const focus = selection.focus;
-
           if (selectedText) {
+            // 선택된 텍스트의 노드 정보 가져오기
+            const anchorNode = selection.anchor.getNode();
+            const focusNode = selection.focus.getNode();
+            const parentNode = anchorNode.getParent();
+
             console.log("Lexical Selected Text:", {
               text: selectedText,
-              anchor: {
-                key: anchor.key,
-                offset: anchor.offset,
-              },
-              focus: {
-                key: focus.key,
-                offset: focus.offset,
+              range: {
+                anchor: {
+                  key: selection.anchor.key,
+                  offset: selection.anchor.offset,
+                },
+                focus: {
+                  key: selection.focus.key,
+                  offset: selection.focus.offset,
+                },
+                nodeType: anchorNode.getType(),
+                parentType: parentNode?.getType(),
+                isHeading: parentNode?.getType() === "heading-with-id",
+                headingTag:
+                  parentNode?.getType() === "heading-with-id"
+                    ? (parentNode as HeadingNodeWithId).getTag()
+                    : null,
               },
             });
           }
@@ -142,7 +162,16 @@ function SelectionPlugin() {
     });
   }, [editor]);
 
-  return null;
+  return (
+    <>
+      <button
+        onClick={() => replaceSelectedText("test")}
+        className={styles.submitButton}
+      >
+        add text
+      </button>
+    </>
+  );
 }
 
 export default function LexicalPage() {
@@ -259,6 +288,7 @@ export default function LexicalPage() {
           <LexicalComposer initialConfig={initialConfig}>
             <div className={styles.editorInner}>
               <ToolbarPlugin />
+              <SelectionPlugin />
               <RichTextPlugin
                 contentEditable={
                   <ContentEditable className={styles.contentEditable} />
@@ -272,7 +302,6 @@ export default function LexicalPage() {
               />
               <HistoryPlugin />
               <ScrollToPlugin />
-              <SelectionPlugin />
             </div>
             <OnChangePlugin onChange={onChange} />
             <SubmitButton />

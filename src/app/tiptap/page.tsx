@@ -17,6 +17,12 @@ export default function TiptapPage() {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const [selectedText, setSelectedText] = useState<string>("");
 
+  const replaceSelectedText = (newText: string) => {
+    if (editor) {
+      editor.commands.insertContent(newText);
+    }
+  };
+
   const editor = useEditor({
     extensions: [StarterKit, UniqueID],
     content: "<h1>시작하기</h1><p>여기에 내용을 입력하세요...</p>",
@@ -30,12 +36,20 @@ export default function TiptapPage() {
       const text = editor.state.doc.textBetween(from, to);
 
       if (text) {
+        const fromNode = editor.state.doc.resolve(from).parent;
+        const toNode = editor.state.doc.resolve(to).parent;
+
         console.log("Tiptap Selected Text:", {
           text,
           range: {
             from,
             to,
-            nodeType: editor.state.doc.nodeAt(from)?.type.name,
+            fromNodeType: fromNode.type.name,
+            fromNodeAttrs: fromNode.attrs,
+            toNodeType: toNode.type.name,
+            toNodeAttrs: toNode.attrs,
+            isHeading: fromNode.type.name === "heading",
+            headingLevel: fromNode.attrs.level,
           },
         });
       }
@@ -47,7 +61,9 @@ export default function TiptapPage() {
       const processNode = (node: JSONContent, index: number) => {
         if (node.type === "heading") {
           headingNodes.push({
-            id: node.attrs?.id || `heading-${Math.random().toString(36).substr(2, 9)}`,
+            id:
+              node.attrs?.id ||
+              `heading-${Math.random().toString(36).substr(2, 9)}`,
             text: (node.content?.[0] as JSONContent)?.text || "",
             level: (node.attrs as { level: number })?.level || 1,
           });
@@ -65,7 +81,9 @@ export default function TiptapPage() {
       const headingNodes = json.content
         ?.filter((node) => node.type === "heading")
         .map((node) => ({
-          id: node.attrs?.id || `heading-${Math.random().toString(36).substr(2, 9)}`,
+          id:
+            node.attrs?.id ||
+            `heading-${Math.random().toString(36).substr(2, 9)}`,
           content: node,
         }));
 
@@ -80,35 +98,35 @@ export default function TiptapPage() {
     // URL 해시 업데이트
     window.location.hash = headingId;
     console.log(headingId);
-    const heading = document.querySelector(`#${headingId}`);  
+    const heading = document.querySelector(`#${headingId}`);
     console.log(heading);
     if (heading) {
       heading.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-//   // URL 해시 변경 감지
-//   useEffect(() => {
-//     const handleHashChange = () => {
-//       const hash = window.location.hash.slice(1);
-//       if (hash) {
-//         const heading = document.querySelector(`[id="${hash}"]`);
-//         if (heading) {
-//           heading.scrollIntoView({ behavior: "smooth" });
-//         }
-//       }
-//     };
+  //   // URL 해시 변경 감지
+  //   useEffect(() => {
+  //     const handleHashChange = () => {
+  //       const hash = window.location.hash.slice(1);
+  //       if (hash) {
+  //         const heading = document.querySelector(`[id="${hash}"]`);
+  //         if (heading) {
+  //           heading.scrollIntoView({ behavior: "smooth" });
+  //         }
+  //       }
+  //     };
 
-//     window.addEventListener("hashchange", handleHashChange);
-//     // 초기 로드 시 해시가 있으면 처리
-//     if (window.location.hash) {
-//       handleHashChange();
-//     }
+  //     window.addEventListener("hashchange", handleHashChange);
+  //     // 초기 로드 시 해시가 있으면 처리
+  //     if (window.location.hash) {
+  //       handleHashChange();
+  //     }
 
-//     return () => {
-//       window.removeEventListener("hashchange", handleHashChange);
-//     };
-//   }, []);
+  //     return () => {
+  //       window.removeEventListener("hashchange", handleHashChange);
+  //     };
+  //   }, []);
 
   return (
     <div className={styles.pageContainer}>
@@ -129,6 +147,7 @@ export default function TiptapPage() {
         </nav>
       </aside>
       <main className={styles.editorContainer}>
+        <button onClick={() => replaceSelectedText("test")}>add text</button>
         <h1>Tiptap 에디터</h1>
         <div className={styles.editor}>
           <EditorContent editor={editor} />
