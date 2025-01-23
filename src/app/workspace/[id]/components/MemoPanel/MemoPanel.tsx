@@ -1,13 +1,15 @@
 "use client";
 
-import AccordionPanel from "@/app/workspace/[id]/components/ui/AccordionPanel/AccordionPanel";
+import AccordionPanel from "@/app/components/Accordion/Accordion";
 import Row from "@/app/components/Row/Row";
+import PanelContainer from "@/app/workspace/[id]/components/ui/PanelContainer/PanelContainer";
 
 export default function MemoPanel() {
   return (
-    <AccordionPanel>
-      <AccordionPanel.Header>
-        {(isOpen, setIsOpen) => (
+    <PanelContainer>
+      <AccordionPanel>
+        <AccordionPanel.Header>
+          {(isOpen, setIsOpen) => (
           <Row spaceBetween>
             메모
             <button onClick={() => setIsOpen(!isOpen)}>
@@ -22,7 +24,8 @@ export default function MemoPanel() {
         <div>메모 들어갑니다~~</div>
         <div>메모 들어갑니다~~</div>
         <div>메모 들어갑니다~~</div>
-      </AccordionPanel.Body>
-    </AccordionPanel>
+        </AccordionPanel.Body>
+      </AccordionPanel>
+    </PanelContainer>
   );
 }

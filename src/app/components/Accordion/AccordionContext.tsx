@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from "react";
 
-export const AccordionPanelContext = createContext<{
+export const AccordionContext = createContext<{
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }>({
@@ -10,7 +10,7 @@ export const AccordionPanelContext = createContext<{
   setIsOpen: () => {},
 });
 
-export const AccordionPanelProvider = ({
+export const AccordionProvider = ({
   children,
 }: {
   children: React.ReactNode;
@@ -18,12 +18,12 @@ export const AccordionPanelProvider = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <AccordionPanelContext.Provider value={{ isOpen, setIsOpen }}>
+    <AccordionContext.Provider value={{ isOpen, setIsOpen }}>
       {children}
-    </AccordionPanelContext.Provider>
+    </AccordionContext.Provider>
   );
 };
 
-export const useAccordionPanelContext = () => {
-  return useContext(AccordionPanelContext);
+export const useAccordionContext = () => {
+  return useContext(AccordionContext);
 };
