@@ -1,8 +1,13 @@
 "use client";
 
 import AccordionPanel from "@/app/components/Accordion/Accordion";
-import Row from "@/app/components/Row/Row";
-import PanelContainer from "@/app/workspace/[id]/components/ui/PanelContainer/PanelContainer";
+import PanelBody from "../ui/panelUI/PanelBody/PanelBody";
+import PanelHeader from "@/app/workspace/[id]/components/ui/panelUI/PanelHeader/PanelHeader";
+import PanelContainer from "@/app/workspace/[id]/components/ui/panelUI/PanelContainer/PanelContainer";
+import MemoPanelBody from "./MemoPanelBody/MemoPanelBody";
+import Text from "@/app/components/Text/Text";
+import { ArrowDownIcon, RemoveIcon } from "@/app/components/Icons";
+import IconButton from "@/app/components/Buttons/IconButton/IconButton";
 
 export default function MemoPanel() {
   return (
@@ -10,20 +15,20 @@ export default function MemoPanel() {
       <AccordionPanel>
         <AccordionPanel.Header>
           {(isOpen, setIsOpen) => (
-          <Row spaceBetween>
-            메모
-            <button onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? "열렸다" : "닫혔다"}
-            </button>
-          </Row>
-        )}
-      </AccordionPanel.Header>
-      <AccordionPanel.Body>
-        <div>메모 들어갑니다~~</div>
-        <div>메모 들어갑니다~~</div>
-        <div>메모 들어갑니다~~</div>
-        <div>메모 들어갑니다~~</div>
-        <div>메모 들어갑니다~~</div>
+            <PanelHeader isOpen={isOpen}>
+              <Text fontSize="14px" fontWeight={600} color="#000">
+                메모
+              </Text>
+              <IconButton onClick={() => setIsOpen(!isOpen)}>
+                {isOpen ? <RemoveIcon /> : <ArrowDownIcon />}
+              </IconButton>
+            </PanelHeader>
+          )}
+        </AccordionPanel.Header>
+        <AccordionPanel.Body>
+          <PanelBody>
+            <MemoPanelBody />
+          </PanelBody>
         </AccordionPanel.Body>
       </AccordionPanel>
     </PanelContainer>
