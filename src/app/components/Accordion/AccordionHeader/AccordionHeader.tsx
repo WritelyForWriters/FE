@@ -11,5 +11,5 @@ interface Props {
 export default function AccordionHeader({ children }: Props) {
   const { isOpen, setIsOpen } = useAccordionContext();
 
-  return <div>{children(isOpen, setIsOpen)}</div>;
+  return <>{children(isOpen, setIsOpen)}</>;
 }

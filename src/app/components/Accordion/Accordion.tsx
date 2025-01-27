@@ -6,10 +6,28 @@ import { AccordionProvider } from "./AccordionContext";
 import AccordionHeader from "./AccordionHeader/AccordionHeader";
 import AccordionBody from "./AccordionBody/AccordionBody";
 
-export default function Accordion({ children }: PropsWithChildren) {
+import classNames from "classnames/bind";
+import styles from "./AccordionS.module.scss";
+
+const cx = classNames.bind(styles);
+
+interface Props {
+  gap?: 12 | 16;
+  fullWidth?: boolean;
+}
+
+export default function Accordion({
+  children,
+  gap = 16,
+  fullWidth,
+}: PropsWithChildren<Props>) {
   return (
     <AccordionProvider>
-      <div>{children}</div>
+      <div
+        className={cx("container", `gap-${gap}`, { "full-width": fullWidth })}
+      >
+        {children}
+      </div>
     </AccordionProvider>
   );
 }
