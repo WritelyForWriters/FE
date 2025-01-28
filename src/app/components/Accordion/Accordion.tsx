@@ -1,36 +1,28 @@
-"use client";
+'use client'
 
-import { PropsWithChildren } from "react";
+import { PropsWithChildren } from 'react'
 
-import { AccordionProvider } from "./AccordionContext";
-import AccordionHeader from "./AccordionHeader/AccordionHeader";
-import AccordionBody from "./AccordionBody/AccordionBody";
+import AccordionBody from './AccordionBody/AccordionBody'
+import { AccordionProvider } from './AccordionContext'
+import AccordionHeader from './AccordionHeader/AccordionHeader'
+import styles from './AccordionS.module.scss'
 
-import classNames from "classnames/bind";
-import styles from "./AccordionS.module.scss";
+import classNames from 'classnames/bind'
 
-const cx = classNames.bind(styles);
+const cx = classNames.bind(styles)
 
 interface Props {
-  gap?: 12 | 16;
-  fullWidth?: boolean;
+  gap?: 12 | 16
+  fullWidth?: boolean
 }
 
-export default function Accordion({
-  children,
-  gap = 16,
-  fullWidth,
-}: PropsWithChildren<Props>) {
+export default function Accordion({ children, gap = 16, fullWidth }: PropsWithChildren<Props>) {
   return (
     <AccordionProvider>
-      <div
-        className={cx("container", `gap-${gap}`, { "full-width": fullWidth })}
-      >
-        {children}
-      </div>
+      <div className={cx('container', `gap-${gap}`, { 'full-width': fullWidth })}>{children}</div>
     </AccordionProvider>
-  );
+  )
 }
 
-Accordion.Header = AccordionHeader;
-Accordion.Body = AccordionBody;
+Accordion.Header = AccordionHeader
+Accordion.Body = AccordionBody
