@@ -12,7 +12,7 @@ import styles from "./AccordionS.module.scss";
 const cx = classNames.bind(styles);
 
 interface Props {
-  gap?: 12 | 16;
+  gap?: 8 | 12 | 16;
   fullWidth?: boolean;
 }
 

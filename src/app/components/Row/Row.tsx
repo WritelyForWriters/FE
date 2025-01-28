@@ -7,7 +7,8 @@ const cx = classNames.bind(styles);
 
 interface Props {
   spaceBetween?: boolean;
-  gap?: 2 | 4;
+  gap?: 2 | 4 | 8;
+  fullWidth?: boolean;
 }
 
 export default function Row({
