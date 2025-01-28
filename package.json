@@ -17,8 +17,6 @@
     ]
   },
   "dependencies": {
-    "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
     "classnames": "^2.5.1",
     "next": "15.1.2",
     "react": "^19.0.0",
@@ -26,6 +24,8 @@
     "sass": "^1.83.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
     "@eslint/eslintrc": "^3",
     "@trivago/prettier-plugin-sort-imports": "^5.2.1",
     "@types/node": "^20",
