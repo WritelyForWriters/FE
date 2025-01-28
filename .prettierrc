@@ -13,12 +13,15 @@
     "^@layouts/(.*)&",
     "^@components/(.*)$",
     "^@hooks/(.*)$",
+    "^@context/(.*)$",
     "^@apis/(.*)$",
     "^@utils/(.*)$",
+    "^@types/(.*)$",
     "^[./]",
     ".(css|scss)$",
     "^classnames/bind$"
   ],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "importOrderSortSpecifiers": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"]
 }
