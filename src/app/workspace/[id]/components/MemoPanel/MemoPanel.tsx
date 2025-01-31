@@ -1,10 +1,14 @@
 'use client'
 
 import Accordion from '@components/Accordion/Accordion'
-import Row from '@components/Row/Row'
+import IconButton from '@components/Buttons/IconButton/IconButton'
+import { ArrowDownIcon, RemoveIcon } from '@components/Icons'
+import Text from '@components/Text/Text'
 
-// TODO 절대경로
-import PanelContainer from '../ui/PanelContainer/PanelContainer'
+import PanelBody from '../ui/panelUI/PanelBody/PanelBody'
+import PanelContainer from '../ui/panelUI/PanelContainer/PanelContainer'
+import PanelHeader from '../ui/panelUI/PanelHeader/PanelHeader'
+import MemoPanelBody from './MemoPanelBody/MemoPanelBody'
 
 export default function MemoPanel() {
   return (
@@ -12,18 +16,20 @@ export default function MemoPanel() {
       <Accordion>
         <Accordion.Header>
           {(isOpen, setIsOpen) => (
-            <Row spaceBetween>
-              메모
-              <button onClick={() => setIsOpen(!isOpen)}>{isOpen ? '열렸다' : '닫혔다'}</button>
-            </Row>
+            <PanelHeader isOpen={isOpen}>
+              <Text fontSize="14px" fontWeight={600} color="#000">
+                메모
+              </Text>
+              <IconButton onClick={() => setIsOpen(!isOpen)}>
+                {isOpen ? <RemoveIcon /> : <ArrowDownIcon />}
+              </IconButton>
+            </PanelHeader>
           )}
         </Accordion.Header>
         <Accordion.Body>
-          <div>메모 들어갑니다~~</div>
-          <div>메모 들어갑니다~~</div>
-          <div>메모 들어갑니다~~</div>
-          <div>메모 들어갑니다~~</div>
-          <div>메모 들어갑니다~~</div>
+          <PanelBody>
+            <MemoPanelBody />
+          </PanelBody>
         </Accordion.Body>
       </Accordion>
     </PanelContainer>
