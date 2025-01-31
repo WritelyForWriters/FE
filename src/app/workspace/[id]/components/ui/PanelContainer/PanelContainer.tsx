@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react'
 
-import styles from './PanelContainerStyle.module.scss'
-
 import classNames from 'classnames/bind'
+
+import styles from './PanelContainerStyle.module.scss'
 
 const cx = classNames.bind(styles)
 

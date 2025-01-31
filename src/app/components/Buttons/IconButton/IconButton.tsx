@@ -1,8 +1,8 @@
 import { HTMLAttributes, PropsWithChildren } from 'react'
 
-import styles from './IconButton.module.scss'
-
 import classNames from 'classnames/bind'
+
+import styles from './IconButton.module.scss'
 
 const cx = classNames.bind(styles)
 

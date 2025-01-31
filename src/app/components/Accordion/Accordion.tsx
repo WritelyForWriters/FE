@@ -2,12 +2,13 @@
 
 import { PropsWithChildren } from 'react'
 
-import styles from './Accordion.module.scss'
 import AccordionBody from './AccordionBody/AccordionBody'
 import { AccordionProvider } from './AccordionContext'
 import AccordionHeader from './AccordionHeader/AccordionHeader'
 
 import classNames from 'classnames/bind'
+
+import styles from './Accordion.module.scss'
 
 const cx = classNames.bind(styles)
 

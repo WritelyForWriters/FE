@@ -17,9 +17,9 @@
     "^@apis/(.*)$",
     "^@utils/(.*)$",
     "^@types/(.*)$",
-    "^[./]",
-    ".(css|scss)$",
-    "^classnames/bind$"
+    "^[./](?!.*\\.module\\.(css|scss)$)",
+    "^classnames/bind$",
+    ".*\\.module\\.(css|scss)$"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
