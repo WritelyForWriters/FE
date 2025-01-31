@@ -1,19 +1,20 @@
-"use client";
+'use client'
 
-import AccordionPanel from "@/app/components/Accordion/Accordion";
-import PanelBody from "../ui/panelUI/PanelBody/PanelBody";
-import PanelHeader from "@/app/workspace/[id]/components/ui/panelUI/PanelHeader/PanelHeader";
-import PanelContainer from "@/app/workspace/[id]/components/ui/panelUI/PanelContainer/PanelContainer";
-import MemoPanelBody from "./MemoPanelBody/MemoPanelBody";
-import Text from "@/app/components/Text/Text";
-import { ArrowDownIcon, RemoveIcon } from "@/app/components/Icons";
-import IconButton from "@/app/components/Buttons/IconButton/IconButton";
+import Accordion from '@components/Accordion/Accordion'
+import IconButton from '@components/Buttons/IconButton/IconButton'
+import { ArrowDownIcon, RemoveIcon } from '@components/Icons'
+import Text from '@components/Text/Text'
+
+import PanelBody from '../ui/panelUI/PanelBody/PanelBody'
+import PanelContainer from '../ui/panelUI/PanelContainer/PanelContainer'
+import PanelHeader from '../ui/panelUI/PanelHeader/PanelHeader'
+import MemoPanelBody from './MemoPanelBody/MemoPanelBody'
 
 export default function MemoPanel() {
   return (
     <PanelContainer>
-      <AccordionPanel>
-        <AccordionPanel.Header>
+      <Accordion>
+        <Accordion.Header>
           {(isOpen, setIsOpen) => (
             <PanelHeader isOpen={isOpen}>
               <Text fontSize="14px" fontWeight={600} color="#000">
@@ -24,13 +25,13 @@ export default function MemoPanel() {
               </IconButton>
             </PanelHeader>
           )}
-        </AccordionPanel.Header>
-        <AccordionPanel.Body>
+        </Accordion.Header>
+        <Accordion.Body>
           <PanelBody>
             <MemoPanelBody />
           </PanelBody>
-        </AccordionPanel.Body>
-      </AccordionPanel>
+        </Accordion.Body>
+      </Accordion>
     </PanelContainer>
-  );
+  )
 }

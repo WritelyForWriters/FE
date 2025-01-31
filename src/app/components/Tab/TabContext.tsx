@@ -1,39 +1,33 @@
-"use client";
+'use client'
 
-import { createContext, useContext, useState, PropsWithChildren } from "react";
+import { PropsWithChildren, createContext, useContext, useState } from 'react'
 
 const TabContext = createContext<{
-  activeTab: string;
-  handleChangeTab: (tab: string) => void;
+  activeTab: string
+  handleChangeTab: (tab: string) => void
 }>({
-  activeTab: "",
+  activeTab: '',
   handleChangeTab: () => {},
-});
+})
 
 export function useTabContext() {
-  return useContext(TabContext);
+  return useContext(TabContext)
 }
 
 interface Props {
-  defaultTab: string;
-  onChange?: (tabValue: string) => void;
+  defaultTab: string
+  onChange?: (tabValue: string) => void
 }
 
-export function TabProvider({
-  defaultTab,
-  children,
-  onChange,
-}: PropsWithChildren<Props>) {
-  const [activeTab, setActiveTab] = useState(defaultTab);
+export function TabProvider({ defaultTab, children, onChange }: PropsWithChildren<Props>) {
+  const [activeTab, setActiveTab] = useState(defaultTab)
 
   const handleChangeTab = (tab: string) => {
-    setActiveTab(tab);
-    onChange?.(tab);
-  };
+    setActiveTab(tab)
+    onChange?.(tab)
+  }
 
   return (
-    <TabContext.Provider value={{ activeTab, handleChangeTab }}>
-      {children}
-    </TabContext.Provider>
-  );
+    <TabContext.Provider value={{ activeTab, handleChangeTab }}>{children}</TabContext.Provider>
+  )
 }
