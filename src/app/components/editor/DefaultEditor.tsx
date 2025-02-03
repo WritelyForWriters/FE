@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { EditorContent, useEditor } from '@tiptap/react'
+import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
 import styles from './styles.module.scss'
@@ -50,11 +50,23 @@ export default function DefaultEditor() {
 
   return (
     <>
-      <div>
-        <button onClick={toggleText}>본문</button>
-        <button onClick={toggleHeading}>제목</button>
-        <button onClick={toggleBlockquote}>인용</button>
-      </div>
+      <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
+        <div className={styles['bubble-menu']}>
+          <button onClick={toggleText}>본문</button>
+          <button
+            onClick={toggleHeading}
+            className={editor.isActive('heading') ? `${styles['is-active']}` : ''}
+          >
+            제목
+          </button>
+          <button
+            onClick={toggleBlockquote}
+            className={editor.isActive('blockquote') ? `${styles['is-active']}` : ''}
+          >
+            인용
+          </button>
+        </div>
+      </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
     </>
   )
