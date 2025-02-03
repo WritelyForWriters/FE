@@ -2,8 +2,12 @@
 
 import React, { useState } from 'react'
 
+import Blockquote from '@tiptap/extension-blockquote'
+import Document from '@tiptap/extension-document'
+import Heading from '@tiptap/extension-heading'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
 
 import styles from './styles.module.scss'
 
@@ -24,7 +28,15 @@ import styles from './styles.module.scss'
 export default function DefaultEditor() {
   const [isOpen, setIsOpen] = useState(false)
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      Document,
+      Blockquote,
+      Text,
+      Paragraph,
+      Heading.configure({
+        levels: [1],
+      }),
+    ],
     immediatelyRender: false,
     content: `
       Nothing is impossible, the word itself says “I’m possible!”
@@ -48,7 +60,6 @@ export default function DefaultEditor() {
   }
 
   const toggleBlockquote = () => {
-    editor?.commands.setParagraph()
     editor?.chain().focus().toggleBlockquote().run()
   }
 
