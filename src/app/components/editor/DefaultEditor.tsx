@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -22,6 +22,7 @@ import styles from './styles.module.scss'
  */
 
 export default function DefaultEditor() {
+  const [isOpen, setIsOpen] = useState(false)
   const editor = useEditor({
     extensions: [StarterKit],
     immediatelyRender: false,
@@ -50,21 +51,33 @@ export default function DefaultEditor() {
 
   return (
     <>
-      <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
+      <BubbleMenu
+        editor={editor}
+        tippyOptions={{
+          duration: 100,
+          onHidden: () => setIsOpen(false),
+        }}
+      >
         <div className={styles['bubble-menu']}>
-          <button onClick={toggleText}>본문</button>
-          <button
-            onClick={toggleHeading}
-            className={editor.isActive('heading') ? `${styles['is-active']}` : ''}
-          >
-            제목
-          </button>
-          <button
-            onClick={toggleBlockquote}
-            className={editor.isActive('blockquote') ? `${styles['is-active']}` : ''}
-          >
-            인용
-          </button>
+          <button onClick={() => setIsOpen(true)}>텍스트 형식 선택</button>
+
+          {isOpen && (
+            <div>
+              <button onClick={toggleText}>본문</button>
+              <button
+                onClick={toggleHeading}
+                className={editor.isActive('heading') ? `${styles['is-active']}` : ''}
+              >
+                제목
+              </button>
+              <button
+                onClick={toggleBlockquote}
+                className={editor.isActive('blockquote') ? `${styles['is-active']}` : ''}
+              >
+                인용
+              </button>
+            </div>
+          )}
         </div>
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
