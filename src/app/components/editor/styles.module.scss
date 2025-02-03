@@ -3,4 +3,10 @@
   :first-child {
     margin-top: 0;
   }
+
+  blockquote {
+    border-left: 3px solid lightgray;
+    margin: 1rem 0;
+    padding-left: 1rem;
+  }
 }
