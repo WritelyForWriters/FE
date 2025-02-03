@@ -13,6 +13,8 @@
 
 /* Bubble menu */
 .bubble-menu {
+  height: 40px;
+
   display: inline-flex;
   padding: 0.5rem 1rem;
   justify-content: center;
@@ -24,17 +26,46 @@
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
 
   button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.25rem;
     background-color: unset;
 
     &:hover {
-      background-color: lightgray;
+      background-color: #e6e6e6;
+    }
+  }
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  width: 92px;
+  position: absolute;
+  top: 32px;
+  left: 0;
+
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1rem;
+
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+
+  button {
+    &:hover {
+      background-color: #e6e6e6;
     }
 
     &.is-active {
-      background-color: yellow;
+      background-color: #e6e6e6;
 
       &:hover {
-        background-color: yellow;
+        background-color: #e6e6e6;
         opacity: 0.5;
       }
     }

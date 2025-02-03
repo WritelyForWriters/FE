@@ -32,16 +32,28 @@ export default function DefaultEditor() {
     `,
   })
 
+  const getTextFormatOption = () => {
+    if (editor?.isActive('blockquote')) {
+      return '인용'
+    } else if (editor?.isActive('heading')) {
+      return '제목'
+    } else {
+      return '본문'
+    }
+  }
+
   const toggleText = () => {
     editor?.commands.unsetBlockquote()
     editor?.commands.setParagraph()
   }
 
   const toggleBlockquote = () => {
+    editor?.commands.setParagraph()
     editor?.chain().focus().toggleBlockquote().run()
   }
 
   const toggleHeading = () => {
+    editor?.commands.unsetBlockquote()
     editor?.chain().focus().toggleHeading({ level: 1 }).run()
   }
 
@@ -59,11 +71,20 @@ export default function DefaultEditor() {
         }}
       >
         <div className={styles['bubble-menu']}>
-          <button onClick={() => setIsOpen(true)}>텍스트 형식 선택</button>
+          <button onClick={() => setIsOpen(true)}>{getTextFormatOption()}</button>
 
           {isOpen && (
-            <div>
-              <button onClick={toggleText}>본문</button>
+            <div className={styles['dropdown-menu']}>
+              <button
+                onClick={toggleText}
+                className={
+                  !editor.isActive('blockquote') && !editor.isActive('heading')
+                    ? `${styles['is-active']}`
+                    : ''
+                }
+              >
+                본문
+              </button>
               <button
                 onClick={toggleHeading}
                 className={editor.isActive('heading') ? `${styles['is-active']}` : ''}
