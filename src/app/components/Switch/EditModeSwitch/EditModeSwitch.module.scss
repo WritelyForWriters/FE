@@ -1,0 +1,23 @@
+@mixin styled-font() {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.default {
+  @include styled-font();
+  color: #cccccc;
+  border-radius: 10px;
+  padding: 8px;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.selected {
+  @include styled-font();
+  background-color: #666666;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
