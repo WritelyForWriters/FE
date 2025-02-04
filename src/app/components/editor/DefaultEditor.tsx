@@ -16,7 +16,7 @@ import React, { useState } from 'react'
  * default styles
  */
 
-import { CommandProps, Extension } from '@tiptap/core'
+import { CommandProps, Extension, GlobalAttributes } from '@tiptap/core'
 import Blockquote from '@tiptap/extension-blockquote'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
@@ -27,10 +27,10 @@ import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import styles from './styles.module.scss'
 
 declare module '@tiptap/core' {
-  interface Commands {
-    indent: {
-      indent: () => boolean
-      outdent: () => boolean
+  interface Commands<ReturnType> {
+    Indent: {
+      indent: () => ReturnType
+      outdent: () => ReturnType
     }
   }
 }
@@ -51,7 +51,7 @@ const Indent = Extension.create<IndentOptions>({
     }
   },
 
-  addGlobalAttributes: () => {
+  addGlobalAttributes: (): GlobalAttributes => {
     return [
       {
         types: Indent.options.types,
@@ -78,16 +78,17 @@ const Indent = Extension.create<IndentOptions>({
       indent:
         () =>
         ({ commands, editor }: CommandProps) => {
-          const indentLevels = Indent.options.indentLevels
+          const indentLevels: number[] = Indent.options.indentLevels
           const indent = editor.getAttributes('paragraph').indent
           const currentIndent = isNaN(indent) ? 0 : indent
-          const nextIndent = indentLevels.find((level) => level > currentIndent) || currentIndent
+          const nextIndent =
+            indentLevels.find((level: number) => level > currentIndent) || currentIndent
           return commands.updateAttributes('paragraph', { indent: nextIndent })
         },
       outdent:
         () =>
         ({ commands, editor }: CommandProps) => {
-          const indentLevels = Indent.options.indentLevels
+          const indentLevels: number[] = Indent.options.indentLevels
           const currentIndent = editor.getAttributes('paragraph').indent || 0
           const prevIndent = [...indentLevels].reverse().find((level) => level < currentIndent) || 0
           return commands.updateAttributes('paragraph', { indent: prevIndent })
