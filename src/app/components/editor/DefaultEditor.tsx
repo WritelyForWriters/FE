@@ -2,15 +2,6 @@
 
 import React, { useState } from 'react'
 
-import Blockquote from '@tiptap/extension-blockquote'
-import Document from '@tiptap/extension-document'
-import Heading from '@tiptap/extension-heading'
-import Paragraph from '@tiptap/extension-paragraph'
-import Text from '@tiptap/extension-text'
-import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-
-import styles from './styles.module.scss'
-
 /**
  * TODO
  * 버블메뉴
@@ -25,6 +16,93 @@ import styles from './styles.module.scss'
  * default styles
  */
 
+import { CommandProps, Extension } from '@tiptap/core'
+import Blockquote from '@tiptap/extension-blockquote'
+import Document from '@tiptap/extension-document'
+import Heading from '@tiptap/extension-heading'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
+import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
+
+import styles from './styles.module.scss'
+
+declare module '@tiptap/core' {
+  interface Commands {
+    indent: {
+      indent: () => boolean
+      outdent: () => boolean
+    }
+  }
+}
+
+type IndentOptions = {
+  types: string[]
+  indentLevels: number[]
+  defaultIndentLevel: number
+}
+
+const Indent = Extension.create<IndentOptions>({
+  name: 'indent',
+  addOptions: () => {
+    return {
+      types: ['paragraph'],
+      indentLevels: [0, 30, 60, 90],
+      defaultIndentLevel: 0,
+    }
+  },
+
+  addGlobalAttributes: () => {
+    return [
+      {
+        types: Indent.options.types,
+        attributes: {
+          indent: {
+            default: Indent.options.defaultIndentLevel,
+            renderHTML: (attributes) => {
+              const indent = isNaN(attributes.indent) ? 0 : attributes.indent
+              return {
+                style: `margin-left: ${indent}px!important;`,
+              }
+            },
+            parseHTML: (element) => ({
+              indent: parseInt(element.style.marginLeft) || Indent.options.defaultIndentLevel,
+            }),
+          },
+        },
+      },
+    ]
+  },
+
+  addCommands: () => {
+    return {
+      indent:
+        () =>
+        ({ commands, editor }: CommandProps) => {
+          const indentLevels = Indent.options.indentLevels
+          const indent = editor.getAttributes('paragraph').indent
+          const currentIndent = isNaN(indent) ? 0 : indent
+          const nextIndent = indentLevels.find((level) => level > currentIndent) || currentIndent
+          return commands.updateAttributes('paragraph', { indent: nextIndent })
+        },
+      outdent:
+        () =>
+        ({ commands, editor }: CommandProps) => {
+          const indentLevels = Indent.options.indentLevels
+          const currentIndent = editor.getAttributes('paragraph').indent || 0
+          const prevIndent = [...indentLevels].reverse().find((level) => level < currentIndent) || 0
+          return commands.updateAttributes('paragraph', { indent: prevIndent })
+        },
+    }
+  },
+
+  addKeyboardShortcuts: () => {
+    return {
+      Tab: ({ editor }) => editor.commands.indent(),
+      'Shift-Tab': ({ editor }) => editor.commands.outdent(),
+    }
+  },
+})
+
 export default function DefaultEditor() {
   const [isOpen, setIsOpen] = useState(false)
   const editor = useEditor({
@@ -36,6 +114,7 @@ export default function DefaultEditor() {
       Heading.configure({
         levels: [1],
       }),
+      Indent,
     ],
     immediatelyRender: false,
     content: `
@@ -110,6 +189,8 @@ export default function DefaultEditor() {
               </button>
             </div>
           )}
+          <button onClick={() => editor.commands.indent()}>+ 들여쓰기</button>
+          <button onClick={() => editor.commands.outdent()}>- 내어쓰기</button>
         </div>
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
