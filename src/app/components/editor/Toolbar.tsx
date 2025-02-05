@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 
+import useDetectClose from '@hooks/common/useDetectClose'
 import useIndent from '@hooks/extensions/useIndent'
+import useTextFormat from '@hooks/extensions/useTextFormat'
 
 import styles from './Toolbar.module.scss'
 
@@ -14,6 +16,18 @@ export default function Toolbar({ editor }: ToolbarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isIndentOption, setIsIndentOption] = useState(false)
 
+  const handleClose = () => {
+    setIsOpen(false)
+  }
+
+  const handleIndentClose = () => {
+    setIsIndentOption(false)
+  }
+
+  const textFormatSelectMenuRef = useDetectClose(handleClose)
+  const indentSelectMenuRef = useDetectClose(handleIndentClose)
+
+  const { toggleText, toggleBlockquote, toggleHeading } = useTextFormat(editor)
   const { indent, outdent } = useIndent(editor)
 
   const getTextFormatOption = () => {
@@ -26,19 +40,9 @@ export default function Toolbar({ editor }: ToolbarProps) {
     }
   }
 
-  const toggleText = () => {
-    editor?.commands.unsetBlockquote()
-    editor?.commands.setParagraph()
-  }
-
-  const toggleBlockquote = () => {
-    editor?.chain().focus().toggleBlockquote().run()
-  }
-
-  const toggleHeading = () => {
-    editor?.commands.unsetBlockquote()
-    editor?.chain().focus().toggleHeading({ level: 1 }).run()
-  }
+  const getActiveStyleClass = useCallback((isActive: boolean) => {
+    return isActive ? `${styles['is-active']}` : ''
+  }, [])
 
   return (
     <ul className={styles['bubble-menu']}>
@@ -46,26 +50,24 @@ export default function Toolbar({ editor }: ToolbarProps) {
       <button onClick={() => setIsOpen(true)}>{getTextFormatOption()}</button>
 
       {isOpen && (
-        <div className={styles['dropdown-menu']}>
+        <div ref={textFormatSelectMenuRef} className={styles['dropdown-menu']}>
           <button
             onClick={toggleText}
-            className={
-              !editor?.isActive('blockquote') && !editor?.isActive('heading')
-                ? `${styles['is-active']}`
-                : ''
-            }
+            className={getActiveStyleClass(
+              !editor.isActive('blockquote') && !editor.isActive('heading'),
+            )}
           >
             본문
           </button>
           <button
             onClick={toggleHeading}
-            className={editor?.isActive('heading') ? `${styles['is-active']}` : ''}
+            className={getActiveStyleClass(editor.isActive('heading'))}
           >
             제목
           </button>
           <button
             onClick={toggleBlockquote}
-            className={editor?.isActive('blockquote') ? `${styles['is-active']}` : ''}
+            className={getActiveStyleClass(editor.isActive('blockquote'))}
           >
             인용
           </button>
@@ -76,8 +78,13 @@ export default function Toolbar({ editor }: ToolbarProps) {
       <button onClick={() => setIsIndentOption(true)}>정렬</button>
 
       {isIndentOption && (
-        <div className={styles['dropdown-menu']}>
-          <button onClick={indent}>+ 들여쓰기</button>
+        <div ref={indentSelectMenuRef} className={styles['dropdown-menu']}>
+          <button
+            onClick={indent}
+            className={getActiveStyleClass(editor.getAttributes('paragraph').indent)}
+          >
+            + 들여쓰기
+          </button>
           <button onClick={outdent}>- 내어쓰기</button>
         </div>
       )}
