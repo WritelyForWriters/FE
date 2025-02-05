@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 
+import useIndent from '@hooks/extensions/useIndent'
+
 import styles from './Toolbar.module.scss'
 
 interface ToolbarProps {
@@ -11,6 +13,8 @@ interface ToolbarProps {
 export default function Toolbar({ editor }: ToolbarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isIndentOption, setIsIndentOption] = useState(false)
+
+  const { indent, outdent } = useIndent(editor)
 
   const getTextFormatOption = () => {
     if (editor?.isActive('blockquote')) {
@@ -73,8 +77,8 @@ export default function Toolbar({ editor }: ToolbarProps) {
 
       {isIndentOption && (
         <div className={styles['dropdown-menu']}>
-          <button onClick={() => editor?.commands.indent()}>+ 들여쓰기</button>
-          <button onClick={() => editor?.commands.outdent()}>- 내어쓰기</button>
+          <button onClick={indent}>+ 들여쓰기</button>
+          <button onClick={outdent}>- 내어쓰기</button>
         </div>
       )}
     </ul>
