@@ -25,6 +25,7 @@
       "@utils/*": ["utils/*"],
       "@types/*": ["types/*"],
       "@context/*": ["context/*"],
+      "@extensions/*": ["extensions/*"],
       "@workspace/*": ["workspace/*"]
     }
   },
