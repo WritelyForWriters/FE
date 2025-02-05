@@ -58,3 +58,17 @@
     }
   }
 }
+
+.text-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  button {
+    padding: 0 0.5rem;
+
+    &.is-active {
+      background-color: #e6e6e6;
+    }
+  }
+}

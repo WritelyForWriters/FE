@@ -88,6 +88,27 @@ export default function Toolbar({ editor }: ToolbarProps) {
           <button onClick={outdent}>- 내어쓰기</button>
         </div>
       )}
+
+      <div className={styles['text-mark']}>
+        <button
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={getActiveStyleClass(editor.isActive('bold'))}
+        >
+          B
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={getActiveStyleClass(editor.isActive('italic'))}
+        >
+          I
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          className={getActiveStyleClass(editor.isActive('underline'))}
+        >
+          U
+        </button>
+      </div>
     </ul>
   )
 }
