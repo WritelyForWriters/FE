@@ -106,6 +106,7 @@ const Indent = Extension.create<IndentOptions>({
 
 export default function DefaultEditor() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isIndentOption, setIsIndentOption] = useState(false)
   const editor = useEditor({
     extensions: [
       Document,
@@ -158,10 +159,14 @@ export default function DefaultEditor() {
         editor={editor}
         tippyOptions={{
           duration: 100,
-          onHidden: () => setIsOpen(false),
+          onHidden: () => {
+            setIsIndentOption(false)
+            setIsOpen(false)
+          },
         }}
       >
         <div className={styles['bubble-menu']}>
+          {/* 텍스트 형식 툴바 */}
           <button onClick={() => setIsOpen(true)}>{getTextFormatOption()}</button>
 
           {isOpen && (
@@ -190,8 +195,16 @@ export default function DefaultEditor() {
               </button>
             </div>
           )}
-          <button onClick={() => editor.commands.indent()}>+ 들여쓰기</button>
-          <button onClick={() => editor.commands.outdent()}>- 내어쓰기</button>
+
+          {/* 정렬 툴바 */}
+          <button onClick={() => setIsIndentOption(true)}>정렬</button>
+
+          {isIndentOption && (
+            <div className={styles['dropdown-menu']}>
+              <button onClick={() => editor.commands.indent()}>+ 들여쓰기</button>
+              <button onClick={() => editor.commands.outdent()}>- 내어쓰기</button>
+            </div>
+          )}
         </div>
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
