@@ -12,27 +12,30 @@
   background: #fff;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
 
-  > button {
+  > div {
     position: relative;
-    padding: 0.25rem;
-    padding-left: 0.8rem;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.25rem;
 
-    border-radius: 0.5rem;
-    background-color: unset;
+    > button {
+      padding: 0.25rem;
+      padding-left: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.25rem;
 
-    /* TODO 공용폰트로 교체 Label/Large */
-    font-family: Pretendard;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 20px; /* 142.857% */
+      border-radius: 0.5rem;
+      background-color: unset;
 
-    &:hover {
-      background-color: #f2f2f2;
+      /* TODO 공용폰트로 교체 Label/Large */
+      font-family: Pretendard;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 20px; /* 142.857% */
+
+      &:hover {
+        background-color: #f2f2f2;
+      }
     }
   }
 }
@@ -40,9 +43,10 @@
 /* Select menu */
 .select-menu {
   position: absolute;
-  top: 44px;
+  top: 36px;
   left: 0;
 
+  width: 100%;
   padding: 0.75rem 0.5rem;
   display: flex;
   flex-direction: column;
