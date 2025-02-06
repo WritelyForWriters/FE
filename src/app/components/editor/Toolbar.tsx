@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
+import { IoIosArrowDown } from 'react-icons/io'
 
 import useDetectClose from '@hooks/common/useDetectClose'
 import useIndent from '@hooks/extensions/useIndent'
@@ -47,10 +48,13 @@ export default function Toolbar({ editor }: ToolbarProps) {
   return (
     <ul className={styles['bubble-menu']}>
       {/* 텍스트 형식 툴바 */}
-      <button onClick={() => setIsOpen(true)}>{getTextFormatOption()}</button>
+      <button onClick={() => setIsOpen(true)}>
+        {getTextFormatOption()}
+        <IoIosArrowDown size={16} fill="#CCCCCC" />
+      </button>
 
       {isOpen && (
-        <div ref={textFormatSelectMenuRef} className={styles['dropdown-menu']}>
+        <div ref={textFormatSelectMenuRef} className={styles['select-menu']}>
           <button
             onClick={toggleText}
             className={getActiveStyleClass(
@@ -75,10 +79,13 @@ export default function Toolbar({ editor }: ToolbarProps) {
       )}
 
       {/* 정렬 툴바 */}
-      <button onClick={() => setIsIndentOption(true)}>정렬</button>
+      <button onClick={() => setIsIndentOption(true)}>
+        정렬
+        <IoIosArrowDown size={16} fill="#CCCCCC" />
+      </button>
 
       {isIndentOption && (
-        <div ref={indentSelectMenuRef} className={styles['dropdown-menu']}>
+        <div ref={indentSelectMenuRef} className={styles['select-menu']}>
           <button
             onClick={indent}
             className={getActiveStyleClass(editor.getAttributes('paragraph').indent)}
@@ -109,6 +116,19 @@ export default function Toolbar({ editor }: ToolbarProps) {
           U
         </button>
       </div>
+
+      <div className={styles.line}>{''}</div>
+
+      {/* 메모 툴바 */}
+      <button>메모</button>
+
+      <div className={styles.line}>{''}</div>
+
+      {/* AI 어시스턴트 */}
+      <button onClick={() => setIsIndentOption(true)}>
+        AI 어시스턴트
+        <IoIosArrowDown size={16} fill="#CCCCCC" />
+      </button>
     </ul>
   )
 }

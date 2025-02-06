@@ -1,10 +1,10 @@
 /* Bubble menu */
 .bubble-menu {
-  height: 40px;
+  height: 44px;
 
   display: inline-flex;
-  padding: 0.5rem 1rem;
-  justify-content: center;
+  padding: 0.5rem;
+  justify-content: flex-start;
   align-items: center;
   gap: 0.5rem;
 
@@ -12,49 +12,59 @@
   background: #fff;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
 
-  button {
+  > button {
+    position: relative;
+    padding: 0.25rem;
+    padding-left: 0.8rem;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 0.25rem;
+
+    border-radius: 0.5rem;
     background-color: unset;
 
+    /* TODO 공용폰트로 교체 Label/Large */
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 142.857% */
+
     &:hover {
-      background-color: #e6e6e6;
+      background-color: #f2f2f2;
     }
   }
 }
 
-/* Dropdown menu */
-.dropdown-menu {
-  width: 92px;
+/* Select menu */
+.select-menu {
   position: absolute;
-  top: 32px;
+  top: 44px;
   left: 0;
 
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 0.75rem;
 
   border-radius: 0.75rem;
   background: #fff;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
 
   button {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
+
     &:hover {
-      background-color: #e6e6e6;
+      background-color: #f2f2f2;
     }
 
     &.is-active {
-      background-color: #e6e6e6;
-
-      &:hover {
-        background-color: #e6e6e6;
-        opacity: 0.5;
-      }
+      background-color: #f2f2f2;
     }
   }
 }
@@ -62,13 +72,23 @@
 .text-mark {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
 
   button {
-    padding: 0 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: #f2f2f2;
+    }
 
     &.is-active {
-      background-color: #e6e6e6;
+      color: #ffcc00;
     }
   }
+}
+
+.line {
+  width: 1px;
+  height: 20px;
+  background: #f2f2f2;
 }

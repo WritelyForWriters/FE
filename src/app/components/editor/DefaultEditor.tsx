@@ -58,7 +58,7 @@ export default function DefaultEditor() {
 
   return (
     <>
-      <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
+      <BubbleMenu editor={editor} tippyOptions={{ duration: 100, maxWidth: 'none' }}>
         <Toolbar editor={editor} />
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
