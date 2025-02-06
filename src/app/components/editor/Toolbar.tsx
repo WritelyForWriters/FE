@@ -6,6 +6,7 @@ import { IoIosArrowDown } from 'react-icons/io'
 import useDetectClose from '@hooks/common/useDetectClose'
 import useIndent from '@hooks/extensions/useIndent'
 import useTextFormat from '@hooks/extensions/useTextFormat'
+import useTextMark from '@hooks/extensions/useTextMark'
 
 import styles from './Toolbar.module.scss'
 
@@ -36,6 +37,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
 
   const { toggleText, toggleBlockquote, toggleHeading } = useTextFormat(editor)
   const { indent, outdent } = useIndent(editor)
+  const { toggleBold, toggleItalic, toggleUnderline } = useTextMark(editor)
 
   const getTextFormatOption = () => {
     if (editor?.isActive('blockquote')) {
@@ -109,20 +111,14 @@ export default function Toolbar({ editor }: ToolbarProps) {
       {/* 텍스트 mark 툴바 */}
       <div>
         <div className={styles['text-mark']}>
-          <button
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={getActiveStyleClass(editor.isActive('bold'))}
-          >
+          <button onClick={toggleBold} className={getActiveStyleClass(editor.isActive('bold'))}>
             B
           </button>
-          <button
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={getActiveStyleClass(editor.isActive('italic'))}
-          >
+          <button onClick={toggleItalic} className={getActiveStyleClass(editor.isActive('italic'))}>
             I
           </button>
           <button
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            onClick={toggleUnderline}
             className={getActiveStyleClass(editor.isActive('underline'))}
           >
             U
