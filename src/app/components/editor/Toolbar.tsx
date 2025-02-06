@@ -16,6 +16,7 @@ interface ToolbarProps {
 export default function Toolbar({ editor }: ToolbarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isIndentOption, setIsIndentOption] = useState(false)
+  const [isAiOption, setIsAiOption] = useState(false)
 
   const handleClose = () => {
     setIsOpen(false)
@@ -25,8 +26,13 @@ export default function Toolbar({ editor }: ToolbarProps) {
     setIsIndentOption(false)
   }
 
+  const handleAiOptionClose = () => {
+    setIsAiOption(false)
+  }
+
   const textFormatSelectMenuRef = useDetectClose(handleClose)
   const indentSelectMenuRef = useDetectClose(handleIndentClose)
+  const aiSelectMenuRef = useDetectClose(handleAiOptionClose)
 
   const { toggleText, toggleBlockquote, toggleHeading } = useTextFormat(editor)
   const { indent, outdent } = useIndent(editor)
@@ -93,16 +99,15 @@ export default function Toolbar({ editor }: ToolbarProps) {
               onClick={indent}
               className={getActiveStyleClass(editor.getAttributes('paragraph').indent)}
             >
-              + 들여쓰기
+              +
             </button>
-            <button onClick={outdent}>- 내어쓰기</button>
+            <button onClick={outdent}>-</button>
           </div>
         )}
       </div>
 
       {/* 텍스트 mark 툴바 */}
       <div>
-        {' '}
         <div className={styles['text-mark']}>
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
@@ -136,10 +141,19 @@ export default function Toolbar({ editor }: ToolbarProps) {
 
       {/* AI 어시스턴트 */}
       <div>
-        <button onClick={() => setIsIndentOption(true)}>
+        <button onClick={() => setIsAiOption(true)}>
           AI 어시스턴트
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </button>
+
+        {isAiOption && (
+          <div ref={aiSelectMenuRef} className={styles['select-menu']}>
+            <button>자동 수정</button>
+            <button>수동 수정</button>
+            <button>구간 피드백</button>
+            <button>자유 대화</button>
+          </div>
+        )}
       </div>
     </div>
   )
