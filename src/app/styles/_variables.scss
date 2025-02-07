@@ -1,0 +1,74 @@
+$font-family-base: 'Pretendard';
+
+@font-face {
+  font-family: $font-family-base;
+  src: ('/fonts/PretendardVariable.woff2') format('woff2');
+}
+
+@function create-typo($font-size, $font-weight, $line-height) {
+  $font: normal normal $font-weight $font-size/#{$line-height} $font-family-base;
+  @return $font;
+}
+
+$typo: (
+  Display: (
+    Large: create-typo(5.7rem, 400, 6.4rem),
+    Medium: create-typo(4.7rem, 500, 5.37rem),
+    // Display_S: 추가 예정
+  ),
+  HeadLine: (
+    Large: create-typo(3.2rem, 500, 3.819rem),
+    Medium: create-typo(2.8rem, 500, 3.341rem),
+    Small: create-typo(2.4rem, 500, 2.864rem),
+  ),
+  Title: (
+    Large: create-typo(2.2rem, 500, 2.8rem),
+    Medium: create-typo(1.6rem, 500, 2.4rem),
+    Small: create-typo(1.4rem, 500, 2rem),
+  ),
+  Label: (
+    Large: create-typo(3.2rem, 500, 3.819rem),
+    Medium: create-typo(1.2rem, 500, 1.6rem),
+    Small: create-typo(1.1rem, 500, 1.6rem),
+  ),
+  Body: (
+    Large: create-typo(1.6rem, 500, 1.909rem),
+    Medium: create-typo(1.4rem, 500, 1.671rem),
+    Small: create-typo(1.2rem, 500, 1.432rem),
+  ),
+);
+
+$colors: (
+  Core: (
+    Primary500: #ffcc00,
+    Secondary100: #000000,
+  ),
+  Alert: (
+    Failure: #ff3b30,
+    Success: #20aceb,
+    Warning: #ffcc00,
+    Primary50: #fffae5,
+    Primary100: #fff5cc,
+    Primary200: #ffeb99,
+    Primary300: #ffe066,
+    Primary400: #ffd633,
+    Primary500: #ffcc00,
+    Primary550: #e6b800,
+    Primary600: #cca300,
+    Primary700: #997a00,
+    Primary800: #665200,
+    Primary900: #332900,
+    Secondary0: #ffffff,
+    Secondary20: #fafafa,
+    Secondary50: #f2f2f2,
+    Secondary100: #e6e6e6,
+    Secondary200: #cccccc,
+    Secondary300: #b3b3b3,
+    Secondary400: #999999,
+    Secondary500: #808080,
+    Secondary600: #666666,
+    Secondary700: #4d4d4d,
+    Secondary800: #333333,
+    Secondary900: #1a1a1a,
+  ),
+);
