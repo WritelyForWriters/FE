@@ -13,8 +13,8 @@ $font-family-base: 'Pretendard';
 $typo: (
   Display: (
     Large: create-typo(5.7rem, 400, 6.4rem),
-    Medium: create-typo(4.7rem, 500, 5.37rem),
-    // Display_S: 추가 예정
+    Medium: create-typo(4.5rem, 500, 5.37rem),
+    Small: create-typo(3.6rem, 400, 4.4rem),
   ),
   HeadLine: (
     Large: create-typo(3.2rem, 500, 3.819rem),
@@ -27,7 +27,7 @@ $typo: (
     Small: create-typo(1.4rem, 500, 2rem),
   ),
   Label: (
-    Large: create-typo(3.2rem, 500, 3.819rem),
+    Large: create-typo(1.4rem, 500, 2rem),
     Medium: create-typo(1.2rem, 500, 1.6rem),
     Small: create-typo(1.1rem, 500, 1.6rem),
   ),
