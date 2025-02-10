@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { useCallback, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
@@ -141,12 +143,29 @@ export default function Toolbar({ editor }: ToolbarProps) {
 
         {isAlignOption && (
           <div ref={alignSelectMenuRef} className={styles['select-menu']}>
-            <button>왼쪽</button>
-            <button>가운데</button>
-            <button>오른쪽</button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('left').run()}
+              className={editor.isActive({ textAlign: 'left' }) ? `${styles['is-active']}` : ''}
+            >
+              <Image src="/icons/text-align-left.svg" alt="왼쪽정렬" width={20} height={20} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('center').run()}
+              className={editor.isActive({ textAlign: 'center' }) ? `${styles['is-active']}` : ''}
+            >
+              <Image src="/icons/text-align-center.svg" alt="가운데정렬" width={20} height={20} />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('right').run()}
+              className={editor.isActive({ textAlign: 'right' }) ? `${styles['is-active']}` : ''}
+            >
+              <Image src="/icons/text-align-right.svg" alt="오른쪽정렬" width={20} height={20} />
+            </button>
           </div>
         )}
       </div>
+
+      <div className={styles.line} />
 
       {/* 들여쓰기, 내어쓰기 */}
       <div>
@@ -158,6 +177,8 @@ export default function Toolbar({ editor }: ToolbarProps) {
         </button>
         <button onClick={outdent}>-</button>
       </div>
+
+      <div className={styles.line} />
 
       {/* 텍스트 mark 툴바 */}
       <div className={styles['text-mark']}>
@@ -175,14 +196,14 @@ export default function Toolbar({ editor }: ToolbarProps) {
         </button>
       </div>
 
-      <div className={styles.line}>{''}</div>
+      <div className={styles.line} />
 
       {/* 메모 툴바 */}
       <div>
         <button>메모</button>
       </div>
 
-      <div className={styles.line}>{''}</div>
+      <div className={styles.line} />
 
       {/* AI 어시스턴트 */}
       <div>
