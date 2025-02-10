@@ -14,25 +14,72 @@ interface ToolbarProps {
   editor: Editor
 }
 
+interface SelectOptionType {
+  label: string
+  isActiveOption: boolean
+  handleTextAction: () => void
+}
+
+interface SelectOptionProps {
+  option: SelectOptionType
+}
+
+function SelectOption({ option }: SelectOptionProps) {
+  const { label, handleTextAction, isActiveOption } = option
+
+  const getActiveStyleClass = useCallback((isActive: boolean) => {
+    return isActive ? `${styles['is-active']}` : ''
+  }, [])
+
+  return (
+    <button key={label} onClick={handleTextAction} className={getActiveStyleClass(isActiveOption)}>
+      {label}
+    </button>
+  )
+}
+
+interface SelectMenuProps {
+  options: SelectOptionType[]
+  isOpen: boolean
+  handleClose: () => void
+}
+
+function SelectMenu({ isOpen, handleClose, options }: SelectMenuProps) {
+  const selectMenuRef = useDetectClose(handleClose)
+
+  return (
+    <>
+      {isOpen && (
+        <div ref={selectMenuRef} className={styles['select-menu']}>
+          {options.map((option) => (
+            <SelectOption key={option.label} option={option} />
+          ))}
+        </div>
+      )}
+    </>
+  )
+}
+
+/** 정렬, 드롭다운 */
 export default function Toolbar({ editor }: ToolbarProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [isIndentOption, setIsIndentOption] = useState(false)
+  const [isAlignOption, setIsAlignOption] = useState(false)
   const [isAiOption, setIsAiOption] = useState(false)
 
   const handleClose = () => {
     setIsOpen(false)
   }
 
-  const handleIndentClose = () => {
-    setIsIndentOption(false)
+  const handleAlignClose = () => {
+    setIsAlignOption(false)
   }
 
   const handleAiOptionClose = () => {
     setIsAiOption(false)
   }
 
-  const textFormatSelectMenuRef = useDetectClose(handleClose)
-  const indentSelectMenuRef = useDetectClose(handleIndentClose)
+  // const textFormatSelectMenuRef = useDetectClose(handleClose)
+  const alignSelectMenuRef = useDetectClose(handleAlignClose)
   const aiSelectMenuRef = useDetectClose(handleAiOptionClose)
 
   const { toggleText, toggleBlockquote, toggleHeading } = useTextFormat(editor)
@@ -62,68 +109,70 @@ export default function Toolbar({ editor }: ToolbarProps) {
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </button>
 
-        {isOpen && (
-          <div ref={textFormatSelectMenuRef} className={styles['select-menu']}>
-            <button
-              onClick={toggleText}
-              className={getActiveStyleClass(
-                !editor.isActive('blockquote') && !editor.isActive('heading'),
-              )}
-            >
-              본문
-            </button>
-            <button
-              onClick={toggleHeading}
-              className={getActiveStyleClass(editor.isActive('heading'))}
-            >
-              제목
-            </button>
-            <button
-              onClick={toggleBlockquote}
-              className={getActiveStyleClass(editor.isActive('blockquote'))}
-            >
-              인용
-            </button>
-          </div>
-        )}
+        <SelectMenu
+          handleClose={handleClose}
+          isOpen={isOpen}
+          options={[
+            {
+              label: '본문',
+              handleTextAction: toggleText,
+              isActiveOption: !editor.isActive('blockquote') && !editor.isActive('heading'),
+            },
+            {
+              label: '제목',
+              handleTextAction: toggleHeading,
+              isActiveOption: editor.isActive('heading'),
+            },
+            {
+              label: '인용',
+              handleTextAction: toggleBlockquote,
+              isActiveOption: editor.isActive('blockquote'),
+            },
+          ]}
+        />
       </div>
 
       {/* 정렬 툴바 */}
       <div>
-        <button onClick={() => setIsIndentOption(true)}>
+        <button onClick={() => setIsAlignOption(true)}>
           정렬
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </button>
 
-        {isIndentOption && (
-          <div ref={indentSelectMenuRef} className={styles['select-menu']}>
-            <button
-              onClick={indent}
-              className={getActiveStyleClass(editor.getAttributes('paragraph').indent)}
-            >
-              +
-            </button>
-            <button onClick={outdent}>-</button>
+        {isAlignOption && (
+          <div ref={alignSelectMenuRef} className={styles['select-menu']}>
+            <button>왼쪽</button>
+            <button>가운데</button>
+            <button>오른쪽</button>
           </div>
         )}
       </div>
 
-      {/* 텍스트 mark 툴바 */}
+      {/* 들여쓰기, 내어쓰기 */}
       <div>
-        <div className={styles['text-mark']}>
-          <button onClick={toggleBold} className={getActiveStyleClass(editor.isActive('bold'))}>
-            B
-          </button>
-          <button onClick={toggleItalic} className={getActiveStyleClass(editor.isActive('italic'))}>
-            I
-          </button>
-          <button
-            onClick={toggleUnderline}
-            className={getActiveStyleClass(editor.isActive('underline'))}
-          >
-            U
-          </button>
-        </div>
+        <button
+          onClick={indent}
+          className={getActiveStyleClass(editor.getAttributes('paragraph').indent)}
+        >
+          +
+        </button>
+        <button onClick={outdent}>-</button>
+      </div>
+
+      {/* 텍스트 mark 툴바 */}
+      <div className={styles['text-mark']}>
+        <button onClick={toggleBold} className={getActiveStyleClass(editor.isActive('bold'))}>
+          B
+        </button>
+        <button onClick={toggleItalic} className={getActiveStyleClass(editor.isActive('italic'))}>
+          I
+        </button>
+        <button
+          onClick={toggleUnderline}
+          className={getActiveStyleClass(editor.isActive('underline'))}
+        >
+          U
+        </button>
       </div>
 
       <div className={styles.line}>{''}</div>
