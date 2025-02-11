@@ -19,16 +19,10 @@ import styles from './DefaultEditor.module.scss'
 
 /**
  * TODO
- * 버블메뉴
- * 툴바
- * [x] 텍스트 형식 본문, 제목, 인용
- * [x] 정렬
- * [x] 글자 스타일
- * [ ] 메모 메뉴
- * [ ] AI 어시스턴트 메뉴
  * keyboard shortcut
- * 드롭다운 공통
- * default styles
+ * - 단축키 '/'로 버블메뉴 활성화
+ * - 제목, 인용 키보드 단축키
+ * 공통 스타일 적용
  */
 
 export default function DefaultEditor() {

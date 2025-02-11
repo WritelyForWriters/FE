@@ -64,7 +64,7 @@ function SelectMenu({ isOpen, handleClose, options }: SelectMenuProps) {
 }
 
 export default function Toolbar({ editor }: ToolbarProps) {
-  const [isTextFormatMenuOpen, setIsTextFormatMenuOpen] = useState(false) // TODO hook
+  const [isTextFormatMenuOpen, setIsTextFormatMenuOpen] = useState(false)
   const [isTextAlignMenuOpen, setIsTextAlignMenuOpen] = useState(false)
   const [isAiOption, setIsAiOption] = useState(false)
 
