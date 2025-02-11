@@ -63,11 +63,11 @@ export default function DefaultEditor() {
   }
 
   return (
-    <>
+    <section className={styles.section}>
       <BubbleMenu editor={editor} tippyOptions={{ duration: 100, maxWidth: 'none' }}>
         <Toolbar editor={editor} />
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
-    </>
+    </section>
   )
 }

@@ -80,6 +80,9 @@
   align-items: center;
 
   button {
+    height: 28px;
+    display: flex;
+    align-items: center;
     padding: 0.25rem 0.5rem;
     border-radius: 8px;
 
@@ -97,4 +100,46 @@
   width: 1px;
   height: 20px;
   background: #f2f2f2;
+}
+
+.bold {
+  /* TODO 공용폰트로 교체 */
+  color: #1a1a1a;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 142.857% */
+}
+
+.italic {
+  /* TODO 공용폰트로 교체 */
+  color: #1a1a1a;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 20px; /* 142.857% */
+}
+
+.underline {
+  /* TODO 공용폰트로 교체 */
+  color: #1a1a1a;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+}
+
+.select-option {
+  padding: 0.25rem !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }

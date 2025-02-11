@@ -21,6 +21,7 @@ interface SelectOptionType {
   label: string | ReactElement<ImageProps>
   isActiveOption?: boolean
   handleTextAction?: () => void
+  className?: string
 }
 
 interface SelectOptionProps {
@@ -28,14 +29,17 @@ interface SelectOptionProps {
 }
 
 function SelectOption({ option }: SelectOptionProps) {
-  const { label, handleTextAction, isActiveOption = false } = option
+  const { label, handleTextAction, isActiveOption = false, className } = option
 
   const getActiveStyleClass = useCallback((isActive: boolean) => {
     return isActive ? `${styles['is-active']}` : ''
   }, [])
 
   return (
-    <button onClick={handleTextAction} className={getActiveStyleClass(isActiveOption)}>
+    <button
+      onClick={handleTextAction}
+      className={`${getActiveStyleClass(isActiveOption)} ${className}`}
+    >
       {label}
     </button>
   )
@@ -179,6 +183,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
             label: 'B',
             handleTextAction: toggleBold,
             isActiveOption: editor.isActive('bold'),
+            className: styles.bold,
           }}
         />
         <SelectOption
@@ -186,6 +191,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
             label: 'I',
             handleTextAction: toggleItalic,
             isActiveOption: editor.isActive('italic'),
+            className: styles.italic,
           }}
         />
         <SelectOption
@@ -193,6 +199,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
             label: 'U',
             handleTextAction: toggleUnderline,
             isActiveOption: editor.isActive('underline'),
+            className: styles.underline,
           }}
         />
       </div>
@@ -200,7 +207,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
       <div className={styles.line} />
 
       {/* Memo */}
-      <div>
+      <div className={styles['text-mark']}>
         <button>메모</button>
       </div>
 
@@ -217,10 +224,42 @@ export default function Toolbar({ editor }: ToolbarProps) {
           handleClose={() => setIsAiOption(false)}
           isOpen={isAiOption}
           options={[
-            { label: '자동 수정' },
-            { label: '수동 수정' },
-            { label: '구간 피드백' },
-            { label: '자유 대화' },
+            {
+              label: (
+                <>
+                  <Image src="/icons/ai-option1.svg" alt="자동수정" width={20} height={20} />
+                  자동 수정
+                </>
+              ),
+              className: styles['select-option'],
+            },
+            {
+              label: (
+                <>
+                  <Image src="/icons/ai-option2.svg" alt="수동수정" width={20} height={20} />
+                  수동 수정
+                </>
+              ),
+              className: styles['select-option'],
+            },
+            {
+              label: (
+                <>
+                  <Image src="/icons/ai-option3.svg" alt="구간피드백" width={20} height={20} />
+                  구간 피드백
+                </>
+              ),
+              className: styles['select-option'],
+            },
+            {
+              label: (
+                <>
+                  <Image src="/icons/ai-option4.svg" alt="자유대화" width={20} height={20} />
+                  자유 대화
+                </>
+              ),
+              className: styles['select-option'],
+            },
           ]}
         />
       </div>
