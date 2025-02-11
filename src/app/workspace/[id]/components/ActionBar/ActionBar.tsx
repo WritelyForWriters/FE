@@ -3,7 +3,6 @@
 import { useState } from 'react'
 
 import IconButton from '@components/Buttons/IconButton/IconButton'
-import TextButton from '@components/Buttons/TextButton/TextButton'
 import { HomeIcon } from '@components/Icons'
 import EditModeSwitch from '@components/Switch/EditModeSwitch/EditModeSwitch'
 
@@ -53,12 +52,12 @@ export default function ActionBar() {
           <HomeIcon />
         </IconButton>
         {/*삭제하기 버튼: 읽기 모드에서 노출 */}
-        {!isContentEditing && <TextButton onClick={handleDelete}>삭제하기</TextButton>}
+        {!isContentEditing && <span onClick={handleDelete}>삭제하기</span>}
         {/*저장하기 & 내보내기 버튼: 쓰기 모드에서 노출 */}
         {isContentEditing && (
           <>
-            <TextButton onClick={handleSave}>저장하기</TextButton>
-            <TextButton>내보내기</TextButton>
+            <span onClick={handleSave}>저장하기</span>
+            <span>내보내기</span>
           </>
         )}
       </section>

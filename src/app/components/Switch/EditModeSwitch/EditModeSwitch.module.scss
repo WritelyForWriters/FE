@@ -1,11 +1,11 @@
-@mixin styled-font() {
-  font-weight: 500;
-  font-size: 14px;
-}
+@use 'sass:map';
+@use '../../../styles/variables' as Styled;
+
+$styled-font: map.get(Styled.$typo, Label, Large);
 
 .default {
-  @include styled-font();
-  color: #cccccc;
+  font: $styled-font;
+  color: map.get(Styled.$colors, Alert, Secondary200);
   border-radius: 10px;
   padding: 8px;
 
@@ -15,9 +15,9 @@
 }
 
 .selected {
-  @include styled-font();
-  background-color: #666666;
-  color: #ffffff;
+  font: $styled-font;
+  background-color: map.get(Styled.$colors, Alert, Secondary900);
+  color: map.get(Styled.$colors, Alert, Secondary0);
   border-radius: 8px;
   padding: 8px 12px;
 }

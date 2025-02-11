@@ -1,14 +1,14 @@
+@use 'sass:map';
+@use '../../../../styles/variables' as Styled;
+
+$styled-font: map.get(Styled.$typo, Title, Medium);
+$secondary-900: map.get(Styled.$colors, Alert, Secondary900);
+
 @mixin display-flex() {
   display: -webkit-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-}
-
-@mixin styled-font() {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
 }
 
 .action-bar-container {
@@ -21,19 +21,27 @@
 
 .action-bar-buttons {
   @include display-flex();
+  font: map.get(Styled.$typo, Label, Large);
+  color: $secondary-900;
   align-items: center;
   gap: 16px;
+
+  span {
+    cursor: pointer;
+  }
 }
 
 .action-bar-input {
-  @include styled-font();
+  font: $styled-font;
+  color: $secondary-900;
   border: 0px;
   outline-width: 0px;
   cursor: text;
 }
 
 .action-bar-span {
-  @include styled-font();
+  font: $styled-font;
+  color: $secondary-900;
   cursor: pointer;
 }
 
@@ -41,7 +49,7 @@
   @include display-flex();
   justify-content: center;
   align-items: center;
-  background-color: #f2f2f2;
+  background-color: map.get(Styled.$colors, Alert, Secondary50);
   list-style: none;
   border-radius: 10px;
   padding: 4px;
