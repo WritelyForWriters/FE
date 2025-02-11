@@ -1,12 +1,13 @@
-import Image from 'next/image'
+import Image, { ImageProps } from 'next/image'
 
-import { useCallback, useState } from 'react'
+import { ReactElement, useCallback, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { IoIosArrowDown } from 'react-icons/io'
 
 import useDetectClose from '@hooks/common/useDetectClose'
 import useIndent from '@hooks/extensions/useIndent'
+import useTextAlign from '@hooks/extensions/useTextAlign'
 import useTextFormat from '@hooks/extensions/useTextFormat'
 import useTextMark from '@hooks/extensions/useTextMark'
 
@@ -17,9 +18,9 @@ interface ToolbarProps {
 }
 
 interface SelectOptionType {
-  label: string
-  isActiveOption: boolean
-  handleTextAction: () => void
+  label: string | ReactElement<ImageProps>
+  isActiveOption?: boolean
+  handleTextAction?: () => void
 }
 
 interface SelectOptionProps {
@@ -27,14 +28,14 @@ interface SelectOptionProps {
 }
 
 function SelectOption({ option }: SelectOptionProps) {
-  const { label, handleTextAction, isActiveOption } = option
+  const { label, handleTextAction, isActiveOption = false } = option
 
   const getActiveStyleClass = useCallback((isActive: boolean) => {
     return isActive ? `${styles['is-active']}` : ''
   }, [])
 
   return (
-    <button key={label} onClick={handleTextAction} className={getActiveStyleClass(isActiveOption)}>
+    <button onClick={handleTextAction} className={getActiveStyleClass(isActiveOption)}>
       {label}
     </button>
   )
@@ -53,8 +54,8 @@ function SelectMenu({ isOpen, handleClose, options }: SelectMenuProps) {
     <>
       {isOpen && (
         <div ref={selectMenuRef} className={styles['select-menu']}>
-          {options.map((option) => (
-            <SelectOption key={option.label} option={option} />
+          {options.map((option, index) => (
+            <SelectOption key={index} option={option} />
           ))}
         </div>
       )}
@@ -62,31 +63,15 @@ function SelectMenu({ isOpen, handleClose, options }: SelectMenuProps) {
   )
 }
 
-/** 정렬, 드롭다운 */
 export default function Toolbar({ editor }: ToolbarProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isAlignOption, setIsAlignOption] = useState(false)
+  const [isTextFormatMenuOpen, setIsTextFormatMenuOpen] = useState(false) // TODO hook
+  const [isTextAlignMenuOpen, setIsTextAlignMenuOpen] = useState(false)
   const [isAiOption, setIsAiOption] = useState(false)
-
-  const handleClose = () => {
-    setIsOpen(false)
-  }
-
-  const handleAlignClose = () => {
-    setIsAlignOption(false)
-  }
-
-  const handleAiOptionClose = () => {
-    setIsAiOption(false)
-  }
-
-  // const textFormatSelectMenuRef = useDetectClose(handleClose)
-  const alignSelectMenuRef = useDetectClose(handleAlignClose)
-  const aiSelectMenuRef = useDetectClose(handleAiOptionClose)
 
   const { toggleText, toggleBlockquote, toggleHeading } = useTextFormat(editor)
   const { indent, outdent } = useIndent(editor)
   const { toggleBold, toggleItalic, toggleUnderline } = useTextMark(editor)
+  const { setTextAlignLeft, setTextAlignCenter, setTextAlignRight } = useTextAlign(editor)
 
   const getTextFormatOption = () => {
     if (editor?.isActive('blockquote')) {
@@ -98,22 +83,18 @@ export default function Toolbar({ editor }: ToolbarProps) {
     }
   }
 
-  const getActiveStyleClass = useCallback((isActive: boolean) => {
-    return isActive ? `${styles['is-active']}` : ''
-  }, [])
-
   return (
     <div className={styles['bubble-menu']}>
-      {/* 텍스트 형식 툴바 */}
+      {/* Text Format */}
       <div>
-        <button onClick={() => setIsOpen(true)}>
+        <button onClick={() => setIsTextFormatMenuOpen(true)}>
           {getTextFormatOption()}
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </button>
 
         <SelectMenu
-          handleClose={handleClose}
-          isOpen={isOpen}
+          handleClose={() => setIsTextFormatMenuOpen(false)}
+          isOpen={isTextFormatMenuOpen}
           options={[
             {
               label: '본문',
@@ -134,71 +115,91 @@ export default function Toolbar({ editor }: ToolbarProps) {
         />
       </div>
 
-      {/* 정렬 툴바 */}
+      {/* Align */}
       <div>
-        <button onClick={() => setIsAlignOption(true)}>
+        <button onClick={() => setIsTextAlignMenuOpen(true)}>
           정렬
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </button>
 
-        {isAlignOption && (
-          <div ref={alignSelectMenuRef} className={styles['select-menu']}>
-            <button
-              onClick={() => editor.chain().focus().setTextAlign('left').run()}
-              className={editor.isActive({ textAlign: 'left' }) ? `${styles['is-active']}` : ''}
-            >
-              <Image src="/icons/text-align-left.svg" alt="왼쪽정렬" width={20} height={20} />
-            </button>
-            <button
-              onClick={() => editor.chain().focus().setTextAlign('center').run()}
-              className={editor.isActive({ textAlign: 'center' }) ? `${styles['is-active']}` : ''}
-            >
-              <Image src="/icons/text-align-center.svg" alt="가운데정렬" width={20} height={20} />
-            </button>
-            <button
-              onClick={() => editor.chain().focus().setTextAlign('right').run()}
-              className={editor.isActive({ textAlign: 'right' }) ? `${styles['is-active']}` : ''}
-            >
-              <Image src="/icons/text-align-right.svg" alt="오른쪽정렬" width={20} height={20} />
-            </button>
-          </div>
-        )}
+        <SelectMenu
+          handleClose={() => setIsTextAlignMenuOpen(false)}
+          isOpen={isTextAlignMenuOpen}
+          options={[
+            {
+              label: (
+                <Image src="/icons/text-align-left.svg" alt="왼쪽정렬" width={20} height={20} />
+              ),
+              handleTextAction: setTextAlignLeft,
+              isActiveOption: editor.isActive({ textAlign: 'left' }),
+            },
+            {
+              label: (
+                <Image src="/icons/text-align-center.svg" alt="가운데정렬" width={20} height={20} />
+              ),
+              handleTextAction: setTextAlignCenter,
+              isActiveOption: editor.isActive({ textAlign: 'center' }),
+            },
+            {
+              label: (
+                <Image src="/icons/text-align-right.svg" alt="오른쪽정렬" width={20} height={20} />
+              ),
+              handleTextAction: setTextAlignRight,
+              isActiveOption: editor.isActive({ textAlign: 'right' }),
+            },
+          ]}
+        />
       </div>
 
       <div className={styles.line} />
 
-      {/* 들여쓰기, 내어쓰기 */}
-      <div>
-        <button
-          onClick={indent}
-          className={getActiveStyleClass(editor.getAttributes('paragraph').indent)}
-        >
-          +
-        </button>
-        <button onClick={outdent}>-</button>
-      </div>
-
-      <div className={styles.line} />
-
-      {/* 텍스트 mark 툴바 */}
+      {/* Indent */}
       <div className={styles['text-mark']}>
-        <button onClick={toggleBold} className={getActiveStyleClass(editor.isActive('bold'))}>
-          B
-        </button>
-        <button onClick={toggleItalic} className={getActiveStyleClass(editor.isActive('italic'))}>
-          I
-        </button>
-        <button
-          onClick={toggleUnderline}
-          className={getActiveStyleClass(editor.isActive('underline'))}
-        >
-          U
-        </button>
+        <SelectOption
+          option={{
+            label: <Image src="/icons/indent.svg" alt="들여쓰기" width={18} height={18} />,
+            handleTextAction: indent,
+            isActiveOption: editor.getAttributes('paragraph').indent,
+          }}
+        />
+        <SelectOption
+          option={{
+            label: <Image src="/icons/outdent.svg" alt="내어쓰기" width={18} height={18} />,
+            handleTextAction: outdent,
+          }}
+        />
       </div>
 
       <div className={styles.line} />
 
-      {/* 메모 툴바 */}
+      {/* Text Mark */}
+      <div className={styles['text-mark']}>
+        <SelectOption
+          option={{
+            label: 'B',
+            handleTextAction: toggleBold,
+            isActiveOption: editor.isActive('bold'),
+          }}
+        />
+        <SelectOption
+          option={{
+            label: 'I',
+            handleTextAction: toggleItalic,
+            isActiveOption: editor.isActive('italic'),
+          }}
+        />
+        <SelectOption
+          option={{
+            label: 'U',
+            handleTextAction: toggleUnderline,
+            isActiveOption: editor.isActive('underline'),
+          }}
+        />
+      </div>
+
+      <div className={styles.line} />
+
+      {/* Memo */}
       <div>
         <button>메모</button>
       </div>
@@ -212,14 +213,16 @@ export default function Toolbar({ editor }: ToolbarProps) {
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </button>
 
-        {isAiOption && (
-          <div ref={aiSelectMenuRef} className={styles['select-menu']}>
-            <button>자동 수정</button>
-            <button>수동 수정</button>
-            <button>구간 피드백</button>
-            <button>자유 대화</button>
-          </div>
-        )}
+        <SelectMenu
+          handleClose={() => setIsAiOption(false)}
+          isOpen={isAiOption}
+          options={[
+            { label: '자동 수정' },
+            { label: '수동 수정' },
+            { label: '구간 피드백' },
+            { label: '자유 대화' },
+          ]}
+        />
       </div>
     </div>
   )
