@@ -2,7 +2,7 @@
 
 import { Editor } from '@tiptap/react'
 
-const useTextFormat = (editor: Editor) => {
+export const useTextFormat = (editor: Editor) => {
   /** 본문 */
   const toggleText = () => {
     editor?.commands.unsetBlockquote()
@@ -26,5 +26,3 @@ const useTextFormat = (editor: Editor) => {
     toggleHeading,
   }
 }
-
-export default useTextFormat

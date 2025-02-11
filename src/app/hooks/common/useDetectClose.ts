@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-const useDetectClose = (onClose: () => void) => {
+export const useDetectClose = (onClose: () => void) => {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -19,5 +19,3 @@ const useDetectClose = (onClose: () => void) => {
 
   return ref
 }
-
-export default useDetectClose

@@ -5,11 +5,7 @@ import { ReactElement, useCallback, useState } from 'react'
 import { Editor } from '@tiptap/react'
 import { IoIosArrowDown } from 'react-icons/io'
 
-import useDetectClose from '@hooks/common/useDetectClose'
-import useIndent from '@hooks/extensions/useIndent'
-import useTextAlign from '@hooks/extensions/useTextAlign'
-import useTextFormat from '@hooks/extensions/useTextFormat'
-import useTextMark from '@hooks/extensions/useTextMark'
+import { useDetectClose, useIndent, useTextAlign, useTextFormat, useTextMark } from '@hooks/index'
 
 import styles from './Toolbar.module.scss'
 

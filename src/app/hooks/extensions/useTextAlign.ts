@@ -2,7 +2,7 @@
 
 import { Editor } from '@tiptap/react'
 
-const useTextAlign = (editor: Editor) => {
+export const useTextAlign = (editor: Editor) => {
   const setTextAlignLeft = () => {
     editor.chain().focus().setTextAlign('left').run()
   }
@@ -20,5 +20,3 @@ const useTextAlign = (editor: Editor) => {
     setTextAlignRight,
   }
 }
-
-export default useTextAlign

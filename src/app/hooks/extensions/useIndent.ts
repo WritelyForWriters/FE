@@ -2,7 +2,7 @@
 
 import { Editor } from '@tiptap/react'
 
-const useIndent = (editor: Editor) => {
+export const useIndent = (editor: Editor) => {
   const indent = () => editor?.commands.indent()
   const outdent = () => editor?.commands.outdent()
 
@@ -11,5 +11,3 @@ const useIndent = (editor: Editor) => {
     outdent,
   }
 }
-
-export default useIndent

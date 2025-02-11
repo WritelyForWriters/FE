@@ -2,7 +2,7 @@
 
 import { Editor } from '@tiptap/react'
 
-const useTextMark = (editor: Editor) => {
+export const useTextMark = (editor: Editor) => {
   const toggleBold = () => {
     editor.chain().focus().toggleBold().run()
   }
@@ -21,5 +21,3 @@ const useTextMark = (editor: Editor) => {
     toggleUnderline,
   }
 }
-
-export default useTextMark
