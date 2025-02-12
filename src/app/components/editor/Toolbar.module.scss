@@ -1,5 +1,5 @@
 @use 'sass:map';
-@use '../../styles/variables' as Styled;
+@use '@styles/variables' as Styled;
 
 // Font
 $Label-Large: map.get(Styled.$typo, Label, Large);
