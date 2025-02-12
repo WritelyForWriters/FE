@@ -2,7 +2,9 @@
 @use '@styles/variables' as Styled;
 
 // Font
-$Label-Large: map.get(Styled.$typo, Label, Large);
+@mixin typography($category, $size) {
+  font: map.get(Styled.$typo, $category, $size);
+}
 
 // Color
 $Secondary0: map.get(Styled.$colors, Alert, Secondary0);
@@ -27,17 +29,17 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
     position: relative;
 
     > button {
+      @include typography('Label', 'Large');
+
       padding: 0.4rem;
       padding-left: 0.8rem;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 0.4rem;
+      gap: 0.8rem;
 
       border-radius: 0.8rem;
       background-color: unset;
-
-      font: $Label-Large;
 
       &:hover {
         background-color: $Secondary50;
@@ -65,6 +67,8 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
 
   button {
+    @include typography('Label', 'Large');
+
     width: 100%;
     padding: 0.4rem 0.8rem;
     text-align: start;
@@ -86,6 +90,8 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
   align-items: center;
 
   button {
+    @include typography('Label', 'Large');
+
     height: 28px;
     display: flex;
     align-items: center;
@@ -109,19 +115,20 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
 }
 
 .bold {
-  font: $Label-Large;
-  font-weight: 700;
+  @include typography('Label', 'Large');
+  font-weight: 700 !important;
 }
 
 .italic {
-  font: $Label-Large;
-  font-weight: 700;
-  font-style: italic;
+  @include typography('Label', 'Large');
+  font-weight: 700 !important;
+  font-style: italic !important;
 }
 
 .underline {
-  font: $Label-Large;
+  @include typography('Label', 'Large');
   text-decoration-line: underline;
+  font-weight: 700 !important;
 }
 
 .select-option {
