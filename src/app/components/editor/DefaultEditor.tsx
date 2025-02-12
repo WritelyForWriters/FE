@@ -1,6 +1,5 @@
 'use client'
 
-import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
@@ -11,25 +10,20 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 
+import BlockquoteExtension from '@extensions/Blockquote'
 import Indent from '@extensions/Indent'
 
 import Toolbar from './Toolbar'
 
 import styles from './DefaultEditor.module.scss'
 
-/**
- * TODO
- * keyboard shortcut
- * - 단축키 '/'로 버블메뉴 활성화
- * - 제목, 인용 키보드 단축키
- * 공통 스타일 적용
- */
+// TODO 단축키 '/'로 버블메뉴 활성화
 
 export default function DefaultEditor() {
   const editor = useEditor({
     extensions: [
       Document,
-      Blockquote,
+      BlockquoteExtension,
       Text,
       Paragraph,
       Heading.configure({
