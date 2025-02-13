@@ -2,9 +2,9 @@
 
 import { PropsWithChildren } from 'react'
 
-import AccordionBody from './AccordionBody/AccordionBody'
+import AccordionBody from './AccordionBody'
 import { AccordionProvider } from './AccordionContext'
-import AccordionHeader from './AccordionHeader/AccordionHeader'
+import AccordionHeader from './AccordionHeader'
 
 import classNames from 'classnames/bind'
 

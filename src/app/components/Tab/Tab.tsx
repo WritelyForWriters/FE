@@ -2,10 +2,10 @@
 
 import { PropsWithChildren } from 'react'
 
-import TabButton from './TabButton/TabButton'
 import { TabProvider } from './TabContext'
-import TabList from './TabList/TabList'
-import TabPanel from './TabPanel/TabPanel'
+import TabButton from './button/TabButton'
+import TabList from './list/TabList'
+import TabPanel from './panel/TabPanel'
 
 interface TabProps {
   defaultTab: string
