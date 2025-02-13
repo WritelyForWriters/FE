@@ -1,4 +1,4 @@
-import Tab from '@/app/components/Tab/Tab'
+import Tab from '@components/Tab/Tab'
 
 import MemoList from '../MemoList/MemoList'
 
