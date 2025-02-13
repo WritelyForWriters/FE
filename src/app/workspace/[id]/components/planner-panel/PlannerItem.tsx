@@ -21,7 +21,7 @@ export default function PlannerItem({ title, content }: Props) {
             </Text>
 
             <IconButton onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <FaChevronUp color="#A5A4A2" /> : <FaChevronDown color="#A5A4A2" />}
+              {isOpen ? <FaChevronUp color="#B3B3B3" /> : <FaChevronDown color="#B3B3B3" />}
             </IconButton>
           </Row>
         )}

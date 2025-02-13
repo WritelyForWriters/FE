@@ -1,6 +1,8 @@
 'use client'
 
-import { ArrowDownIcon, RemoveIcon } from '@components/Icons'
+import { FaMinus } from 'react-icons/fa6'
+import { IoIosArrowDown } from 'react-icons/io'
+
 import Accordion from '@components/accordion/Accordion'
 import IconButton from '@components/buttons/IconButton'
 import Text from '@components/text/Text'
@@ -21,7 +23,11 @@ export default function MemoPanel() {
                 메모
               </Text>
               <IconButton onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? <RemoveIcon /> : <ArrowDownIcon />}
+                {isOpen ? (
+                  <FaMinus color="#B3B3B3" size={18} />
+                ) : (
+                  <IoIosArrowDown size={18} fill="#B3B3B3" />
+                )}
               </IconButton>
             </PanelHeader>
           )}
