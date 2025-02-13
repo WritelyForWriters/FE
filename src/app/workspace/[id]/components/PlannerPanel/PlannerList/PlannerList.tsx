@@ -1,13 +1,14 @@
-import PlannerItem from "../PlannerItem/PlannerItem";
+import PlannerItem from '../PlannerItem/PlannerItem'
 
-import classNames from "classnames/bind";
-import styles from "./PlannerList.module.scss";
+import classNames from 'classnames/bind'
 
-const cx = classNames.bind(styles);
+import styles from './PlannerList.module.scss'
+
+const cx = classNames.bind(styles)
 
 export default function PlannerList() {
   return (
-    <ul className={cx("planner-list")}>
+    <ul className={cx('planner-list')}>
       <li>
         <PlannerItem title="시놉시스" content="시놉시스 내용" />
       </li>
@@ -21,5 +22,5 @@ export default function PlannerList() {
         <PlannerItem title="줄거리" content="줄거리 내용" />
       </li>
     </ul>
-  );
+  )
 }
