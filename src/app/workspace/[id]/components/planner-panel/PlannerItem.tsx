@@ -1,8 +1,8 @@
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-import Row from '@components/Row/Row'
 import Accordion from '@components/accordion/Accordion'
 import IconButton from '@components/buttons/IconButton'
+import Row from '@components/row/Row'
 import Text from '@components/text/Text'
 
 interface Props {

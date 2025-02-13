@@ -4,9 +4,9 @@ import { FaListAlt } from 'react-icons/fa'
 import { FaMinus } from 'react-icons/fa6'
 import { IoChevronDownOutline } from 'react-icons/io5'
 
-import Row from '@components/Row/Row'
 import Accordion from '@components/accordion/Accordion'
 import IconButton from '@components/buttons/IconButton'
+import Row from '@components/row/Row'
 import Text from '@components/text/Text'
 
 import PanelBody from '../panel/PanelBody'

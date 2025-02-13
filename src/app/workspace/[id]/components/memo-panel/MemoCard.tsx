@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 import { CheckIcon, MoreIcon } from '@components/Icons'
-import Row from '@components/Row/Row'
 import IconButton from '@components/buttons/IconButton'
+import Row from '@components/row/Row'
 import Text from '@components/text/Text'
 
 import classNames from 'classnames/bind'
