@@ -1,6 +1,6 @@
 // 작업공간
-import MemoPanel from './components/MemoPanel/MemoPanel'
-import PlannerPanel from './components/PlannerPanel/PlannerPanel'
+import MemoPanel from './components/memo-panel/MemoPanel'
+import PlannerPanel from './components/planner-panel/PlannerPanel'
 
 export default function Page() {
   return (
