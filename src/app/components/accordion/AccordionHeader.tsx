@@ -1,6 +1,6 @@
 'use client'
 
-import { useAccordionContext } from '@components/accordion-temp/AccordionContext'
+import { useAccordionContext } from '@components/accordion/AccordionContext'
 
 interface Props {
   children: (isOpen: boolean, setIsOpen: (isOpen: boolean) => void) => React.ReactNode
