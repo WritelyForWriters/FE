@@ -4,15 +4,15 @@ import { FaListAlt } from 'react-icons/fa'
 import { FaMinus } from 'react-icons/fa6'
 import { IoChevronDownOutline } from 'react-icons/io5'
 
-import Accordion from '@components/Accordion/Accordion'
-import IconButton from '@components/Buttons/IconButton/IconButton'
 import Row from '@components/Row/Row'
-import Text from '@components/Text/Text'
+import Accordion from '@components/accordion/Accordion'
+import IconButton from '@components/buttons/IconButton'
+import Text from '@components/text/Text'
 
-import PanelBody from '../ui/panelUI/PanelBody/PanelBody'
-import PanelContainer from '../ui/panelUI/PanelContainer/PanelContainer'
-import PanelHeader from '../ui/panelUI/PanelHeader/PanelHeader'
-import PlannerList from './PlannerList/PlannerList'
+import PanelBody from '../panel/PanelBody'
+import PanelContainer from '../panel/PanelContainer'
+import PanelHeader from '../panel/PanelHeader'
+import PlannerList from './PlannerList'
 
 export default function PlannerPanel() {
   return (

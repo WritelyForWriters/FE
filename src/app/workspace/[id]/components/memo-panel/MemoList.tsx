@@ -1,4 +1,4 @@
-import MemoCard from '../MemoCard/MemoCard'
+import MemoCard from './MemoCard/MemoCard'
 
 import classNames from 'classnames/bind'
 

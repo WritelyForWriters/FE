@@ -1,9 +1,9 @@
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-import Accordion from '@components/Accordion/Accordion'
-import IconButton from '@components/Buttons/IconButton/IconButton'
 import Row from '@components/Row/Row'
-import Text from '@components/Text/Text'
+import Accordion from '@components/accordion/Accordion'
+import IconButton from '@components/buttons/IconButton'
+import Text from '@components/text/Text'
 
 interface Props {
   title: string

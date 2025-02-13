@@ -1,14 +1,14 @@
 'use client'
 
-import Accordion from '@components/Accordion/Accordion'
-import IconButton from '@components/Buttons/IconButton/IconButton'
 import { ArrowDownIcon, RemoveIcon } from '@components/Icons'
-import Text from '@components/Text/Text'
+import Accordion from '@components/accordion/Accordion'
+import IconButton from '@components/buttons/IconButton'
+import Text from '@components/text/Text'
 
-import PanelBody from '../ui/panelUI/PanelBody/PanelBody'
-import PanelContainer from '../ui/panelUI/PanelContainer/PanelContainer'
-import PanelHeader from '../ui/panelUI/PanelHeader/PanelHeader'
-import MemoPanelBody from './MemoPanelBody/MemoPanelBody'
+import PanelBody from '../panel/PanelBody'
+import PanelContainer from '../panel/PanelContainer'
+import PanelHeader from '../panel/PanelHeader'
+import MemoPanelBody from './MemoPanelBody'
 
 export default function MemoPanel() {
   return (

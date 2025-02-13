@@ -1,4 +1,4 @@
-import PlannerItem from '../PlannerItem/PlannerItem'
+import PlannerItem from './PlannerItem'
 
 import classNames from 'classnames/bind'
 
