@@ -1,15 +1,12 @@
-"use client";
+'use client'
 
-import { useAccordionContext } from "../AccordionContext";
+import { useAccordionContext } from '@components/Accordion/AccordionContext'
 
 interface Props {
-  children: (
-    isOpen: boolean,
-    setIsOpen: (isOpen: boolean) => void
-  ) => React.ReactNode;
+  children: (isOpen: boolean, setIsOpen: (isOpen: boolean) => void) => React.ReactNode
 }
 export default function AccordionHeader({ children }: Props) {
-  const { isOpen, setIsOpen } = useAccordionContext();
+  const { isOpen, setIsOpen } = useAccordionContext()
 
-  return <>{children(isOpen, setIsOpen)}</>;
+  return <>{children(isOpen, setIsOpen)}</>
 }

@@ -1,22 +1,24 @@
-import { ReactNode } from "react";
-import { useTabContext } from "../TabContext";
+import { ReactNode } from 'react'
 
-import styles from "./TabPanel.module.scss";
-import classNames from "classnames/bind";
+import { useTabContext } from '../TabContext'
 
-const cx = classNames.bind(styles);
+import classNames from 'classnames/bind'
+
+import styles from './TabPanel.module.scss'
+
+const cx = classNames.bind(styles)
 
 interface TabPanelProps {
-  value: string;
-  children: ReactNode;
+  value: string
+  children: ReactNode
 }
 
 export default function TabPanel({ value, children }: TabPanelProps) {
-  const { activeTab } = useTabContext();
+  const { activeTab } = useTabContext()
 
-  return  activeTab === value ? (
-    <div className={cx("panel")} role="tabpanel">
+  return activeTab === value ? (
+    <div className={cx('panel')} role="tabpanel">
       {children}
     </div>
-  ) : null;
+  ) : null
 }
