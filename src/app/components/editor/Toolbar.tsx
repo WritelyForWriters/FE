@@ -5,26 +5,24 @@ import { ReactElement, useCallback, useState } from 'react'
 import { Editor } from '@tiptap/react'
 import { IoIosArrowDown } from 'react-icons/io'
 
-import { useDetectClose, useIndent, useTextAlign, useTextFormat, useTextMark } from '@hooks/index'
+import SelectMenu from '@components/select-menu/SelectMenu'
+
+import { useIndent, useTextAlign, useTextFormat, useTextMark } from '@hooks/index'
 
 import styles from './Toolbar.module.scss'
 
-interface ToolbarProps {
-  editor: Editor
-}
-
-interface SelectOptionType {
+interface ToolbarButtoType {
   label: string | ReactElement<ImageProps>
   isActiveOption?: boolean
   handleTextAction?: () => void
   className?: string
 }
 
-interface SelectOptionProps {
-  option: SelectOptionType
+interface ToolbarButtonProps {
+  option: ToolbarButtoType
 }
 
-function SelectOption({ option }: SelectOptionProps) {
+function ToolbarButton({ option }: ToolbarButtonProps) {
   const { label, handleTextAction, isActiveOption = false, className } = option
 
   const getActiveStyleClass = useCallback((isActive: boolean) => {
@@ -41,26 +39,8 @@ function SelectOption({ option }: SelectOptionProps) {
   )
 }
 
-interface SelectMenuProps {
-  options: SelectOptionType[]
-  isOpen: boolean
-  handleClose: () => void
-}
-
-function SelectMenu({ isOpen, handleClose, options }: SelectMenuProps) {
-  const selectMenuRef = useDetectClose(handleClose)
-
-  return (
-    <>
-      {isOpen && (
-        <div ref={selectMenuRef} className={styles['select-menu']}>
-          {options.map((option, index) => (
-            <SelectOption key={index} option={option} />
-          ))}
-        </div>
-      )}
-    </>
-  )
+interface ToolbarProps {
+  editor: Editor
 }
 
 export default function Toolbar({ editor }: ToolbarProps) {
@@ -95,24 +75,29 @@ export default function Toolbar({ editor }: ToolbarProps) {
         <SelectMenu
           handleClose={() => setIsTextFormatMenuOpen(false)}
           isOpen={isTextFormatMenuOpen}
-          options={[
-            {
+        >
+          <SelectMenu.Option
+            option={{
               label: '본문',
-              handleTextAction: toggleText,
+              handleAction: toggleText,
               isActiveOption: !editor.isActive('blockquote') && !editor.isActive('heading'),
-            },
-            {
+            }}
+          />
+          <SelectMenu.Option
+            option={{
               label: '제목',
-              handleTextAction: toggleHeading,
+              handleAction: toggleHeading,
               isActiveOption: editor.isActive('heading'),
-            },
-            {
+            }}
+          />
+          <SelectMenu.Option
+            option={{
               label: '인용',
-              handleTextAction: toggleBlockquote,
+              handleAction: toggleBlockquote,
               isActiveOption: editor.isActive('blockquote'),
-            },
-          ]}
-        />
+            }}
+          />
+        </SelectMenu>
       </div>
 
       {/* Align */}
@@ -122,47 +107,49 @@ export default function Toolbar({ editor }: ToolbarProps) {
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </button>
 
-        <SelectMenu
-          handleClose={() => setIsTextAlignMenuOpen(false)}
-          isOpen={isTextAlignMenuOpen}
-          options={[
-            {
+        <SelectMenu handleClose={() => setIsTextAlignMenuOpen(false)} isOpen={isTextAlignMenuOpen}>
+          <SelectMenu.Option
+            option={{
               label: (
                 <Image src="/icons/text-align-left.svg" alt="왼쪽정렬" width={20} height={20} />
               ),
-              handleTextAction: setTextAlignLeft,
+              handleAction: setTextAlignLeft,
               isActiveOption: editor.isActive({ textAlign: 'left' }),
-            },
-            {
+            }}
+          />
+          <SelectMenu.Option
+            option={{
               label: (
                 <Image src="/icons/text-align-center.svg" alt="가운데정렬" width={20} height={20} />
               ),
-              handleTextAction: setTextAlignCenter,
+              handleAction: setTextAlignCenter,
               isActiveOption: editor.isActive({ textAlign: 'center' }),
-            },
-            {
+            }}
+          />
+          <SelectMenu.Option
+            option={{
               label: (
                 <Image src="/icons/text-align-right.svg" alt="오른쪽정렬" width={20} height={20} />
               ),
-              handleTextAction: setTextAlignRight,
+              handleAction: setTextAlignRight,
               isActiveOption: editor.isActive({ textAlign: 'right' }),
-            },
-          ]}
-        />
+            }}
+          />
+        </SelectMenu>
       </div>
 
       <div className={styles.line} />
 
       {/* Indent */}
       <div className={styles['text-mark']}>
-        <SelectOption
+        <ToolbarButton
           option={{
             label: <Image src="/icons/indent.svg" alt="들여쓰기" width={18} height={18} />,
             handleTextAction: indent,
             isActiveOption: editor.getAttributes('paragraph').indent,
           }}
         />
-        <SelectOption
+        <ToolbarButton
           option={{
             label: <Image src="/icons/outdent.svg" alt="내어쓰기" width={18} height={18} />,
             handleTextAction: outdent,
@@ -174,7 +161,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
 
       {/* Text Mark */}
       <div className={styles['text-mark']}>
-        <SelectOption
+        <ToolbarButton
           option={{
             label: 'B',
             handleTextAction: toggleBold,
@@ -182,7 +169,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
             className: styles.bold,
           }}
         />
-        <SelectOption
+        <ToolbarButton
           option={{
             label: 'I',
             handleTextAction: toggleItalic,
@@ -190,7 +177,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
             className: styles.italic,
           }}
         />
-        <SelectOption
+        <ToolbarButton
           option={{
             label: 'U',
             handleTextAction: toggleUnderline,
@@ -216,11 +203,9 @@ export default function Toolbar({ editor }: ToolbarProps) {
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </button>
 
-        <SelectMenu
-          handleClose={() => setIsAiOption(false)}
-          isOpen={isAiOption}
-          options={[
-            {
+        <SelectMenu handleClose={() => setIsAiOption(false)} isOpen={isAiOption}>
+          <SelectMenu.Option
+            option={{
               label: (
                 <>
                   <Image src="/icons/ai-option1.svg" alt="자동수정" width={20} height={20} />
@@ -228,17 +213,10 @@ export default function Toolbar({ editor }: ToolbarProps) {
                 </>
               ),
               className: styles['select-option'],
-            },
-            {
-              label: (
-                <>
-                  <Image src="/icons/ai-option2.svg" alt="수동수정" width={20} height={20} />
-                  수동 수정
-                </>
-              ),
-              className: styles['select-option'],
-            },
-            {
+            }}
+          />
+          <SelectMenu.Option
+            option={{
               label: (
                 <>
                   <Image src="/icons/ai-option3.svg" alt="구간피드백" width={20} height={20} />
@@ -246,8 +224,10 @@ export default function Toolbar({ editor }: ToolbarProps) {
                 </>
               ),
               className: styles['select-option'],
-            },
-            {
+            }}
+          />
+          <SelectMenu.Option
+            option={{
               label: (
                 <>
                   <Image src="/icons/ai-option4.svg" alt="자유대화" width={20} height={20} />
@@ -255,9 +235,20 @@ export default function Toolbar({ editor }: ToolbarProps) {
                 </>
               ),
               className: styles['select-option'],
-            },
-          ]}
-        />
+            }}
+          />
+          <SelectMenu.Option
+            option={{
+              label: (
+                <>
+                  <Image src="/icons/ai-option2.svg" alt="수동수정" width={20} height={20} />
+                  수동 수정
+                </>
+              ),
+              className: styles['select-option'],
+            }}
+          />
+        </SelectMenu>
       </div>
     </div>
   )

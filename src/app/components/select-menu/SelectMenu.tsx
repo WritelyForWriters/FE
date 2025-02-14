@@ -1,6 +1,6 @@
 import { ImageProps } from 'next/image'
 
-import { ReactElement, useCallback } from 'react'
+import { ReactElement, ReactNode, useCallback } from 'react'
 
 import { useDetectClose } from '@hooks/index'
 
@@ -35,23 +35,23 @@ function SelectOption({ option }: SelectOptionProps) {
 }
 
 interface SelectMenuProps {
-  options: SelectOptionType[]
+  children: ReactNode
   isOpen: boolean
   handleClose: () => void
 }
 
-export default function SelectMenu({ isOpen, handleClose, options }: SelectMenuProps) {
+export default function SelectMenu({ isOpen, handleClose, children }: SelectMenuProps) {
   const selectMenuRef = useDetectClose(handleClose)
 
   return (
     <>
       {isOpen && (
         <div ref={selectMenuRef} className={styles['select-menu']}>
-          {options.map((option, index) => (
-            <SelectOption key={index} option={option} />
-          ))}
+          {children}
         </div>
       )}
     </>
   )
 }
+
+SelectMenu.Option = SelectOption

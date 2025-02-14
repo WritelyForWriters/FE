@@ -48,42 +48,6 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
   }
 }
 
-/* Select menu */
-.select-menu {
-  position: absolute;
-  top: 36px;
-  left: 0;
-
-  width: 100%;
-  padding: 1.2rem 0.8rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1.2rem;
-
-  border-radius: 1.2rem;
-  background: $Secondary0;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
-
-  button {
-    @include typography('Label', 'Large');
-
-    width: 100%;
-    padding: 0.4rem 0.8rem;
-    text-align: start;
-    border-radius: 1rem;
-
-    &:hover {
-      background-color: $Secondary50;
-    }
-
-    &.is-active {
-      background-color: $Secondary50;
-    }
-  }
-}
-
 .text-mark {
   display: flex;
   justify-content: center;
@@ -115,18 +79,15 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
 }
 
 .bold {
-  @include typography('Label', 'Large');
   font-weight: 700 !important;
 }
 
 .italic {
-  @include typography('Label', 'Large');
   font-weight: 700 !important;
   font-style: italic !important;
 }
 
 .underline {
-  @include typography('Label', 'Large');
   text-decoration-line: underline;
   font-weight: 700 !important;
 }
