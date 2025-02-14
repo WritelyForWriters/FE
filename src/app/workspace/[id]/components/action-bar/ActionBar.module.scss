@@ -1,0 +1,126 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+/* variable */
+
+// color variable
+$secondary900: map.get(Styled.$colors, Alert, Secondary900);
+$secondary500: map.get(Styled.$colors, Alert, Secondary500);
+
+/* mixin */
+
+// font mixin
+@mixin styled-font($font-typo, $font-size) {
+  font: map.get(Styled.$typo, $font-typo, $font-size);
+}
+
+// display: flex에 관한 mixin
+@mixin display-flex() {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+// 액션바 전체 컨테이너
+.action-bar-wrapper {
+  @include display-flex();
+  width: 100%;
+  padding: 16px;
+  gap: 10px;
+}
+
+// 액션바 내부 컨테이너
+.action-bar-inner-container {
+  @include display-flex();
+  justify-content: space-between;
+  width: 100%;
+  padding: 24px;
+  border-radius: 16px;
+}
+
+// 액션바 내 좌측 버튼 영억
+.action-bar-action-section {
+  @include display-flex();
+  gap: 16px;
+}
+
+// 액션바 내 타이틀 및 안내 문구 영역
+.action-bar-info-section {
+  @include display-flex();
+  justify-conten: space-between;
+
+  // 액션바 내 타이틀
+  .title {
+    @include styled-font('Title', 'Medium');
+    color: $secondary900;
+  }
+
+  // 액션바 내 안내 문구
+  .description {
+    @include styled-font('Body', 'Small');
+    color: $secondary500;
+  }
+}
+
+// 액션바 내 오른쪽 버튼 영역
+.action-bar-extra-action-section {
+}
+
+// @use 'sass:map';
+// @use '@styles/variables' as Styled;
+
+// $styled-font: map.get(Styled.$typo, Title, Medium);
+// $secondary-900: map.get(Styled.$colors, Alert, Secondary900);
+
+// @mixin display-flex() {
+//   display: -webkit-box;
+//   display: -ms-flexbox;
+//   display: -webkit-flex;
+//   display: flex;
+// }
+
+// .action-bar-container {
+//   @include display-flex();
+//   justify-content: space-between;
+//   align-items: center;
+//   width: 100%;
+//   padding: 24px;
+// }
+
+// .action-bar-buttons {
+//   @include display-flex();
+//   font: map.get(Styled.$typo, Label, Large);
+//   color: $secondary-900;
+//   align-items: center;
+//   gap: 16px;
+
+//   span {
+//     cursor: pointer;
+//   }
+// }
+
+// .action-bar-input {
+//   font: $styled-font;
+//   color: $secondary-900;
+//   border: 0px;
+//   outline-width: 0px;
+//   cursor: text;
+// }
+
+// .action-bar-span {
+//   font: $styled-font;
+//   color: $secondary-900;
+//   cursor: pointer;
+// }
+
+// .action-bar-tabs {
+//   @include display-flex();
+//   justify-content: center;
+//   align-items: center;
+//   background-color: map.get(Styled.$colors, Alert, Secondary50);
+//   list-style: none;
+//   border-radius: 10px;
+//   padding: 4px;
+//   gap: 8px;
+// }
