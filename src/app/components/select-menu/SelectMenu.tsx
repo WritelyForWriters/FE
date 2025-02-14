@@ -1,14 +1,10 @@
-import { ReactNode, useCallback } from 'react'
+import { ReactNode } from 'react'
+
+import { SelectOptionType } from 'types/common/selectMenu'
 
 import { useDetectClose } from '@hooks/index'
 
 import styles from './SelectMenu.module.scss'
-
-interface SelectOptionType {
-  isActiveOption?: boolean
-  handleAction?: () => void
-  className?: string
-}
 
 interface SelectOptionProps {
   option: SelectOptionType
@@ -18,15 +14,10 @@ interface SelectOptionProps {
 function SelectOption({ option, children }: SelectOptionProps) {
   const { handleAction, isActiveOption = false, className } = option
 
-  const getActiveStyleClass = useCallback((isActive: boolean) => {
-    return isActive ? `${styles['is-active']}` : ''
-  }, [])
+  const getActiveStyleClass = isActiveOption ? `${styles['is-active']}` : ''
 
   return (
-    <button
-      onClick={handleAction}
-      className={`${getActiveStyleClass(isActiveOption)} ${className}`}
-    >
+    <button onClick={handleAction} className={`${getActiveStyleClass} ${className}`}>
       {children}
     </button>
   )
