@@ -15,6 +15,7 @@ type IndentOptions = {
   defaultIndentLevel: number
 }
 
+// Create an extension
 const Indent = Extension.create<IndentOptions>({
   name: 'indent',
   addOptions: () => {
@@ -32,12 +33,14 @@ const Indent = Extension.create<IndentOptions>({
         attributes: {
           indent: {
             default: Indent.options.defaultIndentLevel,
+            // --extension이 HTML에서 렌더링되는 방법을 설정
             renderHTML: (attributes) => {
               const indent = isNaN(attributes.indent) ? 0 : attributes.indent
               return {
                 style: `margin-left: ${indent}px!important;`,
               }
             },
+            // --HTML 속성을 가져와서 indent 적용
             parseHTML: (element) => ({
               indent: parseInt(element.style.marginLeft) || Indent.options.defaultIndentLevel,
             }),
@@ -47,6 +50,7 @@ const Indent = Extension.create<IndentOptions>({
     ]
   },
 
+  // --extension(들여쓰기, 내어쓰기) 기능 설정
   addCommands: () => {
     return {
       indent:
@@ -70,6 +74,7 @@ const Indent = Extension.create<IndentOptions>({
     }
   },
 
+  // --키보드 단축키 설정
   addKeyboardShortcuts: () => {
     return {
       Tab: ({ editor }) => editor.commands.indent(),
