@@ -78,25 +78,28 @@ export default function Toolbar({ editor }: ToolbarProps) {
         >
           <SelectMenu.Option
             option={{
-              label: '본문',
               handleAction: toggleText,
               isActiveOption: !editor.isActive('blockquote') && !editor.isActive('heading'),
             }}
-          />
+          >
+            본문
+          </SelectMenu.Option>
           <SelectMenu.Option
             option={{
-              label: '제목',
               handleAction: toggleHeading,
               isActiveOption: editor.isActive('heading'),
             }}
-          />
+          >
+            제목
+          </SelectMenu.Option>
           <SelectMenu.Option
             option={{
-              label: '인용',
               handleAction: toggleBlockquote,
               isActiveOption: editor.isActive('blockquote'),
             }}
-          />
+          >
+            인용
+          </SelectMenu.Option>
         </SelectMenu>
       </div>
 
@@ -110,31 +113,28 @@ export default function Toolbar({ editor }: ToolbarProps) {
         <SelectMenu handleClose={() => setIsTextAlignMenuOpen(false)} isOpen={isTextAlignMenuOpen}>
           <SelectMenu.Option
             option={{
-              label: (
-                <Image src="/icons/text-align-left.svg" alt="왼쪽정렬" width={20} height={20} />
-              ),
               handleAction: setTextAlignLeft,
               isActiveOption: editor.isActive({ textAlign: 'left' }),
             }}
-          />
+          >
+            <Image src="/icons/text-align-left.svg" alt="왼쪽정렬" width={20} height={20} />
+          </SelectMenu.Option>
           <SelectMenu.Option
             option={{
-              label: (
-                <Image src="/icons/text-align-center.svg" alt="가운데정렬" width={20} height={20} />
-              ),
               handleAction: setTextAlignCenter,
               isActiveOption: editor.isActive({ textAlign: 'center' }),
             }}
-          />
+          >
+            <Image src="/icons/text-align-center.svg" alt="가운데정렬" width={20} height={20} />
+          </SelectMenu.Option>
           <SelectMenu.Option
             option={{
-              label: (
-                <Image src="/icons/text-align-right.svg" alt="오른쪽정렬" width={20} height={20} />
-              ),
               handleAction: setTextAlignRight,
               isActiveOption: editor.isActive({ textAlign: 'right' }),
             }}
-          />
+          >
+            <Image src="/icons/text-align-right.svg" alt="오른쪽정렬" width={20} height={20} />
+          </SelectMenu.Option>
         </SelectMenu>
       </div>
 
@@ -204,50 +204,22 @@ export default function Toolbar({ editor }: ToolbarProps) {
         </button>
 
         <SelectMenu handleClose={() => setIsAiOption(false)} isOpen={isAiOption}>
-          <SelectMenu.Option
-            option={{
-              label: (
-                <>
-                  <Image src="/icons/ai-option1.svg" alt="자동수정" width={20} height={20} />
-                  자동 수정
-                </>
-              ),
-              className: styles['select-option'],
-            }}
-          />
-          <SelectMenu.Option
-            option={{
-              label: (
-                <>
-                  <Image src="/icons/ai-option3.svg" alt="구간피드백" width={20} height={20} />
-                  구간 피드백
-                </>
-              ),
-              className: styles['select-option'],
-            }}
-          />
-          <SelectMenu.Option
-            option={{
-              label: (
-                <>
-                  <Image src="/icons/ai-option4.svg" alt="자유대화" width={20} height={20} />
-                  자유 대화
-                </>
-              ),
-              className: styles['select-option'],
-            }}
-          />
-          <SelectMenu.Option
-            option={{
-              label: (
-                <>
-                  <Image src="/icons/ai-option2.svg" alt="수동수정" width={20} height={20} />
-                  수동 수정
-                </>
-              ),
-              className: styles['select-option'],
-            }}
-          />
+          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+            <Image src="/icons/ai-option1.svg" alt="자동수정" width={20} height={20} />
+            자동 수정
+          </SelectMenu.Option>
+          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+            <Image src="/icons/ai-option3.svg" alt="구간피드백" width={20} height={20} />
+            구간 피드백
+          </SelectMenu.Option>
+          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+            <Image src="/icons/ai-option4.svg" alt="자유대화" width={20} height={20} />
+            자유 대화
+          </SelectMenu.Option>
+          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+            <Image src="/icons/ai-option2.svg" alt="수동수정" width={20} height={20} />
+            수동 수정
+          </SelectMenu.Option>
         </SelectMenu>
       </div>
     </div>

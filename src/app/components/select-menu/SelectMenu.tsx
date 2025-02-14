@@ -1,13 +1,10 @@
-import { ImageProps } from 'next/image'
-
-import { ReactElement, ReactNode, useCallback } from 'react'
+import { ReactNode, useCallback } from 'react'
 
 import { useDetectClose } from '@hooks/index'
 
 import styles from './SelectMenu.module.scss'
 
 interface SelectOptionType {
-  label: string | ReactElement<ImageProps>
   isActiveOption?: boolean
   handleAction?: () => void
   className?: string
@@ -15,10 +12,11 @@ interface SelectOptionType {
 
 interface SelectOptionProps {
   option: SelectOptionType
+  children: ReactNode
 }
 
-function SelectOption({ option }: SelectOptionProps) {
-  const { label, handleAction, isActiveOption = false, className } = option
+function SelectOption({ option, children }: SelectOptionProps) {
+  const { handleAction, isActiveOption = false, className } = option
 
   const getActiveStyleClass = useCallback((isActive: boolean) => {
     return isActive ? `${styles['is-active']}` : ''
@@ -29,7 +27,7 @@ function SelectOption({ option }: SelectOptionProps) {
       onClick={handleAction}
       className={`${getActiveStyleClass(isActiveOption)} ${className}`}
     >
-      {label}
+      {children}
     </button>
   )
 }
