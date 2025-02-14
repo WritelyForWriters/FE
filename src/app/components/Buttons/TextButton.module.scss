@@ -1,0 +1,60 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+/* variable */
+$styled-font: map.get(Styled.$typo, Label, Large);
+
+/* mixin */
+// display: flex에 관한 mixin
+@mixin display-flex() {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.text-button-container {
+  @include display-flex();
+  cursor: pointer;
+  gap: 4px;
+
+  &.large {
+    padding: 12px;
+
+    &.leading {
+      padding: 12px;
+    }
+
+    &.trailing {
+      padding: 12px;
+    }
+  }
+
+  &.medium {
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+
+  &.small {
+    padding: 4px 8px;
+    border-radius: 10px;
+
+    &.leading {
+      padding: 4px;
+    }
+
+    &.trailing {
+      padding: 4px 4px 4px 8px;
+    }
+  }
+
+  &.disabled {
+    cursor: unset;
+  }
+}
+
+.text-button {
+  cursor: inherit;
+  font: map.get(Styled.$typo, Label, Large);
+  color: map.get(Styled.$colors, Alert, Secondary900);
+}
