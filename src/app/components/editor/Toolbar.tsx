@@ -1,6 +1,6 @@
-import Image, { ImageProps } from 'next/image'
+import Image from 'next/image'
 
-import { ReactElement, useCallback, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { IoIosArrowDown } from 'react-icons/io'
@@ -11,30 +11,19 @@ import { useIndent, useTextAlign, useTextFormat, useTextMark } from '@hooks/inde
 
 import styles from './Toolbar.module.scss'
 
-interface ToolbarButtoType {
-  label: string | ReactElement<ImageProps>
-  isActiveOption?: boolean
-  handleTextAction?: () => void
+interface ToolbarButtonProps {
+  children: ReactNode
+  isActive?: boolean
+  onClick?: () => void
   className?: string
 }
 
-interface ToolbarButtonProps {
-  option: ToolbarButtoType
-}
-
-function ToolbarButton({ option }: ToolbarButtonProps) {
-  const { label, handleTextAction, isActiveOption = false, className } = option
-
-  const getActiveStyleClass = useCallback((isActive: boolean) => {
-    return isActive ? `${styles['is-active']}` : ''
-  }, [])
+function ToolbarButton({ children, isActive, onClick, className }: ToolbarButtonProps) {
+  const activeStyle = isActive ? `${styles['is-active']}` : ''
 
   return (
-    <button
-      onClick={handleTextAction}
-      className={`${getActiveStyleClass(isActiveOption)} ${className}`}
-    >
-      {label}
+    <button onClick={onClick} className={`${activeStyle} ${className}`}>
+      {children}
     </button>
   )
 }
@@ -67,10 +56,10 @@ export default function Toolbar({ editor }: ToolbarProps) {
     <div className={styles['bubble-menu']}>
       {/* Text Format */}
       <div>
-        <button onClick={() => setIsTextFormatMenuOpen(true)}>
+        <ToolbarButton onClick={() => setIsTextFormatMenuOpen(true)}>
           {getTextFormatOption()}
           <IoIosArrowDown size={16} fill="#CCCCCC" />
-        </button>
+        </ToolbarButton>
 
         <SelectMenu
           handleClose={() => setIsTextFormatMenuOpen(false)}
@@ -105,10 +94,10 @@ export default function Toolbar({ editor }: ToolbarProps) {
 
       {/* Align */}
       <div>
-        <button onClick={() => setIsTextAlignMenuOpen(true)}>
+        <ToolbarButton onClick={() => setIsTextAlignMenuOpen(true)}>
           정렬
           <IoIosArrowDown size={16} fill="#CCCCCC" />
-        </button>
+        </ToolbarButton>
 
         <SelectMenu handleClose={() => setIsTextAlignMenuOpen(false)} isOpen={isTextAlignMenuOpen}>
           <SelectMenu.Option
@@ -142,19 +131,12 @@ export default function Toolbar({ editor }: ToolbarProps) {
 
       {/* Indent */}
       <div className={styles['text-mark']}>
-        <ToolbarButton
-          option={{
-            label: <Image src="/icons/indent.svg" alt="들여쓰기" width={18} height={18} />,
-            handleTextAction: indent,
-            isActiveOption: editor.getAttributes('paragraph').indent,
-          }}
-        />
-        <ToolbarButton
-          option={{
-            label: <Image src="/icons/outdent.svg" alt="내어쓰기" width={18} height={18} />,
-            handleTextAction: outdent,
-          }}
-        />
+        <ToolbarButton onClick={indent}>
+          <Image src="/icons/indent.svg" alt="들여쓰기" width={18} height={18} />
+        </ToolbarButton>
+        <ToolbarButton onClick={outdent}>
+          <Image src="/icons/outdent.svg" alt="내어쓰기" width={18} height={18} />
+        </ToolbarButton>
       </div>
 
       <div className={styles.line} />
@@ -162,46 +144,43 @@ export default function Toolbar({ editor }: ToolbarProps) {
       {/* Text Mark */}
       <div className={styles['text-mark']}>
         <ToolbarButton
-          option={{
-            label: 'B',
-            handleTextAction: toggleBold,
-            isActiveOption: editor.isActive('bold'),
-            className: styles.bold,
-          }}
-        />
+          onClick={toggleBold}
+          isActive={editor.isActive('bold')}
+          className={styles.bold}
+        >
+          B
+        </ToolbarButton>
         <ToolbarButton
-          option={{
-            label: 'I',
-            handleTextAction: toggleItalic,
-            isActiveOption: editor.isActive('italic'),
-            className: styles.italic,
-          }}
-        />
+          onClick={toggleItalic}
+          isActive={editor.isActive('italic')}
+          className={styles.italic}
+        >
+          I
+        </ToolbarButton>
         <ToolbarButton
-          option={{
-            label: 'U',
-            handleTextAction: toggleUnderline,
-            isActiveOption: editor.isActive('underline'),
-            className: styles.underline,
-          }}
-        />
+          onClick={toggleUnderline}
+          isActive={editor.isActive('underline')}
+          className={styles.underline}
+        >
+          U
+        </ToolbarButton>
       </div>
 
       <div className={styles.line} />
 
       {/* Memo */}
       <div className={styles['text-mark']}>
-        <button>메모</button>
+        <ToolbarButton>메모</ToolbarButton>
       </div>
 
       <div className={styles.line} />
 
       {/* AI 어시스턴트 */}
       <div>
-        <button onClick={() => setIsAiOption(true)}>
+        <ToolbarButton onClick={() => setIsAiOption(true)}>
           AI 어시스턴트
           <IoIosArrowDown size={16} fill="#CCCCCC" />
-        </button>
+        </ToolbarButton>
 
         <SelectMenu handleClose={() => setIsAiOption(false)} isOpen={isAiOption}>
           <SelectMenu.Option option={{ className: styles['select-option'] }}>
