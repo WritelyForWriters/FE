@@ -17,6 +17,7 @@
     "^@apis/(.*)$",
     "^@utils/(.*)$",
     "^@types/(.*)$",
+    "^@extensions/(.*)$",
     "^[./](?!.*\\.module\\.(css|scss)$)",
     "^classnames/bind$",
     ".*\\.module\\.(css|scss)$"
