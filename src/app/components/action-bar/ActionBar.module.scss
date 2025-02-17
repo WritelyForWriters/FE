@@ -34,6 +34,7 @@ $secondary500: map.get(Styled.$colors, Alert, Secondary500);
 .action-bar-inner-container {
   @include display-flex();
   justify-content: space-between;
+  align-items: center;
   width: 100%;
   padding: 24px;
   border-radius: 16px;
@@ -48,7 +49,7 @@ $secondary500: map.get(Styled.$colors, Alert, Secondary500);
 // 액션바 내 타이틀 및 안내 문구 영역
 .action-bar-info-section {
   @include display-flex();
-  justify-conten: space-between;
+  justify-content: space-between;
 
   // 액션바 내 타이틀
   .title {
