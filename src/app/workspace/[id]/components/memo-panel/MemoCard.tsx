@@ -1,9 +1,11 @@
 import { useState } from 'react'
 
-import IconButton from '@/app/components/Buttons/IconButton/IconButton'
-import { CheckIcon, MoreIcon } from '@/app/components/Icons'
-import Row from '@/app/components/Row/Row'
-import Text from '@/app/components/Text/Text'
+import { FaCheck } from 'react-icons/fa6'
+import { TfiMoreAlt } from 'react-icons/tfi'
+
+import IconButton from '@components/buttons/IconButton'
+import Row from '@components/row/Row'
+import Text from '@components/text/Text'
 
 import classNames from 'classnames/bind'
 
@@ -12,10 +14,10 @@ import styles from './MemoCard.module.scss'
 const cx = classNames.bind(styles)
 
 function MemoCard() {
-  const [isHovered, setIsHovered] = useState(false)
+  const [isHovered, setIsHovered] = useState(true)
 
   const handleMouseEnter = () => setIsHovered(true)
-  const handleMouseLeave = () => setIsHovered(false)
+  const handleMouseLeave = () => setIsHovered(true)
 
   return (
     <div className={cx('card')} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -24,12 +26,12 @@ function MemoCard() {
           제목
         </Text>
         {isHovered && (
-          <Row gap={4}>
+          <Row gap={8}>
             <IconButton>
-              <CheckIcon />
+              <FaCheck color="#CCCCCC" />
             </IconButton>
             <IconButton>
-              <MoreIcon />
+              <TfiMoreAlt color="#CCCCCC" />
             </IconButton>
           </Row>
         )}

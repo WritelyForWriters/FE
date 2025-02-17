@@ -1,14 +1,16 @@
 'use client'
 
-import Accordion from '@components/Accordion/Accordion'
-import IconButton from '@components/Buttons/IconButton/IconButton'
-import { ArrowDownIcon, RemoveIcon } from '@components/Icons'
-import Text from '@components/Text/Text'
+import { FaMinus } from 'react-icons/fa6'
+import { IoIosArrowDown } from 'react-icons/io'
 
-import PanelBody from '../ui/panelUI/PanelBody/PanelBody'
-import PanelContainer from '../ui/panelUI/PanelContainer/PanelContainer'
-import PanelHeader from '../ui/panelUI/PanelHeader/PanelHeader'
-import MemoPanelBody from './MemoPanelBody/MemoPanelBody'
+import Accordion from '@components/accordion/Accordion'
+import IconButton from '@components/buttons/IconButton'
+import Text from '@components/text/Text'
+
+import PanelBody from '../panel/PanelBody'
+import PanelContainer from '../panel/PanelContainer'
+import PanelHeader from '../panel/PanelHeader'
+import MemoPanelBody from './MemoPanelBody'
 
 export default function MemoPanel() {
   return (
@@ -21,7 +23,11 @@ export default function MemoPanel() {
                 메모
               </Text>
               <IconButton onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? <RemoveIcon /> : <ArrowDownIcon />}
+                {isOpen ? (
+                  <FaMinus color="#B3B3B3" size={18} />
+                ) : (
+                  <IoIosArrowDown size={18} fill="#B3B3B3" />
+                )}
               </IconButton>
             </PanelHeader>
           )}

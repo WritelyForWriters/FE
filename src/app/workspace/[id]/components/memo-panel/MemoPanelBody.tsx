@@ -1,6 +1,6 @@
-import Tab from '@/app/components/Tab/Tab'
+import Tab from '@components/tab/Tab'
 
-import MemoList from '../MemoList/MemoList'
+import MemoList from './MemoList'
 
 export default function MemoPanelBody() {
   return (

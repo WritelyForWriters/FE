@@ -8,7 +8,7 @@ const cx = classNames.bind(styles)
 
 interface Props {
   spaceBetween?: boolean
-  gap?: 2 | 4
+  gap?: 2 | 4 | 8
 }
 
 export default function Row({ children, spaceBetween, gap }: PropsWithChildren<Props>) {
