@@ -1,25 +1,41 @@
 'use client'
 
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, createContext, useContext, useState } from 'react'
 
-import { TabProvider } from './TabContext'
 import TabButton from './button/TabButton'
 import TabList from './list/TabList'
-import TabPanel from './panel/TabPanel'
 
-interface TabProps {
-  defaultTab: string
-  onChange?: (tab: string) => void
+interface TabContextType {
+  activeTab: string
+  handleChangeTab: (tab: string) => void
 }
 
-export default function Tab({ defaultTab, children, onChange }: PropsWithChildren<TabProps>) {
+const TabContext = createContext<TabContextType>({
+  activeTab: '',
+  handleChangeTab: () => {},
+})
+
+export const useTabContext = () => {
+  return useContext(TabContext)
+}
+
+interface TabProviderProps {
+  defaultTab: string
+  onChange?: (tabValue: string) => void
+}
+
+export function Tab({ defaultTab, children, onChange }: PropsWithChildren<TabProviderProps>) {
+  const [activeTab, setActiveTab] = useState(defaultTab)
+
+  const handleChangeTab = (tab: string) => {
+    setActiveTab(tab)
+    onChange?.(tab)
+  }
+
   return (
-    <TabProvider defaultTab={defaultTab} onChange={onChange}>
-      {children}
-    </TabProvider>
+    <TabContext.Provider value={{ activeTab, handleChangeTab }}>{children}</TabContext.Provider>
   )
 }
 
 Tab.List = TabList
 Tab.Button = TabButton
-Tab.Panel = TabPanel
