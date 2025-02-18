@@ -1,0 +1,103 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+/* variable */
+$styled-font: map.get(Styled.$typo, Label, Large);
+$secondary-0: map-get(Styled.$colors, Alert, Secondary0);
+$secondary-50: map-get(Styled.$colors, Alert, Secondary50);
+$secondary-100: map-get(Styled.$colors, Alert, Secondary100);
+$secondary-200: map-get(Styled.$colors, Alert, Secondary200);
+$secondary-900: map-get(Styled.$colors, Alert, Secondary900);
+
+/* mixin */
+// display: flex에 관한 mixin
+@mixin display-flex() {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.fill-button {
+  @include display-flex();
+  align-items: center;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 10px;
+  font: $styled-font;
+
+  &.primary {
+    &.square {
+      background-color: $secondary-900;
+      color: $secondary-0;
+
+      &.medium {
+        padding: 10px;
+      }
+    }
+  }
+
+  &.secondary {
+    color: $secondary-900;
+    &.square {
+      background-color: $secondary-100;
+
+      &.large {
+        border-radius: 10px;
+      }
+
+      &.medium {
+        padding: 8px 12px;
+        border-radius: 8px;
+
+        &.only {
+          padding: 10px;
+          border-radius: 10px;
+        }
+      }
+
+      &.small {
+        background-color: $secondary-50;
+        padding: 4px 8px 4px 8px;
+        border-radius: 8px;
+
+        &.leading,
+        &.only {
+          padding: 4px;
+        }
+
+        &.trailing {
+          padding: 4px 4px 4px 8px;
+        }
+      }
+    }
+
+    &.pill {
+      background-color: $secondary-50;
+      padding: 4px 8px 4px 8px;
+
+      &.small {
+        &.only {
+          padding: 4px;
+        }
+      }
+
+      &.xsmall {
+        border-radius: 40px;
+        &.only {
+          padding: 4px;
+        }
+      }
+    }
+  }
+
+  &:hover {
+    background-color: $secondary-200 !important;
+  }
+
+  &:disabled {
+    background-color: $secondary-900 !important;
+    opacity: 60%;
+    cursor: not-allowed;
+  }
+}
