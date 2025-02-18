@@ -7,11 +7,11 @@ import MemoItem from './MemoItem'
 
 import classNames from 'classnames/bind'
 
-import styles from './MemoPanel.module.scss'
+import styles from './MemoPannel.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function MemoPanel() {
+export default function MemoPannel() {
   return (
     <section className={cx('container')}>
       <Accordion>
