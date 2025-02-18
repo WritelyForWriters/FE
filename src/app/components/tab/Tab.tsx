@@ -3,8 +3,12 @@
 import { PropsWithChildren, createContext, useContext, useState } from 'react'
 
 import TabButton from './button/TabButton'
-import TabList from './list/TabList'
 
+import classNames from 'classnames/bind'
+
+import styles from './Tab.module.scss'
+
+const cx = classNames.bind(styles)
 // TODO type
 interface TabContextType {
   activeTab: string
@@ -21,31 +25,23 @@ export const useTabContext = () => {
   return useContext(TabContext)
 }
 
-interface TabProviderProps {
+interface TabProps {
   defaultTab: string
-  onChange?: (tabValue: string) => void
   size?: 'large' | 'medium'
 }
 
-export function Tab({
-  defaultTab,
-  children,
-  onChange,
-  size = 'medium',
-}: PropsWithChildren<TabProviderProps>) {
+export function Tab({ defaultTab, children, size = 'medium' }: PropsWithChildren<TabProps>) {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
   const handleChangeTab = (tab: string) => {
     setActiveTab(tab)
-    onChange?.(tab)
   }
 
   return (
     <TabContext.Provider value={{ activeTab, handleChangeTab, size }}>
-      {children}
+      <div className={cx`${size}`}>{children}</div>
     </TabContext.Provider>
   )
 }
 
-Tab.List = TabList
 Tab.Button = TabButton

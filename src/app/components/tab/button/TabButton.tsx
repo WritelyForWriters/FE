@@ -1,6 +1,4 @@
-import { ReactNode } from 'react'
-
-import { useTabContext } from '../TabContext'
+import { useTabContext } from '@components/tab/Tab'
 
 import classNames from 'classnames/bind'
 
@@ -10,16 +8,22 @@ const cx = classNames.bind(styles)
 
 interface TabButtonProps {
   value: string
-  children: ReactNode
+  children: string
+  onClick?: () => void
 }
 
-export default function TabButton({ value, children }: TabButtonProps) {
+export default function TabButton({ children, onClick, value }: TabButtonProps) {
   const { activeTab, handleChangeTab } = useTabContext()
+
+  const handleClickTab = () => {
+    handleChangeTab(value)
+    onClick?.()
+  }
 
   return (
     <button
       className={cx('button', { active: activeTab === value })}
-      onClick={() => handleChangeTab(value)}
+      onClick={handleClickTab}
       role="tab"
       aria-selected={activeTab === value}
     >
