@@ -25,14 +25,6 @@ $styled-font: map.get(Styled.$typo, Label, Large);
     &.primary {
       &.large {
         padding: 12px;
-
-        &.leading {
-          padding: 12px;
-        }
-
-        &.trailing {
-          padding: 12px;
-        }
       }
 
       &.medium {
@@ -44,16 +36,13 @@ $styled-font: map.get(Styled.$typo, Label, Large);
         padding: 4px 8px;
         border-radius: 10px;
 
-        &.leading {
+        &.leading,
+        &.only {
           padding: 4px;
         }
 
         &.trailing {
           padding: 4px 4px 4px 8px;
-        }
-
-        &.only {
-          padding: 4px;
         }
       }
     }

@@ -40,13 +40,13 @@ $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
   &.secondary {
     color: $secondary-900;
     &.square {
+      background-color: $secondary-100;
+
       &.large {
-        background-color: $secondary-100;
         border-radius: 10px;
       }
 
       &.medium {
-        background-color: $secondary-100;
         padding: 8px 12px;
         border-radius: 8px;
 
@@ -61,16 +61,13 @@ $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
         padding: 4px 8px 4px 8px;
         border-radius: 8px;
 
-        &.leading {
+        &.leading,
+        &.only {
           padding: 4px;
         }
 
         &.trailing {
           padding: 4px 4px 4px 8px;
-        }
-
-        &.only {
-          padding: 4px;
         }
       }
     }
