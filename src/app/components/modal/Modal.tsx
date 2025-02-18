@@ -4,6 +4,9 @@
  */
 import { ReactNode, forwardRef, useImperativeHandle, useRef } from 'react'
 
+import FillButton from '@components/buttons/FillButton'
+import TextButton from '@components/buttons/TextButton'
+
 import Portal from './Portal'
 
 import classNames from 'classnames/bind'
@@ -14,8 +17,8 @@ const cx = classNames.bind(styles)
 
 interface ModalProps {
   title: string
-  cancelButton: string
-  confirmButton: string
+  cancelText: string
+  confirmText: string
   onCancel: () => void
   onConfirm: () => void
   subtitle?: string
@@ -23,7 +26,7 @@ interface ModalProps {
 }
 
 export default forwardRef(function Modal(
-  { title, cancelButton, confirmButton, onCancel, onConfirm, subtitle, content }: ModalProps,
+  { title, cancelText, confirmText, onCancel, onConfirm, subtitle, content }: ModalProps,
   ref,
 ) {
   const dialog = useRef<HTMLDialogElement | null>(null)
@@ -48,8 +51,12 @@ export default forwardRef(function Modal(
           {content && <div>{content}</div>}
         </section>
         <section className={cx('button-section')}>
-          <button onClick={onCancel}>{cancelButton}</button>
-          <button onClick={onConfirm}>{confirmButton}</button>
+          <TextButton size="large" onClick={onCancel} style={{ width: 88, height: 40 }}>
+            {cancelText}
+          </TextButton>
+          <FillButton size="large" onClick={onConfirm} style={{ width: 88, height: 40 }}>
+            {confirmText}
+          </FillButton>
         </section>
       </dialog>
     </Portal>
