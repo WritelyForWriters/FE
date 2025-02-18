@@ -1,0 +1,66 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+/* variable */
+$secondary-900: map.get(Styled.$colors, Alert, Secondary900);
+
+/* mixin */
+// display: flex에 관한 mixin
+@mixin display-flex() {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+// typography
+@mixin typography($category, $size) {
+  font: map.get(Styled.$typo, $category, $size);
+}
+
+.root-modal[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  min-width: 400px;
+  border: none;
+  border-radius: 24px;
+  padding: 24px 16px 16px;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  color: $secondary-900;
+  animation: slide-in-from-top 0.35s ease-out;
+
+  .content-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    h2 {
+      @include typography('Title', 'Medium');
+    }
+
+    p {
+      @include typography('Body', 'Medium');
+    }
+  }
+
+  .button-section {
+    display: flex;
+    align-self: flex-end;
+    gap: 8px;
+  }
+}
+
+@keyframes slide-in-from-top {
+  0% {
+    transform: translateY(-15%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
