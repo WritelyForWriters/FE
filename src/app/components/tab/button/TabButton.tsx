@@ -13,7 +13,7 @@ interface TabButtonProps {
 }
 
 export default function TabButton({ children, onClick, value }: TabButtonProps) {
-  const { activeTab, handleChangeTab } = useTabContext()
+  const { activeTab, size, handleChangeTab } = useTabContext()
 
   const handleClickTab = () => {
     handleChangeTab(value)
@@ -22,7 +22,7 @@ export default function TabButton({ children, onClick, value }: TabButtonProps) 
 
   return (
     <button
-      className={cx('button', { active: activeTab === value })}
+      className={cx(`${size}`, { active: activeTab === value })}
       onClick={handleClickTab}
       role="tab"
       aria-selected={activeTab === value}

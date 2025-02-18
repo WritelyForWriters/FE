@@ -9,7 +9,7 @@ import classNames from 'classnames/bind'
 import styles from './Tab.module.scss'
 
 const cx = classNames.bind(styles)
-// TODO type
+
 interface TabContextType {
   activeTab: string
   handleChangeTab: (tab: string) => void

@@ -1,13 +1,21 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+/* variable */
+$secondary-50: map-get(Styled.$colors, Alert, Secondary50);
+
 @mixin tab-list {
+  padding-bottom: 0.8rem;
+
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
 .medium {
   @include tab-list();
 
   gap: 1.2rem;
+  border-bottom: 1px solid $secondary-50;
 }
 
 .large {

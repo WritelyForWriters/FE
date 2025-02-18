@@ -1,21 +1,25 @@
-.button {
-  flex: 1;
-  position: relative;
-  // TODO: 디자인 시스템 폰트, 색상 적용
-  color: #878787;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 26px;
-  padding-bottom: 8px;
+@use 'sass:map';
+@use '@styles/variables' as Styled;
 
-  &:hover {
-    color: #15191e;
-  }
+/* variable */
+$styled-font-large: map.get(Styled.$typo, Label, Large);
+$styled-font-medium: map.get(Styled.$typo, Label, Medium);
+
+$secondary-100: map-get(Styled.$colors, Alert, Secondary100);
+$secondary-400: map-get(Styled.$colors, Alert, Secondary400);
+$secondary-900: map-get(Styled.$colors, Alert, Secondary900);
+
+.large {
+  flex: 1;
+  padding-bottom: 0.8rem;
+  position: relative;
+
+  font: $styled-font-large;
+  color: $secondary-400;
+  font-weight: 600;
 
   &.active {
-    color: #15191e;
-    font-weight: 600;
+    color: #15191e; // TODO 컬러파레트로 변경
 
     &::after {
       content: '';
@@ -24,7 +28,24 @@
       left: 0;
       right: 0;
       height: 2px;
-      background-color: #000;
+      background-color: $secondary-900;
     }
+  }
+}
+
+.medium {
+  display: flex;
+  padding: 0.4rem;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 0.4rem;
+
+  font: $styled-font-medium;
+  color: #15191e; // TODO 컬러파레트로 변경
+  font-weight: 600;
+
+  &.active {
+    background-color: $secondary-100;
   }
 }
