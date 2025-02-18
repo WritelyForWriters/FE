@@ -1,4 +1,17 @@
-.list {
+@mixin tab-list {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.medium {
+  @include tab-list();
+
+  gap: 1.2rem;
+}
+
+.large {
+  @include tab-list();
+
+  gap: 0.8rem;
 }

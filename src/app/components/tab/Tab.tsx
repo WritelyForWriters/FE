@@ -5,9 +5,11 @@ import { PropsWithChildren, createContext, useContext, useState } from 'react'
 import TabButton from './button/TabButton'
 import TabList from './list/TabList'
 
+// TODO type
 interface TabContextType {
   activeTab: string
   handleChangeTab: (tab: string) => void
+  size?: 'large' | 'medium'
 }
 
 const TabContext = createContext<TabContextType>({
@@ -22,9 +24,15 @@ export const useTabContext = () => {
 interface TabProviderProps {
   defaultTab: string
   onChange?: (tabValue: string) => void
+  size?: 'large' | 'medium'
 }
 
-export function Tab({ defaultTab, children, onChange }: PropsWithChildren<TabProviderProps>) {
+export function Tab({
+  defaultTab,
+  children,
+  onChange,
+  size = 'medium',
+}: PropsWithChildren<TabProviderProps>) {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
   const handleChangeTab = (tab: string) => {
@@ -33,7 +41,9 @@ export function Tab({ defaultTab, children, onChange }: PropsWithChildren<TabPro
   }
 
   return (
-    <TabContext.Provider value={{ activeTab, handleChangeTab }}>{children}</TabContext.Provider>
+    <TabContext.Provider value={{ activeTab, handleChangeTab, size }}>
+      {children}
+    </TabContext.Provider>
   )
 }
 

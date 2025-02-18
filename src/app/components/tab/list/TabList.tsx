@@ -6,6 +6,10 @@ import styles from './TabList.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function TabList({ children }: PropsWithChildren) {
-  return <div className={cx('list')}>{children}</div>
+interface TabListProps {
+  size?: 'large' | 'medium'
+}
+
+export default function TabList({ children, size = 'medium' }: PropsWithChildren<TabListProps>) {
+  return <div className={cx`${size}`}>{children}</div>
 }
