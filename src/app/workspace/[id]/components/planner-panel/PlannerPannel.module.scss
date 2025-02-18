@@ -1,0 +1,41 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+/* variable */
+$styled-font-large: map.get(Styled.$typo, Label, Large);
+$secondary-20: map-get(Styled.$colors, Alert, Secondary20);
+
+.container {
+  padding: 1.6rem;
+  max-width: 244px;
+  display: inline-block;
+
+  border-radius: 1.6rem;
+  background-color: $secondary-20;
+}
+
+.title {
+  font: $styled-font-large;
+}
+
+.memo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  overflow-y: auto;
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  li {
+    border-bottom: 1px solid #f1f1f0;
+    padding: 0.8rem 0 2rem 0;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0.8rem;
+    }
+  }
+}

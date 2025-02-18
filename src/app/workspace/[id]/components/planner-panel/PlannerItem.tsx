@@ -1,36 +1,28 @@
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
-
 import Accordion from '@components/accordion/Accordion'
-import IconButton from '@components/buttons/IconButton'
-import Row from '@components/row/Row'
-import Text from '@components/text/Text'
 
-interface Props {
+import classNames from 'classnames/bind'
+
+import styles from './PlannerItem.module.scss'
+
+const cx = classNames.bind(styles)
+
+interface PlannerItemProps {
   title: string
   content: string
 }
 
-export default function PlannerItem({ title, content }: Props) {
+export default function PlannerItem({ title, content }: PlannerItemProps) {
   return (
-    <Accordion gap={12}>
-      <Accordion.Header>
-        {(isOpen, setIsOpen) => (
-          <Row spaceBetween>
-            <Text fontSize="12px" fontWeight={700} color="#000">
-              {title}
-            </Text>
+    <li>
+      <Accordion>
+        <Accordion.Header>
+          <h3 className={cx('title')}>{title}</h3>
+        </Accordion.Header>
 
-            <IconButton onClick={() => setIsOpen(!isOpen)}>
-              {isOpen ? <FaChevronUp color="#B3B3B3" /> : <FaChevronDown color="#B3B3B3" />}
-            </IconButton>
-          </Row>
-        )}
-      </Accordion.Header>
-      <Accordion.Body>
-        <Text fontSize="14px" fontWeight={400} color="#000">
-          {content}
-        </Text>
-      </Accordion.Body>
-    </Accordion>
+        <Accordion.Body>
+          <p className={cx('content')}>{content}</p>
+        </Accordion.Body>
+      </Accordion>
+    </li>
   )
 }
