@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 
-import { useAccordionContext } from '@components/accordion/AccordionContext'
+import { useAccordionContext } from './Accordion'
 
 export default function AccordionBody({ children }: PropsWithChildren) {
   const { isOpen } = useAccordionContext()

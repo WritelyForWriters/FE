@@ -1,9 +1,8 @@
 'use client'
 
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, createContext, useContext, useState } from 'react'
 
 import AccordionBody from './AccordionBody'
-import { AccordionProvider } from './AccordionContext'
 import AccordionHeader from './AccordionHeader'
 
 import classNames from 'classnames/bind'
@@ -12,16 +11,36 @@ import styles from './Accordion.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface Props {
-  gap?: 12 | 16
-  fullWidth?: boolean
+interface AccordionContextType {
+  isOpen: boolean
+  toggle: () => void
 }
 
-export default function Accordion({ children, gap = 16, fullWidth }: PropsWithChildren<Props>) {
+const AccordionContext = createContext<AccordionContextType>({
+  isOpen: false,
+  toggle: () => {},
+})
+
+export const useAccordionContext = () => {
+  const context = useContext(AccordionContext)
+
+  if (!context) {
+    throw new Error('AccordionHeader, AccordionBody 컴포넌트는 Accordion 내부에서 사용해야 합니다.')
+  }
+  return context
+}
+
+export default function Accordion({ children }: PropsWithChildren) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const toggle = () => {
+    setIsOpen((prev) => !prev)
+  }
+
   return (
-    <AccordionProvider>
-      <div className={cx('container', `gap-${gap}`, { 'full-width': fullWidth })}>{children}</div>
-    </AccordionProvider>
+    <AccordionContext.Provider value={{ isOpen, toggle }}>
+      <div className={cx('container')}>{children}</div>
+    </AccordionContext.Provider>
   )
 }
 
