@@ -20,6 +20,7 @@ $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
 
 .fill-button {
   @include display-flex();
+  justify-content: center;
   align-items: center;
   gap: 4px;
   padding: 12px;
