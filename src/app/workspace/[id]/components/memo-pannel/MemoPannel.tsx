@@ -16,7 +16,7 @@ export default function MemoPannel() {
     <section className={cx('container')}>
       <Accordion>
         <Accordion.Header>
-          <span className={cx('title')}>메모</span>
+          <h2 className={cx('title')}>메모</h2>
         </Accordion.Header>
         <Accordion.Body>
           <div className={cx('contents')}>
