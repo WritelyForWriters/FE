@@ -5,6 +5,7 @@
 $secondary-50: map-get(Styled.$colors, Alert, Secondary50);
 
 @mixin tab-list {
+  width: 212px;
   padding-bottom: 0.8rem;
 
   display: flex;

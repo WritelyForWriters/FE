@@ -1,0 +1,57 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+/* variable */
+$styled-font-label: map.get(Styled.$typo, Label, Medium);
+$styled-font-body: map.get(Styled.$typo, Body, Medium);
+$secondary-50: map-get(Styled.$colors, Alert, Secondary50);
+$secondary-400: map-get(Styled.$colors, Alert, Secondary400);
+
+.memo-item {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  border-radius: 1.2rem;
+  background-color: $secondary-50;
+
+  &:hover {
+    div button {
+      opacity: 1;
+    }
+  }
+
+  h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font: $styled-font-label;
+    font-weight: 700;
+
+    div {
+      display: flex;
+      gap: 0.4rem;
+
+      button {
+        width: 2rem;
+        height: 2rem;
+
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+    }
+  }
+
+  p {
+    font: $styled-font-body;
+    font-weight: 400;
+  }
+
+  span {
+    font: $styled-font-label;
+    font-weight: 400;
+    color: $secondary-400;
+  }
+}

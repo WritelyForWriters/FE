@@ -1,43 +1,38 @@
 'use client'
 
-import { FaMinus } from 'react-icons/fa6'
-import { IoIosArrowDown } from 'react-icons/io'
-
 import Accordion from '@components/accordion/Accordion'
-import IconButton from '@components/buttons/IconButton'
-import Text from '@components/text/Text'
+import Tab from '@components/tab/Tab'
 
-import PanelBody from '../panel/PanelBody'
-import PanelContainer from '../panel/PanelContainer'
-import PanelHeader from '../panel/PanelHeader'
-import MemoPanelBody from './MemoPanelBody'
+import MemoItem from './MemoItem'
+
+import classNames from 'classnames/bind'
+
+import styles from './MemoPanel.module.scss'
+
+const cx = classNames.bind(styles)
 
 export default function MemoPanel() {
   return (
-    <PanelContainer>
+    <section className={cx('container')}>
       <Accordion>
         <Accordion.Header>
-          {(isOpen, setIsOpen) => (
-            <PanelHeader isOpen={isOpen}>
-              <Text fontSize="14px" fontWeight={600} color="#000">
-                메모
-              </Text>
-              <IconButton onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? (
-                  <FaMinus color="#B3B3B3" size={18} />
-                ) : (
-                  <IoIosArrowDown size={18} fill="#B3B3B3" />
-                )}
-              </IconButton>
-            </PanelHeader>
-          )}
+          <span className={cx('title')}>메모</span>
         </Accordion.Header>
         <Accordion.Body>
-          <PanelBody>
-            <MemoPanelBody />
-          </PanelBody>
+          <div className={cx('contents')}>
+            <Tab defaultTab="progress">
+              <Tab.Button value="progress">진행중</Tab.Button>
+              <Tab.Button value="all">전체</Tab.Button>
+            </Tab>
+
+            <ul className={cx('memo-list')}>
+              {Array.from({ length: 4 }, (_, index) => (
+                <MemoItem key={index} />
+              ))}
+            </ul>
+          </div>
         </Accordion.Body>
       </Accordion>
-    </PanelContainer>
+    </section>
   )
 }
