@@ -30,7 +30,11 @@ interface TabProps {
   size?: 'large' | 'medium'
 }
 
-export function Tab({ defaultTab, children, size = 'medium' }: PropsWithChildren<TabProps>) {
+export default function Tab({
+  defaultTab,
+  children,
+  size = 'medium',
+}: PropsWithChildren<TabProps>) {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
   const handleChangeTab = (tab: string) => {
