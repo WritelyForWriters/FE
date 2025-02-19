@@ -11,5 +11,9 @@ const cx = classNames.bind(styles)
 export default function AccordionBody({ children }: PropsWithChildren) {
   const { isOpen } = useAccordionContext()
 
-  return isOpen ? <div className={cx('body')}>{children}</div> : null
+  return isOpen ? (
+    <div id="contents" className={cx('body')}>
+      {children}
+    </div>
+  ) : null
 }

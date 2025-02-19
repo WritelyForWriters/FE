@@ -18,7 +18,7 @@ export default function AccordionHeader({ children }: PropsWithChildren) {
   return (
     <div className={cx('header')}>
       {children}
-      <button onClick={toggle}>
+      <button aria-controls="contents" aria-expanded={isOpen} onClick={toggle}>
         {isOpen ? <FaChevronUp color="#B3B3B3" /> : <FaChevronDown color="#B3B3B3" />}
       </button>
     </div>
