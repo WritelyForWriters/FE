@@ -1,0 +1,95 @@
+@use 'sass:list';
+
+$typos: (
+  'display-large': (
+    5.7rem,
+    400,
+    6.4rem,
+  ),
+  'display-medium': (
+    4.5rem,
+    500,
+    5.37rem,
+  ),
+  'display-small': (
+    3.6rem,
+    400,
+    4.4rem,
+  ),
+
+  'headline-large': (
+    3.2rem,
+    500,
+    3.819rem,
+  ),
+  'headline-medium': (
+    2.8rem,
+    500,
+    3.341rem,
+  ),
+  'headline-small': (
+    2.4rem,
+    500,
+    2.864rem,
+  ),
+
+  'title-large': (
+    2.2rem,
+    500,
+    2.8rem,
+  ),
+  'title-medium': (
+    1.6rem,
+    500,
+    2.4rem,
+  ),
+  'title-small': (
+    1.4rem,
+    500,
+    2rem,
+  ),
+
+  'label-large': (
+    1.4rem,
+    500,
+    2rem,
+  ),
+  'label-medium': (
+    1.2rem,
+    500,
+    1.6rem,
+  ),
+  'label-small': (
+    1.1rem,
+    500,
+    1.6rem,
+  ),
+
+  'body-large': (
+    1.6rem,
+    500,
+    1.909rem,
+  ),
+  'body-medium': (
+    1.4rem,
+    500,
+    1.671rem,
+  ),
+  'body-small': (
+    1.2rem,
+    500,
+    1.432rem,
+  ),
+);
+
+@mixin typo($size, $weight, $line-height) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $line-height;
+}
+
+@each $name, $values in $typos {
+  .typo-#{$name} {
+    @include typo(list.nth($values, 1), list.nth($values, 2), list.nth($values, 3));
+  }
+}
