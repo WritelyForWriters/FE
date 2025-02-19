@@ -1,6 +1,8 @@
 'use client'
 
-import Accordion from '@components/accordion/Accordion'
+import { MouseEvent, useState } from 'react'
+
+import Pannel from '@components/pannel/Pannel'
 import Tab from '@components/tab/Tab'
 
 import MemoItem from './MemoItem'
@@ -12,27 +14,34 @@ import styles from './MemoPannel.module.scss'
 const cx = classNames.bind(styles)
 
 export default function MemoPannel() {
-  return (
-    <section className={cx('container')}>
-      <Accordion>
-        <Accordion.Header>
-          <h2 className={cx('title')}>메모</h2>
-        </Accordion.Header>
-        <Accordion.Body>
-          <div className={cx('contents')}>
-            <Tab defaultTab="progress">
-              <Tab.Button value="progress">진행중</Tab.Button>
-              <Tab.Button value="all">전체</Tab.Button>
-            </Tab>
+  const [isExpanded, setIsExpanded] = useState(false)
 
-            <ul className={cx('memo-list')}>
-              {Array.from({ length: 4 }, (_, index) => (
-                <MemoItem key={index} />
-              ))}
-            </ul>
-          </div>
-        </Accordion.Body>
-      </Accordion>
-    </section>
+  const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    setIsExpanded(false)
+  }
+
+  return (
+    <>
+      {isExpanded ? (
+        <Pannel onClick={handleCollapsedPannel} title="메모">
+          <Tab defaultTab="progress">
+            <Tab.Button value="progress">진행중</Tab.Button>
+            <Tab.Button value="all">전체</Tab.Button>
+          </Tab>
+
+          <ul className={cx('memo-list')}>
+            {Array.from({ length: 4 }, (_, index) => (
+              <MemoItem key={index} />
+            ))}
+          </ul>
+        </Pannel>
+      ) : (
+        // TODO 공통 버튼 컴포넌트로 변경
+        <button onClick={() => setIsExpanded(true)} className={cx('container')}>
+          메모
+        </button>
+      )}
+    </>
   )
 }

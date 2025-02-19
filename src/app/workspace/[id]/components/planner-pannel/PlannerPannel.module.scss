@@ -18,7 +18,9 @@ $secondary-20: map-get(Styled.$colors, Alert, Secondary20);
   font: $styled-font-large;
 }
 
-.memo-list {
+.planner-list {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
   gap: 1.2rem;

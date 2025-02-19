@@ -14,9 +14,11 @@ $secondary-400: map-get(Styled.$colors, Alert, Secondary400);
   gap: 0.8rem;
 
   border-radius: 1.2rem;
-  background-color: $secondary-50;
+  transition: all 0.2s ease-in-out;
 
   &:hover {
+    background-color: $secondary-50;
+
     div button {
       opacity: 1;
     }
