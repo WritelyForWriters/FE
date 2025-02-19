@@ -2,7 +2,7 @@
 
 import { PropsWithChildren, createContext, useContext, useState } from 'react'
 
-import TabButton from './button/TabButton'
+import TabButton from './TabButton'
 
 import classNames from 'classnames/bind'
 
