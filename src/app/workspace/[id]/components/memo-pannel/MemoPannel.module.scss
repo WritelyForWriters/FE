@@ -12,10 +12,6 @@ $secondary-20: map-get(Styled.$colors, Alert, Secondary20);
   background-color: $secondary-20;
 }
 
-.title {
-  font: $styled-font-large;
-}
-
 .memo-list {
   width: 100%;
 

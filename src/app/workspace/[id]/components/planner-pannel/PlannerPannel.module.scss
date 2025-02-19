@@ -17,10 +17,6 @@ $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
   background-color: $secondary-20;
 }
 
-.title {
-  font: $styled-font-large;
-}
-
 .planner-list {
   width: 100%;
 
