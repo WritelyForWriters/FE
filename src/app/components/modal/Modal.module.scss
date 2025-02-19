@@ -37,6 +37,7 @@ $secondary-900: map.get(Styled.$colors, Alert, Secondary900);
     display: flex;
     flex-direction: column;
     gap: 8px;
+    cursor: default;
 
     h2 {
       @include typography('Title', 'Medium');
