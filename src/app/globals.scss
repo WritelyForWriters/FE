@@ -1,4 +1,7 @@
 @use '@styles/colors';
+@use '@styles/mixin';
+@use '@styles/typography';
+@use '@styles/typography2';
 
 html {
   font-size: 62.5%; /* 1rem = 10px */

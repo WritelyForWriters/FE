@@ -1,9 +1,3 @@
-@mixin typo($size, $weight, $line-height) {
-  font-size: $size;
-  font-weight: $weight;
-  line-height: $line-height;
-}
-
 .typo-display-large {
   @include typo(5.7rem, 400, 6.4rem);
 }

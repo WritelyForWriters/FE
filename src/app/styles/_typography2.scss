@@ -82,12 +82,6 @@ $typos: (
   ),
 );
 
-@mixin typo($size, $weight, $line-height) {
-  font-size: $size;
-  font-weight: $weight;
-  line-height: $line-height;
-}
-
 @each $name, $values in $typos {
   .typo-#{$name} {
     @include typo(list.nth($values, 1), list.nth($values, 2), list.nth($values, 3));
