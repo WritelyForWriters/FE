@@ -16,9 +16,9 @@ export default function AccordionHeader({ children }: PropsWithChildren) {
   const { isOpen, toggle } = useAccordionContext()
 
   return (
-    <div onClick={toggle} className={cx('header')}>
+    <div className={cx('header')}>
       {children}
-      <button>
+      <button onClick={toggle}>
         {isOpen ? <FaChevronUp color="#B3B3B3" /> : <FaChevronDown color="#B3B3B3" />}
       </button>
     </div>
