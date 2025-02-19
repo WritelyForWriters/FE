@@ -39,7 +39,6 @@ export default function MemoPannel() {
           </ul>
         </Pannel>
       ) : (
-        // TODO 공통 버튼 컴포넌트로 변경
         <button onClick={onOpen} className={cx('container')}>
           메모
         </button>

@@ -11,11 +11,9 @@ $secondary-600: map-get(Styled.$colors, Alert, Secondary600);
 $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
 
 .container {
-  padding: 1.6rem;
-  max-width: 244px;
-  display: inline-block;
-
-  border-radius: 1.6rem;
+  padding: 1.2rem;
+  font: $styled-font-large;
+  border-radius: 1rem;
   background-color: $secondary-20;
 }
 

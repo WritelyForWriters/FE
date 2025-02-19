@@ -44,7 +44,6 @@ export default function PlannerPannel() {
           </button>
         </Pannel>
       ) : (
-        // TODO 공통 버튼 컴포넌트로 변경
         <button onClick={onOpen} className={cx('container')}>
           작품 플래너
         </button>
