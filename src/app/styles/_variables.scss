@@ -1,12 +1,6 @@
-$font-family-base: 'Pretendard';
-
-@font-face {
-  font-family: $font-family-base;
-  src: ('/fonts/PretendardVariable.woff2') format('woff2');
-}
-
+// TODO(hajae): 모든 컴포넌트에 신규 스타일 적용 후 삭제
 @function create-typo($font-size, $font-weight, $line-height) {
-  $font: normal normal $font-weight $font-size/#{$line-height} $font-family-base;
+  $font: normal normal $font-weight $font-size/#{$line-height};
   @return $font;
 }
 
