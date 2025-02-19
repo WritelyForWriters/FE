@@ -1,6 +1,8 @@
 'use client'
 
-import { PropsWithChildren, createContext, useContext, useState } from 'react'
+import { PropsWithChildren, createContext, useContext } from 'react'
+
+import { useCollapsed } from '@hooks/common/useCollapsed'
 
 import AccordionBody from './AccordionBody'
 import AccordionHeader from './AccordionHeader'
@@ -31,14 +33,10 @@ export const useAccordionContext = () => {
 }
 
 export default function Accordion({ children }: PropsWithChildren) {
-  const [isOpen, setIsOpen] = useState(false)
-
-  const toggle = () => {
-    setIsOpen((prev) => !prev)
-  }
+  const { isOpen, onToggle } = useCollapsed(false)
 
   return (
-    <AccordionContext.Provider value={{ isOpen, toggle }}>
+    <AccordionContext.Provider value={{ isOpen, toggle: onToggle }}>
       <div className={cx('container')}>{children}</div>
     </AccordionContext.Provider>
   )

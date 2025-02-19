@@ -1,8 +1,10 @@
 'use client'
 
-import { MouseEvent, useState } from 'react'
+import { MouseEvent } from 'react'
 
 import Pannel from '@components/pannel/Pannel'
+
+import { useCollapsed } from '@hooks/common/useCollapsed'
 
 import PlannerItem from './PlannerItem'
 
@@ -16,16 +18,16 @@ const cx = classNames.bind(styles)
 const datas = ['시놉시스', '세계관', '등장인물', '줄거리', '아이디어 노트']
 
 export default function PlannerPannel() {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const { isOpen, onClose, onOpen } = useCollapsed(false)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    setIsExpanded(false)
+    onClose()
   }
 
   return (
     <>
-      {isExpanded ? (
+      {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="작품 플래너">
           <ul className={cx('planner-list')}>
             {datas.map((data) => (
@@ -35,7 +37,7 @@ export default function PlannerPannel() {
         </Pannel>
       ) : (
         // TODO 공통 버튼 컴포넌트로 변경
-        <button onClick={() => setIsExpanded(true)} className={cx('container')}>
+        <button onClick={onOpen} className={cx('container')}>
           작품 플래너
         </button>
       )}
