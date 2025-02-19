@@ -2,6 +2,8 @@
 
 import { MouseEvent } from 'react'
 
+import { MdArrowOutward } from 'react-icons/md'
+
 import Pannel from '@components/pannel/Pannel'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
@@ -34,6 +36,12 @@ export default function PlannerPannel() {
               <PlannerItem key={data} title={data} content={`${data} 내용`} />
             ))}
           </ul>
+
+          {/* TODO (디자인) FillButton 사용할 수 있는지 확인 */}
+          <button className={cx('planner-button')}>
+            작품 플래너바로가기
+            <MdArrowOutward size={20} />
+          </button>
         </Pannel>
       ) : (
         // TODO 공통 버튼 컴포넌트로 변경

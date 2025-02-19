@@ -3,7 +3,12 @@
 
 /* variable */
 $styled-font-large: map.get(Styled.$typo, Label, Large);
+
+$secondary-0: map-get(Styled.$colors, Alert, Secondary0);
 $secondary-20: map-get(Styled.$colors, Alert, Secondary20);
+$secondary-200: map-get(Styled.$colors, Alert, Secondary200);
+$secondary-600: map-get(Styled.$colors, Alert, Secondary600);
+$secondary-900: map-get(Styled.$colors, Alert, Secondary900);
 
 .container {
   padding: 1.6rem;
@@ -39,5 +44,30 @@ $secondary-20: map-get(Styled.$colors, Alert, Secondary20);
       border-bottom: none;
       padding-bottom: 0.8rem;
     }
+  }
+}
+
+.planner-button {
+  width: 100%;
+  padding: 1.2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font: $styled-font-large;
+  color: $secondary-0;
+
+  background-color: $secondary-600;
+  border-radius: 1rem;
+
+  &:hover {
+    background-color: $secondary-200 !important;
+  }
+
+  &:disabled {
+    background-color: $secondary-900 !important;
+    opacity: 60%;
+    cursor: not-allowed;
   }
 }
