@@ -1,4 +1,3 @@
-// NOTE(hajae): example
 @mixin flex($direction: row, $align: center, $justify: center, $wrap: nowrap) {
   display: flex;
   flex-direction: $direction;
@@ -12,10 +11,4 @@
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-}
-
-@mixin typo($size, $weight, $line-height) {
-  font-size: $size;
-  font-weight: $weight;
-  line-height: $line-height;
 }

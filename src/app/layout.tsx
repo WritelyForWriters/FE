@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 // NOTE(hajae): Next.js 폰트 자동 최적화
 const pretendard = localFont({
-  src: '/fonts/PretendardVariable.woff2',
+  src: '../../public/fonts/PretendardVariable.woff2',
   display: 'swap',
 })
 

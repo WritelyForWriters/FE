@@ -1,89 +1,91 @@
+@use 'sass:map';
 @use 'sass:list';
 
-$typos: (
-  'display-large': (
+$typo: (
+  display-large: (
     5.7rem,
     400,
     6.4rem,
   ),
-  'display-medium': (
+  display-medium: (
     4.5rem,
     500,
     5.37rem,
   ),
-  'display-small': (
+  display-small: (
     3.6rem,
     400,
     4.4rem,
   ),
 
-  'headline-large': (
+  headline-large: (
     3.2rem,
     500,
     3.819rem,
   ),
-  'headline-medium': (
+  headline-medium: (
     2.8rem,
     500,
     3.341rem,
   ),
-  'headline-small': (
+  headline-small: (
     2.4rem,
     500,
     2.864rem,
   ),
 
-  'title-large': (
+  title-large: (
     2.2rem,
     500,
     2.8rem,
   ),
-  'title-medium': (
+  title-medium: (
     1.6rem,
     500,
     2.4rem,
   ),
-  'title-small': (
+  title-small: (
     1.4rem,
     500,
     2rem,
   ),
 
-  'label-large': (
+  label-large: (
     1.4rem,
     500,
     2rem,
   ),
-  'label-medium': (
+  label-medium: (
     1.2rem,
     500,
     1.6rem,
   ),
-  'label-small': (
+  label-small: (
     1.1rem,
     500,
     1.6rem,
   ),
 
-  'body-large': (
+  body-large: (
     1.6rem,
     500,
     1.909rem,
   ),
-  'body-medium': (
+  body-medium: (
     1.4rem,
     500,
     1.671rem,
   ),
-  'body-small': (
+  body-small: (
     1.2rem,
     500,
     1.432rem,
   ),
 );
 
-@each $name, $values in $typos {
-  .typo-#{$name} {
-    @include typo(list.nth($values, 1), list.nth($values, 2), list.nth($values, 3));
-  }
+@mixin typo($type) {
+  $values: map.get($typo, $type);
+  font-size: list.nth($values, 1);
+  font-weight: list.nth($values, 2);
+  line-height: list.nth($values, 3);
 }
