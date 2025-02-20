@@ -1,5 +1,15 @@
+@use "@styles/typography";
+@use "@styles/colors" as color;
+
 .text-field {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.8rem;
+
+  width: 36.8rem;
+  height: 8rem;
 
   &__fieldset {
     display: flex;
@@ -7,38 +17,66 @@
 
     margin: 0;
     padding: 0;
-    height: 48px;
+    height: 8rem;
 
     background-color: transparent;
     border: 0;
 
     &__legend {
+      @extend %typo-label-medium;
+
       display: block;
       visibility: hidden;
       padding: 0 4px;
       width: auto;
-      height: 11px;
+      height: 1rem;
 
-      font-size: 12px;
       overflow: hidden;
     }
 
     &__label {
+      @extend %typo-label-large;
+
       position: absolute;
-      top: 30px;
+      top: 3.8rem;
       left: 0;
 
       background-color: transparent;
+      color: color.$alert-secondary-500;
 
       transform: translateY(-50%);
       transition: all 0.2s ease;
       pointer-events: none;
 
       &--active {
-        top: 5px;
-        left: 0;
-        font-size: 12px;
+        @extend %typo-label-medium;
+
+        top: 2rem;
       }
     }
+
+    &__input {
+      @extend %typo-label-large;
+
+      padding-top: 0.8rem;
+      width: 100%;
+      height: 4.8rem;
+
+      border: 0;
+      border-bottom: solid 1px color.$alert-secondary-50;
+      outline: 0;
+
+      &:focus {
+        border-color: color.$alert-secondary-900;
+      }
+    }
+  }
+
+  &__helper-text {
+    @extend %typo-body-small;
+
+    height: 2.4rem;
+
+    color: color.$alert-secondary-300;
   }
 }

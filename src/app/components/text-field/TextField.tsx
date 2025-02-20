@@ -15,7 +15,7 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const TextField = ({ name, label, error, ...props }: TextFieldProps) => {
-  const [value, setValue] = useState(props.value || '') // input의 value 상태 관리
+  const [value, setValue] = useState(props.value || '')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
@@ -34,9 +34,16 @@ const TextField = ({ name, label, error, ...props }: TextFieldProps) => {
         >
           {label}
         </label>
-        <input {...props} name={name} className={cx('')} value={value} onChange={handleChange} />
+        <input
+          {...props}
+          name={name}
+          className={cx('text-field__fieldset__input')}
+          value={value}
+          onChange={handleChange}
+        />
       </fieldset>
       {error && <span className={cx('text-field__error')}>{error}</span>}
+      <span className={cx('text-field__helper-text')}>helper</span>
     </div>
   )
 }
