@@ -1,0 +1,44 @@
+.text-field {
+  position: relative;
+
+  &__fieldset {
+    display: flex;
+    align-items: center;
+
+    margin: 0;
+    padding: 0;
+    height: 48px;
+
+    background-color: transparent;
+    border: 0;
+
+    &__legend {
+      display: block;
+      visibility: hidden;
+      padding: 0 4px;
+      width: auto;
+      height: 11px;
+
+      font-size: 12px;
+      overflow: hidden;
+    }
+
+    &__label {
+      position: absolute;
+      top: 30px;
+      left: 0;
+
+      background-color: transparent;
+
+      transform: translateY(-50%);
+      transition: all 0.2s ease;
+      pointer-events: none;
+
+      &--active {
+        top: 5px;
+        left: 0;
+        font-size: 12px;
+      }
+    }
+  }
+}

@@ -1,38 +1,44 @@
-import { InputHTMLAttributes, ReactNode, createContext, useContext } from 'react'
+'use client'
 
-const TextFieldContext = createContext({
-  name: '',
-  type: 'text',
-})
+import { InputHTMLAttributes, useState } from 'react'
 
-interface TextFieldProps {
+import classNames from 'classnames/bind'
+
+import styles from './TextField.module.scss'
+
+const cx = classNames.bind(styles)
+
+interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
-  children: ReactNode
-  type?: string
-}
-
-export default function TextField({ name, children, type = 'text' }: TextFieldProps) {
-  const contextValue = { name: name, type }
-
-  return <TextFieldContext.Provider value={contextValue}>{children}</TextFieldContext.Provider>
-}
-
-interface TextFieldInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
   error?: string
 }
 
-function TextFieldInput({ label, error, ...props }: TextFieldInputProps) {
-  const { name, type } = useContext(TextFieldContext)
+const TextField = ({ name, label, error, ...props }: TextFieldProps) => {
+  const [value, setValue] = useState(props.value || '') // input의 value 상태 관리
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value)
+  }
+
   return (
-    <div>
-      <fieldset>
-        <legend>{label}</legend>
-        <input id={name} type={type} {...props} />
+    <div className={cx('text-field')}>
+      <fieldset className={cx('text-field__fieldset')}>
+        <legend className={cx('text-field__fieldset__legend')}>{label}</legend>
+        <label
+          htmlFor={name}
+          className={cx(
+            'text-field__fieldset__label',
+            value !== '' ? 'text-field__fieldset__label--active' : '',
+          )}
+        >
+          {label}
+        </label>
+        <input {...props} name={name} className={cx('')} value={value} onChange={handleChange} />
       </fieldset>
-      {error && <span>{error}</span>}
+      {error && <span className={cx('text-field__error')}>{error}</span>}
     </div>
   )
 }
 
-TextField.Input = TextFieldInput
+export default TextField
