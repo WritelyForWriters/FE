@@ -22,11 +22,11 @@ $secondary-900: map.get(Styled.$colors, Alert, Secondary900);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
+  gap: 2.4rem;
   min-width: 400px;
   border: none;
-  border-radius: 24px;
-  padding: 24px 16px 16px;
+  border-radius: 2.4rem;
+  padding: 2.4rem 1.6rem 1.6rem;
   position: fixed;
   inset: 0;
   margin: auto;
@@ -36,7 +36,7 @@ $secondary-900: map.get(Styled.$colors, Alert, Secondary900);
   .content-section {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.8rem;
     cursor: default;
 
     h2 {
@@ -51,7 +51,7 @@ $secondary-900: map.get(Styled.$colors, Alert, Secondary900);
   .button-section {
     display: flex;
     align-self: flex-end;
-    gap: 8px;
+    gap: 0.8rem;
   }
 }
 
