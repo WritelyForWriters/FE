@@ -68,6 +68,30 @@
         border-color: color.$alert-secondary-900;
       }
     }
+
+    &__text-area {
+      @extend %typo-label-large;
+
+      margin: 1.6rem 0 0 0;
+      padding: 0 3rem 0.7rem 0;
+      width: 100%;
+      height: auto;
+      min-height: 3.2rem;
+
+      border: 0;
+      border-bottom: solid 1px color.$alert-secondary-50;
+      outline: 0;
+
+      line-height: 2.4rem;
+      box-sizing: border-box;
+
+      overflow: hidden;
+      resize: none;
+
+      &:focus {
+        border-color: color.$alert-secondary-900;
+      }
+    }
   }
 
   &__helper-text {
