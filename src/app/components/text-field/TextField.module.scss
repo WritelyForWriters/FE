@@ -51,10 +51,10 @@
       }
     }
 
-    &__input {
+    &__input,
+    &__text-area {
       @extend %typo-label-large;
 
-      padding: 1.6rem 3rem 0.7rem 0;
       width: 100%;
 
       border: 0;
@@ -64,33 +64,25 @@
       // NOTE(hajae): caret(커서)크기는 css 조절 불가.
       // 브라우저별로 다르나 line-height, font-size 등을 수정해야함
 
-      &:focus {
+      &:focus,
+      &[data-has-value="true"] {
         border-color: color.$alert-secondary-900;
       }
     }
 
-    &__text-area {
-      @extend %typo-label-large;
+    &__input {
+      padding: 1.6rem 3rem 0.7rem 0;
+    }
 
+    &__text-area {
       margin: 1.6rem 0 0 0;
       padding: 0 3rem 0.7rem 0;
-      width: 100%;
-      height: auto;
-      min-height: 3.2rem;
-
-      border: 0;
-      border-bottom: solid 1px color.$alert-secondary-50;
-      outline: 0;
 
       line-height: 2.4rem;
       box-sizing: border-box;
 
       overflow: hidden;
       resize: none;
-
-      &:focus {
-        border-color: color.$alert-secondary-900;
-      }
     }
   }
 

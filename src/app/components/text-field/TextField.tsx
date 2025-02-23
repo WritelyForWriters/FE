@@ -76,6 +76,7 @@ const TextField = ({
             value={value}
             onChange={handleChange}
             autoComplete="new-password"
+            data-has-value={value ? 'true' : 'false'}
           />
         )}
 
@@ -89,6 +90,7 @@ const TextField = ({
             value={value}
             onChange={handleTextareaHandle}
             rows={1}
+            data-has-value={value ? 'true' : 'false'}
           />
         )}
       </section>
