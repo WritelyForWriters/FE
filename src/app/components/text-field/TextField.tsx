@@ -47,6 +47,7 @@ const TextField = ({
     // NOTE(hajae): textarea 개행될 때 스크롤 resize를 위해.
     // 아래 코드가 없으면 개행시 border와 text가 붙어버림 (padding에 글자가 겹침)
     if (textarea.current) {
+      textarea.current.style.height = 'auto'
       textarea.current.style.height = textarea.current.scrollHeight + 'px'
     }
   }
