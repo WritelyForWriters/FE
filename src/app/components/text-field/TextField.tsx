@@ -1,10 +1,9 @@
 'use client'
 
-import { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useRef, useState } from 'react'
-
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
+import { InputHTMLAttributes, TextareaHTMLAttributes, useState } from 'react'
 
 import TextFieldInput from './TextFieldInput'
+import TextFieldTextarea from './TextFieldTextarea'
 
 import classNames from 'classnames/bind'
 
@@ -39,8 +38,6 @@ const TextField = ({
   ...props
 }: TextFieldProps) => {
   const [value, setValue] = useState(props.value || '')
-  const textarea = useRef<HTMLTextAreaElement | null>(null)
-  const [isExpand, setIsExpand] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
@@ -48,29 +45,11 @@ const TextField = ({
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value)
-    handleTextareaHeight()
-  }
-
-  // NOTE(hajae): textarea 개행될 때 스크롤 resize를 위해.
-  // 아래 코드가 없으면 개행시 border와 text가 붙어버림 (padding에 글자가 겹침)
-  const handleTextareaHeight = () => {
-    if (textarea.current) {
-      textarea.current.style.height = 'auto'
-      textarea.current.style.height = textarea.current.scrollHeight + 'px'
-    }
   }
 
   const handleClearClick = () => {
     setValue('')
   }
-
-  const handleExpandClick = () => {
-    setIsExpand((prev) => !prev)
-  }
-
-  useEffect(() => {
-    handleTextareaHeight()
-  }, [isExpand])
 
   return (
     <div className={cx('text-field')}>
@@ -99,35 +78,11 @@ const TextField = ({
 
         {/* Textarea */}
         {variant === 'expand' && (
-          <div
-            className={cx('text-field__fieldset__wrapper')}
-            data-has-value={value ? 'true' : 'false'}
-          >
-            <textarea
-              {...(props as TextAreaProps)}
-              name={name}
-              ref={textarea}
-              className={cx('text-field__fieldset__text-area', {
-                'text-field__fieldset__text-area--expand': isExpand,
-              })}
-              value={value}
-              onChange={handleTextareaChange}
-              rows={1}
-            />
-            {isExpand ? (
-              <IoIosArrowUp
-                size={20}
-                className={cx('text-field__fieldset__text-area__icon')}
-                onClick={handleExpandClick}
-              />
-            ) : (
-              <IoIosArrowDown
-                size={20}
-                className={cx('text-field__fieldset__text-area__icon')}
-                onClick={handleExpandClick}
-              />
-            )}
-          </div>
+          <TextFieldTextarea
+            value={value as string}
+            name={name}
+            handleTextareaChange={handleTextareaChange}
+          />
         )}
       </section>
 
