@@ -64,13 +64,14 @@
 
     &__input,
     &__text-area {
-      @extend %typo-label-large;
+      @extend %typo-body-medium;
 
       margin: 1.6rem 0 0.7rem 0;
       width: calc(100% - 3rem);
 
       border: 0;
       outline: 0;
+      font-weight: 400;
 
       // NOTE(hajae): caret(커서)크기는 css 조절 불가.
       // 브라우저별로 다르나 line-height, font-size 등을 수정해야함
