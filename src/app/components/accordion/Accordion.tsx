@@ -1,6 +1,6 @@
 'use client'
 
-import { PropsWithChildren, createContext, useContext } from 'react'
+import { ReactNode, createContext, useContext } from 'react'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
@@ -32,7 +32,11 @@ export const useAccordionContext = () => {
   return context
 }
 
-export default function Accordion({ children }: PropsWithChildren) {
+interface AccordionProps {
+  children: ReactNode
+}
+
+export default function Accordion({ children }: AccordionProps) {
   const { isOpen, onToggle } = useCollapsed(false)
 
   return (

@@ -1,6 +1,6 @@
 'use client'
 
-import { PropsWithChildren, createContext, useContext, useState } from 'react'
+import { ReactNode, createContext, useContext, useState } from 'react'
 
 import TabButton from './TabButton'
 
@@ -28,13 +28,10 @@ export const useTabContext = () => {
 interface TabProps {
   defaultTab: string
   size?: 'large' | 'medium'
+  children: ReactNode
 }
 
-export default function Tab({
-  defaultTab,
-  children,
-  size = 'medium',
-}: PropsWithChildren<TabProps>) {
+export default function Tab({ defaultTab, children, size = 'medium' }: TabProps) {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
   const handleChangeTab = (tab: string) => {

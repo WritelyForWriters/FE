@@ -1,6 +1,6 @@
 'use client'
 
-import { PropsWithChildren } from 'react'
+import { ReactNode } from 'react'
 
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa6'
 
@@ -12,7 +12,11 @@ import styles from './Accordion.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function AccordionHeader({ children }: PropsWithChildren) {
+interface AccordionHeaderProps {
+  children: ReactNode
+}
+
+export default function AccordionHeader({ children }: AccordionHeaderProps) {
   const { isOpen, toggle } = useAccordionContext()
 
   return (
