@@ -17,7 +17,6 @@
     ]
   },
   "dependencies": {
-    "@hookform/resolvers": "^4.1.0",
     "@tiptap/extension-blockquote": "^2.11.5",
     "@tiptap/extension-bold": "^2.11.5",
     "@tiptap/extension-document": "^2.11.5",
