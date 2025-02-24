@@ -7,6 +7,7 @@
 
   @extend %typo-label-medium;
   font-weight: 700;
+  color: color.$alert-secondary-900;
 
   div {
     display: flex;
@@ -25,4 +26,5 @@
 .content {
   @extend %typo-body-medium;
   font-weight: 400;
+  color: color.$alert-secondary-900;
 }

@@ -4,6 +4,7 @@ import { MouseEvent } from 'react'
 
 import { MdArrowOutward } from 'react-icons/md'
 
+import FillButton from '@components/buttons/FillButton'
 import Pannel from '@components/pannel/Pannel'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
@@ -37,11 +38,20 @@ export default function PlannerPannel() {
             ))}
           </ul>
 
-          {/* TODO (디자인) FillButton 사용할 수 있는지 확인 */}
-          <button className={cx('planner-button')}>
-            작품 플래너바로가기
-            <MdArrowOutward size={20} />
-          </button>
+          <FillButton
+            size="large"
+            variant="secondary"
+            iconType={<MdArrowOutward size={20} />}
+            iconPosition="trailing"
+            style={{
+              width: 212,
+              color: 'white',
+              backgroundColor: '#666666',
+              justifyContent: 'space-between',
+            }}
+          >
+            작품 플래너 바로가기
+          </FillButton>
         </Pannel>
       ) : (
         <button onClick={onOpen} className={cx('container')}>

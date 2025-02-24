@@ -33,26 +33,3 @@
     }
   }
 }
-
-.planner-button {
-  width: 100%;
-  padding: 1.2rem;
-
-  @include mixin.flex(row, center, space-between);
-
-  @extend %typo-label-large;
-  color: color.$alert-secondary-0;
-
-  background-color: color.$alert-secondary-600;
-  border-radius: 1rem;
-
-  &:hover {
-    background-color: color.$alert-secondary-200 !important;
-  }
-
-  &:disabled {
-    background-color: color.$alert-secondary-900 !important;
-    opacity: 60%;
-    cursor: not-allowed;
-  }
-}
