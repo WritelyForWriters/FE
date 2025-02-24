@@ -14,7 +14,6 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 interface TextFieldProps extends InputProps {
-  name: string
   value?: string
   handleInputChange?: (e: ChangeEvent<HTMLInputElement>) => void
   handleClearClick?: () => void
@@ -22,7 +21,6 @@ interface TextFieldProps extends InputProps {
 
 export default function TextFieldInput({
   variant,
-  name,
   value,
   handleInputChange,
   handleClearClick,
@@ -38,7 +36,6 @@ export default function TextFieldInput({
     <div className={cx('text-field__fieldset__wrapper')}>
       <input
         {...props}
-        name={name}
         type={variant === 'password' ? (showPassword ? 'text' : 'password') : 'text'}
         className={cx('text-field__fieldset__input')}
         value={value}

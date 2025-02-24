@@ -17,7 +17,6 @@ import styles from './TextField.module.scss'
 const cx = classNames.bind(styles)
 
 interface TextFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  name: string
   value?: string
   handleTextareaChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void
 }
@@ -28,7 +27,7 @@ interface TextFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
  * useImperativeHandle을 사용하지 않으면 react-hook-form이 textarea의 value를 감지하지 못해 required error가 발생할 수 있음.
  */
 const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
-  ({ name, value, handleTextareaChange, ...props }, ref) => {
+  ({ value, handleTextareaChange, ...props }, ref) => {
     const [isExpand, setIsExpand] = useState(false)
     const textarea = useRef<HTMLTextAreaElement | null>(null)
 
@@ -55,7 +54,6 @@ const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
         <textarea
           {...props}
           ref={textarea}
-          name={name}
           className={cx('text-field__fieldset__text-area', {
             'text-field__fieldset__text-area--expand': isExpand,
           })}

@@ -21,7 +21,6 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 }
 
 type TextFieldProps = {
-  name: string
   label: string
   required?: boolean
   helperText?: string
@@ -29,7 +28,6 @@ type TextFieldProps = {
 } & (InputProps | TextareaProps)
 
 const TextField = ({
-  name,
   label,
   variant = 'default',
   required = false,
@@ -56,7 +54,7 @@ const TextField = ({
       <section className={cx('text-field__fieldset')}>
         {/* Label */}
         <label
-          htmlFor={name}
+          htmlFor={props.name}
           className={cx('text-field__fieldset__label', {
             'text-field__fieldset__label--active': value !== '',
           })}
@@ -70,7 +68,6 @@ const TextField = ({
           <TextFieldInput
             {...(props as InputProps)}
             variant={variant}
-            name={name}
             value={value as string | undefined}
             handleInputChange={handleInputChange}
             handleClearClick={handleClearClick}
@@ -82,7 +79,6 @@ const TextField = ({
           <TextFieldTextarea
             {...(props as TextareaProps)}
             value={value as string}
-            name={name}
             handleTextareaChange={handleTextareaChange}
           />
         )}
