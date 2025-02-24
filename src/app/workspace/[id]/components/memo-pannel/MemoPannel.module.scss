@@ -1,15 +1,13 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-/* variable */
-$styled-font-large: map.get(Styled.$typo, Label, Large);
-$secondary-20: map-get(Styled.$colors, Alert, Secondary20);
+@use '@styles/typography';
+@use '@styles/colors' as color;
 
 .container {
   padding: 1.2rem;
-  font: $styled-font-large;
+
+  @extend %typo-label-large;
+
   border-radius: 1rem;
-  background-color: $secondary-20;
+  background-color: color.$alert-secondary-20;
 }
 
 .memo-list {

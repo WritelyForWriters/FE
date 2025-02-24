@@ -1,13 +1,14 @@
+@use '@styles/mixins' as mixin;
+
 .container {
-  display: flex;
-  flex-direction: column;
+  @include mixin.flex(column, null, null);
+
   gap: 0.8rem;
 }
 
 /* Accordion Header */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include mixin.flex(row, center, space-between);
+
   align-self: stretch;
 }
