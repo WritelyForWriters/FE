@@ -80,7 +80,7 @@
         position: absolute;
         top: 1.6rem;
         right: 0;
-        height: calc(100% - 3rem); // NOTE(hajae): 100% - (margin,padding top + margin,padding bottom)
+        height: calc(100% - 3rem);
 
         color: color.$alert-secondary-300;
         cursor: pointer;
@@ -95,6 +95,8 @@
 
       &--expand {
         padding-right: 3rem;
+        height: 2.4rem !important; // NOTE(hajae): 비동기로 적용되는 height가 우선되기때문에 important 추가 필요
+
         text-overflow: ellipsis;
         white-space: nowrap;
       }

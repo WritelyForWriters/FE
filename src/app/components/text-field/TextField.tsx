@@ -16,7 +16,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 // NOTE(hajae): Input은 개행이 불가능하므로 expand(확장)기능을 사용하기 위해서는 TextArea가 필요
-interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   variant?: 'expand'
 }
 
@@ -26,7 +26,7 @@ type TextFieldProps = {
   required?: boolean
   helperText?: string
   error?: string
-} & (InputProps | TextAreaProps)
+} & (InputProps | TextareaProps)
 
 const TextField = ({
   name,
@@ -68,6 +68,7 @@ const TextField = ({
         {/* Input */}
         {(variant === 'default' || variant === 'password') && (
           <TextFieldInput
+            {...(props as InputProps)}
             variant={variant}
             name={name}
             value={value as string | undefined}
@@ -79,6 +80,7 @@ const TextField = ({
         {/* Textarea */}
         {variant === 'expand' && (
           <TextFieldTextarea
+            {...(props as TextareaProps)}
             value={value as string}
             name={name}
             handleTextareaChange={handleTextareaChange}
