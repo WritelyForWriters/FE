@@ -27,14 +27,14 @@ type TextFieldProps = {
   error?: string
 } & (InputProps | TextareaProps)
 
-const TextField = ({
+export default function TextField({
   label,
   variant = 'default',
   required = false,
   helperText,
   error,
   ...props
-}: TextFieldProps) => {
+}: TextFieldProps) {
   const [value, setValue] = useState(props.value || '')
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,5 +97,3 @@ const TextField = ({
     </div>
   )
 }
-
-export default TextField
