@@ -2,9 +2,9 @@
 
 import { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useRef, useState } from 'react'
 
-import { BiSolidHide, BiSolidShow } from 'react-icons/bi'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
-import { IoCloseOutline } from 'react-icons/io5'
+
+import TextFieldInput from './TextFieldInput'
 
 import classNames from 'classnames/bind'
 
@@ -41,9 +41,8 @@ const TextField = ({
   const [value, setValue] = useState(props.value || '')
   const textarea = useRef<HTMLTextAreaElement | null>(null)
   const [isExpand, setIsExpand] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
   }
 
@@ -63,10 +62,6 @@ const TextField = ({
 
   const handleClearClick = () => {
     setValue('')
-  }
-
-  const handleShowClick = () => {
-    setShowPassword((prev) => !prev)
   }
 
   const handleExpandClick = () => {
@@ -93,42 +88,13 @@ const TextField = ({
 
         {/* Input */}
         {(variant === 'default' || variant === 'password') && (
-          <div
-            className={cx('text-field__fieldset__wrapper')}
-            data-has-value={value ? 'true' : 'false'}
-          >
-            <input
-              {...(props as InputProps)}
-              name={name}
-              type={variant === 'password' ? (showPassword ? 'text' : 'password') : 'text'}
-              className={cx('text-field__fieldset__input')}
-              value={value}
-              onChange={handleChange}
-              autoComplete="new-password"
-              data-has-value={value ? 'true' : 'false'}
-            />
-            {variant === 'default' && value && (
-              <IoCloseOutline
-                size={20}
-                className={cx('text-field__fieldset__input__icon')}
-                onClick={handleClearClick}
-              />
-            )}
-            {variant === 'password' &&
-              (!showPassword ? (
-                <BiSolidShow
-                  size={20}
-                  className={cx('text-field__fieldset__input__icon')}
-                  onClick={handleShowClick}
-                />
-              ) : (
-                <BiSolidHide
-                  size={20}
-                  className={cx('text-field__fieldset__input__icon')}
-                  onClick={handleShowClick}
-                />
-              ))}
-          </div>
+          <TextFieldInput
+            variant={variant}
+            name={name}
+            value={value as string | undefined}
+            handleInputChange={handleInputChange}
+            handleClearClick={handleClearClick}
+          />
         )}
 
         {/* Textarea */}
