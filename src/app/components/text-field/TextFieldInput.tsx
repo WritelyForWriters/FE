@@ -35,7 +35,7 @@ export default function TextFieldInput({
   }
 
   return (
-    <div className={cx('text-field__fieldset__wrapper')} data-has-value={value ? 'true' : 'false'}>
+    <div className={cx('text-field__fieldset__wrapper')}>
       <input
         {...props}
         name={name}

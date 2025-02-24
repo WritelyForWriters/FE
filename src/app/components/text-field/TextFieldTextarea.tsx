@@ -51,10 +51,7 @@ const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
     }, [isExpand])
 
     return (
-      <div
-        className={cx('text-field__fieldset__wrapper')}
-        data-has-value={value ? 'true' : 'false'}
-      >
+      <div className={cx('text-field__fieldset__wrapper')}>
         <textarea
           {...props}
           ref={textarea}

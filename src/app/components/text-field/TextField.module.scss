@@ -57,8 +57,7 @@
       border-bottom: solid 1px color.$alert-secondary-50;
       width: 100%;
 
-      &:focus-within,
-      &[data-has-value="true"] {
+      &:focus-within {
         border-color: color.$alert-secondary-900;
       }
     }
