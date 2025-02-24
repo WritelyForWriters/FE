@@ -51,38 +51,54 @@
       }
     }
 
-    &__input,
-    &__text-area {
-      @extend %typo-label-large;
-
+    &__wrapper {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: solid 1px color.$alert-secondary-50;
       width: 100%;
 
-      border: 0;
-      border-bottom: solid 1px color.$alert-secondary-50;
-      outline: 0;
-
-      // NOTE(hajae): caret(커서)크기는 css 조절 불가.
-      // 브라우저별로 다르나 line-height, font-size 등을 수정해야함
-
-      &:focus,
+      &:focus-within,
       &[data-has-value="true"] {
         border-color: color.$alert-secondary-900;
       }
     }
 
-    &__input {
-      padding: 1.6rem 3rem 0.7rem 0;
+    &__input,
+    &__text-area {
+      @extend %typo-label-large;
+
+      margin: 1.6rem 0 0.7rem 0;
+      width: calc(100% - 3rem);
+
+      border: 0;
+      outline: 0;
+
+      // NOTE(hajae): caret(커서)크기는 css 조절 불가.
+      // 브라우저별로 다르나 line-height, font-size 등을 수정해야함
+
+      &__icon {
+        position: absolute;
+        top: 1.6rem;
+        right: 0;
+        height: calc(100% - 3rem); // NOTE(hajae): 100% - (margin,padding top + margin,padding bottom)
+
+        color: color.$alert-secondary-300;
+        cursor: pointer;
+      }
     }
 
     &__text-area {
-      margin: 1.6rem 0 0 0;
-      padding: 0 3rem 0.7rem 0;
-
+      height: 3.1rem;
       line-height: 2.4rem;
-      box-sizing: border-box;
 
       overflow: hidden;
       resize: none;
+
+      &--expand {
+        padding-right: 3rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 

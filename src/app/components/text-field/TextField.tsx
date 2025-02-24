@@ -1,6 +1,10 @@
 'use client'
 
-import { InputHTMLAttributes, TextareaHTMLAttributes, useRef, useState } from 'react'
+import { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useRef, useState } from 'react'
+
+import { BiSolidHide, BiSolidShow } from 'react-icons/bi'
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
+import { IoCloseOutline } from 'react-icons/io5'
 
 import classNames from 'classnames/bind'
 
@@ -36,21 +40,42 @@ const TextField = ({
 }: TextFieldProps) => {
   const [value, setValue] = useState(props.value || '')
   const textarea = useRef<HTMLTextAreaElement | null>(null)
+  const [isExpand, setIsExpand] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
   }
 
-  const handleTextareaHandle = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value)
+    handleTextareaHeight()
+  }
 
-    // NOTE(hajae): textarea 개행될 때 스크롤 resize를 위해.
-    // 아래 코드가 없으면 개행시 border와 text가 붙어버림 (padding에 글자가 겹침)
+  // NOTE(hajae): textarea 개행될 때 스크롤 resize를 위해.
+  // 아래 코드가 없으면 개행시 border와 text가 붙어버림 (padding에 글자가 겹침)
+  const handleTextareaHeight = () => {
     if (textarea.current) {
       textarea.current.style.height = 'auto'
       textarea.current.style.height = textarea.current.scrollHeight + 'px'
     }
   }
+
+  const handleClearClick = () => {
+    setValue('')
+  }
+
+  const handleShowClick = () => {
+    setShowPassword((prev) => !prev)
+  }
+
+  const handleExpandClick = () => {
+    setIsExpand((prev) => !prev)
+  }
+
+  useEffect(() => {
+    handleTextareaHeight()
+  }, [isExpand])
 
   return (
     <div className={cx('text-field')}>
@@ -68,30 +93,75 @@ const TextField = ({
 
         {/* Input */}
         {(variant === 'default' || variant === 'password') && (
-          <input
-            {...(props as InputProps)}
-            name={name}
-            type={variant === 'password' ? 'password' : 'text'}
-            className={cx('text-field__fieldset__input')}
-            value={value}
-            onChange={handleChange}
-            autoComplete="new-password"
+          <div
+            className={cx('text-field__fieldset__wrapper')}
             data-has-value={value ? 'true' : 'false'}
-          />
+          >
+            <input
+              {...(props as InputProps)}
+              name={name}
+              type={variant === 'password' ? (showPassword ? 'text' : 'password') : 'text'}
+              className={cx('text-field__fieldset__input')}
+              value={value}
+              onChange={handleChange}
+              autoComplete="new-password"
+              data-has-value={value ? 'true' : 'false'}
+            />
+            {variant === 'default' && value && (
+              <IoCloseOutline
+                size={20}
+                className={cx('text-field__fieldset__input__icon')}
+                onClick={handleClearClick}
+              />
+            )}
+            {variant === 'password' &&
+              (!showPassword ? (
+                <BiSolidShow
+                  size={20}
+                  className={cx('text-field__fieldset__input__icon')}
+                  onClick={handleShowClick}
+                />
+              ) : (
+                <BiSolidHide
+                  size={20}
+                  className={cx('text-field__fieldset__input__icon')}
+                  onClick={handleShowClick}
+                />
+              ))}
+          </div>
         )}
 
         {/* Textarea */}
         {variant === 'expand' && (
-          <textarea
-            {...(props as TextAreaProps)}
-            name={name}
-            ref={textarea}
-            className={cx('text-field__fieldset__text-area')}
-            value={value}
-            onChange={handleTextareaHandle}
-            rows={1}
+          <div
+            className={cx('text-field__fieldset__wrapper')}
             data-has-value={value ? 'true' : 'false'}
-          />
+          >
+            <textarea
+              {...(props as TextAreaProps)}
+              name={name}
+              ref={textarea}
+              className={cx('text-field__fieldset__text-area', {
+                'text-field__fieldset__text-area--expand': isExpand,
+              })}
+              value={value}
+              onChange={handleTextareaChange}
+              rows={1}
+            />
+            {isExpand ? (
+              <IoIosArrowUp
+                size={20}
+                className={cx('text-field__fieldset__text-area__icon')}
+                onClick={handleExpandClick}
+              />
+            ) : (
+              <IoIosArrowDown
+                size={20}
+                className={cx('text-field__fieldset__text-area__icon')}
+                onClick={handleExpandClick}
+              />
+            )}
+          </div>
         )}
       </section>
 
