@@ -1,18 +1,11 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-/* variable */
-$styled-font-label: map.get(Styled.$typo, Label, Medium);
-$styled-font-body: map.get(Styled.$typo, Body, Medium);
-$secondary-50: map-get(Styled.$colors, Alert, Secondary50);
-$secondary-400: map-get(Styled.$colors, Alert, Secondary400);
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
 
 .title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include mixin.flex(row, center, space-between);
 
-  font: $styled-font-label;
+  @extend %typo-label-medium;
   font-weight: 700;
 
   div {
@@ -30,6 +23,6 @@ $secondary-400: map-get(Styled.$colors, Alert, Secondary400);
 }
 
 .content {
-  font: $styled-font-body;
+  @extend %typo-body-medium;
   font-weight: 400;
 }

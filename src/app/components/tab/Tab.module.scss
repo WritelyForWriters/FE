@@ -1,8 +1,4 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-/* variable */
-$secondary-50: map-get(Styled.$colors, Alert, Secondary50);
+@use '@styles/colors' as color;
 
 @mixin tab-list {
   width: 212px;
@@ -16,7 +12,7 @@ $secondary-50: map-get(Styled.$colors, Alert, Secondary50);
   @include tab-list();
 
   gap: 1.2rem;
-  border-bottom: 1px solid $secondary-50;
+  border-bottom: 1px solid color.$alert-secondary-50;
 }
 
 .large {
