@@ -2,151 +2,97 @@
 @use '@styles/typography';
 @use '@styles/colors' as color;
 
-.custom-select {
-  :global {
-    .react-select__control {
-      @include mixin.display-flex();
+.container {
+  position: relative;
 
-      position: relative;
-      min-height: 56px;
-      border-radius: 1.2rem;
-      padding: 0.8rem 1.2rem 0.8rem 1.2rem;
-      gap: 0.8rem;
-      box-shadow: none;
-      cursor: pointer;
+  .custom-select {
+    &.required.closed {
+      :global {
+        .react-select__placeholder {
+          position: relative;
 
-      &:hover {
-        border: none;
-      }
-    }
-
-    .react-select__value-container {
-      padding: 0;
-
-      .react-select__multi-value {
-        background-color: color.$alert-secondary-50;
-        border-radius: 0.6rem;
-        padding: 0.4rem 0.4rem 0.4rem 0.8rem;
-
-        .react-select__multi-value__label {
-          color: color.$alert-secondary-900;
+          &::after {
+            @include mixin.required-dot();
+          }
         }
       }
     }
 
-    .react-select__single-value {
-      @extend %typo-body-medium;
-      color: color.$alert-secondary-900;
-      margin-top: 1.2rem;
+    &.filled {
+      :global {
+        .react-select {
+          &__control {
+            @include mixin.select-control-base();
+            background-color: color.$alert-secondary-50;
+            border: none;
+          }
+
+          &__value-container {
+            @include mixin.value-container-styles();
+          }
+
+          &__indicators {
+            @include mixin.indicators-styles();
+          }
+
+          &__menu {
+            @include mixin.menu-styles();
+          }
+        }
+      }
     }
 
-    .react-select__placeholder {
-      @extend %typo-label-large;
+    &.outlined {
+      :global {
+        .react-select {
+          &__control {
+            @include mixin.select-control-base();
+            border: 2px solid color.$alert-secondary-50;
+
+            &--is-focused,
+            &--menu-is-open {
+              border: 1px solid color.$alert-secondary-900;
+            }
+
+            &:hover {
+              border: 2px solid color.$alert-secondary-50;
+            }
+          }
+
+          &__value-container {
+            @include mixin.value-container-styles();
+          }
+
+          &__indicators {
+            @include mixin.indicators-styles();
+          }
+
+          &__menu {
+            @include mixin.menu-styles();
+          }
+        }
+      }
+    }
+  }
+
+  .label {
+    :global {
+      position: absolute;
+      top: 0.8rem;
+      left: 1.6rem;
+      @extend %typo-label-medium;
       color: color.$alert-secondary-500;
     }
 
-    .react-select__indicator {
-      color: color.$alert-secondary-300;
-
-      &:hover {
-        color: color.$alert-secondary-300;
+    &.required {
+      &::after {
+        position: absolute;
+        content: '';
+        width: 0.4rem;
+        height: 0.4rem;
+        background-color: color.$alert-failure;
+        border-radius: 50%;
       }
-    }
-
-    .react-select__indicator-separator {
-      display: none;
-    }
-
-    .react-select__menu {
-      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.15);
-      @extend %typo-label-large;
-      color: color.$alert-secondary-900;
-      padding: 1.2rem 0.8rem;
-      border-radius: 1.2rem;
-      margin: 0;
-
-      .react-select__menu-list {
-        @include mixin.flex(column, flex-start, center, null);
-        width: 100%;
-        gap: 1.2rem;
-        border-radius: 0.8rem;
-
-        .react-select__option--is-focused {
-          background-color: color.$alert-secondary-50;
-          border-radius: 0.8rem;
-        }
-
-        .react-select__option--is-selected {
-          background-color: color.$alert-secondary-200;
-          border-radius: 0.8rem;
-          color: color.$alert-secondary-900;
-        }
-      }
-    }
-  }
-}
-
-.outlined {
-  :global {
-    .react-select__control {
-      border: 2px solid color.$alert-secondary-50;
-
-      &.react-select__control--is-focused,
-      &.react-select__control--menu-is-open {
-        border: 1px solid color.$alert-secondary-900;
-      }
-
-      &:hover {
-        border: 2px solid color.$alert-secondary-50;
-      }
-    }
-  }
-}
-
-.filled {
-  :global {
-    .react-select__control {
-      background-color: color.$alert-secondary-50;
-      border: none;
-    }
-  }
-}
-
-.required {
-  &.closed {
-    :global {
-      .react-select__placeholder {
-        position: relative;
-
-        &::after {
-          position: absolute;
-          content: '';
-          width: 0.4rem;
-          height: 0.4rem;
-          background-color: color.$alert-failure;
-          border-radius: 50%;
-        }
-      }
-    }
-  }
-}
-
-.react-select-label {
-  position: absolute;
-  top: 0.8rem;
-  left: 1.6rem;
-  @extend %typo-label-medium;
-  color: color.$alert-secondary-500;
-  animation: slide-in-from-bottom 0.35s ease-out;
-
-  &.required {
-    &::after {
-      position: absolute;
-      content: '';
-      width: 0.4rem;
-      height: 0.4rem;
-      background-color: color.$alert-failure;
-      border-radius: 50%;
     }
   }
 }
@@ -155,16 +101,5 @@
   :global {
     @extend %typo-body-medium;
     color: color.$alert-failure;
-  }
-}
-
-@keyframes slide-in-from-bottom {
-  0% {
-    transform: translateY(15%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
   }
 }
