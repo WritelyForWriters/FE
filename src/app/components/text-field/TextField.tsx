@@ -27,7 +27,7 @@ type TextFieldProps = {
   label: string
   required?: boolean
   helperText?: string
-  validation?: RegisterOptions
+  options?: RegisterOptions
 } & (InputProps | TextareaProps)
 
 export default function TextField({
@@ -36,7 +36,7 @@ export default function TextField({
   variant = 'default',
   required = false,
   helperText,
-  validation,
+  options,
   ...props
 }: TextFieldProps) {
   const {
@@ -56,7 +56,11 @@ export default function TextField({
           })}
         >
           {label}
-          {required ? <div className={cx('text-field__fieldset__label--reqired')} /> : ''}
+          {required || (typeof options?.required === 'object' && options?.required?.value) ? (
+            <div className={cx('text-field__fieldset__label--required')} />
+          ) : (
+            ''
+          )}
         </label>
 
         {/* Input */}
@@ -64,14 +68,14 @@ export default function TextField({
           <TextFieldInput
             name={name}
             variant={variant}
-            validation={validation}
+            options={options}
             {...(props as InputProps)}
           />
         )}
 
         {/* Textarea */}
         {variant === 'expand' && (
-          <TextFieldTextarea name={name} validation={validation} {...(props as TextareaProps)} />
+          <TextFieldTextarea name={name} options={options} {...(props as TextareaProps)} />
         )}
       </section>
 

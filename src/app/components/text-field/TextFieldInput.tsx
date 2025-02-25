@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, useState } from 'react'
+import { ChangeEvent, InputHTMLAttributes, useState } from 'react'
 
 import { RegisterOptions, useFormContext } from 'react-hook-form'
 import { BiSolidHide, BiSolidShow } from 'react-icons/bi'
@@ -13,13 +13,15 @@ const cx = classNames.bind(styles)
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   variant?: 'default' | 'password'
-  validation?: RegisterOptions
+  options?: RegisterOptions
 }
 
-export default function TextFieldInput({ name, variant, validation, ...props }: InputProps) {
-  const [showPassword, setShowPassword] = useState(false)
+export default function TextFieldInput({ name, variant, options, ...props }: InputProps) {
   const { register, watch, setValue } = useFormContext()
+  const { onChange: registerOnChange, ...rest } = register(name, options)
   const value = watch(name)
+
+  const [showPassword, setShowPassword] = useState(false)
 
   const handlePasswordToggle = () => {
     setShowPassword((prev) => !prev)
@@ -32,12 +34,18 @@ export default function TextFieldInput({ name, variant, validation, ...props }: 
   return (
     <div className={cx('text-field__fieldset__wrapper')}>
       <input
-        {...register(name, validation)}
+        {...rest}
+        {...props}
         type={variant === 'password' ? (showPassword ? 'text' : 'password') : 'text'}
         className={cx('text-field__fieldset__input')}
         autoComplete="new-password"
         data-has-value={value ? 'true' : 'false'}
-        {...props}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          setValue(name, e.target.value)
+
+          if (registerOnChange) registerOnChange(e)
+          if (props.onChange) props.onChange(e)
+        }}
       />
       {variant === 'default' && value && (
         <IoCloseOutline
