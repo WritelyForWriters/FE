@@ -25,7 +25,6 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 type TextFieldProps = {
   name: string
   label: string
-  required?: boolean
   helperText?: string
   options?: RegisterOptions
 } & (InputProps | TextareaProps)
@@ -34,7 +33,6 @@ export default function TextField({
   name,
   label,
   variant = 'default',
-  required = false,
   helperText,
   options,
   ...props
@@ -56,7 +54,7 @@ export default function TextField({
           })}
         >
           {label}
-          {required || (typeof options?.required === 'object' && options?.required?.value) ? (
+          {props.required || (typeof options?.required === 'object' && options?.required?.value) ? (
             <div className={cx('text-field__fieldset__label--required')} />
           ) : (
             ''
