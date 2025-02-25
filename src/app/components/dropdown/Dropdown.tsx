@@ -54,15 +54,15 @@ export default function Dropdown({
 }: DropdownProps) {
   const {
     control,
-    formState: { isDirty, errors },
+    watch,
+    formState: { errors },
   } = useFormContext()
 
   const error = errors[name] as FieldError
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [hasValue, setHasValue] = useState(false)
 
-  console.log(hasValue)
+  const fieldValue = watch(name)
 
   return (
     <>
@@ -70,9 +70,10 @@ export default function Dropdown({
         control={control}
         name={name}
         rules={rules}
-        render={({ field: { value, onChange } }) => (
-          <>
+        render={({ field }) => (
+          <div className={cx('container')}>
             <Select
+              {...field}
               className={cx(
                 'custom-select',
                 type,
@@ -83,24 +84,30 @@ export default function Dropdown({
               options={options}
               isSearchable={false}
               classNamePrefix="react-select"
-              onChange={(e) => {
-                onChange(e.value)
-                setHasValue(true)
+              onChange={(selectedOption) => {
+                field.onChange(selectedOption)
               }}
               onMenuOpen={() => setIsMenuOpen(true)}
               onMenuClose={() => setIsMenuOpen(false)}
-              value={options.find((option) => option.value === value)}
+              value={field.value}
               isMulti={isMulti}
+              closeMenuOnSelect={!isMulti}
+              hideSelectedOptions={false}
               components={{
                 MultiValueRemove,
               }}
+              menuPortalTarget={document.getElementById('root-modal')}
+              styles={{
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              }}
             />
-            {(isMenuOpen || isDirty) && (
-              <label className={cx('react-select-label', isRequired && 'required')}>{label}</label>
+            {(isMenuOpen || fieldValue?.length !== 0) && (
+              <label className={cx('label', isRequired && 'required')}>{label}</label>
             )}
-          </>
+          </div>
         )}
       />
+
       {error && <span className={cx('error-message')}>{error.message}</span>}
     </>
   )
