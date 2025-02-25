@@ -19,30 +19,30 @@ $styled-font: map.get(Styled.$typo, Label, Large);
   align-items: center;
   font: map.get(Styled.$typo, Label, Large);
   color: map.get(Styled.$colors, Alert, Secondary900);
-  gap: 4px;
+  gap: 0.4rem;
 
   &.square {
     &.primary {
       &.large {
-        padding: 12px;
+        padding: 1.2rem;
       }
 
       &.medium {
-        padding: 8px 12px;
-        border-radius: 10px;
+        padding: 0.8rem 1.2rem;
+        border-radius: 1rem;
       }
 
       &.small {
-        padding: 4px 8px;
-        border-radius: 10px;
+        padding: 0.4rem 0.8rem;
+        border-radius: 1rem;
 
         &.leading,
         &.only {
-          padding: 4px;
+          padding: 0.4rem;
         }
 
         &.trailing {
-          padding: 4px 4px 4px 8px;
+          padding: 0.4rem 0.4rem 0.4rem 0.8rem;
         }
       }
     }
@@ -54,7 +54,7 @@ $styled-font: map.get(Styled.$typo, Label, Large);
 
   &:hover {
     background-color: map.get(Styled.$colors, Alert, Secondary50);
-    border-radius: 8px;
+    border-radius: 0.8rem;
   }
 
   &:disabled {
