@@ -1,6 +1,8 @@
 'use client'
 
-import { InputHTMLAttributes, TextareaHTMLAttributes, useState } from 'react'
+import { InputHTMLAttributes, TextareaHTMLAttributes } from 'react'
+
+import { RegisterOptions, useFormContext } from 'react-hook-form'
 
 import TextFieldInput from './TextFieldInput'
 import TextFieldTextarea from './TextFieldTextarea'
@@ -21,42 +23,36 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 }
 
 type TextFieldProps = {
+  name: string
   label: string
   required?: boolean
   helperText?: string
-  error?: string
+  validation?: RegisterOptions
 } & (InputProps | TextareaProps)
 
 export default function TextField({
+  name,
   label,
   variant = 'default',
   required = false,
   helperText,
-  error,
+  validation,
   ...props
 }: TextFieldProps) {
-  const [value, setValue] = useState(props.value || '')
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value)
-  }
-
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(e.target.value)
-  }
-
-  const handleClearClick = () => {
-    setValue('')
-  }
+  const {
+    watch,
+    formState: { errors },
+  } = useFormContext()
+  const value = watch(name)
 
   return (
     <div className={cx('text-field')}>
       <section className={cx('text-field__fieldset')}>
         {/* Label */}
         <label
-          htmlFor={props.name}
+          htmlFor={name}
           className={cx('text-field__fieldset__label', {
-            'text-field__fieldset__label--active': value !== '',
+            'text-field__fieldset__label--active': value,
           })}
         >
           {label}
@@ -66,32 +62,27 @@ export default function TextField({
         {/* Input */}
         {(variant === 'default' || variant === 'password') && (
           <TextFieldInput
-            {...(props as InputProps)}
+            name={name}
             variant={variant}
-            value={value as string | undefined}
-            handleInputChange={handleInputChange}
-            handleClearClick={handleClearClick}
+            validation={validation}
+            {...(props as InputProps)}
           />
         )}
 
         {/* Textarea */}
         {variant === 'expand' && (
-          <TextFieldTextarea
-            {...(props as TextareaProps)}
-            value={value as string}
-            handleTextareaChange={handleTextareaChange}
-          />
+          <TextFieldTextarea name={name} validation={validation} {...(props as TextareaProps)} />
         )}
       </section>
 
       {/* Helper Text */}
-      {(helperText || error) && (
+      {(helperText || errors) && (
         <span
           className={cx('text-field__helper-text', {
-            'text-field__helper-text--error': error,
+            'text-field__helper-text--error': errors[name]?.message,
           })}
         >
-          {error ? error : helperText}
+          {errors[name]?.message ? (errors[name]?.message as string) : helperText}
         </span>
       )}
     </div>

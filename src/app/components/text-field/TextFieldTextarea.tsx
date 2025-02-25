@@ -8,6 +8,7 @@ import {
   useState,
 } from 'react'
 
+import { RegisterOptions, useFormContext } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 
 import classNames from 'classnames/bind'
@@ -17,8 +18,8 @@ import styles from './TextField.module.scss'
 const cx = classNames.bind(styles)
 
 interface TextFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  value?: string
-  handleTextareaChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void
+  name: string
+  validation?: RegisterOptions
 }
 
 /* NOTE(hajae):
@@ -27,7 +28,8 @@ interface TextFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
  * useImperativeHandle을 사용하지 않으면 react-hook-form이 textarea의 value를 감지하지 못해 required error가 발생할 수 있음.
  */
 const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
-  ({ value, handleTextareaChange, ...props }, ref) => {
+  ({ name, validation, ...props }, ref) => {
+    const { register, setValue } = useFormContext()
     const [isExpand, setIsExpand] = useState(false)
     const textarea = useRef<HTMLTextAreaElement | null>(null)
 
@@ -52,17 +54,17 @@ const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
     return (
       <div className={cx('text-field__fieldset__wrapper')}>
         <textarea
-          {...props}
-          ref={textarea}
+          {...register(name, validation)}
           className={cx('text-field__fieldset__text-area', {
             'text-field__fieldset__text-area--expand': isExpand,
           })}
-          value={value}
+          rows={1}
+          ref={textarea}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-            handleTextareaChange?.(e)
+            setValue(name, e.target.value)
             handleTextareaHeight()
           }}
-          rows={1}
+          {...props}
         />
         {isExpand ? (
           <IoIosArrowUp

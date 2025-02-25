@@ -1,5 +1,6 @@
-import { ChangeEvent, InputHTMLAttributes, useState } from 'react'
+import { InputHTMLAttributes, useState } from 'react'
 
+import { RegisterOptions, useFormContext } from 'react-hook-form'
 import { BiSolidHide, BiSolidShow } from 'react-icons/bi'
 import { IoCloseOutline } from 'react-icons/io5'
 
@@ -10,38 +11,33 @@ import styles from './TextField.module.scss'
 const cx = classNames.bind(styles)
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  name: string
   variant?: 'default' | 'password'
+  validation?: RegisterOptions
 }
 
-interface TextFieldProps extends InputProps {
-  value?: string
-  handleInputChange?: (e: ChangeEvent<HTMLInputElement>) => void
-  handleClearClick?: () => void
-}
-
-export default function TextFieldInput({
-  variant,
-  value,
-  handleInputChange,
-  handleClearClick,
-  ...props
-}: TextFieldProps) {
+export default function TextFieldInput({ name, variant, validation, ...props }: InputProps) {
   const [showPassword, setShowPassword] = useState(false)
+  const { register, watch, setValue } = useFormContext()
+  const value = watch(name)
 
   const handlePasswordToggle = () => {
     setShowPassword((prev) => !prev)
   }
 
+  const handleClearClick = () => {
+    setValue(name, '')
+  }
+
   return (
     <div className={cx('text-field__fieldset__wrapper')}>
       <input
-        {...props}
+        {...register(name, validation)}
         type={variant === 'password' ? (showPassword ? 'text' : 'password') : 'text'}
         className={cx('text-field__fieldset__input')}
-        value={value}
-        onChange={handleInputChange}
         autoComplete="new-password"
         data-has-value={value ? 'true' : 'false'}
+        {...props}
       />
       {variant === 'default' && value && (
         <IoCloseOutline
