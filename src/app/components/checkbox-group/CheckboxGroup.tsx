@@ -10,9 +10,19 @@ type CheckBox = {
 interface CheckboxGroupProps {
   checkAllCheckbox: CheckBox
   checkboxes: CheckBox[]
+  checkboxWrapperClassName?: string
+  checkboxClassName?: string
 }
 
-export default function CheckboxGroup({ checkAllCheckbox, checkboxes }: CheckboxGroupProps) {
+/* NOTE(hajae): checkbox 자체는 react-hook-form의 register을 사용했지만 (간단한 input 요소와 적합)
+ * 하지만 CheckboxGroup에서 Contorller 사용한 이유는 Controller는 상태를 직접 관리가 필요할때 유용한 하므로
+ * 전체 체크를 했을 때 하위 checkbox를 상태를 직접 바꿔야하므로 Controller가 더 작합하여 Controller로 작성 */
+export default function CheckboxGroup({
+  checkAllCheckbox,
+  checkboxes,
+  checkboxWrapperClassName,
+  checkboxClassName,
+}: CheckboxGroupProps) {
   const { control, setValue, getValues } = useFormContext()
 
   return (
@@ -32,54 +42,24 @@ export default function CheckboxGroup({ checkAllCheckbox, checkboxes }: Checkbox
         }
 
         return (
-          <div>
-            <Checkbox
-              label={checkAllCheckbox.label}
-              name={checkAllCheckbox.name}
-              onChange={(e) => handleAllChange(e.target.checked)}
-            />
-
-            {checkboxes.map((box) => (
+          <div className={checkboxWrapperClassName}>
+            <div className={checkboxClassName}>
               <Checkbox
-                key={box.name}
-                label={box.label}
-                name={box.name}
-                onChange={handleSingleChange}
+                label={checkAllCheckbox.label}
+                name={checkAllCheckbox.name}
+                onChange={(e) => handleAllChange(e.target.checked)}
+                style={{ color: 'red' }}
               />
+            </div>
+
+            {checkboxes.map((box, index) => (
+              <div key={box.name + index} className={checkboxClassName}>
+                <Checkbox label={box.label} name={box.name} onChange={handleSingleChange} />
+              </div>
             ))}
           </div>
         )
       }}
     />
   )
-  // const { setValue, getValues } = useFormContext()
-
-  // const handleAllChange = (checked: boolean) => {
-  //   const values = getValues()
-  //   Object.keys(values).forEach((key) => {
-  //     if (key !== allCheckToggleName) {
-  //       setValue(key, checked)
-  //     }
-  //   })
-  //   setValue(allCheckToggleName, checked)
-  // }
-
-  // const handleSingleChange = () => {
-  //   const values = getValues()
-  //   const allSelected = Object.keys(values).every(
-  //     (key) => key === allCheckToggleName || values[key],
-  //   )
-  //   setValue(allCheckToggleName, allSelected)
-  // }
-
-  // const enhancedChildren = (Array.isArray(children) ? children : [children]).map((child, index) =>
-  //   cloneElement(child, {
-  //     key: child.props.name || index,
-  //     onChange:
-  //       child.props.name === allCheckToggleName
-  //         ? (e: ChangeEvent<HTMLInputElement>) => handleAllChange(e.target.checked)
-  //         : handleSingleChange,
-  //   }),
-  // )
-  // return <div>{enhancedChildren}</div>
 }
