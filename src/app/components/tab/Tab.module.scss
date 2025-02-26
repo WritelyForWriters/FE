@@ -1,0 +1,22 @@
+@use '@styles/colors' as color;
+
+@mixin tab-list {
+  width: 212px;
+  padding-bottom: 0.8rem;
+
+  display: flex;
+  align-items: center;
+}
+
+.medium {
+  @include tab-list();
+
+  gap: 1.2rem;
+  border-bottom: 1px solid color.$alert-secondary-50;
+}
+
+.large {
+  @include tab-list();
+
+  gap: 0.8rem;
+}

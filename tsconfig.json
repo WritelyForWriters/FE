@@ -23,8 +23,9 @@
       "@components/*": ["components/*"],
       "@hooks/*": ["hooks/*"],
       "@utils/*": ["utils/*"],
-      "@types/*": ["types/*"],
       "@context/*": ["context/*"],
+      "@extensions/*": ["extensions/*"],
+      "@styles/*": ["styles/*"],
       "@workspace/*": ["workspace/*"]
     }
   },

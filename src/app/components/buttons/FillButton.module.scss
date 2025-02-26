@@ -1,0 +1,104 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+/* variable */
+$styled-font: map.get(Styled.$typo, Label, Large);
+$secondary-0: map-get(Styled.$colors, Alert, Secondary0);
+$secondary-50: map-get(Styled.$colors, Alert, Secondary50);
+$secondary-100: map-get(Styled.$colors, Alert, Secondary100);
+$secondary-200: map-get(Styled.$colors, Alert, Secondary200);
+$secondary-900: map-get(Styled.$colors, Alert, Secondary900);
+
+/* mixin */
+// display: flex에 관한 mixin
+@mixin display-flex() {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.fill-button {
+  @include display-flex();
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.2rem;
+  border-radius: 1rem;
+  font: $styled-font;
+
+  &.primary {
+    &.square {
+      background-color: $secondary-900;
+      color: $secondary-0;
+
+      &.medium {
+        padding: 1rem;
+      }
+    }
+  }
+
+  &.secondary {
+    color: $secondary-900;
+    &.square {
+      background-color: $secondary-100;
+
+      &.large {
+        border-radius: 1rem;
+      }
+
+      &.medium {
+        padding: 0.8rem 1.2rem;
+        border-radius: 0.8rem;
+
+        &.only {
+          padding: 0.1rem;
+          border-radius: 1rem;
+        }
+      }
+
+      &.small {
+        background-color: $secondary-50;
+        padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+        border-radius: 0.8rem;
+
+        &.leading,
+        &.only {
+          padding: 0.4rem;
+        }
+
+        &.trailing {
+          padding: 0.4rem 0.4rem 0.4rem 0.8rem;
+        }
+      }
+    }
+
+    &.pill {
+      background-color: $secondary-50;
+      padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+
+      &.small {
+        &.only {
+          padding: 0.4rem;
+        }
+      }
+
+      &.xsmall {
+        border-radius: 4rem;
+        &.only {
+          padding: 0.4rem;
+        }
+      }
+    }
+  }
+
+  &:hover {
+    background-color: $secondary-200 !important;
+  }
+
+  &:disabled {
+    background-color: $secondary-900 !important;
+    opacity: 60%;
+    cursor: not-allowed;
+  }
+}

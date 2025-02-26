@@ -1,0 +1,100 @@
+@use 'sass:map';
+@use '@styles/variables' as Styled;
+
+// Font
+@mixin typography($category, $size) {
+  font: map.get(Styled.$typo, $category, $size);
+}
+
+// Color
+$Secondary0: map.get(Styled.$colors, Alert, Secondary0);
+$Secondary50: map.get(Styled.$colors, Alert, Secondary50);
+$Primary500: map.get(Styled.$colors, Alert, Primary500);
+
+/* Bubble menu */
+.bubble-menu {
+  height: 44px;
+
+  display: inline-flex;
+  padding: 0.8rem;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.8rem;
+
+  border-radius: 1rem;
+  background: $Secondary0;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+
+  > div:not(.text-mark) {
+    position: relative;
+
+    > button {
+      @include typography('Label', 'Large');
+
+      padding: 0.4rem;
+      padding-left: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.8rem;
+
+      border-radius: 0.8rem;
+      background-color: unset;
+
+      &:hover {
+        background-color: $Secondary50;
+      }
+    }
+  }
+}
+
+.text-mark {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    @include typography('Label', 'Large');
+
+    height: 28px;
+    display: flex;
+    align-items: center;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.8rem;
+
+    &:hover {
+      background-color: $Secondary50;
+    }
+
+    &.is-active {
+      color: $Primary500;
+    }
+  }
+}
+
+.line {
+  width: 1px;
+  height: 20px;
+  background: $Secondary50;
+}
+
+.bold {
+  font-weight: 700 !important;
+}
+
+.italic {
+  font-weight: 700 !important;
+  font-style: italic !important;
+}
+
+.underline {
+  text-decoration-line: underline;
+  font-weight: 700 !important;
+}
+
+.select-option {
+  padding: 0.4rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
