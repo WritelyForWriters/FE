@@ -4,7 +4,7 @@ import { DefaultValues, FieldValues, FormProvider, useForm } from 'react-hook-fo
 
 interface FormWrapperProps<T> {
   children: ReactNode
-  onSubmit: (data: T) => void
+  onSubmit: (data: T) => Promise<void>
   defaultValues?: DefaultValues<T>
 }
 
@@ -16,7 +16,7 @@ export default function FormWrapper<T extends FieldValues>({
   const methods = useForm<T>({ defaultValues })
 
   const handleSubmit = methods.handleSubmit(async (data: T) => {
-    onSubmit(data)
+    await onSubmit(data)
   })
 
   return (
