@@ -1,0 +1,29 @@
+import { FaCheck } from 'react-icons/fa6'
+import { TfiMoreAlt } from 'react-icons/tfi'
+
+import classNames from 'classnames/bind'
+
+import styles from './MemoItem.module.scss'
+
+const cx = classNames.bind(styles)
+
+export default function MemoItem() {
+  return (
+    <li className={cx('memo-item')}>
+      <h3>
+        타이틀
+        <div>
+          <button>
+            <FaCheck color="#CCCCCC" />
+          </button>
+          <button>
+            <TfiMoreAlt color="#CCCCCC" />
+          </button>
+        </div>
+      </h3>
+
+      <p>메모 본문입니다.</p>
+      <span>2024.01.11</span>
+    </li>
+  )
+}

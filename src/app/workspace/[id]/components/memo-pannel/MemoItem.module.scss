@@ -1,0 +1,55 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.memo-item {
+  padding: 1.2rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  border-radius: 1.2rem;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: color.$alert-secondary-50;
+
+    div button {
+      opacity: 1;
+    }
+  }
+
+  h3 {
+    @include mixin.flex(row, center, space-between);
+
+    @extend %typo-label-medium;
+    font-weight: 700;
+    color: color.$alert-secondary-900;
+
+    div {
+      display: flex;
+      gap: 0.4rem;
+
+      button {
+        width: 2rem;
+        height: 2rem;
+
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+    }
+  }
+
+  p {
+    @extend %typo-body-medium;
+    font-weight: 400;
+    color: color.$alert-secondary-900;
+  }
+
+  span {
+    @extend %typo-label-medium;
+    font-weight: 400;
+    color: color.$alert-secondary-400;
+  }
+}

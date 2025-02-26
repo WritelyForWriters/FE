@@ -1,0 +1,35 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.container {
+  @extend %typo-label-large;
+
+  padding: 1.2rem;
+  border-radius: 1rem;
+  background-color: color.$alert-secondary-20;
+}
+
+.planner-list {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+
+  overflow-y: auto;
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  li {
+    border-bottom: 1px solid color.$alert-secondary-50;
+    padding: 0.8rem 0 2rem 0;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0.8rem;
+    }
+  }
+}
