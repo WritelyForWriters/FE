@@ -5,8 +5,9 @@ import dynamic from 'next/dynamic'
 import { useState } from 'react'
 
 import { Controller, FieldError, RegisterOptions, useFormContext } from 'react-hook-form'
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
-import { MultiValueRemoveProps, components } from 'react-select'
+import { DropdownIndicatorProps, MultiValueRemoveProps, components } from 'react-select'
 
 import classNames from 'classnames/bind'
 
@@ -34,14 +35,6 @@ const Select = dynamic(() => import('react-select'), {
 
 const cx = classNames.bind(styles)
 
-const MultiValueRemove = (props: MultiValueRemoveProps) => {
-  return (
-    <components.MultiValueRemove {...props}>
-      <IoClose size={16} color="#CCCCCC" />
-    </components.MultiValueRemove>
-  )
-}
-
 export default function Dropdown({
   name,
   type,
@@ -63,6 +56,28 @@ export default function Dropdown({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const fieldValue = watch(name)
+
+  const DropdownIndicator = (props: DropdownIndicatorProps) => {
+    const {
+      selectProps: { menuIsOpen },
+    } = props
+
+    const IconComponent = menuIsOpen ? IoIosArrowUp : IoIosArrowDown
+
+    return (
+      <components.DropdownIndicator {...props}>
+        <IconComponent size={20} color="#B3B3B3" />
+      </components.DropdownIndicator>
+    )
+  }
+
+  const MultiValueRemove = (props: MultiValueRemoveProps) => {
+    return (
+      <components.MultiValueRemove {...props}>
+        <IoClose size={16} color="#CCCCCC" />
+      </components.MultiValueRemove>
+    )
+  }
 
   return (
     <>
@@ -95,13 +110,11 @@ export default function Dropdown({
               hideSelectedOptions={false}
               components={{
                 MultiValueRemove,
+                DropdownIndicator,
               }}
-              menuPortalTarget={document.getElementById('root-modal')}
-              styles={{
-                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              }}
+              menuPosition="fixed"
             />
-            {(isMenuOpen || fieldValue?.length !== 0) && (
+            {(isMenuOpen || (fieldValue && fieldValue.length !== 0)) && (
               <label className={cx('label', isRequired && 'required')}>{label}</label>
             )}
           </div>
