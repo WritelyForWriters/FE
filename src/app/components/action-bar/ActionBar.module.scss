@@ -5,6 +5,7 @@
 // 액션바 전체 컨테이너
 .action-bar-wrapper {
   @include mixin.display-flex();
+  position: relative;
   width: 100%;
   padding: 1.6rem;
   gap: 1rem;
@@ -23,7 +24,13 @@
 // 액션바 내 좌측 버튼 영억
 .action-bar-action-section {
   @include mixin.display-flex();
+  align-items: center;
   gap: 1.6rem;
+}
+
+.export-button-wrapper {
+  position: relative;
+  width: 14rem;
 }
 
 // 액션바 내 타이틀 및 안내 문구 영역
@@ -62,6 +69,7 @@
 .action-bar-extra-action-section {
   @include mixin.display-flex();
   gap: 1rem;
+
   .action-bar-tabs {
     @include mixin.display-flex();
     justify-content: center;
@@ -72,9 +80,6 @@
     padding: 0.4rem;
     gap: 0.8rem;
   }
-}
-
-.export-button {
 }
 
 .select-option {
