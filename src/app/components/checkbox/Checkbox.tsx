@@ -21,7 +21,7 @@ interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   options?: RegisterOptions
 }
 
-export default function Checkbox({ label, name, options, ...props }: CheckboxProps) {
+export default function Checkbox({ label, name, options, onChange, ...props }: CheckboxProps) {
   const { register, watch } = useFormContext()
   const checked = watch(name) ?? false
 
@@ -39,6 +39,10 @@ export default function Checkbox({ label, name, options, ...props }: CheckboxPro
         checked={checked}
         {...props}
         {...register(name, options)}
+        onChange={(e) => {
+          register(name).onChange(e)
+          onChange?.(e)
+        }}
       />
       <label className={cx('checkbox__label')}>{label}</label>
     </section>
