@@ -2,7 +2,9 @@
 
 import Image from 'next/image'
 
-import { InputHTMLAttributes, useState } from 'react'
+import { InputHTMLAttributes } from 'react'
+
+import { RegisterOptions, useFormContext } from 'react-hook-form'
 
 import checkedIcon from '/public/icons/checked.svg'
 import uncheckedIcon from '/public/icons/unchecked.svg'
@@ -15,31 +17,28 @@ const cx = classNames.bind(styles)
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
-  checked?: boolean
+  name: string
+  options?: RegisterOptions
 }
 
-export default function Checkbox({ label, checked = false, ...props }: CheckboxProps) {
-  const [isChecked, setIsChecked] = useState(checked)
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(e.target.checked)
-
-    if (props.onChange) props.onChange(e)
-  }
+export default function Checkbox({ label, name, options, ...props }: CheckboxProps) {
+  const { register, watch } = useFormContext()
+  const checked = watch(name) ?? false
 
   return (
     <section className={cx('checkbox')}>
-      {isChecked ? (
-        <Image src={checkedIcon.src} width={20} height={20} alt="unchecked-image" />
-      ) : (
-        <Image src={uncheckedIcon.src} width={20} height={20} alt="checked-image" />
-      )}
+      <Image
+        src={checked ? checkedIcon.src : uncheckedIcon.src}
+        width={20}
+        height={20}
+        alt={checked ? 'checked' : 'unchecked'}
+      />
       <input
         className={cx('checkbox__input')}
         type="checkbox"
-        checked={isChecked}
-        onChange={handleChange}
+        checked={checked}
         {...props}
+        {...register(name, options)}
       />
       <label className={cx('checkbox__label')}>{label}</label>
     </section>

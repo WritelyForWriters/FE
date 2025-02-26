@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode } from 'react'
 
 import { DefaultValues, FieldValues, FormProvider, useForm } from 'react-hook-form'
