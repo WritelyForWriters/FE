@@ -20,6 +20,12 @@ a {
   text-decoration: none;
 }
 
+input,
+textarea,
+button {
+  font-family: inherit;
+}
+
 button {
   border: none;
   background: none;
