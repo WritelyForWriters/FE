@@ -1,3 +1,4 @@
+@use '@styles/typography';
 @use './colors' as color;
 
 @mixin flex($direction: row, $align: center, $justify: center, $wrap: nowrap) {
@@ -59,6 +60,12 @@
       &__label {
         @extend %typo-label-medium;
         color: color.$alert-secondary-900;
+      }
+
+      &__remove {
+        &:hover {
+          background-color: color.$alert-secondary-50;
+        }
       }
     }
   }
