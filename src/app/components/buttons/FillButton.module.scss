@@ -1,36 +1,18 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-/* variable */
-$styled-font: map.get(Styled.$typo, Label, Large);
-$secondary-0: map-get(Styled.$colors, Alert, Secondary0);
-$secondary-50: map-get(Styled.$colors, Alert, Secondary50);
-$secondary-100: map-get(Styled.$colors, Alert, Secondary100);
-$secondary-200: map-get(Styled.$colors, Alert, Secondary200);
-$secondary-900: map-get(Styled.$colors, Alert, Secondary900);
-
-/* mixin */
-// display: flex에 관한 mixin
-@mixin display-flex() {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-}
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography';
 
 .fill-button {
-  @include display-flex();
-  justify-content: center;
-  align-items: center;
+  @include mixin.flex();
   gap: 0.4rem;
   padding: 1.2rem;
   border-radius: 1rem;
-  font: $styled-font;
+  @extend %typo-label-large;
 
   &.primary {
     &.square {
-      background-color: $secondary-900;
-      color: $secondary-0;
+      background-color: color.$alert-secondary-900;
+      color: color.$alert-secondary-0;
 
       &.medium {
         padding: 1rem;
@@ -39,9 +21,9 @@ $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
   }
 
   &.secondary {
-    color: $secondary-900;
+    color: color.$alert-secondary-900;
     &.square {
-      background-color: $secondary-100;
+      background-color: color.$alert-secondary-100;
 
       &.large {
         border-radius: 1rem;
@@ -58,7 +40,7 @@ $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
       }
 
       &.small {
-        background-color: $secondary-50;
+        background-color: color.$alert-secondary-50;
         padding: 0.4rem 0.8rem 0.4rem 0.8rem;
         border-radius: 0.8rem;
 
@@ -74,7 +56,7 @@ $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
     }
 
     &.pill {
-      background-color: $secondary-50;
+      background-color: color.$alert-secondary-50;
       padding: 0.4rem 0.8rem 0.4rem 0.8rem;
 
       &.small {
@@ -93,11 +75,11 @@ $secondary-900: map-get(Styled.$colors, Alert, Secondary900);
   }
 
   &:hover {
-    background-color: $secondary-200 !important;
+    background-color: color.$alert-secondary-200 !important;
   }
 
   &:disabled {
-    background-color: $secondary-900 !important;
+    background-color: color.$alert-secondary-900 !important;
     opacity: 60%;
     cursor: not-allowed;
   }

@@ -1,27 +1,8 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-/* variable */
-$secondary-900: map.get(Styled.$colors, Alert, Secondary900);
-
-/* mixin */
-// display: flex에 관한 mixin
-@mixin display-flex() {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-}
-
-// typography
-@mixin typography($category, $size) {
-  font: map.get(Styled.$typo, $category, $size);
-}
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
 
 .root-modal[open] {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  @include mixin.flex(column, flex-start, null, null);
   gap: 2.4rem;
   min-width: 400px;
   border: none;
@@ -30,26 +11,30 @@ $secondary-900: map.get(Styled.$colors, Alert, Secondary900);
   position: fixed;
   inset: 0;
   margin: auto;
-  color: $secondary-900;
+  color: color.$alert-secondary-900;
   animation: slide-in-from-top 0.35s ease-out;
 
-  .content-section {
-    display: flex;
-    flex-direction: column;
+  .title-section {
+    @include mixin.flex(column, null, null, null);
     gap: 0.8rem;
+    width: 100%;
     cursor: default;
 
     h2 {
-      @include typography('Title', 'Medium');
+      @extend %typo-title-medium;
     }
 
     p {
-      @include typography('Body', 'Medium');
+      @extend %typo-body-medium;
     }
   }
 
+  .content-section {
+    width: 100%;
+  }
+
   .button-section {
-    display: flex;
+    @include mixin.display-flex();
     align-self: flex-end;
     gap: 0.8rem;
   }
