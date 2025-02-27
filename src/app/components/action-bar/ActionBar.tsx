@@ -2,15 +2,21 @@
 
 import { useRef, useState } from 'react'
 
+import { SHORTCUTS } from 'constants/workspace'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FiInfo } from 'react-icons/fi'
+import { IoClose } from 'react-icons/io5'
 import { MdHome } from 'react-icons/md'
+import { Tooltip } from 'react-tooltip'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
+import Dropdown from '@components/dropdown/Dropdown'
 import Modal from '@components/modal/Modal'
 import SelectMenu from '@components/select-menu/SelectMenu'
 import EditModeSwitch from '@components/switch/EditModeSwitch'
+
+import { useCollapsed } from '@hooks/common/useCollapsed'
 
 import classNames from 'classnames/bind'
 
@@ -50,8 +56,14 @@ export default function ActionBar({ usage }: ActionBarProps) {
   // full: 전체 내보내기, toc: 목차 내보내기
   const [exportMode, setExportMode] = useState<exportMode>()
 
+  // prevent lint error
+  console.log(exportMode)
+
   // 타이틀명 state
   const [title, setTitle] = useState('타이틀')
+
+  // 단축키 도움말 버튼 클릭 여부 구분하는 state
+  const { isOpen, onOpen, onClose } = useCollapsed(false)
 
   // 홈 버튼 클릭 트리거 이벤트
   const handleHomeClick = () => {
@@ -124,6 +136,30 @@ export default function ActionBar({ usage }: ActionBarProps) {
   const showDeleteButton =
     (usage === 'workspace' && !isContentEditing) || (usage === 'planner' && hasSaved)
 
+  // 도움말 컴포넌트
+  const ShortcutHelp = () => {
+    return (
+      <>
+        <section className={cx('tooltip__title-section')}>
+          <span>툴바 단축키</span>
+          <button onClick={onClose}>
+            <IoClose size={20} color="#B3B3B3" />
+          </button>
+        </section>
+        <section className={cx('tooltip__content-section')}>
+          <ul>
+            {SHORTCUTS.map((item, idx) => (
+              <li key={idx}>
+                <span>{item.title}</span>
+                <span>{item.shortcut}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </>
+    )
+  }
+
   return (
     <>
       <Modal
@@ -136,9 +172,59 @@ export default function ActionBar({ usage }: ActionBarProps) {
         subtitle="내보낼 파일의 형태와 형식을 지정해 주세요."
         content={
           <FormProvider {...methods}>
-            <form>
-              {/* 드롭다운 컴포넌트 머지 되면 반영 */}
-              <span>{exportMode === 'full' ? '작품 전체' : '목차'} 내보내기</span>
+            <form className={cx('form')}>
+              <Dropdown
+                name="exportType"
+                type="outlined"
+                placeholder="파일 형태(단일 파일, 여러 파일)"
+                label="파일 형태"
+                options={[
+                  {
+                    label: '하나의 파일',
+                    value: '하나의 파일',
+                  },
+                  {
+                    label: '여러 개의 파일',
+                    value: '여러 개의 파일',
+                  },
+                ]}
+                rules={{
+                  required: {
+                    value: true,
+                    message: '필수 입력 항목입니다.',
+                  },
+                }}
+              />
+              <Dropdown
+                name="fileFormat"
+                type="outlined"
+                placeholder="파일 포맷(pdf, docx, hwpx, epub) "
+                label="파일 포맷"
+                options={[
+                  {
+                    label: 'PDF 문서(.pdf)',
+                    value: 'PDF 문서(.pdf)',
+                  },
+                  {
+                    label: 'Microsoft Word(.docx)',
+                    value: 'Microsoft Word(.docx)',
+                  },
+                  {
+                    label: '한글 파일(.hwpx)',
+                    value: '한글 파일(.hwpx)',
+                  },
+                  {
+                    label: 'EPUB 출판물(.epub)',
+                    value: 'EPUB 출판물(.epub)',
+                  },
+                ]}
+                rules={{
+                  required: {
+                    value: true,
+                    message: '필수 입력 항목입니다.',
+                  },
+                }}
+              />
             </form>
           </FormProvider>
         }
@@ -212,10 +298,23 @@ export default function ActionBar({ usage }: ActionBarProps) {
           <section className={cx('action-bar-extra-action-section')}>
             {usage === 'workspace' ? (
               <>
-                {/* Note: 해당 버튼 클릭 시 도움말 메뉴 오픈 */}
-                <button>
+                <button
+                  data-tooltip-id="shortcut-help-tooltip"
+                  data-tooltip-place="bottom-end"
+                  onClick={onOpen}
+                >
                   <FiInfo size={20} color="#CCCCCC" />
                 </button>
+                <Tooltip
+                  noArrow
+                  openOnClick
+                  clickable
+                  isOpen={isOpen}
+                  id="shortcut-help-tooltip"
+                  className={cx('tooltip')}
+                >
+                  <ShortcutHelp />
+                </Tooltip>
                 <menu className={cx('action-bar-tabs')}>
                   <EditModeSwitch
                     isSelected={!isContentEditing}

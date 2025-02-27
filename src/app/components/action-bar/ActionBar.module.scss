@@ -2,6 +2,12 @@
 @use '@styles/typography';
 @use '@styles/colors' as color;
 
+.form {
+  @include mixin.display-flex();
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
 // 액션바 전체 컨테이너
 .action-bar-wrapper {
   @include mixin.display-flex();
@@ -69,6 +75,50 @@
 .action-bar-extra-action-section {
   @include mixin.display-flex();
   gap: 1rem;
+
+  .tooltip {
+    @include mixin.display-flex();
+    flex-direction: column;
+    width: 244px;
+    padding: 1.6rem 2rem;
+    gap: 1.6rem;
+    border-radius: 1.6rem;
+    background-color: color.$alert-secondary-20;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+
+    &__title-section {
+      @include mixin.display-flex();
+      justify-content: space-between;
+      align-items: center;
+
+      span {
+        @extend %typo-label-large;
+        color: color.$alert-secondary-900;
+      }
+    }
+
+    &__content-section {
+      ul {
+        @include mixin.display-flex();
+        flex-direction: column;
+        gap: 0.8rem;
+
+        li {
+          @include mixin.display-flex();
+          justify-content: space-between;
+          @extend %typo-body-medium;
+
+          span:nth-child(1) {
+            color: color.$alert-secondary-600;
+          }
+
+          span:nth-child(2) {
+            color: color.$alert-secondary-900;
+          }
+        }
+      }
+    }
+  }
 
   .action-bar-tabs {
     @include mixin.display-flex();
