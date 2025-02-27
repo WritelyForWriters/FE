@@ -25,6 +25,12 @@
             @include mixin.select-control-base();
             background-color: color.$alert-secondary-50;
             border: none;
+
+            &--is-focused,
+            &--menu-is-open,
+            &:hover {
+              background-color: color.$alert-secondary-100;
+            }
           }
 
           &__value-container {
@@ -47,15 +53,12 @@
         .react-select {
           &__control {
             @include mixin.select-control-base();
-            border: 2px solid color.$alert-secondary-50;
+            border: 1px solid color.$alert-secondary-50;
 
             &--is-focused,
-            &--menu-is-open {
-              border: 1px solid color.$alert-secondary-900;
-            }
-
+            &--menu-is-open,
             &:hover {
-              border: 2px solid color.$alert-secondary-50;
+              border: 1px solid color.$alert-secondary-900;
             }
           }
 
