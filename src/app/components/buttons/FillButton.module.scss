@@ -1,0 +1,86 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography';
+
+.fill-button {
+  @include mixin.flex();
+  gap: 0.4rem;
+  padding: 1.2rem;
+  border-radius: 1rem;
+  @extend %typo-label-large;
+
+  &.primary {
+    &.square {
+      background-color: color.$alert-secondary-900;
+      color: color.$alert-secondary-0;
+
+      &.medium {
+        padding: 1rem;
+      }
+    }
+  }
+
+  &.secondary {
+    color: color.$alert-secondary-900;
+    &.square {
+      background-color: color.$alert-secondary-100;
+
+      &.large {
+        border-radius: 1rem;
+      }
+
+      &.medium {
+        padding: 0.8rem 1.2rem;
+        border-radius: 0.8rem;
+
+        &.only {
+          padding: 0.1rem;
+          border-radius: 1rem;
+        }
+      }
+
+      &.small {
+        background-color: color.$alert-secondary-50;
+        padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+        border-radius: 0.8rem;
+
+        &.leading,
+        &.only {
+          padding: 0.4rem;
+        }
+
+        &.trailing {
+          padding: 0.4rem 0.4rem 0.4rem 0.8rem;
+        }
+      }
+    }
+
+    &.pill {
+      background-color: color.$alert-secondary-50;
+      padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+
+      &.small {
+        &.only {
+          padding: 0.4rem;
+        }
+      }
+
+      &.xsmall {
+        border-radius: 4rem;
+        &.only {
+          padding: 0.4rem;
+        }
+      }
+    }
+  }
+
+  &:hover {
+    background-color: color.$alert-secondary-200 !important;
+  }
+
+  &:disabled {
+    background-color: color.$alert-secondary-900 !important;
+    opacity: 60%;
+    cursor: not-allowed;
+  }
+}

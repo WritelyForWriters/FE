@@ -45,11 +45,11 @@ export default forwardRef(function Modal(
   return (
     <Portal>
       <dialog ref={dialog} className={cx('root-modal')}>
-        <section className={cx('content-section')}>
+        <section className={cx('title-section')}>
           <h2>{title}</h2>
           {subtitle && <p>{subtitle}</p>}
-          {content && <div>{content}</div>}
         </section>
+        {content && <section className={cx('content-section')}>{content}</section>}
         <section className={cx('button-section')}>
           <TextButton size="large" onClick={onCancel} style={{ width: 88, height: 40 }}>
             {cancelText}
