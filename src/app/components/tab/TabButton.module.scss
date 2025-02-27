@@ -1,0 +1,42 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.large {
+  flex: 1;
+  padding-bottom: 0.8rem;
+  position: relative;
+
+  @extend %typo-title-small;
+  color: color.$alert-secondary-400;
+  font-weight: 600;
+
+  &.active {
+    color: color.$alert-secondary-900;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: color.$alert-secondary-900;
+    }
+  }
+}
+
+.medium {
+  @include mixin.flex(row, center, center);
+
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+
+  @extend %typo-label-medium;
+  color: color.$alert-secondary-900;
+  font-weight: 600;
+
+  &.active {
+    background-color: color.$alert-secondary-100;
+  }
+}
