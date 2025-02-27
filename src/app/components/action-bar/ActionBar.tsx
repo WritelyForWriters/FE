@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 
 import { SHORTCUTS } from 'constants/workspace'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -282,7 +282,7 @@ export default function ActionBar({ usage }: ActionBarProps) {
                 <input
                   className={cx('action-bar-input')}
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                   onBlur={() => setIsTitleEditing(false)}
                   onKeyDown={handleKeyDown}
                 />
