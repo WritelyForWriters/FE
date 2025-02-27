@@ -2,12 +2,12 @@
 
 import dynamic from 'next/dynamic'
 
-import { useState } from 'react'
-
 import { Controller, FieldError, RegisterOptions, useFormContext } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
 import { DropdownIndicatorProps, MultiValueRemoveProps, components } from 'react-select'
+
+import { useCollapsed } from '@hooks/common/useCollapsed'
 
 import classNames from 'classnames/bind'
 
@@ -53,7 +53,7 @@ export default function Dropdown({
 
   const error = errors[name] as FieldError
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { isOpen, onClose, onOpen } = useCollapsed(false)
 
   const fieldValue = watch(name)
 
@@ -89,21 +89,16 @@ export default function Dropdown({
           <div className={cx('container')}>
             <Select
               {...field}
-              className={cx(
-                'custom-select',
-                type,
-                isRequired && 'required',
-                !isMenuOpen && 'closed',
-              )}
-              placeholder={!isMenuOpen && placeholder}
+              className={cx('custom-select', type, isRequired && 'required', !isOpen && 'closed')}
+              placeholder={!isOpen && placeholder}
               options={options}
               isSearchable={false}
               classNamePrefix="react-select"
               onChange={(selectedOption) => {
                 field.onChange(selectedOption)
               }}
-              onMenuOpen={() => setIsMenuOpen(true)}
-              onMenuClose={() => setIsMenuOpen(false)}
+              onMenuOpen={() => onOpen}
+              onMenuClose={() => onClose}
               value={field.value}
               isMulti={isMulti}
               closeMenuOnSelect={!isMulti}
@@ -114,7 +109,7 @@ export default function Dropdown({
               }}
               menuPosition="fixed"
             />
-            {(isMenuOpen || (fieldValue && fieldValue.length !== 0)) && (
+            {(isOpen || (fieldValue && fieldValue.length !== 0)) && (
               <label className={cx('label', isRequired && 'required')}>{label}</label>
             )}
           </div>
