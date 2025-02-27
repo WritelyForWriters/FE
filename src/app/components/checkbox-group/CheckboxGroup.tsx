@@ -1,10 +1,11 @@
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, RegisterOptions, useFormContext } from 'react-hook-form'
 
 import Checkbox from '@components/checkbox/Checkbox'
 
 type CheckBox = {
   name: string
   label: string
+  options?: RegisterOptions
 }
 
 interface CheckboxGroupProps {
@@ -47,14 +48,19 @@ export default function CheckboxGroup({
               <Checkbox
                 label={checkAllCheckbox.label}
                 name={checkAllCheckbox.name}
+                options={checkAllCheckbox.options}
                 onChange={(e) => handleAllChange(e.target.checked)}
-                style={{ color: 'red' }}
               />
             </div>
 
             {checkboxes.map((box, index) => (
               <div key={box.name + index} className={checkboxClassName}>
-                <Checkbox label={box.label} name={box.name} onChange={handleSingleChange} />
+                <Checkbox
+                  label={box.label}
+                  name={box.name}
+                  options={box.options}
+                  onChange={handleSingleChange}
+                />
               </div>
             ))}
           </div>
