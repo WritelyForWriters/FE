@@ -1,9 +1,4 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-@mixin typography($category, $size) {
-  font: map.get(Styled.$typo, $category, $size);
-}
+@use '@styles/typography';
 
 .section {
   padding: 1.6rem;
@@ -13,7 +8,7 @@
 
 /* Basic editor styles */
 .tiptap {
-  @include typography('Body', 'Large');
+  @extend %typo-body-large;
 
   :first-child {
     margin-top: 0;

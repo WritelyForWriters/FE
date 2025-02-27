@@ -1,15 +1,5 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-// Font
-@mixin typography($category, $size) {
-  font: map.get(Styled.$typo, $category, $size);
-}
-
-// Color
-$Secondary0: map.get(Styled.$colors, Alert, Secondary0);
-$Secondary50: map.get(Styled.$colors, Alert, Secondary50);
-$Primary500: map.get(Styled.$colors, Alert, Primary500);
+@use '@styles/typography';
+@use '@styles/colors' as color;
 
 /* Bubble menu */
 .bubble-menu {
@@ -22,17 +12,18 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
   gap: 0.8rem;
 
   border-radius: 1rem;
-  background: $Secondary0;
+  background: color.$alert-secondary-0;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
 
   > div:not(.text-mark) {
     position: relative;
 
     > button {
-      @include typography('Label', 'Large');
+      @extend %typo-label-large;
 
       padding: 0.4rem;
       padding-left: 0.8rem;
+
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -42,7 +33,7 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
       background-color: unset;
 
       &:hover {
-        background-color: $Secondary50;
+        background-color: color.$alert-secondary-50;
       }
     }
   }
@@ -54,7 +45,7 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
   align-items: center;
 
   button {
-    @include typography('Label', 'Large');
+    @extend %typo-label-large;
 
     height: 28px;
     display: flex;
@@ -63,11 +54,11 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
     border-radius: 0.8rem;
 
     &:hover {
-      background-color: $Secondary50;
+      background-color: color.$alert-secondary-50;
     }
 
     &.is-active {
-      color: $Primary500;
+      color: color.$alert-primary-500;
     }
   }
 }
@@ -75,7 +66,7 @@ $Primary500: map.get(Styled.$colors, Alert, Primary500);
 .line {
   width: 1px;
   height: 20px;
-  background: $Secondary50;
+  background: color.$alert-secondary-50;
 }
 
 .bold {
