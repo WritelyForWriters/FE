@@ -1,24 +1,11 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-/* variable */
-$styled-font: map.get(Styled.$typo, Label, Large);
-
-/* mixin */
-// display: flex에 관한 mixin
-@mixin display-flex() {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-}
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography';
 
 .text-button {
-  @include display-flex();
-  justify-content: center;
-  align-items: center;
-  font: map.get(Styled.$typo, Label, Large);
-  color: map.get(Styled.$colors, Alert, Secondary900);
+  @include mixin.flex();
+  @extend %typo-label-large;
+  color: color.$alert-secondary-900;
   gap: 0.4rem;
 
   &.square {
@@ -49,11 +36,11 @@ $styled-font: map.get(Styled.$typo, Label, Large);
   }
 
   &:active {
-    background-color: map.get(Styled.$colors, Alert, Secondary200) !important;
+    background-color: color.$alert-secondary-200 !important;
   }
 
   &:hover {
-    background-color: map.get(Styled.$colors, Alert, Secondary50);
+    background-color: color.$alert-secondary-50;
     border-radius: 0.8rem;
   }
 

@@ -1,0 +1,108 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.container {
+  position: relative;
+
+  .custom-select {
+    &.required.closed {
+      :global {
+        .react-select__placeholder {
+          position: relative;
+
+          &::after {
+            @include mixin.required-dot();
+          }
+        }
+      }
+    }
+
+    &.filled {
+      :global {
+        .react-select {
+          &__control {
+            @include mixin.select-control-base();
+            background-color: color.$alert-secondary-50;
+            border: none;
+
+            &--is-focused,
+            &--menu-is-open,
+            &:hover {
+              background-color: color.$alert-secondary-100;
+            }
+          }
+
+          &__value-container {
+            @include mixin.value-container-styles();
+          }
+
+          &__indicators {
+            @include mixin.indicators-styles();
+          }
+
+          &__menu {
+            @include mixin.menu-styles();
+          }
+        }
+      }
+    }
+
+    &.outlined {
+      :global {
+        .react-select {
+          &__control {
+            @include mixin.select-control-base();
+            border: 1px solid color.$alert-secondary-50;
+
+            &--is-focused,
+            &--menu-is-open,
+            &:hover {
+              border: 1px solid color.$alert-secondary-900;
+            }
+          }
+
+          &__value-container {
+            @include mixin.value-container-styles();
+          }
+
+          &__indicators {
+            @include mixin.indicators-styles();
+          }
+
+          &__menu {
+            @include mixin.menu-styles();
+          }
+        }
+      }
+    }
+  }
+
+  .label {
+    :global {
+      position: absolute;
+      top: 0.8rem;
+      left: 1.6rem;
+      @extend %typo-label-medium;
+      color: color.$alert-secondary-500;
+    }
+
+    &.required {
+      &::after {
+        position: absolute;
+        content: '';
+        width: 0.4rem;
+        height: 0.4rem;
+        background-color: color.$alert-failure;
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+.error-message {
+  :global {
+    @extend %typo-body-medium;
+    color: color.$alert-failure;
+  }
+}
