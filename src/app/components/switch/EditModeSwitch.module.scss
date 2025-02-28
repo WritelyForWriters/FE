@@ -1,0 +1,22 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.default {
+  @extend %typo-label-large;
+  color: color.$alert-secondary-200;
+  border-radius: 1rem;
+  padding: 0.8rem;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.selected {
+  @extend %typo-label-large;
+  background-color: color.$alert-secondary-900;
+  color: color.$alert-secondary-0;
+  border-radius: 0.8rem;
+  padding: 0.8rem 1.2rem;
+}
