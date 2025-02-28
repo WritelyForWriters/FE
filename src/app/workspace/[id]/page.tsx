@@ -1,16 +1,11 @@
 // 작업공간
-import ActionBar from './components/ActionBar/ActionBar'
-import MemoPanel from './components/MemoPanel/MemoPanel'
-import MemoPannel from './components/memo-pannel/MemoPannel'
-import PlannerPannel from './components/planner-pannel/PlannerPannel'
+import ActionBar from '@components/action-bar/ActionBar'
 
 export default function Page() {
   return (
-    <>
-      <ActionBar />
-      <MemoPanel />
-      <MemoPannel />
-      <PlannerPannel />
-    </>
+    <div style={{ height: '100vh' }}>
+      <ActionBar usage="workspace" />
+      <ActionBar usage="planner" />
+    </div>
   )
 }

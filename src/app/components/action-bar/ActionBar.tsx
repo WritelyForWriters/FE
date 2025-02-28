@@ -24,11 +24,11 @@ import styles from './ActionBar.module.scss'
 
 const cx = classNames.bind(styles)
 
-type usage = 'workspace' | 'planner'
-type exportMode = 'full' | 'toc'
+type Usage = 'workspace' | 'planner'
+type ExportMode = 'full' | 'toc'
 
 interface ActionBarProps {
-  usage: usage
+  usage: Usage
 }
 
 interface ModalHandler {
@@ -54,7 +54,7 @@ export default function ActionBar({ usage }: ActionBarProps) {
 
   // 내보내기 구분 state
   // full: 전체 내보내기, toc: 목차 내보내기
-  const [exportMode, setExportMode] = useState<exportMode>()
+  const [exportMode, setExportMode] = useState<ExportMode>()
 
   // prevent lint error
   console.log(exportMode)
@@ -71,7 +71,7 @@ export default function ActionBar({ usage }: ActionBarProps) {
   }
 
   // 저장 버튼 클릭 트리거 이벤트
-  const handleSave = (usage: usage) => {
+  const handleSave = () => {
     setHasSaved(true)
 
     alert('저장 완료!')
@@ -85,7 +85,7 @@ export default function ActionBar({ usage }: ActionBarProps) {
   }
 
   // 삭제 버튼 클릭 트리거 이벤트
-  const handleDelete = (usage: usage) => {
+  const handleDelete = () => {
     // 사용처에 따라 다르게 처리
     switch (usage) {
       case 'workspace':
@@ -119,8 +119,8 @@ export default function ActionBar({ usage }: ActionBarProps) {
     ref.current?.open()
   }
 
-  const handleExportSelection = (exportMode: exportMode) => {
-    setExportMode(exportMode)
+  const handleExportSelection = (mode: ExportMode) => {
+    setExportMode(mode)
     setIsExportMenuOpen(false)
     handleModalOpen()
   }
@@ -237,7 +237,7 @@ export default function ActionBar({ usage }: ActionBarProps) {
               <MdHome size={24}></MdHome>
             </button>
             {showSaveButton && (
-              <TextButton size="large" onClick={() => handleSave(usage)}>
+              <TextButton size="large" onClick={() => handleSave()}>
                 저장하기
               </TextButton>
             )}
@@ -271,7 +271,7 @@ export default function ActionBar({ usage }: ActionBarProps) {
               </div>
             )}
             {showDeleteButton && (
-              <TextButton size="large" onClick={() => handleDelete(usage)}>
+              <TextButton size="large" onClick={() => handleDelete()}>
                 삭제하기
               </TextButton>
             )}
