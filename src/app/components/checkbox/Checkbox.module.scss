@@ -22,5 +22,6 @@
 
   &__label {
     @include typo.typo(1.4rem, 400, 2.2rem);
+    color: color.$alert-secondary-900;
   }
 }

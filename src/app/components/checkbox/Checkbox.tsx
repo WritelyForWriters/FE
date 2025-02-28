@@ -34,6 +34,7 @@ export default function Checkbox({ label, name, options, onChange, ...props }: C
         alt={checked ? 'checked' : 'unchecked'}
       />
       <input
+        id={name}
         className={cx('checkbox__input')}
         type="checkbox"
         checked={checked}
@@ -44,7 +45,9 @@ export default function Checkbox({ label, name, options, onChange, ...props }: C
           onChange?.(e)
         }}
       />
-      <label className={cx('checkbox__label')}>{label}</label>
+      <label className={cx('checkbox__label')} htmlFor={name}>
+        {label}
+      </label>
     </section>
   )
 }
