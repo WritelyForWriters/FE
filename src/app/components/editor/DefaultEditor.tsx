@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
@@ -20,6 +22,9 @@ import styles from './DefaultEditor.module.scss'
 // TODO 단축키 '/'로 버블메뉴 활성화
 
 export default function DefaultEditor() {
+  // TODO 전역상태관리
+  const [activeMenu, setActiveMenu] = useState<'defaultToolbar' | 'aiToolbar'>('defaultToolbar')
+
   const editor = useEditor({
     extensions: [
       Document,
@@ -42,6 +47,7 @@ export default function DefaultEditor() {
     immediatelyRender: false,
     content: `
       Nothing is impossible, the word itself says “I’m possible!”
+      <p></p>
       <p>Audrey Hepburn</p>
     `,
   })
@@ -52,8 +58,34 @@ export default function DefaultEditor() {
 
   return (
     <section className={styles.section}>
-      <BubbleMenu editor={editor} tippyOptions={{ duration: 100, maxWidth: 'none' }}>
-        <Toolbar editor={editor} />
+      <BubbleMenu
+        editor={editor}
+        tippyOptions={{
+          duration: 100,
+          maxWidth: 'none',
+          onHidden: () => setActiveMenu('defaultToolbar'),
+        }}
+        // --shouldShow: 버블 메뉴 표시를 제어하는 콜백
+        shouldShow={({ state }) => {
+          const { selection } = state
+          // --드래그한 text가 있다면 버블메뉴 활성화
+          if (!selection.empty) {
+            return true
+          }
+          return false
+        }}
+      >
+        {activeMenu === 'defaultToolbar' ? (
+          <>
+            <Toolbar editor={editor} />
+            <button onClick={() => setActiveMenu('aiToolbar')}>프롬프트</button>
+          </>
+        ) : (
+          <div id="defaultToolbar">
+            <input placeholder="....." />
+            <button onClick={() => setActiveMenu('defaultToolbar')}>기본</button>
+          </div>
+        )}
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
     </section>
