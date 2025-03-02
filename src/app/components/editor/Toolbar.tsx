@@ -30,9 +30,19 @@ function ToolbarButton({ children, isActive, onClick, className }: ToolbarButton
 
 interface ToolbarProps {
   editor: Editor
+  handleActiveMenu: () => void
 }
 
-export default function Toolbar({ editor }: ToolbarProps) {
+/**
+ * TODO
+ * [ ] text-highlighter
+ * [x] 프롬프트 입력창 띄우기
+ * [ ] 자동 구간선택 부분 확인
+ * [ ] 서브메뉴 띄우기
+ * [ ] 텍스트 대체
+ */
+
+export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
   const [isTextFormatMenuOpen, setIsTextFormatMenuOpen] = useState(false)
   const [isTextAlignMenuOpen, setIsTextAlignMenuOpen] = useState(false)
   const [isAiOption, setIsAiOption] = useState(false)
@@ -195,7 +205,9 @@ export default function Toolbar({ editor }: ToolbarProps) {
             <Image src="/icons/ai-option4.svg" alt="자유대화" width={20} height={20} />
             자유 대화
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+          <SelectMenu.Option
+            option={{ className: styles['select-option'], handleAction: handleActiveMenu }}
+          >
             <Image src="/icons/ai-option2.svg" alt="수동수정" width={20} height={20} />
             수동 수정
           </SelectMenu.Option>

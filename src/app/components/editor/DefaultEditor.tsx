@@ -15,6 +15,7 @@ import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import BlockquoteExtension from '@extensions/Blockquote'
 import Indent from '@extensions/Indent'
 
+import PropmptInput from './PromptInput'
 import Toolbar from './Toolbar'
 
 import styles from './DefaultEditor.module.scss'
@@ -52,6 +53,10 @@ export default function DefaultEditor() {
     `,
   })
 
+  const handleActiveMenu = () => {
+    setActiveMenu('aiToolbar')
+  }
+
   if (!editor) {
     return null
   }
@@ -76,15 +81,9 @@ export default function DefaultEditor() {
         }}
       >
         {activeMenu === 'defaultToolbar' ? (
-          <>
-            <Toolbar editor={editor} />
-            <button onClick={() => setActiveMenu('aiToolbar')}>프롬프트</button>
-          </>
+          <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
         ) : (
-          <div id="defaultToolbar">
-            <input placeholder="....." />
-            <button onClick={() => setActiveMenu('defaultToolbar')}>기본</button>
-          </div>
+          <PropmptInput />
         )}
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
