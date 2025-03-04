@@ -1,22 +1,10 @@
 'use client'
 
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import { ReactNode, createContext, useContext, useState } from 'react'
 
-import { FaCircleCheck, FaCircleExclamation } from 'react-icons/fa6'
-
-import classNames from 'classnames/bind'
-
-import styles from './toast.module.scss'
-
-const cx = classNames.bind(styles)
+import { Toast } from './Toast'
 
 type ToastType = 'success' | 'warning'
-
-interface ToastProps {
-  message: string
-  onClose: () => void
-  type?: ToastType
-}
 
 interface ToastContextType {
   showToast: (type: ToastType, message: string) => void
@@ -30,26 +18,6 @@ export function useToast() {
     throw new Error('useToast must be used within a ToastProvider')
   }
   return context.showToast
-}
-
-function Toast({ type = 'success', message, onClose }: ToastProps) {
-  useEffect(() => {
-    const timer = setTimeout(onClose, 3000)
-    return () => clearTimeout(timer)
-  }, [onClose])
-
-  return (
-    <div className={cx('toast-warpper')}>
-      <div className={cx('toast')}>
-        {type === 'success' ? (
-          <FaCircleCheck size={20} color="#20ACE8" />
-        ) : (
-          <FaCircleExclamation size={20} color="#FF3B30" />
-        )}
-        {message}
-      </div>
-    </div>
-  )
 }
 
 interface ToastProviderProps {

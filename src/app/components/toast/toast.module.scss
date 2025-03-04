@@ -2,7 +2,7 @@
 @use "@styles/typography" as typo;
 @use "@styles/colors" as color;
 
-.toast-warpper {
+.toast-wrapper {
   @include mixin.flex();
 
   position: fixed;
@@ -27,6 +27,7 @@
   border-radius: 1.2rem;
 
   color: color.$alert-secondary-0;
+  box-shadow: 0 0 2rem rgba(#121212, 0.3);
 }
 
 @keyframes fadeIn {
