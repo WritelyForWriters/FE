@@ -9,6 +9,9 @@
   top: 8rem;
 
   width: 100dvw;
+  opacity: 1;
+
+  animation: fadeIn 0.3s ease-out;
 }
 
 .toast {
@@ -24,4 +27,13 @@
   border-radius: 1.2rem;
 
   color: color.$alert-secondary-0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
