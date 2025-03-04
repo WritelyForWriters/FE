@@ -2,6 +2,14 @@
 
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 
+import { FaCircleCheck, FaCircleExclamation } from 'react-icons/fa6'
+
+import classNames from 'classnames/bind'
+
+import styles from './toast.module.scss'
+
+const cx = classNames.bind(styles)
+
 type ToastType = 'success' | 'warning'
 
 interface ToastProps {
@@ -30,7 +38,18 @@ function Toast({ type = 'success', message, onClose }: ToastProps) {
     return () => clearTimeout(timer)
   }, [onClose])
 
-  return <div>{type + message}</div>
+  return (
+    <div className={cx('toast-warpper')}>
+      <div className={cx('toast')}>
+        {type === 'success' ? (
+          <FaCircleCheck size={20} color="#20ACE8" />
+        ) : (
+          <FaCircleExclamation size={20} color="#FF3B30" />
+        )}
+        {message}
+      </div>
+    </div>
+  )
 }
 
 interface ToastProviderProps {
