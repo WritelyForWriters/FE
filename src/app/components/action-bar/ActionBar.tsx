@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, useRef, useState } from 'react'
+import { ChangeEvent, KeyboardEvent, useRef, useState } from 'react'
 
 import { SHORTCUTS } from 'constants/workspace'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -105,7 +105,7 @@ export default function ActionBar({ usage }: ActionBarProps) {
   }
 
   // 엔터키 트리거 이벤트
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setIsTitleEditing(false)
     }
