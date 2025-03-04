@@ -4,19 +4,19 @@ import { FaCircleCheck, FaCircleExclamation } from 'react-icons/fa6'
 
 import classNames from 'classnames/bind'
 
-import styles from './toast.module.scss'
+import styles from './Toast.module.scss'
 
 const cx = classNames.bind(styles)
 
 type ToastType = 'success' | 'warning'
 
 interface ToastProps {
+  type: ToastType
   message: string
   onClose: () => void
-  type?: ToastType
 }
 
-export function Toast({ type = 'success', message, onClose }: ToastProps) {
+export function Toast({ type, message, onClose }: ToastProps) {
   useEffect(() => {
     const timer = setTimeout(onClose, 3000)
     return () => clearTimeout(timer)
