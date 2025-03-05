@@ -1,34 +1,23 @@
-@use 'sass:map';
-@use '@styles/variables' as Styled;
-
-// Font
-@mixin typography($category, $size) {
-  font: map.get(Styled.$typo, $category, $size);
-}
-
-// Color
-$Secondary0: map.get(Styled.$colors, Alert, Secondary0);
-$Secondary50: map.get(Styled.$colors, Alert, Secondary50);
+@use '@styles/typography';
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
 
 .select-menu {
   position: absolute;
-  top: 36px;
   left: 0;
 
   width: 100%;
   padding: 1.2rem 0.8rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+
+  @include mixin.flex(column, flex-start, center);
   gap: 1.2rem;
 
   border-radius: 1.2rem;
-  background: $Secondary0;
+  background: color.$alert-secondary-0;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
 
   button {
-    @include typography('Label', 'Large');
+    @extend %typo-label-large;
 
     width: 100%;
     padding: 0.4rem 0.8rem;
@@ -39,11 +28,11 @@ $Secondary50: map.get(Styled.$colors, Alert, Secondary50);
     align-items: center;
 
     &:hover {
-      background-color: $Secondary50;
+      background-color: color.$alert-secondary-50;
     }
 
     &.is-active {
-      background-color: $Secondary50;
+      background-color: color.$alert-secondary-50;
     }
   }
 }
