@@ -192,7 +192,11 @@ export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </ToolbarButton>
 
-        <SelectMenu handleClose={() => setIsAiOption(false)} isOpen={isAiOption}>
+        <SelectMenu
+          handleClose={() => setIsAiOption(false)}
+          isOpen={isAiOption}
+          style={{ top: '36px' }}
+        >
           <SelectMenu.Option option={{ className: styles['select-option'] }}>
             <Image src="/icons/ai-option1.svg" alt="자동수정" width={20} height={20} />
             자동 수정
