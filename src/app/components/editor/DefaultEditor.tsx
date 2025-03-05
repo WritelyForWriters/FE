@@ -1,9 +1,5 @@
 'use client'
 
-import Image from 'next/image'
-
-import { ChangeEvent, useState } from 'react'
-
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
@@ -13,13 +9,9 @@ import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
-import { BubbleMenu, Editor, EditorContent, useEditor } from '@tiptap/react'
-import { FaCheck } from 'react-icons/fa6'
-import { IoClose } from 'react-icons/io5'
-
-import SelectMenu from '@components/select-menu/SelectMenu'
-
-import { useCollapsed } from '@hooks/common/useCollapsed'
+import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
+import { useAtom } from 'jotai'
+import { activeMenuAtom, selectionAtom } from 'store/editorAtoms'
 
 import BlockquoteExtension from '@extensions/Blockquote'
 import Indent from '@extensions/Indent'
@@ -32,12 +24,8 @@ import styles from './DefaultEditor.module.scss'
 // TODO 단축키 '/'로 버블메뉴 활성화
 
 export default function DefaultEditor() {
-  // TODO 전역상태관리
-  const [activeMenu, setActiveMenu] = useState<'defaultToolbar' | 'aiToolbar'>('defaultToolbar')
-  const [selection, setSelection] = useState<{ from: number; to: number } | null>(null)
-  const [value, setValue] = useState('')
-
-  const { isOpen, onOpen, onClose } = useCollapsed()
+  const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
+  const [, setSelection] = useAtom(selectionAtom)
 
   const editor = useEditor({
     extensions: [
@@ -74,37 +62,9 @@ export default function DefaultEditor() {
     setActiveMenu('aiToolbar')
   }
 
-  // --드래그한 영역 저장
-  const handleTextSelection = (editor: Editor) => {
-    const { state } = editor!
-    const { from, to } = state.selection
-
-    if (from !== to) {
-      setSelection({ from, to })
-    }
-    editor?.commands.setMark('highlight', { color: '#FFFAE5' })
-  }
-
   if (!editor) {
     return null
   }
-
-  // --프롬프트 입력
-  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value)
-  }
-
-  // --프롬프트 기반 수동 수정 기능
-  const handleAIPrompt = (editor: Editor) => {
-    // TODO API 연동
-
-    if (!value) return
-
-    onOpen()
-    handleTextSelection(editor)
-  }
-
-  console.log(selection)
 
   return (
     <section className={styles.section}>
@@ -132,29 +92,7 @@ export default function DefaultEditor() {
         {activeMenu === 'defaultToolbar' ? (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
         ) : (
-          <>
-            <PropmptInput
-              editor={editor}
-              handleChangeInput={handleChangeInput}
-              handleAIPrompt={handleAIPrompt}
-            />
-            <div className={styles['prompt-menu']}>
-              <SelectMenu handleClose={onClose} isOpen={isOpen}>
-                <SelectMenu.Option option={{ handleAction: () => {} }}>
-                  <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
-                  이대로 수정하기
-                </SelectMenu.Option>
-                <SelectMenu.Option option={{ handleAction: () => {} }}>
-                  <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
-                  다시 생성하기
-                </SelectMenu.Option>
-                <SelectMenu.Option option={{ handleAction: () => {} }}>
-                  <IoClose color="#CCCCCC" fontSize={20} />
-                  취소하기
-                </SelectMenu.Option>
-              </SelectMenu>
-            </div>
-          </>
+          <PropmptInput editor={editor} />
         )}
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
