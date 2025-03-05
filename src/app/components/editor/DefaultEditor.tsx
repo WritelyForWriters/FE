@@ -14,6 +14,8 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, Editor, EditorContent, useEditor } from '@tiptap/react'
+import { FaCheck } from 'react-icons/fa6'
+import { IoClose } from 'react-icons/io5'
 
 import SelectMenu from '@components/select-menu/SelectMenu'
 
@@ -136,18 +138,18 @@ export default function DefaultEditor() {
               handleChangeInput={handleChangeInput}
               handleAIPrompt={handleAIPrompt}
             />
-            <div>
+            <div className={styles['prompt-menu']}>
               <SelectMenu handleClose={onClose} isOpen={isOpen}>
                 <SelectMenu.Option option={{ handleAction: () => {} }}>
-                  <Image src="/icons/ai-option1.svg" alt="이대로 수정하기" width={20} height={20} />
+                  <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
                   이대로 수정하기
                 </SelectMenu.Option>
                 <SelectMenu.Option option={{ handleAction: () => {} }}>
-                  <Image src="/icons/ai-option3.svg" alt="다시 생성하기" width={20} height={20} />
+                  <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
                   다시 생성하기
                 </SelectMenu.Option>
                 <SelectMenu.Option option={{ handleAction: () => {} }}>
-                  <Image src="/icons/ai-option4.svg" alt="취소하기" width={20} height={20} />
+                  <IoClose color="#CCCCCC" fontSize={20} />
                   취소하기
                 </SelectMenu.Option>
               </SelectMenu>
