@@ -1,6 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import Image from 'next/image'
+
+import { ChangeEvent, useState } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
@@ -12,6 +14,10 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, Editor, EditorContent, useEditor } from '@tiptap/react'
+
+import SelectMenu from '@components/select-menu/SelectMenu'
+
+import { useCollapsed } from '@hooks/common/useCollapsed'
 
 import BlockquoteExtension from '@extensions/Blockquote'
 import Indent from '@extensions/Indent'
@@ -27,6 +33,9 @@ export default function DefaultEditor() {
   // TODO 전역상태관리
   const [activeMenu, setActiveMenu] = useState<'defaultToolbar' | 'aiToolbar'>('defaultToolbar')
   const [selection, setSelection] = useState<{ from: number; to: number } | null>(null)
+  const [value, setValue] = useState('')
+
+  const { isOpen, onOpen, onClose } = useCollapsed()
 
   const editor = useEditor({
     extensions: [
@@ -78,6 +87,21 @@ export default function DefaultEditor() {
     return null
   }
 
+  // --프롬프트 입력
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value)
+  }
+
+  // --프롬프트 기반 수동 수정 기능
+  const handleAIPrompt = (editor: Editor) => {
+    // TODO API 연동
+
+    if (!value) return
+
+    onOpen()
+    handleTextSelection(editor)
+  }
+
   console.log(selection)
 
   return (
@@ -106,7 +130,29 @@ export default function DefaultEditor() {
         {activeMenu === 'defaultToolbar' ? (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
         ) : (
-          <PropmptInput editor={editor} handleTextSelection={handleTextSelection} />
+          <>
+            <PropmptInput
+              editor={editor}
+              handleChangeInput={handleChangeInput}
+              handleAIPrompt={handleAIPrompt}
+            />
+            <div>
+              <SelectMenu handleClose={onClose} isOpen={isOpen}>
+                <SelectMenu.Option option={{ handleAction: () => {} }}>
+                  <Image src="/icons/ai-option1.svg" alt="이대로 수정하기" width={20} height={20} />
+                  이대로 수정하기
+                </SelectMenu.Option>
+                <SelectMenu.Option option={{ handleAction: () => {} }}>
+                  <Image src="/icons/ai-option3.svg" alt="다시 생성하기" width={20} height={20} />
+                  다시 생성하기
+                </SelectMenu.Option>
+                <SelectMenu.Option option={{ handleAction: () => {} }}>
+                  <Image src="/icons/ai-option4.svg" alt="취소하기" width={20} height={20} />
+                  취소하기
+                </SelectMenu.Option>
+              </SelectMenu>
+            </div>
+          </>
         )}
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />
