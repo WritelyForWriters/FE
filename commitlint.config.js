@@ -1,3 +1,5 @@
+const jiraTicketRegex = /^KAN-\d+/
+
 module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {
@@ -23,5 +25,25 @@ module.exports = {
         'env', // etc
       ],
     ],
+    'jira-ticket-format': [2, 'always'],
   },
+  parserPreset: {
+    parserOpts: {
+      headerPattern: /^([A-Z]+-\d+)\s+(\w+):\s*(.*)$/,
+      headerCorrespondence: ['ticket', 'type', 'subject'],
+    },
+  },
+  plugins: [
+    {
+      rules: {
+        'jira-ticket-format': (parsed) => {
+          const ticket = parsed.ticket
+          if (!jiraTicketRegex.test(ticket)) {
+            return [false, `Wrong format. Ensure the ticket follows the 'KAN-123 Title' pattern.`]
+          }
+          return [true]
+        },
+      },
+    },
+  ],
 }
