@@ -16,7 +16,7 @@ import { activeMenuAtom, selectionAtom } from 'store/editorAtoms'
 import BlockquoteExtension from '@extensions/Blockquote'
 import Indent from '@extensions/Indent'
 
-import PropmptInput from './PromptInput'
+import PromptMenu from './PromptMenu'
 import Toolbar from './Toolbar'
 
 import styles from './DefaultEditor.module.scss'
@@ -92,7 +92,7 @@ export default function DefaultEditor() {
         {activeMenu === 'defaultToolbar' ? (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
         ) : (
-          <PropmptInput editor={editor} />
+          <PromptMenu editor={editor} />
         )}
       </BubbleMenu>
       <EditorContent editor={editor} className={styles.tiptap} />

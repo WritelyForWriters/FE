@@ -15,7 +15,7 @@ import { useCollapsed } from '@hooks/common/useCollapsed'
 
 import classNames from 'classnames/bind'
 
-import styles from './PromptInput.module.scss'
+import styles from './PromptMenu.module.scss'
 
 const cx = classNames.bind(styles)
 
@@ -23,8 +23,8 @@ interface PropmptInputProps {
   editor: Editor
 }
 
-// TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 수정 - API 연동
-export default function PropmptInput({ editor }: PropmptInputProps) {
+// TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 API 연동
+export default function PromptMenu({ editor }: PropmptInputProps) {
   const [promptValue, setPromptValue] = useAtom(promptValueAtom)
   const [, setSelection] = useAtom(selectionAtom)
 
