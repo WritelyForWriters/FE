@@ -26,6 +26,7 @@
 
     display: flex;
     align-items: center;
+    gap: 4px;
 
     &:hover {
       background-color: color.$alert-secondary-50;
