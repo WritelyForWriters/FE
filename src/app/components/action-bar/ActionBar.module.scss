@@ -1,0 +1,140 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.form {
+  @include mixin.display-flex();
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+// 액션바 전체 컨테이너
+.action-bar-wrapper {
+  @include mixin.display-flex();
+  position: relative;
+  width: 100%;
+  padding: 1.6rem;
+  gap: 1rem;
+}
+
+// 액션바 내부 컨테이너
+.action-bar-inner-container {
+  @include mixin.display-flex();
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 2.4rem;
+  border-radius: 1.6rem;
+}
+
+// 액션바 내 좌측 버튼 영억
+.action-bar-action-section {
+  @include mixin.display-flex();
+  align-items: center;
+  gap: 1.6rem;
+}
+
+.export-button-wrapper {
+  position: relative;
+  width: 14rem;
+}
+
+// 액션바 내 타이틀 및 안내 문구 영역
+.action-bar-info-section {
+  // 액션바 내 타이틀
+  .title {
+    @include mixin.display-flex();
+    align-items: center;
+    gap: 2.4rem;
+    @extend %typo-title-medium;
+    color: color.$alert-secondary-900;
+
+    input {
+      @extend %typo-title-medium;
+      color: color.$alert-secondary-900;
+      border: 0px;
+      outline-width: 0px;
+      cursor: text;
+    }
+
+    .action-bar-span {
+      @extend %typo-title-medium;
+      color: color.$alert-secondary-900;
+      cursor: pointer;
+    }
+  }
+
+  // 액션바 내 안내 문구
+  .description {
+    @extend %typo-body-small;
+    color: color.$alert-secondary-500;
+  }
+}
+
+// 액션바 내 오른쪽 버튼 영역
+.action-bar-extra-action-section {
+  @include mixin.display-flex();
+  gap: 1rem;
+
+  .tooltip {
+    @include mixin.display-flex();
+    flex-direction: column;
+    width: 244px;
+    padding: 1.6rem 2rem;
+    gap: 1.6rem;
+    border-radius: 1.6rem;
+    background-color: color.$alert-secondary-20;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+
+    &__title-section {
+      @include mixin.display-flex();
+      justify-content: space-between;
+      align-items: center;
+
+      span {
+        @extend %typo-label-large;
+        color: color.$alert-secondary-900;
+      }
+    }
+
+    &__content-section {
+      ul {
+        @include mixin.display-flex();
+        flex-direction: column;
+        gap: 0.8rem;
+
+        li {
+          @include mixin.display-flex();
+          justify-content: space-between;
+          @extend %typo-body-medium;
+
+          span:nth-child(1) {
+            color: color.$alert-secondary-600;
+          }
+
+          span:nth-child(2) {
+            color: color.$alert-secondary-900;
+          }
+        }
+      }
+    }
+  }
+
+  .action-bar-tabs {
+    @include mixin.display-flex();
+    justify-content: center;
+    align-items: center;
+    background-color: color.$alert-secondary-50;
+    list-style: none;
+    border-radius: 1rem;
+    padding: 0.4rem;
+    gap: 0.8rem;
+  }
+}
+
+.select-option {
+  @include mixin.display-flex();
+  align-items: center;
+  padding: 0.4rem !important;
+  gap: 0.4rem;
+}
