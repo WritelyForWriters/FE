@@ -2,7 +2,7 @@
 
 import { ChangeEvent, KeyboardEvent, useRef, useState } from 'react'
 
-import { SHORTCUTS } from 'constants/workspace'
+import { KEYBOARD_SHORTCUTS } from 'constants/workspace/keyboardShortcuts'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FiInfo } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
@@ -84,6 +84,11 @@ export default function ActionBar({ usage }: ActionBarProps) {
     }
   }
 
+  // 수정 버튼 클릭 트리거 이벤트
+  const handleModify = () => {
+    console.log('수정 모드')
+  }
+
   // 삭제 버튼 클릭 트리거 이벤트
   const handleDelete = () => {
     // 사용처에 따라 다르게 처리
@@ -132,6 +137,9 @@ export default function ActionBar({ usage }: ActionBarProps) {
   // 내보내기 버튼 렌더링 조건: (작업공간 & 쓰기모드)
   const showExportButton = usage === 'workspace' && isContentEditing
 
+  // 수정하기 버튼 렌더링 조건: (작품 플래너 & 저장 후)
+  const showModifyButton = usage === 'planner' && hasSaved
+
   // 삭제하기 버튼 렌더링 조건: (작업공간 & 읽기모드) || (작품 플래너 & 저장 후)
   const showDeleteButton =
     (usage === 'workspace' && !isContentEditing) || (usage === 'planner' && hasSaved)
@@ -148,7 +156,7 @@ export default function ActionBar({ usage }: ActionBarProps) {
         </section>
         <section className={cx('tooltip__content-section')}>
           <ul>
-            {SHORTCUTS.map((item, idx) => (
+            {KEYBOARD_SHORTCUTS.map((item, idx) => (
               <li key={idx}>
                 <span>{item.title}</span>
                 <span>{item.shortcut}</span>
@@ -269,6 +277,11 @@ export default function ActionBar({ usage }: ActionBarProps) {
                   </SelectMenu.Option>
                 </SelectMenu>
               </div>
+            )}
+            {showModifyButton && (
+              <TextButton size="large" onClick={() => handleModify()}>
+                수정하기
+              </TextButton>
             )}
             {showDeleteButton && (
               <TextButton size="large" onClick={() => handleDelete()}>

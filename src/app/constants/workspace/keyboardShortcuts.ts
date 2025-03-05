@@ -1,4 +1,4 @@
-export const SHORTCUTS = [
+export const KEYBOARD_SHORTCUTS = [
   { title: '제목', shortcut: '# or Control + Alt + 1' },
   { title: '본문', shortcut: 'Control + Alt + 0' },
   { title: '인용', shortcut: '>' + ' or Control + Shift + B' },
