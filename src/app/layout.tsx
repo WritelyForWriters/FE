@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 
-import { ToastProvider } from '@components/toast/ToastProvider'
+import { Providers } from '@components/providers/Providers'
 
 import './globals.scss'
 
@@ -24,10 +24,10 @@ export default function RootLayout({
   return (
     <html lang="ko" className={pretendard.className}>
       <body>
-        <ToastProvider>
+        <Providers>
           <div id="modal"></div>
           {children}
-        </ToastProvider>
+        </Providers>
       </body>
     </html>
   )
