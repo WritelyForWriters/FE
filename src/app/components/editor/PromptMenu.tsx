@@ -23,7 +23,6 @@ interface PropmptInputProps {
   editor: Editor
 }
 
-// TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 API 연동
 export default function PromptMenu({ editor }: PropmptInputProps) {
   const [promptValue, setPromptValue] = useAtom(promptValueAtom)
   const [, setSelection] = useAtom(selectionAtom)
@@ -35,22 +34,42 @@ export default function PromptMenu({ editor }: PropmptInputProps) {
     setPromptValue(e.target.value)
   }
 
-  // --드래그한 영역 저장
+  // --드래그한 영역 저장 및 하이라이트
   const handleTextSelection = (editor: Editor) => {
     const { state } = editor!
     const { from, to } = state.selection
 
     if (from !== to) {
       setSelection({ from, to })
+      editor?.commands.setMark('highlight', { color: '#FFFAE5' })
+      return { from, to }
     }
-    editor?.commands.setMark('highlight', { color: '#FFFAE5' })
+    return null
+  }
+
+  // NOTE(sohyun): 드래그한 영역에 생성된 텍스트 적용할 때, 에디터가 새로 렌더링되는 문제로인해 주석처리 해둠
+  const handleChangeText = (selection: { from: number; to: number }) => {
+    // editor.getText().slice(selection?.from, selection?.to)
+    // editor.commands.insertContentAt(
+    //   { from: selection?.from, to: selection?.to },
+    //   '대체 텍스트 입니다.',
+    // )
+
+    console.log(selection) // lint error
   }
 
   const handleAIPrompt = (editor: Editor) => {
     if (!promptValue) return
 
+    const selectedText = handleTextSelection(editor)
+    if (selectedText) {
+      handleChangeText(selectedText)
+    }
     onOpen()
-    handleTextSelection(editor)
+  }
+
+  const handleOptionClick = () => {
+    // TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 API 연동
   }
 
   return (
@@ -73,15 +92,15 @@ export default function PromptMenu({ editor }: PropmptInputProps) {
 
       <div className={cx('select-menu')}>
         <SelectMenu handleClose={onClose} isOpen={isOpen}>
-          <SelectMenu.Option option={{ handleAction: () => {} }}>
+          <SelectMenu.Option option={{ handleAction: handleOptionClick }}>
             <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
             이대로 수정하기
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ handleAction: () => {} }}>
+          <SelectMenu.Option option={{ handleAction: handleOptionClick }}>
             <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
             다시 생성하기
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ handleAction: () => {} }}>
+          <SelectMenu.Option option={{ handleAction: handleOptionClick }}>
             <IoClose color="#CCCCCC" fontSize={20} />
             취소하기
           </SelectMenu.Option>
