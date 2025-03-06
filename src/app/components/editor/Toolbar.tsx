@@ -33,15 +33,6 @@ interface ToolbarProps {
   handleActiveMenu: () => void
 }
 
-/**
- * TODO
- * [ ] text-highlighter
- * [x] 프롬프트 입력창 띄우기
- * [ ] 자동 구간선택 부분 확인
- * [ ] 서브메뉴 띄우기
- * [ ] 텍스트 대체
- */
-
 export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
   const [isTextFormatMenuOpen, setIsTextFormatMenuOpen] = useState(false)
   const [isTextAlignMenuOpen, setIsTextAlignMenuOpen] = useState(false)

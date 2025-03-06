@@ -76,18 +76,13 @@ export default function DefaultEditor() {
           onHidden: () => {
             setActiveMenu('defaultToolbar')
             setSelection(null)
-            // TODO remove text highlight
+
+            // TODO remove text highlight 적용이 안되는 문제
+            // editor.chain().focus().unsetMark('highlight').run()
           },
         }}
         // --shouldShow: 버블 메뉴 표시를 제어하는 콜백
-        shouldShow={({ state }) => {
-          const { selection } = state
-          // --드래그한 text가 있다면 버블메뉴 활성화
-          if (!selection.empty) {
-            return true
-          }
-          return false
-        }}
+        shouldShow={({ state }) => !state.selection.empty}
       >
         {activeMenu === 'defaultToolbar' ? (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
