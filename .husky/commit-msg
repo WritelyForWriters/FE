@@ -7,7 +7,7 @@ commit_message=$(cat "$commit_message_file")
 # 현재 브랜치 이름 가져오기
 branch_name=$(git symbolic-ref --short HEAD)
 
-# feature/ 이후, _ 이전까지 추출
+# / 이후, _ 이전까지 추출
 ticket_number=$(echo "$branch_name" | sed -E 's|^.*/([^_/]+).*|\1|')
 
 # 커밋 메시지에 추출한 티켓 번호 추가
