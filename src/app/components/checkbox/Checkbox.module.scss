@@ -1,0 +1,27 @@
+@use "@styles/mixins" as mixin;
+@use "@styles/typography" as typo;
+@use "@styles/colors" as color;
+
+.checkbox {
+  @include mixin.flex(null, center, flex-start);
+  position: relative;
+  gap: 0.4rem;
+
+  padding: 0.3rem;
+  width: fit-content;
+
+  &__input {
+    position: absolute;
+    left: 0.3rem;
+    width: 2rem;
+    height: 2rem;
+
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &__label {
+    @include typo.typo(1.4rem, 400, 2.2rem);
+    color: color.$alert-secondary-900;
+  }
+}

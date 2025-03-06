@@ -97,8 +97,8 @@ export default function Dropdown({
               onChange={(selectedOption) => {
                 field.onChange(selectedOption)
               }}
-              onMenuOpen={() => onOpen}
-              onMenuClose={() => onClose}
+              onMenuOpen={onOpen}
+              onMenuClose={onClose}
               value={field.value}
               isMulti={isMulti}
               closeMenuOnSelect={!isMulti}
