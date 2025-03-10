@@ -6,6 +6,8 @@ import { Provider } from 'jotai'
 
 import { ToastProvider } from '@components/toast/ToastProvider'
 
+import ReactQueryProvider from './ReactQueryProvider'
+
 interface ProvidersProps {
   children: ReactNode
 }
@@ -13,7 +15,9 @@ interface ProvidersProps {
 export const Providers = ({ children }: ProvidersProps) => {
   return (
     <Provider>
-      <ToastProvider> {children}</ToastProvider>
+      <ReactQueryProvider>
+        <ToastProvider> {children}</ToastProvider>
+      </ReactQueryProvider>
     </Provider>
   )
 }
