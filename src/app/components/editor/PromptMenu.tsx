@@ -3,10 +3,10 @@ import Image from 'next/image'
 import { ChangeEvent } from 'react'
 
 import { Editor } from '@tiptap/react'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
-import { promptValueAtom, selectionAtom } from 'store/editorAtoms'
+import { activeMenuAtom, promptValueAtom, selectionAtom } from 'store/editorAtoms'
 
 import FillButton from '@components/buttons/FillButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
@@ -25,7 +25,8 @@ interface PropmptInputProps {
 
 export default function PromptMenu({ editor }: PropmptInputProps) {
   const [promptValue, setPromptValue] = useAtom(promptValueAtom)
-  const [, setSelection] = useAtom(selectionAtom)
+  const setSelection = useSetAtom(selectionAtom)
+  const setActiveMenu = useSetAtom(activeMenuAtom)
 
   const { isOpen, onOpen, onClose } = useCollapsed()
 
@@ -68,8 +69,13 @@ export default function PromptMenu({ editor }: PropmptInputProps) {
     onOpen()
   }
 
-  const handleOptionClick = () => {
+  const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
     // TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 API 연동
+
+    switch (option) {
+      case 'cancel':
+        setActiveMenu('defaultToolbar')
+    }
   }
 
   return (
@@ -92,15 +98,15 @@ export default function PromptMenu({ editor }: PropmptInputProps) {
 
       <div className={cx('select-menu')}>
         <SelectMenu handleClose={onClose} isOpen={isOpen}>
-          <SelectMenu.Option option={{ handleAction: handleOptionClick }}>
+          <SelectMenu.Option option={{ handleAction: handleOptionClick('apply') }}>
             <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
             이대로 수정하기
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ handleAction: handleOptionClick }}>
+          <SelectMenu.Option option={{ handleAction: handleOptionClick('recreate') }}>
             <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
             다시 생성하기
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ handleAction: handleOptionClick }}>
+          <SelectMenu.Option option={{ handleAction: handleOptionClick('cancel') }}>
             <IoClose color="#CCCCCC" fontSize={20} />
             취소하기
           </SelectMenu.Option>

@@ -10,7 +10,7 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { activeMenuAtom, selectionAtom } from 'store/editorAtoms'
 
 import BlockquoteExtension from '@extensions/Blockquote'
@@ -25,7 +25,7 @@ import styles from './DefaultEditor.module.scss'
 
 export default function DefaultEditor() {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
-  const [, setSelection] = useAtom(selectionAtom)
+  const setSelection = useSetAtom(selectionAtom)
 
   const editor = useEditor({
     extensions: [
