@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode } from 'react'
+import { HTMLAttributes, ReactNode } from 'react'
 
 import { SelectOptionType } from 'types/common/selectMenu'
 
@@ -27,20 +27,19 @@ function SelectOption({ option, children }: SelectOptionProps) {
   )
 }
 
-interface SelectMenuProps {
+interface SelectMenuProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
   isOpen: boolean
   handleClose: () => void
-  style?: CSSProperties
 }
 
-export default function SelectMenu({ isOpen, handleClose, children, style }: SelectMenuProps) {
+export default function SelectMenu({ isOpen, handleClose, children, ...rest }: SelectMenuProps) {
   const selectMenuRef = useDetectClose(handleClose)
 
   return (
     <>
       {isOpen && (
-        <div ref={selectMenuRef} className={cx('select-menu')} style={style}>
+        <div ref={selectMenuRef} className={cx('select-menu')} {...rest}>
           {children}
         </div>
       )}
