@@ -25,7 +25,11 @@ interface ModalHandler {
   close: () => void
 }
 
-export default function WokrspaceActionBar() {
+interface WokrspaceActionBarProps {
+  onClickSave: () => Promise<void>
+}
+
+export default function WokrspaceActionBar({ onClickSave }: WokrspaceActionBarProps) {
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
 
@@ -39,7 +43,12 @@ export default function WokrspaceActionBar() {
   const handleSave = () => {
     setHasSaved(true)
 
-    alert('저장 완료!')
+    try {
+      onClickSave()
+      alert('저장 완료!')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   // 내보내기 버튼 클릭 트리거 이벤트
