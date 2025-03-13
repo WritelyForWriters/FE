@@ -24,7 +24,7 @@ export default function MemoPannel() {
   }
 
   return (
-    <>
+    <div>
       {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="메모">
           <Tab defaultTab="progress">
@@ -43,6 +43,6 @@ export default function MemoPannel() {
           메모
         </button>
       )}
-    </>
+    </div>
   )
 }
