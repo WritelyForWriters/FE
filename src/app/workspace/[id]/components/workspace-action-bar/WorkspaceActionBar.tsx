@@ -12,7 +12,7 @@ import Modal from '@components/modal/Modal'
 import SelectMenu from '@components/select-menu/SelectMenu'
 import EditModeSwitch from '@components/switch/EditModeSwitch'
 
-import KeyboardShortcutsHelper from './KeyboardShortCutsHelper'
+import KeyboardShortcutsHelper from './KeyboardShortcutsHelper'
 
 import classNames from 'classnames/bind'
 
