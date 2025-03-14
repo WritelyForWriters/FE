@@ -1,9 +1,10 @@
-import { PLANNER_TABS } from 'constants/planner/plannerConstants'
+'use client'
 
+import Tab from '@components/tab/Tab'
+import TabButton from '@components/tab/TabButton'
+
+import IndexPannel from './components/index-pannel/IndexPannel'
 import PlannerActionBar from './components/planner-action-bar/PlannerActionBar'
-import PlannerSynopsisFormContainer from './components/planner-synopsis-form-container/PlannerSynopsisFormContainer'
-import PlannerTab from './components/planner-tab/PlannerTab'
-import { PlannerTabType } from './types/PlannerTab'
 
 import classNames from 'classnames/bind'
 
@@ -11,23 +12,25 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
-type Params = Promise<{ id: string }>
-type SearchParams = Promise<{ tab?: string }>
-
-export default async function PlannerPage(props: { params: Params; searchParams: SearchParams }) {
-  // TODO(hajae): for data fetch
-  // const id = (await props.params).id
-  const tab = (await props.searchParams).tab || 'synopsis'
-  const selectedTab: PlannerTabType =
-    PLANNER_TABS.find((plannerTab) => plannerTab.value === tab) || PLANNER_TABS[0]
-
+// TODO 패널을 fixed로 고정?
+export default function Page() {
   return (
-    <>
+    <div className={cx('container')}>
       <PlannerActionBar />
-      <PlannerTab selectedTab={selectedTab} />
-      <div className={cx('planner-body')}>
-        {selectedTab.value === 'synopsis' && <PlannerSynopsisFormContainer />}
-      </div>
-    </>
+
+      <main className={cx('main-section')}>
+        <IndexPannel />
+
+        <div className={cx('main-section__contents')}>
+          <div className={cx('main-section__contents__wrapper')}>
+            <Tab defaultTab="시놉시스" size="large">
+              <TabButton value="시놉시스">시놉시스</TabButton>
+              <TabButton value="아이디어 노트">아이디어 노트</TabButton>
+            </Tab>
+            <section>시놉시스</section>
+          </div>
+        </div>
+      </main>
+    </div>
   )
 }
