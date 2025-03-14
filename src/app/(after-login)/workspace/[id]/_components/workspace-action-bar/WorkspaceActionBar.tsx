@@ -25,11 +25,11 @@ interface ModalHandler {
   close: () => void
 }
 
-interface WokrspaceActionBarProps {
+interface WorkspaceActionBarProps {
   onClickSave: () => Promise<void>
 }
 
-export default function WokrspaceActionBar({ onClickSave }: WokrspaceActionBarProps) {
+export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarProps) {
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
 

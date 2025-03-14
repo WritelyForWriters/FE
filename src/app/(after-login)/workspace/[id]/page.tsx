@@ -9,7 +9,7 @@ import DefaultEditor from '@components/editor/DefaultEditor'
 import IndexPannel from './_components/index-pannel/IndexPannel'
 import MemoPannel from './_components/memo-pannel/MemoPannel'
 import PlannerPannel from './_components/planner-pannel/PlannerPannel'
-import WokrspaceActionBar from './_components/workspace-action-bar/WorkspaceActionBar'
+import WorkspaceActionBar from './_components/workspace-action-bar/WorkspaceActionBar'
 
 import classNames from 'classnames/bind'
 
@@ -30,7 +30,7 @@ export default function WorkSpacePage() {
 
   return (
     <>
-      <WokrspaceActionBar onClickSave={handleSave} />
+      <WorkspaceActionBar onClickSave={handleSave} />
 
       <main className={cx('main-section')}>
         <IndexPannel />
