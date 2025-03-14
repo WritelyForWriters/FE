@@ -6,6 +6,7 @@ import { Editor } from '@tiptap/react'
 
 import DefaultEditor from '@components/editor/DefaultEditor'
 
+import IndexPannel from './components/index-pannel/IndexPannel'
 import MemoPannel from './components/memo-pannel/MemoPannel'
 import PlannerPannel from './components/planner-pannel/PlannerPannel'
 import WorkspaceActionBar from './components/workspace-action-bar/WorkspaceActionBar'
@@ -40,7 +41,7 @@ export default function WorkSpacePage() {
       <WorkspaceActionBar onClickSave={handleSave} />
 
       <main className={cx('main-section')}>
-        <MemoPannel />
+        <IndexPannel />
 
         <div className={cx('main-section__editor')}>
           <DefaultEditor ref={editorRef} />
