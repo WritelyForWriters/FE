@@ -3,8 +3,8 @@
 import Tab from '@components/tab/Tab'
 import TabButton from '@components/tab/TabButton'
 
-import IndexPannel from './components/index-pannel/IndexPannel'
-import PlannerActionBar from './components/planner-action-bar/PlannerActionBar'
+import IndexPannel from './_components/index-pannel/IndexPannel'
+import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
 
 import classNames from 'classnames/bind'
 
