@@ -12,9 +12,9 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { RefEditor } from '@workspace/[id]/page'
 import { useAtom, useSetAtom } from 'jotai'
 import { activeMenuAtom, selectionAtom } from 'store/editorAtoms'
+import { HandleEditor } from 'types/common/editor'
 
 import BlockquoteExtension from '@extensions/Blockquote'
 import Indent from '@extensions/Indent'
@@ -26,7 +26,11 @@ import styles from './DefaultEditor.module.scss'
 
 // TODO 단축키 '/'로 버블메뉴 활성화
 
-export default function DefaultEditor({ ref }: { ref: Ref<RefEditor> }) {
+interface DefaultEditorProps {
+  ref: Ref<HandleEditor>
+}
+
+export default function DefaultEditor({ ref }: DefaultEditorProps) {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
 
