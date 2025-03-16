@@ -31,17 +31,22 @@ export default function WorkSpacePage() {
   return (
     <>
       <WorkspaceActionBar onClickSave={handleSave} />
+      <div className={cx('header-space')}></div>
 
       <main className={cx('main-section')}>
         <IndexPannel />
+
+        <div className={cx('index-space')}></div>
 
         <div className={cx('main-section__contents')}>
           <DefaultEditor ref={editorRef} />
         </div>
 
-        <div className={cx('main-section__pannel')}>
-          <MemoPannel />
-          <PlannerPannel />
+        <div>
+          <div className={cx('main-section__pannel')}>
+            <MemoPannel />
+            <PlannerPannel />
+          </div>
         </div>
       </main>
     </>

@@ -13,6 +13,7 @@ import styles from './IndexPannel.module.scss'
 const cx = classNames.bind(styles)
 
 // mock data
+// TODO data 받아서 표시, 공통 컴포넌트로
 const datas = ['시놉시스', '세계관', '등장인물', '줄거리', '아이디어 노트']
 
 export default function IndexPannel() {
@@ -24,7 +25,7 @@ export default function IndexPannel() {
   }
 
   return (
-    <div>
+    <div className={cx('wrapper')}>
       {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="목차">
           <ul className={cx('index-list')}>

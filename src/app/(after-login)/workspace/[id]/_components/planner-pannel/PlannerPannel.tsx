@@ -29,7 +29,7 @@ export default function PlannerPannel() {
   }
 
   return (
-    <div>
+    <>
       {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="작품 플래너">
           <ul className={cx('planner-list')}>
@@ -58,6 +58,6 @@ export default function PlannerPannel() {
           작품 플래너
         </button>
       )}
-    </div>
+    </>
   )
 }
