@@ -2,7 +2,12 @@
 @use '@styles/typography';
 @use '@styles/colors' as color;
 
+.wrapper {
+  position: fixed;
+}
+
 .container {
+  position: fixed;
   @extend %typo-label-large;
 
   padding: 1.2rem;

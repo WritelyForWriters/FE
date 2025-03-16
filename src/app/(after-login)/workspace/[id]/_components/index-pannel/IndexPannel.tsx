@@ -21,7 +21,7 @@ export default function IndexPannel() {
   }
 
   return (
-    <div>
+    <div className={cx('wrapper')}>
       {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="목차">
           <ul className={cx('index-list')}>
