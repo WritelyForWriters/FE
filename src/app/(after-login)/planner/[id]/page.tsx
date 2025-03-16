@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import IndexPannel from '@components/pannel/IndexPannel'
 import Tab from '@components/tab/Tab'
 import TabButton from '@components/tab/TabButton'
@@ -21,6 +23,8 @@ const TABLE_OF_CONTENTS = [
 ]
 
 export default function PlannerPage() {
+  const [activeTab, setActiveTab] = useState<'synopsys' | 'ideaNote'>('synopsys')
+
   return (
     <>
       <PlannerActionBar />
@@ -30,7 +34,7 @@ export default function PlannerPage() {
       <div className={cx('header-space')}></div>
 
       <main className={cx('main-section')}>
-        <IndexPannel toc={TABLE_OF_CONTENTS} />
+        {activeTab === 'synopsys' && <IndexPannel toc={TABLE_OF_CONTENTS} />}
 
         <div className={cx('index-space')}></div>
 
@@ -38,30 +42,38 @@ export default function PlannerPage() {
           <div className={cx('main-section__contents__planner')}>
             <div className={cx('planner__tab-wrapper')}>
               <Tab defaultTab="시놉시스" size="large">
-                <TabButton value="시놉시스">시놉시스</TabButton>
-                <TabButton value="아이디어 노트">아이디어 노트</TabButton>
+                <TabButton value="시놉시스" onClick={() => setActiveTab('synopsys')}>
+                  시놉시스
+                </TabButton>
+                <TabButton value="아이디어 노트" onClick={() => setActiveTab('ideaNote')}>
+                  아이디어 노트
+                </TabButton>
               </Tab>
             </div>
 
             <div className={cx('tab-space')}></div>
 
-            <div className={cx('planner__fields-wrapper')}>
-              <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                시놉시스
-              </section>
-              <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                시놉시스
-              </section>
-              <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                시놉시스
-              </section>
-              <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                시놉시스
-              </section>
-              <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                시놉시스
-              </section>
-            </div>
+            {activeTab === 'synopsys' ? (
+              <div className={cx('planner__fields-wrapper')}>
+                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
+                  시놉시스
+                </section>
+                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
+                  시놉시스
+                </section>
+                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
+                  시놉시스
+                </section>
+                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
+                  시놉시스
+                </section>
+                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
+                  시놉시스
+                </section>
+              </div>
+            ) : (
+              <section>아이디어를 자유롭게 입력해 주세요.</section>
+            )}
           </div>
         </div>
       </main>
