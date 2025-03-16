@@ -1,9 +1,9 @@
 'use client'
 
+import IndexPannel from '@components/pannel/IndexPannel'
 import Tab from '@components/tab/Tab'
 import TabButton from '@components/tab/TabButton'
 
-import IndexPannel from './_components/index-pannel/IndexPannel'
 import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
 
 import classNames from 'classnames/bind'
@@ -11,6 +11,14 @@ import classNames from 'classnames/bind'
 import styles from '../../layout.module.scss'
 
 const cx = classNames.bind(styles)
+
+// mock data example
+const TABLE_OF_CONTENTS = [
+  { id: 'heading1', title: '시놉시스' },
+  { id: 'heading2', title: '세계관' },
+  { id: 'heading3', title: '등장인물' },
+  { id: 'heading4', title: '줄거리' },
+]
 
 export default function PlannerPage() {
   return (
@@ -22,7 +30,7 @@ export default function PlannerPage() {
       <div className={cx('header-space')}></div>
 
       <main className={cx('main-section')}>
-        <IndexPannel />
+        <IndexPannel toc={TABLE_OF_CONTENTS} />
 
         <div className={cx('index-space')}></div>
 

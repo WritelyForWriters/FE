@@ -12,7 +12,16 @@ import styles from './IndexPannel.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function IndexPannel() {
+interface TocItem {
+  id: string
+  title: string
+}
+
+interface IndexPannelProps {
+  toc: TocItem[]
+}
+
+export default function IndexPannel({ toc }: IndexPannelProps) {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
@@ -25,8 +34,8 @@ export default function IndexPannel() {
       {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="목차">
           <ul className={cx('index-list')}>
-            {Array.from({ length: 5 }, (_, index) => index + 1).map((v) => (
-              <li key={v}>{`제목 ${v}`}</li>
+            {toc.map(({ id, title }) => (
+              <li key={id}>{title}</li>
             ))}
           </ul>
         </Pannel>
