@@ -1,0 +1,26 @@
+@use "@styles/mixins" as mixin;
+@use "@styles/typography" as typo;
+@use "@styles/colors" as color;
+
+.synopsys-form-wrapper {
+  @include mixin.flex();
+
+  width: 100%;
+}
+
+.synopsys-form {
+  @include mixin.flex(column, flex-start);
+  gap: 1.6rem;
+
+  width: 368px;
+
+  &__title {
+    @extend %typo-title-medium;
+
+    margin-top: 4rem;
+  }
+
+  > div {
+    width: 100%;
+  }
+}

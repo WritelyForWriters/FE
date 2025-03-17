@@ -9,7 +9,7 @@ export const PLANNER_TABS: PlannerTabType[] = [
     value: 'synopsys',
   },
   {
-    label: '아이디어',
+    label: '아이디어 노트',
     value: 'idea',
   },
 ]
