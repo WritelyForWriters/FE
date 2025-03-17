@@ -1,3 +1,5 @@
+import { PLANNER_TABS, PlannerTabType } from 'constants/planner/plannerConstants'
+
 import PlannerActionBar from './components/planner-action-bar/PlannerActionBar'
 import PlannerTab from './components/planner-tab/PlannerTab'
 
@@ -8,11 +10,13 @@ export default async function PlannerPage(props: { params: Params; searchParams:
   // TODO(hajae): for data fetch
   // const id = (await props.params).id
   const tab = (await props.searchParams).tab || 'synopsys'
+  const selectedTab: PlannerTabType =
+    PLANNER_TABS.find((plannerTab) => plannerTab.value === tab) || PLANNER_TABS[0]
 
   return (
     <div>
       <PlannerActionBar />
-      <PlannerTab tab={tab} />
+      <PlannerTab selectedTab={selectedTab} />
     </div>
   )
 }

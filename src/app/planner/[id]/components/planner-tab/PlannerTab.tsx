@@ -2,33 +2,22 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
+import { PLANNER_TABS, PlannerTabType } from 'constants/planner/plannerConstants'
+
 import classNames from 'classnames/bind'
 
 import styles from './PlannerTab.module.scss'
 
 const cx = classNames.bind(styles)
 
-const PLANNER_TABS = [
-  {
-    label: '시놉시스',
-    value: 'synopsys',
-  },
-  {
-    label: '아이디어',
-    value: 'idea',
-  },
-]
-
 interface PlannerTabProps {
-  tab: string
+  selectedTab: PlannerTabType
 }
 
-export default function PlannerTab({ tab }: PlannerTabProps) {
+export default function PlannerTab({ selectedTab }: PlannerTabProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
-
-  const selectedTab = PLANNER_TABS.find((plannerTab) => plannerTab.value === tab) || PLANNER_TABS[0]
 
   const handleTabClick = (value: string) => {
     const newSearchParams = new URLSearchParams(searchParams)
