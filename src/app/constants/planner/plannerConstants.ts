@@ -6,7 +6,7 @@ export type PlannerTabType = {
 export const PLANNER_TABS: PlannerTabType[] = [
   {
     label: '시놉시스',
-    value: 'synopsys',
+    value: 'synopsis',
   },
   {
     label: '아이디어 노트',

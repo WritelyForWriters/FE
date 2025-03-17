@@ -6,16 +6,16 @@ import TextField from '@components/text-field/TextField'
 
 import classNames from 'classnames/bind'
 
-import styles from './PlannerSynopsysForm.module.scss'
+import styles from './PlannerSynopsisForm.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function PlannerSynopsysForm() {
+export default function PlannerSynopsisForm() {
   return (
-    <div className={cx('synopsys-form-wrapper')}>
+    <div className={cx('synopsis-form-wrapper')}>
       <FormWrapper onSubmit={async () => {}}>
-        <div className={cx('synopsys-form')}>
-          <div className={cx('synopsys-form__title')}>시놉시스</div>
+        <div className={cx('synopsis-form')}>
+          <div className={cx('synopsis-form__title')}>시놉시스</div>
           <Dropdown
             name="장르"
             type="outlined"
