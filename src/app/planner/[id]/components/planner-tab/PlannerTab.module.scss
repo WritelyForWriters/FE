@@ -1,0 +1,20 @@
+@use "@styles/mixins" as mixin;
+@use "@styles/typography" as typo;
+@use "@styles/colors" as color;
+
+.planner-tab {
+  @include mixin.flex(row, center, center);
+  gap: 0.8rem;
+
+  &__tab {
+    @include mixin.flex(row, center, center);
+    @extend %typo-title-small;
+
+    padding-bottom: 0.8rem;
+    width: 100px;
+
+    &--active {
+      border-bottom: solid 2px color.$alert-secondary-900;
+    }
+  }
+}
