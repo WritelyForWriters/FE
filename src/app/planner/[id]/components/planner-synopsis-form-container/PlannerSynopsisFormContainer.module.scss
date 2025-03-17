@@ -1,0 +1,9 @@
+@use "@styles/mixins" as mixin;
+@use "@styles/typography" as typo;
+@use "@styles/colors" as color;
+
+.synopsys-form-wrapper {
+  @include mixin.flex();
+
+  width: 100%;
+}
