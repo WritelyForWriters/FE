@@ -16,6 +16,7 @@
     color: color.$alert-secondary-900;
 
     &--active {
+      padding-bottom: 0.6rem;
       border-bottom: solid 2px color.$alert-secondary-900;
     }
   }
