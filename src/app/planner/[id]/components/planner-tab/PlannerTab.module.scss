@@ -13,6 +13,8 @@
     padding-bottom: 0.8rem;
     width: 100px;
 
+    color: color.$alert-secondary-900;
+
     &--active {
       border-bottom: solid 2px color.$alert-secondary-900;
     }
