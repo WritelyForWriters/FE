@@ -17,6 +17,7 @@ export default function PlannerSynopsisFormContainer() {
   return (
     <div className={cx('synopsis-form-wrapper')}>
       <FormWrapper<PlannerSynopsisFormValue>
+        className={cx('form')}
         onSubmit={async (data) => {
           console.log(data)
         }}

@@ -4,6 +4,24 @@
 
 .synopsis-form-wrapper {
   @include mixin.flex();
+  position: relative;
 
   width: 100%;
+  height: calc(100dvh - 192px);
+
+  overflow-y: auto;
+}
+
+.form {
+  @include mixin.flex(column, center, null);
+
+  width: 100%;
+  max-height: 100%;
+
+  overflow-y: auto;
+
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }

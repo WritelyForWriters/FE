@@ -6,6 +6,8 @@
   @include mixin.flex(row, center, center);
   gap: 0.8rem;
 
+  margin-bottom: 4rem;
+
   &__tab {
     @include mixin.flex(row, center, center);
     @extend %typo-title-small;
