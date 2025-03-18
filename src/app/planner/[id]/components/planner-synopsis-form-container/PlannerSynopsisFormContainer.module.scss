@@ -3,7 +3,6 @@
 @use "@styles/colors" as color;
 
 .synopsis-form-wrapper {
-  @include mixin.flex();
   position: relative;
 
   width: 100%;
