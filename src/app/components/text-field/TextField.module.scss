@@ -105,7 +105,8 @@
 
   &__helper-text {
     @extend %typo-body-small;
-    @include mixin.flex(row, center, flex-start);
+    @include mixin.flex(column, flex-start, center);
+    gap: 2.5px;
 
     min-height: 2.4rem;
 

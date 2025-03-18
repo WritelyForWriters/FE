@@ -84,7 +84,16 @@ export default function TextField({
             'text-field__helper-text--error': errors[name]?.message,
           })}
         >
-          {errors[name]?.message ? (errors[name]?.message as string) : helperText}
+          {errors[name]?.message
+            ? (errors[name]?.message as string)
+            : helperText
+              ? helperText.split('\n').map((line, index) => (
+                  <span key={index}>
+                    {line}
+                    <br />
+                  </span>
+                ))
+              : undefined}
         </span>
       )}
     </div>
