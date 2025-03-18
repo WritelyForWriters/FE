@@ -38,12 +38,6 @@ export default function LoginPage() {
             당신의 인생 작품, <br />한 문장부터 시작하세요
           </h3>
           <FormProvider {...methods}>
-            {/*NOTE(선우)
-                - TextField 컴포넌트 수정이 필요할 것 같습니다.
-                  1) 기본 width 값이 설정되어 있어서 width를 동적으로 받을 수 있게 변경이 필요할 것 같습니다.
-                  2) helperText prop이 없어도 기본적으로 Helper Text Span이 생겨서 수정이 필요할 것 같습니다.
-                  3) variant가 password인 경우, input 태그에 값이 있을때만 아이콘이 노출되어야 합니다.
-              */}
             <form className={cx('login-form')}>
               <TextField
                 name="email"
