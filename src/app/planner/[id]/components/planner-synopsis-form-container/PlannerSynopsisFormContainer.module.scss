@@ -2,15 +2,6 @@
 @use "@styles/typography" as typo;
 @use "@styles/colors" as color;
 
-.synopsis-form-wrapper {
-  position: relative;
-
-  width: 100%;
-  height: calc(100dvh - 192px);
-
-  overflow-y: auto;
-}
-
 .form {
   @include mixin.flex(column, center, null);
 

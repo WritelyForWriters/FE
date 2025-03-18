@@ -15,17 +15,15 @@ const cx = classNames.bind(styles)
 
 export default function PlannerSynopsisFormContainer() {
   return (
-    <div className={cx('synopsis-form-wrapper')}>
-      <FormWrapper<PlannerSynopsisFormValue>
-        className={cx('form')}
-        onSubmit={async (data) => {
-          console.log(data)
-        }}
-      >
-        <PlannerSynopsisForm />
-        <PlannerWorldViewForm />
-        <button type="submit">Submit</button>
-      </FormWrapper>
-    </div>
+    <FormWrapper<PlannerSynopsisFormValue>
+      className={cx('form')}
+      onSubmit={async (data) => {
+        console.log(data)
+      }}
+    >
+      <PlannerSynopsisForm />
+      <PlannerWorldViewForm />
+      <button type="submit">Submit</button>
+    </FormWrapper>
   )
 }
