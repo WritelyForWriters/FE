@@ -1,12 +1,12 @@
-@use "@styles/mixins" as mixin;
-@use "@styles/typography";
-@use "@styles/colors" as color;
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
 
 .text-field {
   @include mixin.flex(column, null, space-between);
   gap: 0.8rem;
 
-  width: 36.8rem;
+  width: 100%;
 
   &__fieldset {
     @include mixin.display-flex();
