@@ -1,8 +1,9 @@
-import { PLANNER_TABS, PlannerTabType } from 'constants/planner/plannerConstants'
+import { PLANNER_TABS } from 'constants/planner/plannerConstants'
 
 import PlannerActionBar from './components/planner-action-bar/PlannerActionBar'
 import PlannerSynopsisFormContainer from './components/planner-synopsis-form-container/PlannerSynopsisFormContainer'
 import PlannerTab from './components/planner-tab/PlannerTab'
+import { PlannerTabType } from './types/PlannerTab'
 
 type Params = Promise<{ id: string }>
 type SearchParams = Promise<{ tab?: string }>

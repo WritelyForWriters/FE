@@ -1,7 +1,4 @@
-export type PlannerTabType = {
-  label: string
-  value: string
-}
+import { PlannerTabType } from 'planner/[id]/types/PlannerTab'
 
 export const PLANNER_TABS: PlannerTabType[] = [
   {

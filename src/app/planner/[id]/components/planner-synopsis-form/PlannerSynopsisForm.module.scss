@@ -2,7 +2,7 @@
 @use "@styles/typography" as typo;
 @use "@styles/colors" as color;
 
-.synopsys-form {
+.synopsis-form {
   @include mixin.flex(column, flex-start);
   gap: 1.6rem;
 
