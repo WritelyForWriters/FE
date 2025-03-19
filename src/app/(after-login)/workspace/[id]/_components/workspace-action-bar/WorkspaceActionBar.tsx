@@ -12,7 +12,7 @@ import Modal from '@components/modal/Modal'
 import SelectMenu from '@components/select-menu/SelectMenu'
 import EditModeSwitch from '@components/switch/EditModeSwitch'
 
-import KeyboardShortcutsHelper from './KeyboardShortCutsHelper'
+import KeyboardShortcutsHelper from './KeyboardShortcutsHelper'
 
 import classNames from 'classnames/bind'
 
@@ -25,7 +25,11 @@ interface ModalHandler {
   close: () => void
 }
 
-export default function WokrspaceActionBar() {
+interface WorkspaceActionBarProps {
+  onClickSave: () => Promise<void>
+}
+
+export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarProps) {
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
 
@@ -36,10 +40,15 @@ export default function WokrspaceActionBar() {
   const [isContentEditing, setIsContentEditing] = useState(true)
 
   // 저장 버튼 클릭 트리거 이벤트
-  const handleSave = () => {
+  const handleSave = async () => {
     setHasSaved(true)
 
-    alert('저장 완료!')
+    try {
+      await onClickSave()
+      alert('저장 완료!')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   // 내보내기 버튼 클릭 트리거 이벤트
