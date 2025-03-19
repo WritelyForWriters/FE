@@ -5,27 +5,27 @@
 }
 
 %typo-display-large {
-  @include typo(5.7rem, 400, 6.4rem);
+  @include typo(5.7rem, 600, 6.4rem);
 }
 
 %typo-display-medium {
-  @include typo(4.5rem, 500, 5.37rem);
+  @include typo(4.5rem, 500, 5.2rem);
 }
 
 %typo-display-small {
-  @include typo(3.6rem, 400, 4.4rem);
+  @include typo(3.6rem, 500, 4.4rem);
 }
 
 %typo-headline-large {
-  @include typo(3.2rem, 500, 3.819rem);
+  @include typo(3.2rem, 500, 4rem);
 }
 
 %typo-headline-medium {
-  @include typo(2.8rem, 500, 3.341rem);
+  @include typo(2.8rem, 500, 3.6rem);
 }
 
 %typo-headline-small {
-  @include typo(2.4rem, 500, 2.864rem);
+  @include typo(2.4rem, 700, 3.6rem);
 }
 
 %typo-title-large {
@@ -53,13 +53,13 @@
 }
 
 %typo-body-large {
-  @include typo(1.6rem, 500, 1.909rem);
+  @include typo(1.6rem, 500, 1.6rem);
 }
 
 %typo-body-medium {
-  @include typo(1.4rem, 500, 1.671rem);
+  @include typo(1.4rem, 500, 1.7rem);
 }
 
 %typo-body-small {
-  @include typo(1.2rem, 500, 1.432rem);
+  @include typo(1.2rem, 500, 1.4rem);
 }
