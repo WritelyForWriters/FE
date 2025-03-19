@@ -3,6 +3,7 @@
 import FormWrapper from '@components/form-wrapper/FormWrapper'
 
 import { PlannerSynopsisFormValue } from '../../types/plannerSynopsisFormValue'
+import PlannerSynopsisForm from '../planner-synopsis-form/PlannerSynopsisForm'
 
 import classNames from 'classnames/bind'
 
@@ -18,6 +19,7 @@ export default function PlannerSynopsisFormContainer() {
         console.log(data)
       }}
     >
+      <PlannerSynopsisForm />
       <button type="submit">Submit</button>
     </FormWrapper>
   )
