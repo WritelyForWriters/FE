@@ -1,5 +1,5 @@
 @use '@styles/mixins' as mixin;
-@use '@styles/typography' as typo;
+@use '@styles/typography';
 @use '@styles/colors' as color;
 
 .character-form {
@@ -9,13 +9,10 @@
   width: 368px;
 
   &__title {
-    @extend %typo-title-medium;
     @include mixin.flex(row, center, space-between);
+    @extend %typo-title-medium;
 
     margin-top: 4rem;
-  }
-
-  > div {
     width: 100%;
   }
 }

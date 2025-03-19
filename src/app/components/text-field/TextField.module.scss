@@ -1,6 +1,6 @@
-@use "@styles/mixins" as mixin;
-@use "@styles/typography";
-@use "@styles/colors" as color;
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
 
 .text-field {
   @include mixin.flex(column, null, space-between);
@@ -69,6 +69,7 @@
       margin: 1.6rem 0 0.7rem 0;
       width: calc(100% - 3rem);
 
+      background-color: transparent;
       border: 0;
       outline: 0;
       font-weight: 400;

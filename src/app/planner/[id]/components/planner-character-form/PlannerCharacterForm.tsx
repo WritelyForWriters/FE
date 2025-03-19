@@ -1,7 +1,6 @@
-import { PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
-
 import FillButton from '@components/buttons/FillButton'
-import TextField from '@components/text-field/TextField'
+
+import PlannerCharacterFormList from '../planner-character-form-list/PlannerCharacterFormList'
 
 import classNames from 'classnames/bind'
 
@@ -19,9 +18,7 @@ export default function PlannerCharacterForm() {
         </FillButton>
       </div>
 
-      {PLANNER_CHARACTER_ITEMS.map((item) => (
-        <TextField key={item.itemId} name={item.name} label={item.label} />
-      ))}
+      <PlannerCharacterFormList />
     </div>
   )
 }
