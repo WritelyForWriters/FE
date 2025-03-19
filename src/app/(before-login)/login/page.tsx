@@ -7,6 +7,7 @@
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
+import OutLinedButton from '@components/buttons/OutLinedButton'
 import TextButton from '@components/buttons/TextButton'
 import Checkbox from '@components/checkbox/Checkbox'
 import TextField from '@components/text-field/TextField'
@@ -64,11 +65,10 @@ export default function LoginPage() {
           <FillButton size="large" onClick={handleSubmit(handleLogin)}>
             로그인
           </FillButton>
-          {/* NOTE(선우)
-            - Outlined 버튼은 공통 컴포넌트에 정의되어 있지 않아 디자이너분께 문의드린 상황입니다.
-            */}
-          <FillButton size="large">회원가입 하기</FillButton>
-          <TextButton size="small">비밀번호 찾기</TextButton>
+          <OutLinedButton size="large">회원가입</OutLinedButton>
+          <div className={cx('btn-section__find-password')}>
+            <TextButton size="small">비밀번호 찾기</TextButton>
+          </div>
         </section>
       </div>
     </main>
