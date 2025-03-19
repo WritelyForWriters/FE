@@ -1,0 +1,39 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.list {
+  @include mixin.flex(column, flex-start);
+  gap: 1.6rem;
+
+  width: 100%;
+
+  &__title {
+    @include mixin.flex(row, center, space-between);
+    @extend %typo-title-small;
+
+    &__opend-icon,
+    &__closed-icon {
+      padding: 0.4rem;
+      width: 2rem;
+      height: 2rem;
+
+      color: color.$alert-secondary-300;
+
+      cursor: pointer;
+    }
+  }
+
+  &__items {
+    @include mixin.flex(column, flex-start);
+    gap: 1.6rem;
+
+    background-color: color.$alert-secondary-20;
+  }
+
+  &__title,
+  &__items,
+  &__items > div {
+    width: 100%;
+  }
+}
