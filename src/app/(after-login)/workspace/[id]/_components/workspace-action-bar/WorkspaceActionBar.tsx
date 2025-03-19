@@ -40,11 +40,11 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
   const [isContentEditing, setIsContentEditing] = useState(true)
 
   // 저장 버튼 클릭 트리거 이벤트
-  const handleSave = () => {
+  const handleSave = async () => {
     setHasSaved(true)
 
     try {
-      onClickSave()
+      await onClickSave()
       alert('저장 완료!')
     } catch (error) {
       console.error(error)
