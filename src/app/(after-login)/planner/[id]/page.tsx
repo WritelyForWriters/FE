@@ -10,7 +10,7 @@ import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
 
 import classNames from 'classnames/bind'
 
-import styles from '../../layout.module.scss'
+import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
@@ -23,10 +23,10 @@ const TABLE_OF_CONTENTS = [
 ]
 
 export default function PlannerPage() {
-  const [activeTab, setActiveTab] = useState<'synopsys' | 'ideaNote'>('synopsys')
+  const [activeTab, setActiveTab] = useState<'synopsis' | 'ideaNote'>('synopsis')
 
   return (
-    <>
+    <div className={cx('container')}>
       <PlannerActionBar />
       {/* MEMO(Sohyun): fixed position은 뷰포트 기준으로 포지션닝 되므로, 고정된 크기만큼 margin-top을 주게되면 margin-collapsing 발생으로 
       다른 element 배치가 이상해질 수 있음. 따라서, padding을 주는 방법 또는 fixed 영역과 동일한 크기의 빈 element 배치.
@@ -34,7 +34,7 @@ export default function PlannerPage() {
       <div className={cx('header-space')}></div>
 
       <main className={cx('main-section')}>
-        {activeTab === 'synopsys' && <IndexPannel toc={TABLE_OF_CONTENTS} />}
+        {activeTab === 'synopsis' && <IndexPannel toc={TABLE_OF_CONTENTS} />}
 
         <div className={cx('index-space')}></div>
 
@@ -42,7 +42,7 @@ export default function PlannerPage() {
           <div className={cx('main-section__contents__planner')}>
             <div className={cx('planner__tab-wrapper')}>
               <Tab defaultTab="시놉시스" size="large">
-                <TabButton value="시놉시스" onClick={() => setActiveTab('synopsys')}>
+                <TabButton value="시놉시스" onClick={() => setActiveTab('synopsis')}>
                   시놉시스
                 </TabButton>
                 <TabButton value="아이디어 노트" onClick={() => setActiveTab('ideaNote')}>
@@ -53,7 +53,7 @@ export default function PlannerPage() {
 
             <div className={cx('tab-space')}></div>
 
-            {activeTab === 'synopsys' ? (
+            {activeTab === 'synopsis' ? (
               <div className={cx('planner__fields-wrapper')}>
                 <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
                   시놉시스
@@ -77,6 +77,6 @@ export default function PlannerPage() {
           </div>
         </div>
       </main>
-    </>
+    </div>
   )
 }
