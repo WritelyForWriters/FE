@@ -1,65 +1,66 @@
-@mixin typo($size, $weight, $line-height) {
+@mixin typo($size, $weight, $line-height, $letter-spacing) {
   font-size: $size;
   font-weight: $weight;
   line-height: $line-height;
+  letter-spacing: $letter-spacing;
 }
 
 %typo-display-large {
-  @include typo(5.7rem, 600, 6.4rem);
+  @include typo(5.7rem, 600, 6.4rem, -0.01em);
 }
 
 %typo-display-medium {
-  @include typo(4.5rem, 500, 5.2rem);
+  @include typo(4.5rem, 500, 5.2rem, -0.01em);
 }
 
 %typo-display-small {
-  @include typo(3.6rem, 500, 4.4rem);
+  @include typo(3.6rem, 500, 4.4rem, -0.01em);
 }
 
 %typo-headline-large {
-  @include typo(3.2rem, 500, 4rem);
+  @include typo(3.2rem, 500, 4rem, -0.01em);
 }
 
 %typo-headline-medium {
-  @include typo(2.8rem, 500, 3.6rem);
+  @include typo(2.8rem, 500, 3.6rem, -0.01em);
 }
 
 %typo-headline-small {
-  @include typo(2.4rem, 700, 3.6rem);
+  @include typo(2.4rem, 700, 3.6rem, -0.01em);
 }
 
 %typo-title-large {
-  @include typo(2.2rem, 500, 2.8rem);
+  @include typo(2.2rem, 500, 2.8rem, -0.01em);
 }
 
 %typo-title-medium {
-  @include typo(1.6rem, 500, 2.4rem);
+  @include typo(1.6rem, 500, 2.4rem, -0.01em);
 }
 
 %typo-title-small {
-  @include typo(1.4rem, 500, 2rem);
+  @include typo(1.4rem, 500, 2rem, -0.01em);
 }
 
 %typo-label-large {
-  @include typo(1.4rem, 500, 2rem);
+  @include typo(1.4rem, 500, 2rem, 0);
 }
 
 %typo-label-medium {
-  @include typo(1.2rem, 500, 1.6rem);
+  @include typo(1.2rem, 500, 1.6rem, 0);
 }
 
 %typo-label-small {
-  @include typo(1.1rem, 500, 1.6rem);
+  @include typo(1.1rem, 500, 1.6rem, 0);
 }
 
 %typo-body-large {
-  @include typo(1.6rem, 500, 1.6rem);
+  @include typo(1.6rem, 500, 1.6rem, 0);
 }
 
 %typo-body-medium {
-  @include typo(1.4rem, 500, 1.7rem);
+  @include typo(1.4rem, 500, 1.7rem, 0);
 }
 
 %typo-body-small {
-  @include typo(1.2rem, 500, 1.4rem);
+  @include typo(1.2rem, 500, 1.4rem, 0);
 }

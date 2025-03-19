@@ -1,6 +1,6 @@
-@use "@styles/mixins" as mixin;
-@use "@styles/typography" as typo;
-@use "@styles/colors" as color;
+@use '@styles/mixins' as mixin;
+@use '@styles/typography' as typo;
+@use '@styles/colors' as color;
 
 .checkbox {
   @include mixin.flex(null, center, flex-start);
@@ -21,7 +21,7 @@
   }
 
   &__label {
-    @include typo.typo(1.4rem, 400, 2.2rem);
+    @include typo.typo(1.4rem, 400, 2.2rem, 0);
     color: color.$alert-secondary-900;
   }
 }
