@@ -32,7 +32,7 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
   return (
     <div className={cx('wrapper')}>
       {isOpen ? (
-        <Pannel onClick={handleCollapsedPannel} title="목차">
+        <Pannel onClick={handleCollapsedPannel} title="목차" variant>
           <ul className={cx('index-list')}>
             {toc.map(({ id, title }) => (
               <li key={id}>{title}</li>
