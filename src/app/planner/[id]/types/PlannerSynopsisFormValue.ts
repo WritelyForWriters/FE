@@ -36,6 +36,6 @@ type CharacterFormValues = {
   occuption: string
   appearance: string
   personality: string
-  characteristic: string
+  characteristic?: string
   relationship: string
 }

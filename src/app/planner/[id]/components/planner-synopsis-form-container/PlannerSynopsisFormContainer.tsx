@@ -4,6 +4,7 @@ import { PlannerSynopsisFormValue } from 'planner/[id]/types/PlannerSynopsisForm
 
 import FormWrapper from '@components/form-wrapper/FormWrapper'
 
+import PlannerCharacterForm from '../planner-character-form/PlannerCharacterForm'
 import PlannerSynopsisForm from '../planner-synopsis-form/PlannerSynopsisForm'
 import PlannerWorldViewForm from '../planner-world-view-form/PlannerWorldViewForm'
 
@@ -23,6 +24,7 @@ export default function PlannerSynopsisFormContainer() {
     >
       <PlannerSynopsisForm />
       <PlannerWorldViewForm />
+      <PlannerCharacterForm />
       <button type="submit">Submit</button>
     </FormWrapper>
   )

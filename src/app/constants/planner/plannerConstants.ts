@@ -93,3 +93,46 @@ export const PLANNER_WORLD_VIEW_ITEMS = [
     helperText: '갈등 주체, 원인, 주요 사건, 현재 상황',
   },
 ]
+
+export const PLANNER_CHARACTER_ITEMS = [
+  {
+    itemId: 'planner-character-item-0',
+    label: '인물 소개',
+    name: 'character.intro',
+  },
+  {
+    itemId: 'planner-character-item-1',
+    label: '이름',
+    name: 'character.name',
+  },
+  {
+    itemId: 'planner-character-item-2',
+    label: '나이',
+    name: 'character.age',
+  },
+  {
+    itemId: 'planner-character-item-3',
+    label: '성별',
+    name: 'character.gender',
+  },
+  {
+    itemId: 'planner-character-item-4',
+    label: '직업',
+    name: 'character.occuption',
+  },
+  {
+    itemId: 'planner-character-item-5',
+    label: '외모',
+    name: 'character.appearance',
+  },
+  {
+    itemId: 'planner-character-item-6',
+    label: '성격/특징',
+    name: 'character.personality',
+  },
+  {
+    itemId: 'planner-character-item-7',
+    label: '주요 관계',
+    name: 'character.relationship',
+  },
+]
