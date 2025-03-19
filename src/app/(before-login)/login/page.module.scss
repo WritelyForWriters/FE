@@ -41,6 +41,10 @@
       @include mixin.display-flex();
       flex-direction: column;
       gap: 1.6rem;
+
+      &__find-password {
+        margin: 0 auto;
+      }
     }
   }
 }
