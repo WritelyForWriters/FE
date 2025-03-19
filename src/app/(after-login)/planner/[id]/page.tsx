@@ -7,6 +7,7 @@ import Tab from '@components/tab/Tab'
 import TabButton from '@components/tab/TabButton'
 
 import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
+import PlannerSynopsisFormContainer from './_components/planner-synopsis-form-container/PlannerSynopsisFormContainer'
 
 import classNames from 'classnames/bind'
 
@@ -55,21 +56,7 @@ export default function PlannerPage() {
 
             {activeTab === 'synopsis' ? (
               <div className={cx('planner__fields-wrapper')}>
-                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                  시놉시스
-                </section>
-                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                  시놉시스
-                </section>
-                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                  시놉시스
-                </section>
-                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                  시놉시스
-                </section>
-                <section style={{ height: 300, width: '100%', backgroundColor: 'lightBlue' }}>
-                  시놉시스
-                </section>
+                <PlannerSynopsisFormContainer />
               </div>
             ) : (
               <section>아이디어를 자유롭게 입력해 주세요.</section>
