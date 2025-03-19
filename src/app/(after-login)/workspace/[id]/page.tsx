@@ -13,7 +13,7 @@ import WorkspaceActionBar from './_components/workspace-action-bar/WorkspaceActi
 
 import classNames from 'classnames/bind'
 
-import styles from '../../layout.module.scss'
+import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
@@ -37,7 +37,7 @@ export default function WorkSpacePage() {
   }
 
   return (
-    <>
+    <div className={cx('container')}>
       <WorkspaceActionBar onClickSave={handleSave} />
       <div className={cx('header-space')}></div>
 
@@ -58,6 +58,6 @@ export default function WorkSpacePage() {
           </div>
         </div>
       </main>
-    </>
+    </div>
   )
 }
