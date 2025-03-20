@@ -4,7 +4,7 @@
  * 로그인 페이지
  * @author 선우
  */
-import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
 import OutLinedButton from '@components/buttons/OutLinedButton'
@@ -18,14 +18,21 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
+interface LoginFormType {
+  email: string
+  password: string
+  rememberMe: boolean
+}
+
 export default function LoginPage() {
-  const methods = useForm()
+  const methods = useForm<LoginFormType>()
 
   const { handleSubmit } = methods
 
   // 로그인 하기
-  const handleLogin = (data: FieldValues) => {
-    console.log(data)
+  const handleLogin = (data: LoginFormType) => {
+    const { email, password } = data
+    console.log(`email: ${email}, password: ${password}`)
   }
 
   // 로그인 유지하기
@@ -62,12 +69,16 @@ export default function LoginPage() {
           </FormProvider>
         </section>
         <section className={cx('btn-section')}>
-          <FillButton size="large" onClick={handleSubmit(handleLogin)}>
+          <FillButton type="submit" size="large" onClick={handleSubmit(handleLogin)}>
             로그인
           </FillButton>
-          <OutLinedButton size="large">회원가입</OutLinedButton>
+          <OutLinedButton type="button" size="large">
+            회원가입
+          </OutLinedButton>
           <div className={cx('btn-section__find-password')}>
-            <TextButton size="small">비밀번호 찾기</TextButton>
+            <TextButton type="button" size="small">
+              비밀번호 찾기
+            </TextButton>
           </div>
         </section>
       </div>
