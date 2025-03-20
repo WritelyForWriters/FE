@@ -33,7 +33,7 @@ export default function ResetPassword() {
     },
   })
 
-  const { handleSubmit, trigger, getValues } = methods
+  const { handleSubmit, trigger, watch } = methods
 
   const changePasswordToken = params?.token
 
@@ -58,11 +58,8 @@ export default function ResetPassword() {
                 label="새 비밀번호"
                 variant="password"
                 options={{
-                  onChange: () => {
-                    if (getValues('confirmPassword')) {
-                      trigger('confirmPassword')
-                    }
-                  },
+                  required: true,
+                  onChange: () => trigger('confirmPassword'),
                   // TODO: 타 브랜치 머지되면 수정
                   pattern: {
                     value:
@@ -77,8 +74,9 @@ export default function ResetPassword() {
                 label="새 비밀번호 확인"
                 variant="password"
                 options={{
+                  required: true,
                   validate: (value) => {
-                    if (value !== getValues('password')) {
+                    if (value !== watch('password')) {
                       return '비밀번호가 일치하지 않습니다.'
                     }
                   },
