@@ -51,6 +51,7 @@ export default function FindPasswordPage() {
               label="이메일"
               // TODO: 타 브랜치 머지 후 수정
               options={{
+                required: true,
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                   message: '이메일 주소를 정확히 입력해 주세요.',
