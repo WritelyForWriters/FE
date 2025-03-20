@@ -6,8 +6,6 @@
  */
 import Link from 'next/link'
 
-import { useEffect } from 'react'
-
 import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
 import { AUTH_PATTERN } from 'constants/signup/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -49,22 +47,7 @@ export default function SignupPage() {
     },
   })
 
-  const { handleSubmit, watch, setError, clearErrors } = methods
-
-  const password = watch('password')
-  const confirmPassword = watch('confirmPassword')
-
-  // 비밀번호 일치 여부 검사
-  useEffect(() => {
-    if (password && confirmPassword && confirmPassword !== password) {
-      setError('confirmPassword', {
-        type: 'manual',
-        message: AUTH_ERROR_MESSAGE.PASSWORD_NOT_MATCH,
-      })
-    } else {
-      clearErrors('confirmPassword')
-    }
-  }, [password, confirmPassword])
+  const { handleSubmit, setError, watch, trigger } = methods
 
   // 이메일 중복 검사
   const checkEmailDuplication = () => {
@@ -73,7 +56,7 @@ export default function SignupPage() {
 
   // 회원가입
   const handleSignup = (data: SignUpFormValue) => {
-    if (!data['termsOfService'] || !data['privacyPolicy']) {
+    if (!data.termsOfService || !data.privacyPolicy) {
       setError('allAgree', {
         type: 'manual',
         message: AUTH_ERROR_MESSAGE.TERMS_AGREEMENT_REQUIRED,
@@ -117,6 +100,7 @@ export default function SignupPage() {
                     value: AUTH_PATTERN.PASSWORD,
                     message: AUTH_ERROR_MESSAGE.PASSWORD_PATTERN,
                   },
+                  onChange: () => trigger('confirmPassword'),
                 }}
               />
               <TextField
@@ -126,7 +110,7 @@ export default function SignupPage() {
                 options={{
                   required: true,
                   validate: (value) => {
-                    if (value !== password) {
+                    if (value !== watch('password')) {
                       return AUTH_ERROR_MESSAGE.PASSWORD_NOT_MATCH
                     }
                   },
