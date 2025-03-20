@@ -10,7 +10,7 @@ import { useEffect } from 'react'
 
 import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
 import { AUTH_PATTERN } from 'constants/signup/pattern'
-import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
@@ -23,43 +23,58 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
+interface SignUpFormValue {
+  email: string
+  nickname: string
+  password: string
+  confirmPassword: string
+  allAgree: boolean
+  termsOfService: boolean
+  privacyPolicy: boolean
+  marketingConsent: boolean
+}
+
 export default function SignupPage() {
-  const methods = useForm({
+  const methods = useForm<SignUpFormValue>({
     mode: 'onBlur',
     defaultValues: {
       email: '',
+      nickname: '',
       password: '',
-      'confirm-password': '',
-      'all-agree': '',
+      confirmPassword: '',
+      allAgree: false,
+      termsOfService: false,
+      privacyPolicy: false,
+      marketingConsent: false,
     },
   })
 
   const { handleSubmit, watch, setError, clearErrors } = methods
 
   const password = watch('password')
-  const confirmPassword = watch('confirm-password')
+  const confirmPassword = watch('confirmPassword')
+
+  // 비밀번호 일치 여부 검사
+  useEffect(() => {
+    if (password && confirmPassword && confirmPassword !== password) {
+      setError('confirmPassword', {
+        type: 'manual',
+        message: AUTH_ERROR_MESSAGE.PASSWORD_NOT_MATCH,
+      })
+    } else {
+      clearErrors('confirmPassword')
+    }
+  }, [password, confirmPassword])
 
   // 이메일 중복 검사
   const checkEmailDuplication = () => {
     return true
   }
 
-  // 비밀번호 일치 여부 검사
-  useEffect(() => {
-    if (password && confirmPassword && confirmPassword !== password) {
-      setError('confirm-password', {
-        type: 'manual',
-        message: AUTH_ERROR_MESSAGE.PASSWORD_NOT_MATCH,
-      })
-    } else {
-      clearErrors('confirm-password')
-    }
-  }, [password, confirmPassword])
-
   // 회원가입
-  const handleSignup = (data: FieldValues) => {
-    if (!data['terms-of-service'] || !data['privacy-policy']) {
-      setError('all-agree', {
+  const handleSignup = (data: SignUpFormValue) => {
+    if (!data['termsOfService'] || !data['privacyPolicy']) {
+      setError('allAgree', {
         type: 'manual',
         message: AUTH_ERROR_MESSAGE.TERMS_AGREEMENT_REQUIRED,
       })
@@ -105,15 +120,11 @@ export default function SignupPage() {
                 }}
               />
               <TextField
-                name="confirm-password"
+                name="confirmPassword"
                 label="비밀번호 확인"
                 variant="password"
                 options={{
                   required: true,
-                  pattern: {
-                    value: AUTH_PATTERN.PASSWORD,
-                    message: AUTH_ERROR_MESSAGE.PASSWORD_PATTERN,
-                  },
                   validate: (value) => {
                     if (value !== password) {
                       return AUTH_ERROR_MESSAGE.PASSWORD_NOT_MATCH
@@ -126,20 +137,20 @@ export default function SignupPage() {
           <section className={cx('form__action-section')}>
             <CheckboxGroup
               checkAllCheckbox={{
-                name: 'all-agree',
+                name: 'allAgree',
                 label: '전체 동의',
               }}
               checkboxes={[
                 {
-                  name: 'terms-of-service',
+                  name: 'termsOfService',
                   label: '(필수) 이용약관',
                 },
                 {
-                  name: 'privacy-policy',
+                  name: 'privacyPolicy',
                   label: '(필수) 개인정보처리방침',
                 },
                 {
-                  name: 'marketing-consent',
+                  name: 'marketingConsent',
                   label: '(선택) 마케팅 메시지 수신',
                 },
               ]}
