@@ -11,11 +11,17 @@ const cx = classNames.bind(styles)
 interface PannelProps {
   title: string
   onClick: (e: MouseEvent<HTMLButtonElement>) => void
+  variant?: boolean
 }
 
-export default function Pannel({ children, onClick, title }: PropsWithChildren<PannelProps>) {
+export default function Pannel({
+  children,
+  onClick,
+  title,
+  variant,
+}: PropsWithChildren<PannelProps>) {
   return (
-    <section className={cx('pannel')}>
+    <section className={cx('pannel', { 'pannel--variant': variant })}>
       <div className={cx('title')}>
         <h2>{title}</h2>
         <button onClick={onClick}>

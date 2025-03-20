@@ -12,6 +12,10 @@
   @include mixin.flex(column, flex-start, null);
   gap: 1.6rem;
   align-self: stretch;
+
+  &--variant {
+    padding: 1.6rem 2rem;
+  }
 }
 
 .title {

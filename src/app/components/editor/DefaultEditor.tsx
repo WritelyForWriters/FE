@@ -1,5 +1,7 @@
 'use client'
 
+import { Ref, useImperativeHandle } from 'react'
+
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
@@ -12,6 +14,7 @@ import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtom, useSetAtom } from 'jotai'
 import { activeMenuAtom, selectionAtom } from 'store/editorAtoms'
+import { HandleEditor } from 'types/common/editor'
 
 import BlockquoteExtension from '@extensions/Blockquote'
 import Indent from '@extensions/Indent'
@@ -23,7 +26,11 @@ import styles from './DefaultEditor.module.scss'
 
 // TODO 단축키 '/'로 버블메뉴 활성화
 
-export default function DefaultEditor() {
+interface DefaultEditorProps {
+  ref: Ref<HandleEditor>
+}
+
+export default function DefaultEditor({ ref }: DefaultEditorProps) {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
 
@@ -57,6 +64,11 @@ export default function DefaultEditor() {
       <p>Audrey Hepburn</p>
     `,
   })
+
+  // 외부에서 에디터 인스턴스에 접근하기 위해 사용
+  useImperativeHandle(ref, () => ({
+    getEditor: () => editor,
+  }))
 
   const handleActiveMenu = () => {
     setActiveMenu('aiToolbar')

@@ -39,6 +39,11 @@
     background-color: color.$alert-secondary-200 !important;
   }
 
+  &:focus {
+    background-color: color.$alert-secondary-50;
+    outline: none;
+  }
+
   &:hover {
     background-color: color.$alert-secondary-50;
     border-radius: 0.8rem;
