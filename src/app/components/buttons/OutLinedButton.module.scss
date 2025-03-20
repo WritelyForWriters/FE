@@ -1,0 +1,37 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography';
+
+.outlined-button {
+  @include mixin.flex();
+
+  &.large {
+    &.square {
+      &.primary {
+        @extend %typo-label-large;
+        color: color.$alert-secondary-900;
+        border: 1px solid color.$alert-secondary-900;
+        border-radius: 1rem;
+        padding: 1.2rem;
+        gap: 0.4rem;
+      }
+    }
+  }
+
+  &:active {
+    background-color: color.$alert-secondary-100 !important;
+  }
+
+  &:focus {
+    background-color: color.$alert-secondary-50;
+    outline: none;
+  }
+
+  &:hover {
+    background-color: color.$alert-secondary-50;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}

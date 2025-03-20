@@ -3,15 +3,19 @@
 .section {
   padding: 1.6rem;
   width: 100%;
-  height: 100vh;
 }
 
 /* Basic editor styles */
 .tiptap {
   @extend %typo-body-large;
 
+  max-width: 568px;
+  margin: auto;
+
+  /* ProseMirror */
   :first-child {
     margin-top: 0;
+    outline: none;
   }
 
   blockquote {

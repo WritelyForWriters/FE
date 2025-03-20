@@ -1,0 +1,38 @@
+@use '@styles/colors' as color;
+
+.container {
+  min-height: 100vh;
+}
+
+/* fixed 영역 크기 */
+.header-space {
+  height: 124px;
+}
+
+.index-space {
+  width: 244px;
+}
+
+/* main */
+.main-section {
+  padding: 0 1.6rem;
+
+  display: grid;
+  grid-template-columns: 244px minmax(568px, 1fr) 244px;
+  gap: 1.6rem;
+
+  &__contents {
+    padding-bottom: 1.6rem;
+    min-width: 568px;
+  }
+
+  &__pannel {
+    position: fixed;
+    max-width: 244px;
+    height: fit-content;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+}
