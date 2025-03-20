@@ -55,6 +55,7 @@ export default function TextFieldInput({ name, variant, options, ...props }: Inp
         />
       )}
       {variant === 'password' &&
+        value &&
         (!showPassword ? (
           <BiSolidShow
             size={20}

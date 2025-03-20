@@ -1,0 +1,50 @@
+@use '@styles/typography';
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+.wrapper {
+  @include mixin.display-flex();
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+
+  .inner-container {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 4.8rem;
+    width: 25.8rem;
+
+    .form-section {
+      @include mixin.display-flex();
+      flex-direction: column;
+      gap: 3.1rem;
+
+      &__title {
+        @extend %typo-headline-small;
+        font-weight: 700;
+        line-height: 3.6rem;
+        color: color.$core-secondary-100;
+      }
+
+      .login-form {
+        @include mixin.display-flex();
+        flex-direction: column;
+        gap: 1.6rem;
+
+        &__checkbox-section {
+          margin-top: 1.5rem;
+        }
+      }
+    }
+
+    .btn-section {
+      @include mixin.display-flex();
+      flex-direction: column;
+      gap: 1.6rem;
+
+      &__find-password {
+        margin: 0 auto;
+      }
+    }
+  }
+}
