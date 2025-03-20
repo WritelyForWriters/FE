@@ -58,7 +58,7 @@ export default function SignupPage() {
 
   // 회원가입
   const handleSignup = (data: FieldValues) => {
-    if (!data['terms-of-service'] && !data['privacy-policy']) {
+    if (!data['terms-of-service'] || !data['privacy-policy']) {
       setError('all-agree', {
         type: 'manual',
         message: AUTH_ERROR_MESSAGE.TERMS_AGREEMENT_REQUIRED,
@@ -144,7 +144,6 @@ export default function SignupPage() {
                 },
               ]}
               checkboxWrapperClassName={cx('form__action-section--checkboxes')}
-              helperText={AUTH_ERROR_MESSAGE.TERMS_AGREEMENT_REQUIRED}
             />
             <div className={cx('form__action-section--buttons')}>
               <FillButton size="large">회원가입</FillButton>

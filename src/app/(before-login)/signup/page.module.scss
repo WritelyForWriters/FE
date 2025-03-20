@@ -41,7 +41,7 @@
         flex-direction: column;
         gap: 0.8rem;
 
-        div:nth-child(1) {
+        > div:first-child {
           padding-bottom: 0.8rem;
           border-bottom: 1px solid color.$alert-secondary-50;
         }
