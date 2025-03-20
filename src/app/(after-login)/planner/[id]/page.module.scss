@@ -1,56 +1,31 @@
-@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
 
-.container {
-  min-height: 100vh;
-}
+.planner {
+  position: relative;
 
-/* fixed 영역 크기 */
-.header-space {
-  height: 124px;
-}
-
-.index-space {
-  width: 244px;
-}
-
-.tab-space {
-  height: 84px;
-}
-
-/* main */
-.main-section {
-  padding: 0 1.6rem;
-
-  display: grid;
-  grid-template-columns: 244px minmax(568px, 1fr) 244px;
-  gap: 1.6rem;
-
-  &__contents {
-    padding-bottom: 1.6rem;
-    min-width: 568px;
-
-    &__planner {
-      max-width: 368px;
-      margin: auto;
-    }
+  &__index-pannel-wrapper {
+    position: absolute;
+    top: 0;
+    left: 1.6rem;
   }
-}
 
-/* 작품플래너 시놉시스 필드 영역 */
-.planner__tab-wrapper {
-  position: fixed;
-  padding-top: 1.6rem;
-  width: 368px;
+  &__tab-wrapper {
+    @include mixin.flex(row, center, center);
+    position: relative;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: color.$alert-secondary-0;
-}
+    width: 100%;
+  }
 
-.planner__fields-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4rem;
+  &__tab {
+    @include mixin.flex(row, center, center);
+
+    padding: 1.8rem 0 4rem;
+    width: 368px;
+  }
+
+  &__body {
+    position: relative;
+
+    height: calc(100dvh - 210px);
+  }
 }
