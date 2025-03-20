@@ -12,10 +12,10 @@ export default function PlannerWorldViewForm() {
   return (
     <div className={cx('world-view-form')}>
       <div className={cx('world-view-form__title')}>세계관</div>
-      {PLANNER_WORLD_VIEW_ITEMS.map((item) => (
+      {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
         <TextField
-          key={item.itemId}
-          name={item.name}
+          key={`planner-world-view-item-${index}`}
+          name={`worldView.${item.name}`}
           label={item.label}
           helperText={item.helperText}
         />

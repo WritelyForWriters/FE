@@ -11,13 +11,17 @@ import styles from './PlannerCharacterFormList.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function PlannerCharacterFormList() {
+interface PlannerCharacterFormListProps {
+  arrayIndex: number
+}
+
+export default function PlannerCharacterFormList({ arrayIndex }: PlannerCharacterFormListProps) {
   const { isOpen, onToggle } = useCollapsed(true)
 
   return (
     <div className={cx('list')}>
       <div className={cx('list__title')}>
-        <span>등장인물 1</span>
+        <span>등장인물 {arrayIndex + 1}</span>
         {isOpen ? (
           <IoIosArrowUp onClick={onToggle} className={cx('list__title__closed-icon')} />
         ) : (
@@ -27,8 +31,12 @@ export default function PlannerCharacterFormList() {
 
       {isOpen && (
         <div className={cx('list__items')}>
-          {PLANNER_CHARACTER_ITEMS.map((item) => (
-            <TextField key={item.itemId} name={item.name} label={item.label} />
+          {PLANNER_CHARACTER_ITEMS.map((item, index) => (
+            <TextField
+              key={`planner-character-item-${index}`}
+              name={`character[${arrayIndex}].${item.name}`}
+              label={item.label}
+            />
           ))}
         </div>
       )}

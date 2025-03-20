@@ -4,7 +4,7 @@ export type PlannerSynopsisFormValue = {
   character: CharacterFormValues[]
 }
 
-type SynopsisFormValues = {
+export type SynopsisFormValues = {
   genre: { label: string; value: string }
   length: { label: string; value: string }
   purpose: string
@@ -12,7 +12,7 @@ type SynopsisFormValues = {
   example: string
 }
 
-type WorldViewFormValues = {
+export type WorldViewFormValues = {
   geography: string
   history: string
   politics: string
@@ -28,12 +28,14 @@ type WorldViewFormValues = {
   conflict: string
 }
 
-type CharacterFormValues = {
+export type CharacterFormValues = {
+  // NOTE(hajae): 배열이기 때문에 추후 수정이 있다면 id가 필요하므로 추가
+  characterId: string
   intro: string
   name: string
   age: number
   gender: string
-  occuption: string
+  occupation: string
   appearance: string
   personality: string
   characteristic?: string
