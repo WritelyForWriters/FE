@@ -6,6 +6,8 @@
  */
 import Link from 'next/link'
 
+import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
+import { AUTH_PATTERN } from 'constants/signup/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
@@ -49,12 +51,11 @@ export default function FindPasswordPage() {
             <TextField
               name="email"
               label="이메일"
-              // TODO: 타 브랜치 머지 후 수정
               options={{
                 required: true,
                 pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: '이메일 주소를 정확히 입력해 주세요.',
+                  value: AUTH_PATTERN.EMAIL,
+                  message: AUTH_ERROR_MESSAGE.EMAIL_PATTERN,
                 },
               }}
             />
