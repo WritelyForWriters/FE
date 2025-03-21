@@ -19,35 +19,60 @@ interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
   name: string
   options?: RegisterOptions
+  helperText?: string
 }
 
-export default function Checkbox({ label, name, options, onChange, ...props }: CheckboxProps) {
-  const { register, watch } = useFormContext()
+export default function Checkbox({
+  label,
+  name,
+  options,
+  helperText,
+  onChange,
+  ...props
+}: CheckboxProps) {
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = useFormContext()
   const checked = watch(name) ?? false
 
   return (
-    <section className={cx('checkbox')}>
-      <Image
-        src={checked ? checkedIcon.src : uncheckedIcon.src}
-        width={20}
-        height={20}
-        alt={checked ? 'checked' : 'unchecked'}
-      />
-      <input
-        id={name}
-        className={cx('checkbox__input')}
-        type="checkbox"
-        checked={checked}
-        {...props}
-        {...register(name, options)}
-        onChange={(e) => {
-          register(name).onChange(e)
-          onChange?.(e)
-        }}
-      />
-      <label className={cx('checkbox__label')} htmlFor={name}>
-        {label}
-      </label>
-    </section>
+    <div className={cx('checkbox-field')}>
+      <section className={cx('checkbox-field__fieldset')}>
+        <Image
+          src={checked ? checkedIcon.src : uncheckedIcon.src}
+          width={20}
+          height={20}
+          alt={checked ? 'checked' : 'unchecked'}
+        />
+        <input
+          id={name}
+          className={cx('checkbox-field__fieldset__input')}
+          type="checkbox"
+          checked={checked}
+          {...props}
+          {...register(name, options)}
+          onChange={(e) => {
+            register(name).onChange(e)
+            onChange?.(e)
+          }}
+        />
+        <label className={cx('checkbox-field__fieldset__label')} htmlFor={name}>
+          {label}
+        </label>
+      </section>
+
+      {/* Helper Text */}
+      {(helperText || errors[name]) && (
+        <span
+          className={cx('checkbox-field__helper-text', {
+            'checkbox-field__helper-text--error': errors[name]?.message,
+          })}
+        >
+          {errors[name]?.message ? (errors[name]?.message as string) : helperText}
+        </span>
+      )}
+    </div>
   )
 }
