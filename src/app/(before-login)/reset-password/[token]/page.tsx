@@ -25,7 +25,7 @@ interface ResetPasswordFormValues {
 }
 
 export default function ResetPassword() {
-  const params = useParams()
+  const params = useParams<{ token: string }>()
 
   const methods = useForm<ResetPasswordFormValues>({
     mode: 'onBlur',
