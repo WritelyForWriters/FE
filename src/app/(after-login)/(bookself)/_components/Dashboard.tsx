@@ -1,6 +1,8 @@
 import { getMeProfile } from 'services/members/members'
 import { ProductDto } from 'types/products'
 
+import CardItem from './CardItem'
+
 import classNames from 'classnames/bind'
 
 import styles from './Dashboard.module.scss'
@@ -22,17 +24,8 @@ export default async function Dashboard({ productList }: DashboardProps) {
             {`${profile?.nickname} 님, 오늘도 집필을 시작해볼까요?`}
           </h1>
           <ul className={cx('dashboard__contents')}>
-            {productList.map(({ id, title, genre, updatedAt }) => (
-              <li key={id} className={cx('dashboard__item')}>
-                <div className={cx('item__container')}>
-                  <h2>{title ? title : '제목 없음'}</h2>
-                  <p>{genre}</p>
-                </div>
-                <div className={cx('item__container')}>
-                  <button>작품 플래너</button>
-                  <time>{updatedAt}</time>
-                </div>
-              </li>
+            {productList.map((item) => (
+              <CardItem key={item.id} item={item} />
             ))}
           </ul>
         </div>
