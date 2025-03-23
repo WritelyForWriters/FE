@@ -1,6 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
+import { MouseEvent } from 'react'
 
 import { ProductDto } from 'types/products'
 
@@ -15,7 +18,13 @@ interface CardItemProps {
 }
 
 export default function CardItem({ item }: CardItemProps) {
+  const router = useRouter()
   const { id, title, genre, updatedAt } = item
+
+  const onClickMoveToPlanner = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    router.push(`/planner/${id}`)
+  }
 
   return (
     <Link href={`/workspace/${id}`} key={id}>
@@ -25,7 +34,7 @@ export default function CardItem({ item }: CardItemProps) {
           <p>{genre}</p>
         </div>
         <div className={cx('item__container')}>
-          <button>작품 플래너</button>
+          <button onClick={onClickMoveToPlanner}>작품 플래너</button>
           <time>{updatedAt}</time>
         </div>
       </li>
