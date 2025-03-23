@@ -48,6 +48,7 @@ export default function MainHeader({ productCount }: MainHeaderProps) {
 
   return (
     <header className={cx('header')}>
+      {/* TODO 로고로 대체 예정 */}
       <div>로고</div>
 
       <div className={cx('button-wrapper')}>
