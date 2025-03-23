@@ -1,6 +1,5 @@
+import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 import { nickname, products } from 'mockData'
-
-import FillButton from '@components/buttons/FillButton'
 
 import classNames from 'classnames/bind'
 
@@ -8,13 +7,18 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
+/**
+ * TODO
+ * [ ] 내 정보 조회 API 연결
+ * [x] 작품 생성 API 연결
+ * [ ] 작품 목록 조회 API 연결
+ * [ ] 인가
+ */
+
 export default function Home() {
   return (
     <div>
-      <header className={cx('header')}>
-        <div>로고</div>
-        <FillButton size="medium">글쓰기</FillButton>
-      </header>
+      <MainHeader />
 
       <main className={cx('wrapper')}>
         <div className={cx('dashboard')}>
