@@ -1,5 +1,5 @@
 import { getMeProfile } from 'services/members/members'
-import { ProductType } from 'types/products'
+import { ProductDto } from 'types/products'
 
 import classNames from 'classnames/bind'
 
@@ -8,7 +8,7 @@ import styles from './Dashboard.module.scss'
 const cx = classNames.bind(styles)
 
 interface DashboardProps {
-  productList?: ProductType[]
+  productList?: ProductDto[]
 }
 
 export default async function Dashboard({ productList }: DashboardProps) {

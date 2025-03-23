@@ -1,4 +1,4 @@
-import { ProductIdDto, ProductListDto } from 'types/products'
+import { ProductIdResponseType, ProductListResponseType } from 'types/products'
 
 // 작품 ID 생성
 export const postProducts = async () => {
@@ -11,7 +11,7 @@ export const postProducts = async () => {
       },
     })
 
-    const data: ProductIdDto = await res.json()
+    const data: ProductIdResponseType = await res.json()
 
     if (data.code === 'RESULT-001') {
       return data.result
@@ -34,7 +34,7 @@ export const getProductList = async () => {
       // 작품 목록 조회의 경우 no-cache 옵션 사용 vs 개인화된 요청에 따른 no-store 옵션 고민
     })
 
-    const data: ProductListDto = await res.json()
+    const data: ProductListResponseType = await res.json()
 
     if (data.code === 'RESULT-001') {
       return data.result

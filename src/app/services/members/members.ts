@@ -1,4 +1,4 @@
-import { ProfileDto } from 'types/members'
+import { ProfileResponseType } from 'types/members'
 
 export const getMeProfile = async () => {
   try {
@@ -10,7 +10,7 @@ export const getMeProfile = async () => {
       },
     })
 
-    const data: ProfileDto = await res.json()
+    const data: ProfileResponseType = await res.json()
 
     if (data.code === 'RESULT-001') {
       return data.result
