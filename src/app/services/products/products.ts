@@ -1,9 +1,4 @@
-// TODO DTO 분리
-interface ResponseDTO {
-  code: string
-  message: string
-  result: string
-}
+import { PostProductsDto } from 'types/products'
 
 export const postProducts = async () => {
   try {
@@ -15,7 +10,7 @@ export const postProducts = async () => {
       },
     })
 
-    const data: ResponseDTO = await res.json()
+    const data: PostProductsDto = await res.json()
 
     if (data.code === 'RESULT-001') {
       return data.result
