@@ -7,6 +7,8 @@ import { MouseEvent } from 'react'
 
 import { ProductDto } from 'types/products'
 
+import { formatDate } from '@utils/formatDate'
+
 import classNames from 'classnames/bind'
 
 import styles from './CardItem.module.scss'
@@ -35,7 +37,7 @@ export default function CardItem({ item }: CardItemProps) {
         </div>
         <div className={cx('item__container')}>
           <button onClick={onClickMoveToPlanner}>작품 플래너</button>
-          <time>{updatedAt}</time>
+          <time>{formatDate(updatedAt)}</time>
         </div>
       </li>
     </Link>
