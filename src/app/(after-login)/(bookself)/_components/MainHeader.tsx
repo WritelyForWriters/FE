@@ -2,11 +2,13 @@
 
 import { useRouter } from 'next/navigation'
 
-import { products } from 'mockData'
+import { MAX_PRODUCT_COUNT } from 'constants/bookself/number'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { postProducts } from 'services/products/products'
 
 import FillButton from '@components/buttons/FillButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
+import { useToast } from '@components/toast/ToastProvider'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
@@ -16,15 +18,18 @@ import styles from './MainHeader.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function MainHeader() {
+interface MainHeaderProps {
+  productCount?: number
+}
+
+export default function MainHeader({ productCount }: MainHeaderProps) {
   const router = useRouter()
-  const { isOpen, onToggle } = useCollapsed()
+  const { isOpen, onToggle, onClose } = useCollapsed()
+  const showToast = useToast()
 
   const onClickOpenDropdown = () => {
-    if (products.length >= 30) {
-      // TODO 토스트
-      alert('최대 30개만 집필')
-      return
+    if (productCount && productCount >= MAX_PRODUCT_COUNT) {
+      return showToast('warning', TOAST_MESSAGE.LIMIT_PRODUCT_COUNT)
     }
     onToggle()
   }
@@ -50,7 +55,7 @@ export default function MainHeader() {
           글쓰기
         </FillButton>
 
-        <SelectMenu handleClose={() => {}} isOpen={isOpen} style={{ width: '109px' }}>
+        <SelectMenu handleClose={onClose} isOpen={isOpen} style={{ width: '109px' }}>
           <SelectMenu.Option option={{ handleAction: () => onClickWriting('workspace') }}>
             바로 집필하기
           </SelectMenu.Option>
