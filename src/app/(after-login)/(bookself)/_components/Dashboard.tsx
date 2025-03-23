@@ -1,4 +1,4 @@
-import { nickname } from 'mockData'
+import { getMeProfile } from 'services/members/members'
 import { ProductType } from 'types/products'
 
 import classNames from 'classnames/bind'
@@ -12,12 +12,14 @@ interface DashboardProps {
 }
 
 export default async function Dashboard({ productList }: DashboardProps) {
+  const profile = await getMeProfile()
+
   return (
     <main className={cx('wrapper')}>
       {productList && productList.length > 0 ? (
         <div className={cx('dashboard')}>
           <h1 className={cx('dashboard__title')}>
-            {`${nickname} 님, 오늘도 집필을 시작해볼까요?`}
+            {`${profile?.nickname} 님, 오늘도 집필을 시작해볼까요?`}
           </h1>
           <ul className={cx('dashboard__contents')}>
             {productList.map(({ id, title, genre, updatedAt }) => (
