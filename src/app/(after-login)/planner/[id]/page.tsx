@@ -58,8 +58,8 @@ export default function PlannerPage() {
             <div className={cx('tab-space')}></div>
 
             <FormWrapper<PlannerSynopsisFormValue>
-              className={cx('form', {
-                'form__idea-form': activeTab === 'ideaNote',
+              className={cx('main-section__form', {
+                'main-section__form--idea-form': activeTab === 'ideaNote',
               })}
               onSubmit={async (data) => {
                 console.log({
@@ -68,13 +68,12 @@ export default function PlannerPage() {
                 })
               }}
             >
-              <div className={cx('planner__fields-wrapper')}>
+              <div className={cx('main-section__form__fields')}>
                 {activeTab === 'synopsis' ? (
                   <PlannerSynopsisFormContainer />
                 ) : (
                   <textarea
-                    className={styles['idea__textarea']}
-                    name="idea"
+                    className={styles['main-section__form__fields__textarea']}
                     placeholder="아이디어를 자유롭게 입력해 주세요."
                     value={ideaValue}
                     onChange={(e) => setIdeaValue(e.target.value)}
