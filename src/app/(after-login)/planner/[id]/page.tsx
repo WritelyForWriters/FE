@@ -59,7 +59,12 @@ export default function PlannerPage() {
                 <PlannerSynopsisFormContainer />
               </div>
             ) : (
-              <section>아이디어를 자유롭게 입력해 주세요.</section>
+              <textarea
+                className={styles['idea__textarea']}
+                name="idea"
+                id=""
+                placeholder="아이디어를 자유롭게 입력해 주세요."
+              />
             )}
           </div>
         </div>
