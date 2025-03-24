@@ -61,12 +61,7 @@ export default function PlannerPage() {
               className={cx('main-section__form', {
                 'main-section__form--idea-form': activeTab === 'ideaNote',
               })}
-              onSubmit={async (data) => {
-                console.log({
-                  ...data,
-                  idea: ideaValue,
-                })
-              }}
+              onSubmit={async () => {}}
             >
               <div className={cx('main-section__form__fields')}>
                 {activeTab === 'synopsis' ? (

@@ -12,7 +12,6 @@ export default function PlannerSynopsisFormContainer() {
       <PlannerWorldViewForm />
       <PlannerCharacterForm />
       <PlannerPlotForm />
-      <button type="submit">Submit</button>
     </>
   )
 }
