@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 
+import FormWrapper from '@components/form-wrapper/FormWrapper'
 import IndexPannel from '@components/pannel/IndexPannel'
 import Tab from '@components/tab/Tab'
 import TabButton from '@components/tab/TabButton'
 
 import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
 import PlannerSynopsisFormContainer from './_components/planner-synopsis-form-container/PlannerSynopsisFormContainer'
+import { PlannerSynopsisFormValue } from './types/plannerSynopsisFormValue'
 
 import classNames from 'classnames/bind'
 
@@ -54,18 +56,27 @@ export default function PlannerPage() {
 
             <div className={cx('tab-space')}></div>
 
-            {activeTab === 'synopsis' ? (
+            <FormWrapper<PlannerSynopsisFormValue>
+              className={cx('form', {
+                'form__idea-form': activeTab === 'ideaNote',
+              })}
+              onSubmit={async (data) => {
+                console.log(data)
+              }}
+            >
               <div className={cx('planner__fields-wrapper')}>
-                <PlannerSynopsisFormContainer />
+                {activeTab === 'synopsis' ? (
+                  <PlannerSynopsisFormContainer />
+                ) : (
+                  <textarea
+                    className={styles['idea__textarea']}
+                    name="idea"
+                    id=""
+                    placeholder="아이디어를 자유롭게 입력해 주세요."
+                  />
+                )}
               </div>
-            ) : (
-              <textarea
-                className={styles['idea__textarea']}
-                name="idea"
-                id=""
-                placeholder="아이디어를 자유롭게 입력해 주세요."
-              />
-            )}
+            </FormWrapper>
           </div>
         </div>
       </main>
