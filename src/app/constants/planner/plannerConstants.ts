@@ -79,6 +79,11 @@ export const PLANNER_WORLD_VIEW_ITEMS = [
     name: 'conflict',
     helperText: '갈등 주체, 원인, 주요 사건, 현재 상황',
   },
+  {
+    label: '커스텀 항목',
+    name: 'customField',
+    helperText: '',
+  },
 ] as const
 
 export const PLANNER_CHARACTER_ITEMS = [
@@ -90,4 +95,5 @@ export const PLANNER_CHARACTER_ITEMS = [
   { label: '외모', name: 'appearance' },
   { label: '성격/특징', name: 'personality' },
   { label: '주요 관계', name: 'relationship' },
+  { label: '커스텀 필드', name: 'customField' },
 ] as const
