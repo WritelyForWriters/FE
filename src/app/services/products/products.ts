@@ -30,8 +30,9 @@ export const getProductList = async () => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
       },
-      // MEMO(Sohyun): Next.js v15에서 cache의 default option은 no-store(uncached requests)
-      // 작품 목록 조회의 경우 no-cache 옵션 사용 vs 개인화된 요청에 따른 no-store 옵션 고민
+      // MEMO(Sohyun): Next.js v15에서 cache의 default option은 auto no cache
+      // no cache: 개발에서는 항상 새로 fetch, 프로덕션에서는 SSG이면 빌드 시 fetch, 동적 요청이면 매 요청 fetch
+      // 작품 목록 조회의 경우 자주 변경되는 데이터가 아니므로 즉, 캐시를 저장하고 사용할때 검증(조건에 따라 fetch)하는 방식인 no cache 옵션 사용
     })
 
     const data: ProductListResponseType = await res.json()
