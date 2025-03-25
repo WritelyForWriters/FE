@@ -33,7 +33,7 @@ export default function PlannerCharacterForm() {
   }
 
   return (
-    <div className={cx('character-form')}>
+    <div className={cx('character-form')} id="heading3">
       <div className={cx('character-form__title')}>
         <span>등장 인물</span>
         <FillButton size="small" variant="secondary" onClick={handleAddCharacter} type="button">
@@ -43,7 +43,7 @@ export default function PlannerCharacterForm() {
 
       {characters &&
         characters.map((character, index) => (
-          <PlannerCharacterFormList key={character.name + index} arrayIndex={index} />
+          <PlannerCharacterFormList key={index} arrayIndex={index} />
         ))}
     </div>
   )

@@ -7,11 +7,11 @@ import PlannerWorldViewForm from '../planner-world-view-form/PlannerWorldViewFor
 
 export default function PlannerSynopsisFormContainer() {
   return (
-    <>
+    <div>
       <PlannerSynopsisForm />
       <PlannerWorldViewForm />
       <PlannerCharacterForm />
       <PlannerPlotForm />
-    </>
+    </div>
   )
 }

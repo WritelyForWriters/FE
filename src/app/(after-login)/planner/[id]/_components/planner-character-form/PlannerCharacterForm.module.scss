@@ -8,6 +8,8 @@
 
   width: 368px;
 
+  scroll-margin-top: 14rem;
+
   &__title {
     @include mixin.flex(row, center, space-between);
     @extend %typo-title-medium;

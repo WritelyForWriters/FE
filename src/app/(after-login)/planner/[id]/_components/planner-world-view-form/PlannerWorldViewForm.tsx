@@ -10,7 +10,7 @@ const cx = classNames.bind(styles)
 
 export default function PlannerWorldViewForm() {
   return (
-    <div className={cx('world-view-form')}>
+    <div className={cx('world-view-form')} id="heading2">
       <div className={cx('world-view-form__title')}>세계관</div>
       {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
         <TextField

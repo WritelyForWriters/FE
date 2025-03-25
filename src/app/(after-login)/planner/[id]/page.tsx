@@ -55,7 +55,14 @@ export default function PlannerPage() {
               </Tab>
             </div>
 
-            <div className={cx('tab-space')}></div>
+            {/* NOTE(hajae): 정확한 원인은 파악하지 못했지만 heading1(시놉시스 부분)만 
+            목차의 아이템 클릭으로 스크롤이 원하는대로 동작하지 않습니다. (fixed된 header와 겹쳐 표시)
+            따라서 스크롤을 위한 첫번째 id(heading1)만 tab-space에 정의. */}
+            <div
+              className={cx('tab-space')}
+              id="heading1"
+              style={{ scrollMarginTop: '120px' }}
+            ></div>
 
             <FormWrapper<PlannerSynopsisFormValue>
               className={cx('main-section__form', {
