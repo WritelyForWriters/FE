@@ -6,8 +6,8 @@
  */
 import Link from 'next/link'
 
-import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
-import { AUTH_PATTERN } from 'constants/signup/pattern'
+import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
+import { AUTH_PATTERN } from 'constants/join/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
