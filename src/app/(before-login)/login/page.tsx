@@ -5,6 +5,8 @@
  * @author 선우
  */
 import { FormProvider, useForm } from 'react-hook-form'
+import { login } from 'service/auth/auth'
+import { LoginFormFieldValues } from 'types/auth/join'
 
 import FillButton from '@components/buttons/FillButton'
 import OutLinedButton from '@components/buttons/OutLinedButton'
@@ -18,21 +20,17 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface LoginFormType {
-  email: string
-  password: string
-  rememberMe: boolean
-}
-
 export default function LoginPage() {
-  const methods = useForm<LoginFormType>()
+  const methods = useForm<LoginFormFieldValues>()
 
   const { handleSubmit } = methods
 
   // 로그인 하기
-  const handleLogin = (data: LoginFormType) => {
+  const handleLogin = async (data: LoginFormFieldValues) => {
     const { email, password } = data
-    console.log(`email: ${email}, password: ${password}`)
+
+    const result = await login({ email, password })
+    console.log(result)
   }
 
   // 로그인 유지하기
