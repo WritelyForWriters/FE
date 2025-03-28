@@ -7,10 +7,15 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import { useEffect } from 'react'
+
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
 import { AUTH_PATTERN } from 'constants/join/pattern'
+import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { checkValueDuplicate, join } from 'service/auth/auth'
+import { isLoggedInAtom } from 'store/isLoggedInAtom'
 import { JoinFormFieldValues, Terms } from 'types/auth/join'
 
 import FillButton from '@components/buttons/FillButton'
@@ -46,6 +51,14 @@ export default function JoinPage() {
 
   const { handleSubmit, setError, watch, trigger } = methods
 
+  const isLoggedIn = useAtomValue(isLoggedInAtom)
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      window.location.href = '/'
+    }
+  }, [isLoggedIn])
+
   // 중복 검사
   const validateValueDuplicate = async (type: 'email' | 'nickname', value: string) => {
     const isDuplicate = await checkValueDuplicate(type, value)
@@ -69,19 +82,25 @@ export default function JoinPage() {
       return
     }
 
-    const { email, password, nickname, termsOfService, privacyPolicy, marketingReceive } = data
+    // TODO: 서버 약관 관리 내용 변경 되면 수정 예정
+    const { email, password, nickname, privacyPolicy, marketingReceive } = data
 
     const termsList = [
-      { termsCd: Terms.TERMS_OF_SERVICE_AGREEMENT, isAgreed: termsOfService },
-      { termsCd: Terms.PRIVACY_POLICY_AGREEMENT, isAgreed: privacyPolicy },
-      { termsCd: Terms.MARKETING_RECEIVE_AGREEMENT, isAgreed: marketingReceive },
+      { termsCd: Terms.PRIVACY_POLICY, isAgreed: privacyPolicy },
+      { termsCd: Terms.MARKETING_RECEIVE, isAgreed: marketingReceive },
     ]
 
-    const result = await join({ email, password, nickname, termsList })
+    try {
+      const result = await join({ email, password, nickname, termsList })
 
-    if (result) {
-      router.push('/login')
-      showToast('success', '회원가입 완료. 이메일을 확인하고 계정을 활성화해 주세요')
+      if (result.code === 'RESULT-001') {
+        router.push('/login')
+        showToast('success', TOAST_MESSAGE.SIGN_UP_COMPLETE)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        showToast('warning', error.message)
+      }
     }
   }
 
@@ -117,7 +136,7 @@ export default function JoinPage() {
                     value: AUTH_PATTERN.NICKNAME,
                     message: AUTH_ERROR_MESSAGE.NICKNAME_PATTERN,
                   },
-                  // TODO: 닉네임 중복 검사 추가
+                  validate: (value) => validateValueDuplicate('nickname', value),
                 }}
               />
               <TextField
