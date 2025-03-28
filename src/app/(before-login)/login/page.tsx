@@ -21,7 +21,7 @@ import Checkbox from '@components/checkbox/Checkbox'
 import TextField from '@components/text-field/TextField'
 import { useToast } from '@components/toast/ToastProvider'
 
-import { login } from './service/loginService'
+import { login } from './services/loginService'
 
 import classNames from 'classnames/bind'
 

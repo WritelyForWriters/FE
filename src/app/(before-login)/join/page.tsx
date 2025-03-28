@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 
 import { useEffect } from 'react'
 
-import { checkValueDuplicate, join } from '(before-login)/join/service/joinService'
+import { checkValueDuplicate, join } from '(before-login)/join/services/joinService'
 import { JoinFormFieldValues, Terms } from '(before-login)/join/types/join'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'

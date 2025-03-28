@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 
 import { ReactNode, useEffect, useState } from 'react'
 
-import { refreshAccessToken } from '(before-login)/login/service/loginService'
+import { refreshAccessToken } from '(before-login)/login/services/loginService'
 import { deleteCookie, getCookie, setCookie } from 'cookies-next'
 import { useAtom, useAtomValue } from 'jotai'
 import { accessTokenAtom } from 'store/accessTokenAtom'
