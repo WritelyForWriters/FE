@@ -4,16 +4,17 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 import { useEffect } from 'react'
 
-import { useSetAtom } from 'jotai'
-import { accessToken } from 'store/accessTokenAtom'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
+
+import { useToast } from '@components/toast/ToastProvider'
 
 export default function CompleteJoinPage() {
+  const showToast = useToast()
+
   const router = useRouter()
   const params = useSearchParams()
 
   const joinToken = params.get('joinToken')
-
-  const setAccessToken = useSetAtom(accessToken)
 
   useEffect(() => {
     const completeJoin = async () => {
@@ -28,12 +29,12 @@ export default function CompleteJoinPage() {
 
         const data = await res.json()
 
-        if (data.code === 'RESULT-001') {
-          setAccessToken(data.result.accessToken)
-        } else {
-          router.push('/login')
+        if (data.code !== 'RESULT-001') {
+          showToast('warning', data.message)
         }
       } catch {
+        showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
+      } finally {
         router.push('/login')
       }
     }
