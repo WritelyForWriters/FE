@@ -1,0 +1,27 @@
+@use '@styles/typography';
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+// TODO 전체적인 크기(넓이, 높이), 패딩값, 폰트 크기 수정 필요
+.wrapper {
+  padding-top: 8rem;
+  flex-grow: 1;
+}
+
+.dashboard {
+  padding: 3.8rem 7.6rem;
+
+  @include mixin.flex(column, null, null);
+  gap: 3.2rem;
+
+  &__title {
+    @extend %typo-headline-small;
+    font-weight: 700;
+  }
+
+  &__contents {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+  }
+}
