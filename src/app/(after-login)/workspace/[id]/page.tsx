@@ -4,11 +4,13 @@ import { useParams } from 'next/navigation'
 
 import { useRef } from 'react'
 
-import { SaveProductDataType, saveProduct } from 'services/products/products'
 import { HandleEditor } from 'types/common/editor'
+import { SaveProductDataType } from 'types/products'
 
 import DefaultEditor from '@components/editor/DefaultEditor'
 import IndexPannel from '@components/pannel/IndexPannel'
+
+import { useProducts } from '@hooks/products/useProducts'
 
 import MemoPannel from './_components/memo-pannel/MemoPannel'
 import PlannerPannel from './_components/planner-pannel/PlannerPannel'
@@ -37,14 +39,11 @@ const TABLE_OF_CONTENTS = [
 export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
+  const { saveProductMutation } = useProducts()
 
   const handleSave = async () => {
     if (editorRef.current) {
       const editor = editorRef.current.getEditor()
-      console.log(editor?.getJSON()) // object
-      console.log(editor?.getHTML()) // string
-      console.log(!editor?.getText()) // 비었을때 true
-
       const title = '임시'
 
       const data: Partial<SaveProductDataType> = {}
@@ -56,10 +55,13 @@ export default function WorkSpacePage() {
         data.title = title
       }
 
-      await saveProduct(params.id, {
-        title,
-        content: data.content,
-        isAutoSave: true,
+      saveProductMutation.mutate({
+        productId: params.id,
+        product: {
+          title,
+          content: data.content,
+          isAutoSave: true,
+        },
       })
     }
   }

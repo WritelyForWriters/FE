@@ -1,4 +1,4 @@
-import { ProductIdResponseType, ProductListResponseType } from 'types/products'
+import { ProductIdResponseType, ProductListResponseType, SaveProductDataType } from 'types/products'
 
 // 작품 ID 생성
 export const postProducts = async () => {
@@ -45,14 +45,13 @@ export const getProductList = async () => {
   }
 }
 
-export interface SaveProductDataType {
-  title: string
-  content: string
-  isAutoSave: boolean
+interface SaveProductType {
+  productId: string
+  product: SaveProductDataType
 }
 
 // 작품 저장
-export const saveProduct = async (productId: string, product: Partial<SaveProductDataType>) => {
+export const saveProduct = async ({ productId, product }: SaveProductType) => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`, {
       method: 'POST',
