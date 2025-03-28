@@ -4,8 +4,9 @@ import { useParams } from 'next/navigation'
 
 import { useRef } from 'react'
 
+import { useAtomValue } from 'jotai'
+import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
-import { SaveProductDataType } from 'types/products'
 
 import DefaultEditor from '@components/editor/DefaultEditor'
 import IndexPannel from '@components/pannel/IndexPannel'
@@ -40,26 +41,17 @@ export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
   const { saveProductMutation } = useProducts()
+  const productTitle = useAtomValue(productTitleAtom)
 
   const handleSave = async () => {
     if (editorRef.current) {
       const editor = editorRef.current.getEditor()
-      const title = '임시'
-
-      const data: Partial<SaveProductDataType> = {}
-
-      if (editor?.getText()) {
-        data.content = editor?.getHTML()
-      }
-      if (title) {
-        data.title = title
-      }
 
       saveProductMutation.mutate({
         productId: params.id,
         product: {
-          title,
-          content: data.content,
+          title: productTitle,
+          content: editor?.getHTML(),
           isAutoSave: true,
         },
       })

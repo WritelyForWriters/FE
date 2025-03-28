@@ -2,7 +2,9 @@
 
 import { ChangeEvent, KeyboardEvent, useRef, useState } from 'react'
 
+import { useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
+import { productTitleAtom } from 'store/productsAtoms'
 
 import ActionBar from '@components/action-bar/ActionBar'
 import styles from '@components/action-bar/ActionBar.module.scss'
@@ -138,11 +140,13 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
 
     // 타이틀명 state
     const [title, setTitle] = useState('타이틀')
+    const setTitleAtom = useSetAtom(productTitleAtom)
 
     // 엔터키 트리거 이벤트
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         setIsTitleEditing(false)
+        setTitleAtom(title)
       }
     }
 
@@ -153,7 +157,10 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
             className={cx('action-bar-input')}
             value={title}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-            onBlur={() => setIsTitleEditing(false)}
+            onBlur={() => {
+              setIsTitleEditing(false)
+              setTitleAtom(title)
+            }}
             onKeyDown={handleKeyDown}
           />
         ) : (
