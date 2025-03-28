@@ -10,7 +10,7 @@ import { SaveProductDataType } from 'types/products'
 import DefaultEditor from '@components/editor/DefaultEditor'
 import IndexPannel from '@components/pannel/IndexPannel'
 
-import { useProducts } from '@hooks/products/useProducts'
+import { useProducts } from '@hooks/products/useProductsMutation'
 
 import MemoPannel from './_components/memo-pannel/MemoPannel'
 import PlannerPannel from './_components/planner-pannel/PlannerPannel'
