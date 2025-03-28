@@ -10,12 +10,13 @@ import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
 import { AUTH_PATTERN } from 'constants/signup/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
-import { sendChangePasswordToken } from 'services/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
 import TextField from '@components/text-field/TextField'
 import { useToast } from '@components/toast/ToastProvider'
+
+import { sendChangePasswordToken } from './services/findPasswordService'
 
 import classNames from 'classnames/bind'
 

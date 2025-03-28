@@ -8,16 +8,17 @@ import { notFound, useRouter, useSearchParams } from 'next/navigation'
 
 import { useEffect } from 'react'
 
+import { ChangePasswordFormValues } from '(before-login)/change-password/types/changePassword'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
 import { AUTH_PATTERN } from 'constants/signup/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
-import { changePassword } from 'services/auth/auth'
-import { ChangePasswordFormValues } from 'types/auth/changePassword'
 
 import FillButton from '@components/buttons/FillButton'
 import TextField from '@components/text-field/TextField'
 import { useToast } from '@components/toast/ToastProvider'
+
+import { changePassword } from '../services/changePasswordService'
 
 import classNames from 'classnames/bind'
 
