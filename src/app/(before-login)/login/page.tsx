@@ -8,12 +8,11 @@ import { useRouter } from 'next/navigation'
 
 import { useEffect } from 'react'
 
+import { LoginFormFieldValues } from '(before-login)/login/types/login'
 import { setCookie } from 'cookies-next'
 import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
-import { login } from 'service/auth/auth'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
-import { LoginFormFieldValues } from 'types/auth/login'
 
 import FillButton from '@components/buttons/FillButton'
 import OutLinedButton from '@components/buttons/OutLinedButton'
@@ -21,6 +20,8 @@ import TextButton from '@components/buttons/TextButton'
 import Checkbox from '@components/checkbox/Checkbox'
 import TextField from '@components/text-field/TextField'
 import { useToast } from '@components/toast/ToastProvider'
+
+import { login } from './service/loginService'
 
 import classNames from 'classnames/bind'
 

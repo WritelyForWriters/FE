@@ -9,14 +9,14 @@ import { useRouter } from 'next/navigation'
 
 import { useEffect } from 'react'
 
+import { checkValueDuplicate, join } from '(before-login)/join/service/joinService'
+import { JoinFormFieldValues, Terms } from '(before-login)/join/types/join'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
 import { AUTH_PATTERN } from 'constants/join/pattern'
 import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
-import { checkValueDuplicate, join } from 'service/auth/auth'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
-import { JoinFormFieldValues, Terms } from 'types/auth/join'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
