@@ -15,9 +15,9 @@ export interface Term {
 }
 
 export enum Terms {
-  PRIVACY_POLICY_AGREEMENT = '1001', // 개인정보 처리 방침
-  MARKETING_RECEIVE_AGREEMENT = '1002', // 마케팅 정보 수신
-  TERMS_OF_SERVICE_AGREEMENT = '1003', // 이용 약관
+  PRIVACY_POLICY = '1001', // 개인정보 처리 방침
+  MARKETING_RECEIVE = '1002', // 마케팅 정보 수신
+  TERMS_OF_SERVICE = '1003', // 이용 약관
 }
 
 export interface JoinFormData {
@@ -25,15 +25,4 @@ export interface JoinFormData {
   password: string
   nickname: string
   termsList: Term[]
-}
-
-export interface LoginFormFieldValues {
-  email: string
-  password: string
-  rememberMe: boolean
-}
-
-export interface LoginFormData {
-  email: string
-  password: string
 }
