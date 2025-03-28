@@ -6,13 +6,16 @@
  */
 import Link from 'next/link'
 
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
 import { AUTH_PATTERN } from 'constants/signup/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
+import { sendChangePasswordToken } from 'services/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
 import TextField from '@components/text-field/TextField'
+import { useToast } from '@components/toast/ToastProvider'
 
 import classNames from 'classnames/bind'
 
@@ -20,12 +23,10 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface FindPasswordFormValue {
-  email: string
-}
-
 export default function FindPasswordPage() {
-  const methods = useForm<FindPasswordFormValue>({
+  const showToast = useToast()
+
+  const methods = useForm<{ email: string }>({
     defaultValues: {
       email: '',
     },
@@ -33,15 +34,27 @@ export default function FindPasswordPage() {
 
   const { handleSubmit } = methods
 
-  // 비밀번호 변경 링크 받기
-  const sendPasswordResetLink = (data: FindPasswordFormValue) => {
-    console.log(data)
+  // 비밀번호 변경 링크 전송
+  const handleSendToken = async (data: { email: string }) => {
+    try {
+      const result = await sendChangePasswordToken(data.email)
+
+      if (result.code !== 'RESULT-001') {
+        showToast('warning', result.message)
+      } else {
+        showToast('success', TOAST_MESSAGE.FIND_PASSWORD_COMPLETE)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        showToast('warning', error.message)
+      }
+    }
   }
 
   return (
     <main className={cx('wrapper')}>
       <FormProvider {...methods}>
-        <form className={cx('form')} onSubmit={handleSubmit(sendPasswordResetLink)}>
+        <form className={cx('form')} onSubmit={handleSubmit(handleSendToken)}>
           <section className={cx('form__input-section')}>
             <h3 className={cx('form__input-section__title')}>
               가입할 때 사용했던
