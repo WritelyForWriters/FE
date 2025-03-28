@@ -1,7 +1,10 @@
 'use client'
 
+import { useParams } from 'next/navigation'
+
 import { useRef } from 'react'
 
+import { SaveProductDataType, saveProduct } from 'services/products/products'
 import { HandleEditor } from 'types/common/editor'
 
 import DefaultEditor from '@components/editor/DefaultEditor'
@@ -17,6 +20,12 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
+/**
+ * TODO
+ * 에디터 저장하기 (Q. isAutoSave field)
+ * 에디터 조회하기 (Q. 제목 필드)
+ */
+
 // mock data example
 const TABLE_OF_CONTENTS = [
   { id: 'heading1', title: '제목 1' },
@@ -26,13 +35,32 @@ const TABLE_OF_CONTENTS = [
 ]
 
 export default function WorkSpacePage() {
+  const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
 
   const handleSave = async () => {
     if (editorRef.current) {
       const editor = editorRef.current.getEditor()
-      console.log(editor)
-      // TODO 에디터 저장로직
+      console.log(editor?.getJSON()) // object
+      console.log(editor?.getHTML()) // string
+      console.log(!editor?.getText()) // 비었을때 true
+
+      const title = '임시'
+
+      const data: Partial<SaveProductDataType> = {}
+
+      if (editor?.getText()) {
+        data.content = editor?.getHTML()
+      }
+      if (title) {
+        data.title = title
+      }
+
+      await saveProduct(params.id, {
+        title,
+        content: data.content,
+        isAutoSave: true,
+      })
     }
   }
 

@@ -44,3 +44,31 @@ export const getProductList = async () => {
     console.error('작품 목록 조회 실패: ', error)
   }
 }
+
+export interface SaveProductDataType {
+  title: string
+  content: string
+  isAutoSave: boolean
+}
+
+// 작품 저장
+export const saveProduct = async (productId: string, product: Partial<SaveProductDataType>) => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify(product),
+    })
+
+    const data = await res.json()
+
+    if (data.code === 'RESULT-001') {
+      return data.result
+    }
+  } catch (error) {
+    console.error('작품 저장 실패: ', error)
+  }
+}
