@@ -12,6 +12,7 @@ import DefaultEditor from '@components/editor/DefaultEditor'
 import IndexPannel from '@components/pannel/IndexPannel'
 
 import { useProducts } from '@hooks/products/useProductsMutation'
+import { useGetProductDetail } from '@hooks/products/useProductsQueries'
 
 import MemoPannel from './_components/memo-pannel/MemoPannel'
 import PlannerPannel from './_components/planner-pannel/PlannerPannel'
@@ -27,6 +28,8 @@ const cx = classNames.bind(styles)
  * TODO
  * 에디터 저장하기 (Q. isAutoSave field)
  * 에디터 조회하기 (Q. 제목 필드)
+ * 저장 전 에디터 상태 - 저장 전에는 title과 content가 null, 한번이라도 저장하면 null 대신 empty string
+ * 읽기 모드일때는 툴바 활성화x
  */
 
 // mock data example
@@ -41,6 +44,7 @@ export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
   const { saveProductMutation } = useProducts()
+  const { data: productDatail } = useGetProductDetail(params.id)
   const productTitle = useAtomValue(productTitleAtom)
 
   const handleSave = async () => {
@@ -51,7 +55,7 @@ export default function WorkSpacePage() {
         productId: params.id,
         product: {
           title: productTitle,
-          content: editor?.getHTML(),
+          content: JSON.stringify(editor?.getJSON()),
           isAutoSave: true,
         },
       })
@@ -70,7 +74,7 @@ export default function WorkSpacePage() {
         <div className={cx('index-space')}></div>
 
         <div className={cx('main-section__contents')}>
-          <DefaultEditor ref={editorRef} />
+          <DefaultEditor ref={editorRef} contents={productDatail?.content} />
         </div>
 
         <div>

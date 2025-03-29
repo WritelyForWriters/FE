@@ -1,6 +1,6 @@
 'use client'
 
-import { Ref, useImperativeHandle } from 'react'
+import { Ref, useEffect, useImperativeHandle } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
@@ -12,8 +12,8 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { useAtom, useSetAtom } from 'jotai'
-import { activeMenuAtom, selectionAtom } from 'store/editorAtoms'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { activeMenuAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
 
 import BlockquoteExtension from '@extensions/Blockquote'
@@ -28,11 +28,13 @@ import styles from './DefaultEditor.module.scss'
 
 interface DefaultEditorProps {
   ref: Ref<HandleEditor>
+  contents?: string
 }
 
-export default function DefaultEditor({ ref }: DefaultEditorProps) {
+export default function DefaultEditor({ ref, contents }: DefaultEditorProps) {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
+  const editable = useAtomValue(isEditableAtom)
 
   const editor = useEditor({
     extensions: [
@@ -57,12 +59,7 @@ export default function DefaultEditor({ ref }: DefaultEditorProps) {
       }),
     ],
     immediatelyRender: false,
-    content: `
-      Nothing is impossible, the word itself says “I’m possible!”
-      <p></p>
-      <p>드래그해서 수정하기</p>
-      <p>Audrey Hepburn</p>
-    `,
+    content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
   })
 
   // 외부에서 에디터 인스턴스에 접근하기 위해 사용
@@ -73,6 +70,13 @@ export default function DefaultEditor({ ref }: DefaultEditorProps) {
   const handleActiveMenu = () => {
     setActiveMenu('aiToolbar')
   }
+
+  useEffect(() => {
+    if (!editor) {
+      return undefined
+    }
+    editor.setEditable(editable)
+  }, [editor, editable])
 
   if (!editor) {
     return null

@@ -2,8 +2,9 @@
 
 import { ChangeEvent, KeyboardEvent, useRef, useState } from 'react'
 
-import { useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
+import { isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 
 import ActionBar from '@components/action-bar/ActionBar'
@@ -39,7 +40,7 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
   const [hasSaved, setHasSaved] = useState(false)
 
   // 읽기/쓰기 모드를 구분하는 state
-  const [isContentEditing, setIsContentEditing] = useState(true)
+  const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
 
   // 저장 버튼 클릭 트리거 이벤트
   const handleSave = async () => {
