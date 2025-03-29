@@ -1,4 +1,9 @@
-import { ProductIdResponseType, ProductListResponseType, SaveProductDataType } from 'types/products'
+import {
+  ProductDetailResponseType,
+  ProductIdResponseType,
+  ProductListResponseType,
+  SaveProductDataType,
+} from 'types/products'
 
 // 작품 ID 생성
 export const postProducts = async () => {
@@ -67,5 +72,23 @@ export const saveProduct = async ({ productId, product }: SaveProductType) => {
     }
   } catch (error) {
     console.error('작품 저장 실패: ', error)
+  }
+}
+
+export const getProductDetail = async (productId: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${productId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_ACCESS_TOKEN}`,
+    },
+  })
+
+  const data: ProductDetailResponseType = await res.json()
+
+  if (data.code === 'RESULT-001') {
+    return data.result
+  } else {
+    throw new Error('작품 상세 조회 실패') // React-Query에서 에러를 받도록 처리
   }
 }
