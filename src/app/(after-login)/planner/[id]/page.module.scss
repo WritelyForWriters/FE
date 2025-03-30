@@ -6,39 +6,10 @@
   min-height: 100vh;
 }
 
-/* fixed 영역 크기 */
-.header-space {
-  height: 124px;
-}
-
-.index-space {
-  width: 244px;
-  height: calc(100% - 1.6rem);
-}
-
-.tab-space {
-  height: 84px;
-}
-
 /* main */
 .main-section {
-  padding: 0 1.6rem;
+  position: relative;
 
-  display: grid;
-  grid-template-columns: 244px minmax(568px, 1fr) 244px;
-  gap: 1.6rem;
-
-  height: calc(100dvh - 12.4rem);
-
-  &__contents {
-    padding-bottom: 1.6rem;
-    min-width: 568px;
-    height: calc(100% - 1.6rem);
-
-    &__planner {
-      margin: auto;
-      max-width: 368px;
-      height: 100%;
-    }
-  }
+  padding-top: 12.4rem;
+  height: 100dvh;
 }

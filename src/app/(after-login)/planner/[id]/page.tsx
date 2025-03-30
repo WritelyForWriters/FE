@@ -19,10 +19,12 @@ export default function PlannerPage() {
   return (
     <div className={cx('container')}>
       <PlannerActionBar />
-      <PlannerTabs />
-      <FormProvider {...methods}>
-        <PlannerSynopsisFormContainer />
-      </FormProvider>
+      <div className={cx('main-section')}>
+        <PlannerTabs />
+        <FormProvider {...methods}>
+          <PlannerSynopsisFormContainer />
+        </FormProvider>
+      </div>
     </div>
   )
 }

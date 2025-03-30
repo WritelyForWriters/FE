@@ -36,10 +36,12 @@ export default function PlannerSynopsisFormContainer() {
       })}
       onSubmit={async () => {}}
     >
-      <div className={cx('orm__fields')}>
+      <div className={cx('form__fields')}>
         {activeTab === 'synopsis' ? (
           <>
-            <IndexPannel toc={TABLE_OF_CONTENTS} />
+            <div className={cx('index')}>
+              <IndexPannel toc={TABLE_OF_CONTENTS} />
+            </div>
             <PlannerSynopsisForm />
             <PlannerWorldViewForm />
             <PlannerCharacterForm />
