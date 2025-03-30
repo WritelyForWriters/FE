@@ -1,17 +1,53 @@
 'use client'
 
+import { useState } from 'react'
+
+import { useAtom } from 'jotai'
+import { plannerActiveTabAtom } from 'store/plannerAtoms'
+
 import PlannerCharacterForm from '../planner-character-form/PlannerCharacterForm'
 import PlannerPlotForm from '../planner-plot-form/PlannerPlotForm'
 import PlannerSynopsisForm from '../planner-synopsis-form/PlannerSynopsisForm'
 import PlannerWorldViewForm from '../planner-world-view-form/PlannerWorldViewForm'
 
+import classNames from 'classnames/bind'
+
+import styles from './PlannerSynopsisFormContainer.module.scss'
+
+const cx = classNames.bind(styles)
+
 export default function PlannerSynopsisFormContainer() {
+  const [activeTab] = useAtom(plannerActiveTabAtom)
+  const [ideaValue, setIdeaValue] = useState('')
+
   return (
-    <div>
-      <PlannerSynopsisForm />
-      <PlannerWorldViewForm />
-      <PlannerCharacterForm />
-      <PlannerPlotForm />
-    </div>
+    <form
+      className={cx('form', {
+        'form--idea-form': activeTab === 'ideaNote',
+      })}
+      onSubmit={async () => {}}
+    >
+      <div className={cx('orm__fields')}>
+        {activeTab === 'synopsis' ? (
+          <>
+            <PlannerSynopsisForm />
+            <PlannerWorldViewForm />
+            <PlannerCharacterForm />
+            <PlannerPlotForm />
+          </>
+        ) : (
+          <textarea
+            className={styles['form__fields__textarea']}
+            placeholder="아이디어를 자유롭게 입력해 주세요."
+            value={ideaValue}
+            onChange={(e) => setIdeaValue(e.target.value)}
+          />
+        )}
+      </div>
+
+      {/* NOTE(hajae): Tab 변경시 활성화된 Tab의 필드만 렌더링 되므로 실제 보이는 필드만 submit하게 됨
+      따라서 렌더링되지 않는 상태에서 데이터도 유지하면서, onSubmit에서 둘 다 포함할 수 있도록 추가 */}
+      <input type="hidden" name="idea" value={ideaValue} />
+    </form>
   )
 }

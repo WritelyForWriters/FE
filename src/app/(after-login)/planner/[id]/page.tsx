@@ -1,14 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useAtom } from 'jotai'
+import { FormProvider, useForm } from 'react-hook-form'
+import { plannerActiveTabAtom } from 'store/plannerAtoms'
 
-import FormWrapper from '@components/form-wrapper/FormWrapper'
 import IndexPannel from '@components/pannel/IndexPannel'
-import Tab from '@components/tab/Tab'
-import TabButton from '@components/tab/TabButton'
 
 import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
 import PlannerSynopsisFormContainer from './_components/planner-synopsis-form-container/PlannerSynopsisFormContainer'
+import PlannerTabs from './_components/planner-tabs/PlannerTabs'
 import { PlannerSynopsisFormValues } from './types/plannerSynopsisFormValues'
 
 import classNames from 'classnames/bind'
@@ -26,8 +26,8 @@ const TABLE_OF_CONTENTS = [
 ]
 
 export default function PlannerPage() {
-  const [activeTab, setActiveTab] = useState<'synopsis' | 'ideaNote'>('synopsis')
-  const [ideaValue, setIdeaValue] = useState('')
+  const [activeTab] = useAtom(plannerActiveTabAtom)
+  const methods = useForm<PlannerSynopsisFormValues>()
 
   return (
     <div className={cx('container')}>
@@ -44,16 +44,7 @@ export default function PlannerPage() {
 
         <div className={cx('main-section__contents')}>
           <div className={cx('main-section__contents__planner')}>
-            <div className={cx('planner__tab-wrapper')}>
-              <Tab defaultTab="시놉시스" size="large">
-                <TabButton value="시놉시스" onClick={() => setActiveTab('synopsis')}>
-                  시놉시스
-                </TabButton>
-                <TabButton value="아이디어 노트" onClick={() => setActiveTab('ideaNote')}>
-                  아이디어 노트
-                </TabButton>
-              </Tab>
-            </div>
+            <PlannerTabs />
 
             {/* NOTE(hajae): 정확한 원인은 파악하지 못했지만 heading1(시놉시스 부분)만 
             목차의 아이템 클릭으로 스크롤이 원하는대로 동작하지 않습니다. (fixed된 header와 겹쳐 표시)
@@ -64,29 +55,9 @@ export default function PlannerPage() {
               style={{ scrollMarginTop: '120px' }}
             ></div>
 
-            <FormWrapper<PlannerSynopsisFormValues>
-              className={cx('main-section__form', {
-                'main-section__form--idea-form': activeTab === 'ideaNote',
-              })}
-              onSubmit={async () => {}}
-            >
-              <div className={cx('main-section__form__fields')}>
-                {activeTab === 'synopsis' ? (
-                  <PlannerSynopsisFormContainer />
-                ) : (
-                  <textarea
-                    className={styles['main-section__form__fields__textarea']}
-                    placeholder="아이디어를 자유롭게 입력해 주세요."
-                    value={ideaValue}
-                    onChange={(e) => setIdeaValue(e.target.value)}
-                  />
-                )}
-              </div>
-
-              {/* NOTE(hajae): Tab 변경시 활성화된 Tab의 필드만 렌더링 되므로 실제 보이는 필드만 submit하게 됨
-              따라서 렌더링되지 않는 상태에서 데이터도 유지하면서, onSubmit에서 둘 다 포함할 수 있도록 추가 */}
-              <input type="hidden" name="idea" value={ideaValue} />
-            </FormWrapper>
+            <FormProvider {...methods}>
+              <PlannerSynopsisFormContainer />
+            </FormProvider>
           </div>
         </div>
       </main>
