@@ -5,6 +5,8 @@ import { useState } from 'react'
 import { useAtom } from 'jotai'
 import { plannerActiveTabAtom } from 'store/plannerAtoms'
 
+import IndexPannel from '@components/pannel/IndexPannel'
+
 import PlannerCharacterForm from '../planner-character-form/PlannerCharacterForm'
 import PlannerPlotForm from '../planner-plot-form/PlannerPlotForm'
 import PlannerSynopsisForm from '../planner-synopsis-form/PlannerSynopsisForm'
@@ -15,6 +17,13 @@ import classNames from 'classnames/bind'
 import styles from './PlannerSynopsisFormContainer.module.scss'
 
 const cx = classNames.bind(styles)
+
+const TABLE_OF_CONTENTS = [
+  { id: 'heading1', title: '시놉시스' },
+  { id: 'heading2', title: '세계관' },
+  { id: 'heading3', title: '등장인물' },
+  { id: 'heading4', title: '줄거리' },
+]
 
 export default function PlannerSynopsisFormContainer() {
   const [activeTab] = useAtom(plannerActiveTabAtom)
@@ -30,6 +39,7 @@ export default function PlannerSynopsisFormContainer() {
       <div className={cx('orm__fields')}>
         {activeTab === 'synopsis' ? (
           <>
+            <IndexPannel toc={TABLE_OF_CONTENTS} />
             <PlannerSynopsisForm />
             <PlannerWorldViewForm />
             <PlannerCharacterForm />
