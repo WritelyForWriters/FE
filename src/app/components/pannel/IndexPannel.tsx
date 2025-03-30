@@ -36,15 +36,13 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.4) {
+          if (entry.isIntersecting) {
             setActiveId(entry.target.id)
           }
         })
       },
       {
-        threshold: [0.1, 0.6],
-        // NOTE(hajae): rootMargin must be specified in pixels
-        rootMargin: '0px 0px -140px 0px',
+        threshold: [0.45],
       },
     )
 

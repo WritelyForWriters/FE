@@ -8,10 +8,6 @@
 
   width: 368px;
 
-  // NOTE(hajae): `scroll-margin-top: 14rem;`을 넣지않으면
-  // fixed된 header부분에 겹쳐져서 제대로 표시되지 않기 때문에 추가 (다른 form 동일)
-  scroll-margin-top: 14rem;
-
   &__title {
     @extend %typo-title-medium;
 

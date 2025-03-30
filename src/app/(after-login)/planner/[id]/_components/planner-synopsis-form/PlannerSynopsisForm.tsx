@@ -9,7 +9,7 @@ const cx = classNames.bind(styles)
 
 export default function PlannerSynopsisForm() {
   return (
-    <div className={cx('synopsis-form')}>
+    <div className={cx('synopsis-form')} id="heading1">
       <div className={cx('synopsis-form__title')}>시놉시스</div>
       <Dropdown
         name="synopsis.genre"
