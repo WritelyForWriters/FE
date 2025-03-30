@@ -2,7 +2,7 @@ export type PlannerSynopsisFormValues = {
   synopsis: SynopsisFormValues
   worldView: WorldViewFormValues
   character: CharacterFormValues[]
-  plot: string
+  plot: PlotFormValues
 }
 
 export type SynopsisFormValues = {
@@ -27,12 +27,12 @@ export type WorldViewFormValues = {
   species?: string
   occupation?: string
   conflict?: string
-  customField?: string
+  customFields?: CustomField[]
 }
 
 export type CharacterFormValues = {
   // NOTE(hajae): 배열이기 때문에 추후 수정이 있다면 id가 필요하므로 추가
-  characterId?: string
+  id?: string
   intro?: string
   name?: string
   age?: number
@@ -42,9 +42,11 @@ export type CharacterFormValues = {
   personality?: string
   characteristic?: string
   relationship?: string
-  customField?: string
+  customFields?: CustomField[]
 }
 
 export type PlotFormValues = {
   content?: string
 }
+
+export type CustomField = { id: string; name: string; content: string }
