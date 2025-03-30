@@ -34,7 +34,7 @@ export default function PlannerCharacterFormList({ arrayIndex }: PlannerCharacte
           {PLANNER_CHARACTER_ITEMS.map((item, index) => (
             <TextField
               key={`planner-character-item-${index}`}
-              name={`character[${arrayIndex}].${item.name}`}
+              name={`characters[${arrayIndex}].${item.name}`}
               label={item.label}
             />
           ))}
