@@ -1,4 +1,4 @@
-export type PlannerSynopsisFormValue = {
+export type PlannerSynopsisFormValues = {
   synopsis: SynopsisFormValues
   worldView: WorldViewFormValues
   character: CharacterFormValues[]
