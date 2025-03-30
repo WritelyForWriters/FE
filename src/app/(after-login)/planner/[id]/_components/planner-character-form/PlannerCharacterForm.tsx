@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import FillButton from '@components/buttons/FillButton'
 
-import { CharacterFormValues } from '../../types/plannerSynopsisFormValue'
+import { CharacterFormValues } from '../../types/plannerSynopsisFormValues'
 import PlannerCharacterFormList from '../planner-character-form-list/PlannerCharacterFormList'
 
 import classNames from 'classnames/bind'

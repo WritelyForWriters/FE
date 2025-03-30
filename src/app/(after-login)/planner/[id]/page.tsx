@@ -9,7 +9,7 @@ import TabButton from '@components/tab/TabButton'
 
 import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
 import PlannerSynopsisFormContainer from './_components/planner-synopsis-form-container/PlannerSynopsisFormContainer'
-import { PlannerSynopsisFormValue } from './types/plannerSynopsisFormValue'
+import { PlannerSynopsisFormValues } from './types/plannerSynopsisFormValues'
 
 import classNames from 'classnames/bind'
 
@@ -64,7 +64,7 @@ export default function PlannerPage() {
               style={{ scrollMarginTop: '120px' }}
             ></div>
 
-            <FormWrapper<PlannerSynopsisFormValue>
+            <FormWrapper<PlannerSynopsisFormValues>
               className={cx('main-section__form', {
                 'main-section__form--idea-form': activeTab === 'ideaNote',
               })}
