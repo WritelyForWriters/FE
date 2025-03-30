@@ -15,10 +15,13 @@ const cx = classNames.bind(styles)
 
 export default function PlannerPage() {
   const methods = useForm<PlannerSynopsisFormValues>()
+  const {
+    formState: { isValid },
+  } = methods
 
   return (
     <div className={cx('container')}>
-      <PlannerActionBar />
+      <PlannerActionBar isValidFormValues={isValid} />
       <div className={cx('main-section')}>
         <PlannerTabs />
         <FormProvider {...methods}>
