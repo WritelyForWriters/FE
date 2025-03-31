@@ -2,9 +2,9 @@
 
 import { useParams } from 'next/navigation'
 
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 
@@ -44,8 +44,9 @@ export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
   const { saveProductMutation } = useProducts()
-  const { data: productDatail } = useGetProductDetail(params.id)
+  const { data: productDetail } = useGetProductDetail(params.id)
   const productTitle = useAtomValue(productTitleAtom)
+  const setProductTitle = useSetAtom(productTitleAtom)
 
   const handleSave = async () => {
     if (editorRef.current) {
@@ -62,9 +63,19 @@ export default function WorkSpacePage() {
     }
   }
 
+  useEffect(() => {
+    if (productDetail?.title) {
+      // 작품 조회 API에서 받아온 리스폰스로 작품 제목 상태 초기화
+      setProductTitle(productDetail.title)
+    }
+  }, [productDetail, setProductTitle])
+
   return (
     <div className={cx('container')}>
-      <WorkspaceActionBar onClickSave={handleSave} />
+      <WorkspaceActionBar
+        onClickSave={handleSave}
+        initialTitle={productDetail ? productDetail?.title : ''}
+      />
       <div className={cx('header-space')}></div>
 
       <main className={cx('main-section')}>
@@ -74,7 +85,7 @@ export default function WorkSpacePage() {
         <div className={cx('index-space')}></div>
 
         <div className={cx('main-section__contents')}>
-          <DefaultEditor ref={editorRef} contents={productDatail?.content} />
+          <DefaultEditor ref={editorRef} contents={productDetail?.content} />
         </div>
 
         <div>

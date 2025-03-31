@@ -1,8 +1,8 @@
 'use client'
 
-import { ChangeEvent, KeyboardEvent, useRef, useState } from 'react'
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
@@ -30,9 +30,10 @@ interface ModalHandler {
 
 interface WorkspaceActionBarProps {
   onClickSave: () => Promise<void>
+  initialTitle?: string | null
 }
 
-export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarProps) {
+export default function WorkspaceActionBar({ onClickSave, initialTitle }: WorkspaceActionBarProps) {
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
 
@@ -140,27 +141,31 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
     const [isTitleEditing, setIsTitleEditing] = useState(false)
 
     // 타이틀명 state
-    const [title, setTitle] = useState('타이틀')
-    const setTitleAtom = useSetAtom(productTitleAtom)
+    const [title, setTitle] = useState(initialTitle) // 로컬 상태 관리
+    const [titleAtom, setTitleAtom] = useAtom(productTitleAtom) // 전역 상태 관리
 
     // 엔터키 트리거 이벤트
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         setIsTitleEditing(false)
-        setTitleAtom(title)
+        setTitleAtom(title as string)
       }
     }
+
+    useEffect(() => {
+      setTitle(titleAtom)
+    }, [titleAtom])
 
     return (
       <>
         {isTitleEditing && isContentEditing ? (
           <input
             className={cx('action-bar-input')}
-            value={title}
+            value={title as string}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
             onBlur={() => {
               setIsTitleEditing(false)
-              setTitleAtom(title)
+              setTitleAtom(title as string)
             }}
             onKeyDown={handleKeyDown}
           />
