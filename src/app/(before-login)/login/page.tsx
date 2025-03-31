@@ -6,13 +6,9 @@
  */
 import { useRouter } from 'next/navigation'
 
-import { useEffect } from 'react'
-
 import { LoginFormFieldValues } from '(before-login)/login/types/login'
 import { setCookie } from 'cookies-next'
-import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
-import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
 import FillButton from '@components/buttons/FillButton'
 import OutLinedButton from '@components/buttons/OutLinedButton'
@@ -36,14 +32,6 @@ export default function LoginPage() {
   const methods = useForm<LoginFormFieldValues>()
 
   const { handleSubmit } = methods
-
-  const isLoggedIn = useAtomValue(isLoggedInAtom)
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      window.location.href = '/'
-    }
-  }, [isLoggedIn])
 
   // 로그인 하기
   const handleLogin = async (data: LoginFormFieldValues) => {
