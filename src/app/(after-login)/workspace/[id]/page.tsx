@@ -4,7 +4,8 @@ import { useParams } from 'next/navigation'
 
 import { useEffect, useRef } from 'react'
 
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
+import { isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 
@@ -25,11 +26,10 @@ import styles from './page.module.scss'
 const cx = classNames.bind(styles)
 
 /**
- * TODO
- * 에디터 저장하기 (Q. isAutoSave field)
- * 에디터 조회하기 (Q. 제목 필드)
- * 저장 전 에디터 상태 - 저장 전에는 title과 content가 null, 한번이라도 저장하면 null 대신 empty string
- * 읽기 모드일때는 툴바 활성화x
+ * TODO 작업공간 페이지 중 에디터 관련
+ * [ ] 읽기 모드일때는 툴바 활성화 X
+ * [ ] 에디터 TOC
+ * [ ] 자동 저장 기능
  */
 
 // mock data example
@@ -45,8 +45,8 @@ export default function WorkSpacePage() {
   const editorRef = useRef<HandleEditor>(null)
   const { saveProductMutation } = useProducts()
   const { data: productDetail } = useGetProductDetail(params.id)
-  const productTitle = useAtomValue(productTitleAtom)
-  const setProductTitle = useSetAtom(productTitleAtom)
+  const [productTitle, setProductTitle] = useAtom(productTitleAtom)
+  const setIsContentEditing = useSetAtom(isEditableAtom)
 
   const handleSave = async () => {
     if (editorRef.current) {
@@ -67,14 +67,21 @@ export default function WorkSpacePage() {
     if (productDetail?.title) {
       // 작품 조회 API에서 받아온 리스폰스로 작품 제목 상태 초기화
       setProductTitle(productDetail.title)
+    } else {
+      setProductTitle('타이틀')
     }
-  }, [productDetail, setProductTitle])
+    if (!productDetail?.title && !productDetail?.content) {
+      setIsContentEditing(true)
+    }
+  }, [productDetail, setProductTitle, setIsContentEditing])
 
   return (
     <div className={cx('container')}>
       <WorkspaceActionBar
         onClickSave={handleSave}
         initialTitle={productDetail ? productDetail?.title : ''}
+        // 처음 작업공간에 진입했을때 읽기 모드, 그 이후에는 쓰기 모드로 진입
+        isInitialAccess={!productDetail?.title && !productDetail?.content}
       />
       <div className={cx('header-space')}></div>
 

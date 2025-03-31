@@ -31,22 +31,22 @@ interface ModalHandler {
 interface WorkspaceActionBarProps {
   onClickSave: () => Promise<void>
   initialTitle?: string | null
+  isInitialAccess: boolean
 }
 
-export default function WorkspaceActionBar({ onClickSave, initialTitle }: WorkspaceActionBarProps) {
+export default function WorkspaceActionBar({
+  onClickSave,
+  initialTitle,
+  isInitialAccess,
+}: WorkspaceActionBarProps) {
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
-
-  // 저장 여부 판단 state
-  const [hasSaved, setHasSaved] = useState(false)
 
   // 읽기/쓰기 모드를 구분하는 state
   const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
 
   // 저장 버튼 클릭 트리거 이벤트
   const handleSave = async () => {
-    setHasSaved(true)
-
     try {
       await onClickSave()
       alert('저장 완료!')
@@ -188,7 +188,7 @@ export default function WorkspaceActionBar({ onClickSave, initialTitle }: Worksp
           <EditModeSwitch
             isSelected={!isContentEditing}
             onClick={() => setIsContentEditing(false)}
-            disabled={!hasSaved}
+            disabled={isInitialAccess}
           >
             읽기 모드
           </EditModeSwitch>
