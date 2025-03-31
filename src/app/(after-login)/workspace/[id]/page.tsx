@@ -1,8 +1,8 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { useAtom, useSetAtom } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
@@ -10,6 +10,7 @@ import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 
 import DefaultEditor from '@components/editor/DefaultEditor'
+import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
 import { useProducts } from '@hooks/products/useProductsMutation'
@@ -40,11 +41,20 @@ const TABLE_OF_CONTENTS = [
   { id: 'heading4', title: '제목 4' },
 ]
 
+interface ModalHandler {
+  open: () => void
+  close: () => void
+}
+
 export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
+  const ref = useRef<ModalHandler | null>(null)
+  const router = useRouter()
+
   const { saveProductMutation } = useProducts()
   const { data: productDetail } = useGetProductDetail(params.id)
+
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
 
@@ -62,6 +72,30 @@ export default function WorkSpacePage() {
       })
     }
   }
+
+  // TODO hook으로 만들기
+  // 렌더링 2번 실행시(react strict mode) 경로가 2번 추가되는 이슈 방지 flag 값
+  const isClickedFirst = useRef(false)
+
+  // 뒤로 가기 이벤트 핸들러
+  const handlePopState = useCallback(() => {
+    ref.current?.open()
+    history.pushState(null, '', '') // 현재 페이지를 다시 추가하여 뒤로 가기 무효화
+  }, [])
+
+  useEffect(() => {
+    // 최초 렌더링 시 현재 상태 저장 (뒤로 가기 무효화용)
+    if (!isClickedFirst.current) {
+      history.pushState(null, '', '')
+      isClickedFirst.current = true
+    }
+
+    window.addEventListener('popstate', handlePopState)
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [handlePopState])
 
   useEffect(() => {
     if (productDetail?.title) {
@@ -102,6 +136,18 @@ export default function WorkSpacePage() {
           </div>
         </div>
       </main>
+
+      <Modal
+        ref={ref}
+        title="나가기 전 작성한 내용을 저장해 주세요."
+        cancelText="취소"
+        confirmText="저장하기"
+        onCancel={() => ref.current?.close()}
+        onConfirm={async () => {
+          await handleSave()
+          router.push('/')
+        }}
+      />
     </div>
   )
 }
