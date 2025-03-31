@@ -37,6 +37,7 @@ export default function DefaultEditor({ ref, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
 
   const editor = useEditor({
+    editable,
     extensions: [
       Document,
       BlockquoteExtension,
@@ -98,7 +99,9 @@ export default function DefaultEditor({ ref, contents }: DefaultEditorProps) {
           },
         }}
         // --shouldShow: 버블 메뉴 표시를 제어하는 콜백
-        shouldShow={({ state }) => !state.selection.empty}
+        /* MEMO(Sohyun): DefaultEditor내부에서 editable 상태에따른 화면을 구현하고 싶었으나, 버블메뉴 shouldShow 상태 제어가 안되는 문제가 있음
+          editable상태가 shouldShow에 즉각반영이 안됨, (참고) https://tiptap.dev/docs/guides/output-json-html#render */
+        shouldShow={({ state }) => editable && !state.selection.empty}
       >
         {activeMenu === 'defaultToolbar' ? (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />

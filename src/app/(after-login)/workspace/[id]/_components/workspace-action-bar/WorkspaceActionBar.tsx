@@ -97,7 +97,7 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
       <>
         {isContentEditing ? (
           <>
-            <TextButton size="large" onClick={() => handleSave()}>
+            <TextButton size="large" onClick={handleSave}>
               저장하기
             </TextButton>
             <div className={cx('export-button-wrapper')}>
@@ -153,7 +153,7 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
 
     return (
       <>
-        {isTitleEditing ? (
+        {isTitleEditing && isContentEditing ? (
           <input
             className={cx('action-bar-input')}
             value={title}

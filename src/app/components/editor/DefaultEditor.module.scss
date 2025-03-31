@@ -16,6 +16,11 @@
   :first-child {
     margin-top: 0;
     outline: none;
+
+    // 읽기 모드 상태일때
+    &[contenteditable='false'] {
+      cursor: default;
+    }
   }
 
   blockquote {
@@ -25,9 +30,4 @@
   }
 
   // TODO heading 등 정의 필요
-
-  // 읽기 모드 상태일때
-  &[contenteditable='false'] {
-    cursor: not-allowed;
-  }
 }
