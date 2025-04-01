@@ -79,6 +79,13 @@ export default function DefaultEditor({ ref, contents }: DefaultEditorProps) {
     editor.setEditable(editable)
   }, [editor, editable])
 
+  // 에디터 초기 content 데이터 보여주기
+  useEffect(() => {
+    if (editor && contents && contents !== null) {
+      editor.commands.setContent(JSON.parse(contents))
+    }
+  }, [editor, contents])
+
   if (!editor) {
     return null
   }
