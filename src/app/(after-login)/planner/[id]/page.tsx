@@ -2,10 +2,10 @@
 
 import { FormProvider, useForm } from 'react-hook-form'
 
+import { PlannerSynopsisFormValues } from '../../../types/planner/plannerSynopsisFormValues'
 import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
 import PlannerSynopsisFormContainer from './_components/planner-synopsis-form-container/PlannerSynopsisFormContainer'
 import PlannerTabs from './_components/planner-tabs/PlannerTabs'
-import { PlannerSynopsisFormValues } from './types/plannerSynopsisFormValues'
 
 import classNames from 'classnames/bind'
 

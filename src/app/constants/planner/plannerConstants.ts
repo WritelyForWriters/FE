@@ -1,4 +1,4 @@
-import { PlannerTabType } from '(after-login)/planner/[id]/types/plannerTab'
+import { PlannerTabType } from 'types/planner/plannerTab'
 
 export const PLANNER_TABS: PlannerTabType[] = [
   {
