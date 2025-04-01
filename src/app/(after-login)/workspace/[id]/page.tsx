@@ -67,7 +67,7 @@ export default function WorkSpacePage() {
         product: {
           title: productTitle,
           content: JSON.stringify(editor?.getJSON()),
-          isAutoSave: true,
+          isAutoSave: false,
         },
       })
     }
