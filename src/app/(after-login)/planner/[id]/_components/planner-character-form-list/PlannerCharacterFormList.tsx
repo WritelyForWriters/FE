@@ -14,11 +14,13 @@ const cx = classNames.bind(styles)
 
 interface PlannerCharacterFormListProps {
   arrayIndex: number
-  handleRemoveCharacter: () => void
+  characterId: string
+  handleRemoveCharacter: (id: string) => void
 }
 
 export default function PlannerCharacterFormList({
   arrayIndex,
+  characterId,
   handleRemoveCharacter,
 }: PlannerCharacterFormListProps) {
   const { isOpen, onToggle } = useCollapsed(true)
@@ -33,7 +35,7 @@ export default function PlannerCharacterFormList({
               size="small"
               variant="secondary"
               type="button"
-              onClick={handleRemoveCharacter}
+              onClick={() => handleRemoveCharacter(characterId)}
             >
               삭제하기
             </FillButton>
@@ -52,7 +54,7 @@ export default function PlannerCharacterFormList({
           {PLANNER_CHARACTER_ITEMS.map((item, index) => (
             <TextField
               key={`planner-character-item-${index}`}
-              name={`characters[${arrayIndex}].${item.name}`}
+              name={`characters[${characterId}].${item.name}`}
               label={item.label}
             />
           ))}

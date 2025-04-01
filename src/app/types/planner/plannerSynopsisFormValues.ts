@@ -31,8 +31,7 @@ export type WorldViewFormValues = {
 }
 
 export type CharacterFormValues = {
-  // NOTE(hajae): 배열이기 때문에 추후 수정이 있다면 id가 필요하므로 추가
-  id?: string
+  id: string
   intro?: string
   name?: string
   age?: number

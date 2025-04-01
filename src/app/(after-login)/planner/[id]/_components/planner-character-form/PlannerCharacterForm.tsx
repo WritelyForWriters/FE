@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { v4 as uuidv4 } from 'uuid'
+
 import FillButton from '@components/buttons/FillButton'
 
 import { CharacterFormValues } from '../../../../../types/planner/plannerSynopsisFormValues'
@@ -26,16 +28,20 @@ const mockCharacter: CharacterFormValues = {
 }
 
 export default function PlannerCharacterForm() {
-  const [characters, setCharacters] = useState<CharacterFormValues[]>([mockCharacter])
+  const [characters, setCharacters] = useState<CharacterFormValues[]>([])
 
-  const handleAddCharacter = () => {
-    setCharacters([...characters, mockCharacter])
+  const createCharacter = (): CharacterFormValues => {
+    const characterId = uuidv4()
+    return { ...mockCharacter, id: characterId }
   }
 
-  const handleRemoveCharacter = () => {
-    const updatedCharacters = [...characters]
-    updatedCharacters.splice(updatedCharacters.length - 1, 1)
-    setCharacters(updatedCharacters)
+  const handleAddCharacter = () => {
+    setCharacters([...characters, createCharacter()])
+  }
+
+  const handleRemoveCharacter = (id: string) => {
+    const filteredCharacters = characters.filter((character) => character.id !== id)
+    setCharacters(filteredCharacters)
   }
 
   return (
@@ -50,7 +56,8 @@ export default function PlannerCharacterForm() {
       {characters &&
         characters.map((character, index) => (
           <PlannerCharacterFormList
-            key={index}
+            key={character.id}
+            characterId={character.id}
             arrayIndex={index}
             handleRemoveCharacter={handleRemoveCharacter}
           />
