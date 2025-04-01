@@ -7,6 +7,7 @@
 import { useRouter } from 'next/navigation'
 
 import { LoginFormFieldValues } from '(before-login)/login/types/login'
+import { NUMERICS } from 'constants/common/numberValue'
 import { setCookie } from 'cookies-next'
 import { FormProvider, useForm } from 'react-hook-form'
 
@@ -41,19 +42,13 @@ export default function LoginPage() {
       const response = await login({ email, password })
 
       if (response.code === 'RESULT-001') {
-        // TODO: cookie expire 의사 결정 필요
         const date = new Date()
-        date.setTime(date.getTime() + 60 * 60 * 1000)
+        date.setTime(date.getTime() + NUMERICS.COOKIE_EXPIRE)
 
         if (rememberMe) {
           setCookie('isRemberMe', true, { expires: date, path: '/' })
         }
 
-        setCookie(
-          'refreshToken',
-          response.result.refreshToken,
-          rememberMe ? { expires: date, path: '/' } : {},
-        )
         setCookie('isLoggedIn', true, rememberMe ? { expires: date, path: '/' } : {})
 
         router.replace('/')

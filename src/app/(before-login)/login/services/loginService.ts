@@ -5,16 +5,10 @@ import { LoginFormData } from '../types/login'
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 // AT 갱신
-// TODO: API 수정 후 RT 관련 코드 삭제
-export const refreshAccessToken = async (refreshToken: string) => {
+export const refreshAccessToken = async () => {
   const res = await fetch(`${API_URL}/auth/token/reissue`, {
     method: 'POST',
-    body: JSON.stringify({
-      refreshToken,
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    credentials: 'include',
   })
 
   const data = await res.json()
@@ -31,6 +25,7 @@ export const login = async (formData: LoginFormData) => {
   try {
     const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
+      credentials: 'include',
       body: JSON.stringify(formData),
       headers: {
         'Content-Type': 'application/json',

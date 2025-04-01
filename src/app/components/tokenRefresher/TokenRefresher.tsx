@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useState } from 'react'
 
 import { refreshAccessToken } from '(before-login)/login/services/loginService'
-import { deleteCookie, getCookie, setCookie } from 'cookies-next'
+import { NUMERICS } from 'constants/common/numberValue'
+import { deleteCookie, setCookie } from 'cookies-next'
 import { useAtom, useAtomValue } from 'jotai'
 import { accessTokenAtom } from 'store/accessTokenAtom'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
@@ -32,27 +33,19 @@ export default function TokenRefresher({ children }: TokenRefresherProps) {
     // 로그인한 경우에만 리프레시 요청
     const refresh = async () => {
       try {
-        // API 수정 후 RT 관련 코드 삭제
-        const refreshToken = (await getCookie('refreshToken')!) as string
-
-        const result = await refreshAccessToken(refreshToken)
+        const result = await refreshAccessToken()
 
         setAccessToken(result.accessToken)
         setIsLoggedIn(true)
 
-        // TODO: 영구 쿠키 expire 의사 결정 필요
         const date = new Date()
-        date.setTime(date.getTime() + 60 * 60 * 1000)
+        date.setTime(date.getTime() + NUMERICS.COOKIE_EXPIRE)
 
-        setCookie(
-          'refreshToken',
-          result.refreshToken,
-          isRemberMe ? { expires: date, path: '/' } : {},
-        )
         setCookie('isLoggedIn', true, isRemberMe ? { expires: date, path: '/' } : {})
       } catch {
         deleteCookie('isLoggedIn')
         deleteCookie('refreshToken')
+        deleteCookie('isRememberMe')
         router.replace('/login')
       } finally {
         setIsLoading(false)
