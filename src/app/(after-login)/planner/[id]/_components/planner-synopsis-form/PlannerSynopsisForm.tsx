@@ -1,3 +1,8 @@
+import {
+  PLANNER_SYNOPSIS_GENRES,
+  PLANNER_SYNOPSIS_LENGTH,
+} from 'constants/planner/plannerConstants'
+
 import Dropdown from '@components/dropdown/Dropdown'
 import TextField from '@components/text-field/TextField'
 
@@ -16,22 +21,14 @@ export default function PlannerSynopsisForm() {
         type="outlined"
         placeholder="장르"
         label="장르"
-        options={[
-          {
-            label: '장르1',
-            value: '1',
-          },
-          {
-            label: '장르2',
-            value: '2',
-          },
-        ]}
+        options={PLANNER_SYNOPSIS_GENRES}
         rules={{
           required: {
             value: true,
             message: '필수 입력 사항입니다.',
           },
         }}
+        isMulti={true}
         isRequired={true}
       />
       <Dropdown
@@ -39,16 +36,7 @@ export default function PlannerSynopsisForm() {
         type="outlined"
         placeholder="분량"
         label="분량"
-        options={[
-          {
-            label: '분량1',
-            value: '1',
-          },
-          {
-            label: '분량2',
-            value: '2',
-          },
-        ]}
+        options={PLANNER_SYNOPSIS_LENGTH}
         isRequired={false}
       />
       <TextField name="synopsis.purpose" label="기획 의도" />

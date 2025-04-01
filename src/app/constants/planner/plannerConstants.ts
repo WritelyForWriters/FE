@@ -11,6 +11,60 @@ export const PLANNER_TABS: PlannerTabType[] = [
   },
 ] as const
 
+export const PLANNER_SYNOPSIS_GENRES = [
+  {
+    label: '일상',
+    value: '일상',
+  },
+  {
+    label: '드라마',
+    value: '드라마',
+  },
+  {
+    label: '판타지',
+    value: '판타지',
+  },
+  {
+    label: '공상과학',
+    value: '공상과학',
+  },
+  {
+    label: '추리/미스터리',
+    value: '추리/미스터리',
+  },
+  {
+    label: '로맨스',
+    value: '로맨스',
+  },
+  {
+    label: '코미디',
+    value: '코미디',
+  },
+  {
+    label: '시대극',
+    value: '시대극',
+  },
+  {
+    label: '호러',
+    value: '호러',
+  },
+]
+
+export const PLANNER_SYNOPSIS_LENGTH = [
+  {
+    label: '단편(50페이지 이하)',
+    value: 'shortStory',
+  },
+  {
+    label: '중편(50-200페이지)',
+    value: 'novella',
+  },
+  {
+    label: '장편(200페이지 이상)',
+    value: 'novel',
+  },
+]
+
 export const PLANNER_WORLD_VIEW_ITEMS = [
   {
     label: '지리/환경',
