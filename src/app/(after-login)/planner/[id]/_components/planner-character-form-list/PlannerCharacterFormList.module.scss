@@ -12,15 +12,30 @@
     @include mixin.flex(row, center, space-between);
     @extend %typo-title-small;
 
-    &__opend-icon,
-    &__closed-icon {
-      padding: 0.4rem;
-      width: 2rem;
-      height: 2rem;
+    height: 2.4rem;
 
-      color: color.$alert-secondary-300;
+    &__buttons {
+      @include mixin.flex(row, center, null);
+      gap: 1.6rem;
 
-      cursor: pointer;
+      &__opend-icon,
+      &__closed-icon {
+        padding: 0.4rem;
+        width: 2rem;
+        height: 2rem;
+
+        color: color.$alert-secondary-300;
+
+        cursor: pointer;
+      }
+
+      &__delete {
+        display: none;
+      }
+    }
+
+    &:hover &__buttons__delete {
+      display: block;
     }
   }
 

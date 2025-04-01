@@ -32,6 +32,12 @@ export default function PlannerCharacterForm() {
     setCharacters([...characters, mockCharacter])
   }
 
+  const handleRemoveCharacter = () => {
+    const updatedCharacters = [...characters]
+    updatedCharacters.splice(updatedCharacters.length - 1, 1)
+    setCharacters(updatedCharacters)
+  }
+
   return (
     <div className={cx('character-form')} id="heading3">
       <div className={cx('character-form__title')}>
@@ -43,7 +49,11 @@ export default function PlannerCharacterForm() {
 
       {characters &&
         characters.map((character, index) => (
-          <PlannerCharacterFormList key={index} arrayIndex={index} />
+          <PlannerCharacterFormList
+            key={index}
+            arrayIndex={index}
+            handleRemoveCharacter={handleRemoveCharacter}
+          />
         ))}
     </div>
   )
