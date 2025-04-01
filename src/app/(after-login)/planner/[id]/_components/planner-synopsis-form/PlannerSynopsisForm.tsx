@@ -39,13 +39,14 @@ export default function PlannerSynopsisForm() {
         options={PLANNER_SYNOPSIS_LENGTH}
         isRequired={false}
       />
-      <TextField name="synopsis.purpose" label="기획 의도" />
+      <TextField name="synopsis.purpose" label="기획 의도" variant="expand" />
       <TextField
         name="synopsis.logline"
         label="로그 라인"
+        variant="expand"
         options={{ required: { value: true, message: 'required' } }}
       />
-      <TextField name="synopsis.example" label="예시 문장" />
+      <TextField name="synopsis.example" label="예시 문장" variant="expand" />
     </div>
   )
 }

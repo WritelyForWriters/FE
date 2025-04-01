@@ -12,6 +12,8 @@ import styles from './PlannerCharacterFormList.module.scss'
 
 const cx = classNames.bind(styles)
 
+const expandItems = ['intro', 'customFields']
+
 interface PlannerCharacterFormListProps {
   arrayIndex: number
   characterId: string
@@ -56,6 +58,7 @@ export default function PlannerCharacterFormList({
               key={`planner-character-item-${index}`}
               name={`characters[${characterId}].${item.name}`}
               label={item.label}
+              variant={expandItems.includes(item.name) ? 'expand' : undefined}
             />
           ))}
         </div>

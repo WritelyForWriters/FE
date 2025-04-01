@@ -17,6 +17,7 @@ export default function PlannerWorldViewForm() {
           key={`planner-world-view-item-${index}`}
           name={`worldView.${item.name}`}
           label={item.label}
+          variant="expand"
           helperText={item.helperText}
         />
       ))}

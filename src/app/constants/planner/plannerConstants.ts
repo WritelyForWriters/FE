@@ -149,5 +149,5 @@ export const PLANNER_CHARACTER_ITEMS = [
   { label: '외모', name: 'appearance' },
   { label: '성격/특징', name: 'personality' },
   { label: '주요 관계', name: 'relationship' },
-  { label: '커스텀 필드', name: 'customField' },
+  { label: '커스텀 필드', name: 'customFields' },
 ] as const
