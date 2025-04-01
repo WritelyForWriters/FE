@@ -29,8 +29,9 @@ interface TextFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
  */
 const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
   ({ name, options, ...props }, ref) => {
-    const { register, setValue } = useFormContext()
+    const { register, watch, setValue } = useFormContext()
     const { onChange: registerOnChange, ...rest } = register(name, options)
+    const value = watch(name)
 
     const [isExpand, setIsExpand] = useState(false)
     const textarea = useRef<HTMLTextAreaElement | null>(null)
@@ -71,19 +72,20 @@ const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
             if (props.onChange) props.onChange(e)
           }}
         />
-        {isExpand ? (
-          <IoIosArrowUp
-            size={20}
-            className={cx('text-field__fieldset__text-area__icon')}
-            onClick={handleExpandClick}
-          />
-        ) : (
-          <IoIosArrowDown
-            size={20}
-            className={cx('text-field__fieldset__text-area__icon')}
-            onClick={handleExpandClick}
-          />
-        )}
+        {value &&
+          (isExpand ? (
+            <IoIosArrowDown
+              size={20}
+              className={cx('text-field__fieldset__text-area__icon')}
+              onClick={handleExpandClick}
+            />
+          ) : (
+            <IoIosArrowUp
+              size={20}
+              className={cx('text-field__fieldset__text-area__icon')}
+              onClick={handleExpandClick}
+            />
+          ))}
       </div>
     )
   },
