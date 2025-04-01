@@ -6,7 +6,7 @@ export type PlannerSynopsisFormValues = {
 }
 
 export type SynopsisFormValues = {
-  genre: { label: string; value: string }
+  genre: { label: string; value: string }[]
   length?: { label: string; value: string }
   purpose?: string
   logline: string
