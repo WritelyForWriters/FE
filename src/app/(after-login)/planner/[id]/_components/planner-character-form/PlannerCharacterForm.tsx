@@ -14,7 +14,7 @@ import styles from './PlannerCharacterForm.module.scss'
 const cx = classNames.bind(styles)
 
 const mockCharacter: CharacterFormValues = {
-  characterId: '',
+  id: '',
   intro: '',
   name: '',
   age: NaN,
