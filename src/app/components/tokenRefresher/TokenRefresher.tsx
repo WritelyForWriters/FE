@@ -55,9 +55,5 @@ export default function TokenRefresher({ children }: TokenRefresherProps) {
     refresh()
   }, [isLoading, accessToken, router, setAccessToken, setIsLoggedIn, isRemberMe])
 
-  if (isLoading) {
-    return <></>
-  }
-
   return <>{children}</>
 }
