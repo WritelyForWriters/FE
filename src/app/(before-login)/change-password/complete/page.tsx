@@ -4,14 +4,21 @@
  * 비밀번호 변경 페이지
  * @author 선우
  */
-import { useParams } from 'next/navigation'
+import { notFound, useRouter, useSearchParams } from 'next/navigation'
 
+import { useEffect } from 'react'
+
+import { ChangePasswordFormValues } from '(before-login)/change-password/types/changePassword'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
 import { AUTH_PATTERN } from 'constants/signup/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
 import TextField from '@components/text-field/TextField'
+import { useToast } from '@components/toast/ToastProvider'
+
+import { changePassword } from '../services/changePasswordService'
 
 import classNames from 'classnames/bind'
 
@@ -19,15 +26,21 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface ResetPasswordFormValues {
-  password: string
-  confirmPassword: string
-}
-
 export default function ResetPassword() {
-  const params = useParams<{ token: string }>()
+  const showToast = useToast()
 
-  const methods = useForm<ResetPasswordFormValues>({
+  const router = useRouter()
+  const params = useSearchParams()
+
+  const changePasswordToken = params.get('changePasswordToken')!
+
+  useEffect(() => {
+    if (!changePasswordToken) {
+      return notFound()
+    }
+  }, [changePasswordToken])
+
+  const methods = useForm<ChangePasswordFormValues>({
     mode: 'onBlur',
     defaultValues: {
       password: '',
@@ -37,11 +50,23 @@ export default function ResetPassword() {
 
   const { handleSubmit, trigger, watch } = methods
 
-  const changePasswordToken = params?.token
-
-  const handleChangePassword = (data: ResetPasswordFormValues) => {
+  const handleChangePassword = async (data: ChangePasswordFormValues) => {
     const password = data.password
-    console.log(`changePasswordToken: ${changePasswordToken}, password: ${password}`)
+
+    try {
+      const result = await changePassword({ changePasswordToken, password })
+
+      if (result.code !== 'RESULT-001') {
+        showToast('warning', result.message)
+      } else {
+        showToast('success', TOAST_MESSAGE.CHANGE_PASSWORD_COMPLETE)
+        router.push('/login')
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        showToast('warning', error.message)
+      }
+    }
   }
 
   return (
