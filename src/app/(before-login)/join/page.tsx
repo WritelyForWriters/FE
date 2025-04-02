@@ -82,12 +82,12 @@ export default function JoinPage() {
       return
     }
 
-    // TODO: 서버 약관 관리 내용 변경 되면 수정 예정
-    const { email, password, nickname, privacyPolicy, marketingReceive } = data
+    const { email, password, nickname, privacyPolicy, marketingReceive, termsOfService } = data
 
     const termsList = [
       { termsCd: Terms.PRIVACY_POLICY, isAgreed: privacyPolicy },
       { termsCd: Terms.MARKETING_RECEIVE, isAgreed: marketingReceive },
+      { termsCd: Terms.TERMS_OF_SERVICE, isAgreed: termsOfService },
     ]
 
     try {
