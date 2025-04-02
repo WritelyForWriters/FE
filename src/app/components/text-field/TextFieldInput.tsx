@@ -57,13 +57,13 @@ export default function TextFieldInput({ name, variant, options, ...props }: Inp
       {variant === 'password' &&
         value &&
         (!showPassword ? (
-          <BiSolidShow
+          <BiSolidHide
             size={20}
             className={cx('text-field__fieldset__input__icon')}
             onClick={handlePasswordToggle}
           />
         ) : (
-          <BiSolidHide
+          <BiSolidShow
             size={20}
             className={cx('text-field__fieldset__input__icon')}
             onClick={handlePasswordToggle}
