@@ -1,0 +1,23 @@
+@use '@styles/typography' as typo;
+@use '@styles/colors' as color;
+
+.section {
+  padding: 0 1.6rem;
+  width: 600px;
+
+  p {
+    @include typo.typo(1.6rem, 400, 3.6rem, 0);
+  }
+}
+
+.is-editor-empty:first-child::before {
+  @include typo.typo(1.6rem, 400, 3.6rem, 0);
+
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+
+  color: color.$alert-secondary-500;
+  font-weight: 400;
+}

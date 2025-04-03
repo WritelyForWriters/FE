@@ -15,3 +15,6 @@ export const selectionAtom = atom<TextSelectionRangeType | null>(null)
 
 // prompt 입력 값
 export const promptValueAtom = atom('')
+
+// 에디터 상태(읽기, 쓰기)
+export const isEditableAtom = atom(true)

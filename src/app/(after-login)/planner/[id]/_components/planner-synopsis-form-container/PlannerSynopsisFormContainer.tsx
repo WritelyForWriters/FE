@@ -8,6 +8,7 @@ import { plannerActiveTabAtom } from 'store/plannerAtoms'
 import IndexPannel from '@components/pannel/IndexPannel'
 
 import PlannerCharacterForm from '../planner-character-form/PlannerCharacterForm'
+import PlannerIdeaNote from '../planner-idea-note/PlannerIdeaNote'
 import PlannerPlotForm from '../planner-plot-form/PlannerPlotForm'
 import PlannerSynopsisForm from '../planner-synopsis-form/PlannerSynopsisForm'
 import PlannerWorldViewForm from '../planner-world-view-form/PlannerWorldViewForm'
@@ -27,7 +28,8 @@ const TABLE_OF_CONTENTS = [
 
 export default function PlannerSynopsisFormContainer() {
   const [activeTab] = useAtom(plannerActiveTabAtom)
-  const [ideaValue, setIdeaValue] = useState('')
+  // TODO(hajae): idea note value 추후 처리
+  const [ideaValue] = useState('')
 
   return (
     <form
@@ -48,12 +50,7 @@ export default function PlannerSynopsisFormContainer() {
             <PlannerPlotForm />
           </>
         ) : (
-          <textarea
-            className={styles['form__fields__textarea']}
-            placeholder="아이디어를 자유롭게 입력해 주세요."
-            value={ideaValue}
-            onChange={(e) => setIdeaValue(e.target.value)}
-          />
+          <PlannerIdeaNote />
         )}
       </div>
 

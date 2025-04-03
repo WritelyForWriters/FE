@@ -21,7 +21,9 @@ function SelectOption({ option, children }: SelectOptionProps) {
   const getActiveStyleClass = isActiveOption ? `${styles['is-active']}` : ''
 
   return (
-    <button onClick={handleAction} className={`${getActiveStyleClass} ${className}`}>
+    // NOTE(hajae): <button> 태그는 type="submit"이 기본값이므로,
+    // type="button"이 지정되지 않으면 예상치 못한 폼 제출이 발생할 수 있어서 추가
+    <button type="button" onClick={handleAction} className={`${getActiveStyleClass} ${className}`}>
       {children}
     </button>
   )
