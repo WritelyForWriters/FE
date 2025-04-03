@@ -30,6 +30,7 @@
     "@tiptap/extension-underline": "^2.11.5",
     "@tiptap/pm": "^2.11.5",
     "@tiptap/react": "^2.11.5",
+    "axios": "^1.8.4",
     "classnames": "^2.5.1",
     "cookies-next": "^5.1.0",
     "jotai": "^2.12.1",
