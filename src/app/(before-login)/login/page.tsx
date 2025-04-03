@@ -6,19 +6,16 @@
  */
 import { useRouter } from 'next/navigation'
 
-import { LoginFormFieldValues } from '(before-login)/login/types/login'
-import { NUMERICS } from 'constants/common/numberValue'
-import { setCookie } from 'cookies-next'
 import { FormProvider, useForm } from 'react-hook-form'
+import { LoginFormFieldValues } from 'types/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
 import OutLinedButton from '@components/buttons/OutLinedButton'
 import TextButton from '@components/buttons/TextButton'
 import Checkbox from '@components/checkbox/Checkbox'
 import TextField from '@components/text-field/TextField'
-import { useToast } from '@components/toast/ToastProvider'
 
-import { login } from './services/loginService'
+import { useLogin } from '@hooks/index'
 
 import classNames from 'classnames/bind'
 
@@ -28,38 +25,20 @@ const cx = classNames.bind(styles)
 
 export default function LoginPage() {
   const router = useRouter()
-  const showToast = useToast()
 
   const methods = useForm<LoginFormFieldValues>()
 
   const { handleSubmit } = methods
 
+  const { mutate: login } = useLogin({
+    onSuccessHandler: () => {
+      router.replace('/')
+    },
+  })
+
   // 로그인 하기
   const handleLogin = async (data: LoginFormFieldValues) => {
-    const { email, password, rememberMe } = data
-
-    try {
-      const response = await login({ email, password })
-
-      if (response.code === 'RESULT-001') {
-        const date = new Date()
-        date.setTime(date.getTime() + NUMERICS.COOKIE_EXPIRE)
-
-        if (rememberMe) {
-          setCookie('isRemberMe', true, { expires: date, path: '/' })
-        }
-
-        setCookie('isLoggedIn', true, rememberMe ? { expires: date, path: '/' } : {})
-
-        router.replace('/')
-      } else {
-        showToast('warning', response.message)
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        showToast('warning', error.message)
-      }
-    }
+    login(data)
   }
 
   const navigateTo = (url: string) => {
@@ -91,7 +70,7 @@ export default function LoginPage() {
                 }}
               />
               <div className={cx('login-form__checkbox-section')}>
-                <Checkbox label="로그인 유지하기" name="rememberMe" />
+                <Checkbox label="로그인 유지하기" name="isRememberMe" />
               </div>
             </form>
           </FormProvider>

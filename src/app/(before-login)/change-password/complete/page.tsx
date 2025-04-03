@@ -8,17 +8,15 @@ import { notFound, useRouter, useSearchParams } from 'next/navigation'
 
 import { useEffect } from 'react'
 
-import { ChangePasswordFormValues } from '(before-login)/change-password/types/changePassword'
-import { TOAST_MESSAGE } from 'constants/common/toastMessage'
-import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
-import { AUTH_PATTERN } from 'constants/signup/pattern'
+import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
+import { AUTH_PATTERN } from 'constants/join/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
+import { ChangePasswordFormValues } from 'types/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
 import TextField from '@components/text-field/TextField'
-import { useToast } from '@components/toast/ToastProvider'
 
-import { changePassword } from '../services/changePasswordService'
+import { useChangePassword } from '@hooks/index'
 
 import classNames from 'classnames/bind'
 
@@ -27,8 +25,6 @@ import styles from './page.module.scss'
 const cx = classNames.bind(styles)
 
 export default function ResetPassword() {
-  const showToast = useToast()
-
   const router = useRouter()
   const params = useSearchParams()
 
@@ -50,23 +46,15 @@ export default function ResetPassword() {
 
   const { handleSubmit, trigger, watch } = methods
 
+  const { mutate, isPending } = useChangePassword({
+    onSuccessHandler: () => {
+      router.push('/login')
+    },
+  })
+
   const handleChangePassword = async (data: ChangePasswordFormValues) => {
     const password = data.password
-
-    try {
-      const result = await changePassword({ changePasswordToken, password })
-
-      if (result.code !== 'RESULT-001') {
-        showToast('warning', result.message)
-      } else {
-        showToast('success', TOAST_MESSAGE.CHANGE_PASSWORD_COMPLETE)
-        router.push('/login')
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        showToast('warning', error.message)
-      }
-    }
+    mutate({ changePasswordToken, password })
   }
 
   return (
@@ -108,7 +96,7 @@ export default function ResetPassword() {
               />
             </div>
           </section>
-          <FillButton type="submit" size="large">
+          <FillButton type="submit" size="large" disabled={isPending}>
             확인
           </FillButton>
         </form>

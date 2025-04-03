@@ -7,22 +7,19 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { useEffect } from 'react'
-
-import { checkValueDuplicate, join } from '(before-login)/join/services/joinService'
-import { JoinFormFieldValues, Terms } from '(before-login)/join/types/join'
-import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
 import { AUTH_PATTERN } from 'constants/join/pattern'
-import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
-import { isLoggedInAtom } from 'store/isLoggedInAtom'
+import { JoinFormFieldValues, Terms } from 'types/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
 import CheckboxGroup from '@components/checkbox-group/CheckboxGroup'
 import TextField from '@components/text-field/TextField'
-import { useToast } from '@components/toast/ToastProvider'
+
+import { useJoin } from '@hooks/index'
+
+import { checkValueDuplicate } from './../../api/auth/Auth'
 
 import classNames from 'classnames/bind'
 
@@ -32,8 +29,6 @@ const cx = classNames.bind(styles)
 
 export default function JoinPage() {
   const router = useRouter()
-
-  const showToast = useToast()
 
   const methods = useForm<JoinFormFieldValues>({
     mode: 'onBlur',
@@ -51,24 +46,22 @@ export default function JoinPage() {
 
   const { handleSubmit, setError, watch, trigger } = methods
 
-  const isLoggedIn = useAtomValue(isLoggedInAtom)
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      window.location.href = '/'
-    }
-  }, [isLoggedIn])
+  const { mutate, isPending } = useJoin({
+    onSuccessHandler: () => {
+      router.push('/login')
+    },
+  })
 
   // 중복 검사
   const validateValueDuplicate = async (type: 'email' | 'nickname', value: string) => {
-    const isDuplicate = await checkValueDuplicate(type, value)
+    const { exists } = await checkValueDuplicate(type, value)
 
-    if (!isDuplicate) {
-      return true
-    } else {
+    if (exists) {
       return type === 'email'
         ? AUTH_ERROR_MESSAGE.EMAIL_DUPLICATE
         : AUTH_ERROR_MESSAGE.NICKNAME_DUPLICATE
+    } else {
+      return true
     }
   }
 
@@ -90,18 +83,7 @@ export default function JoinPage() {
       { termsCd: Terms.TERMS_OF_SERVICE, isAgreed: termsOfService },
     ]
 
-    try {
-      const result = await join({ email, password, nickname, termsList })
-
-      if (result.code === 'RESULT-001') {
-        router.push('/login')
-        showToast('success', TOAST_MESSAGE.SIGN_UP_COMPLETE)
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        showToast('warning', error.message)
-      }
-    }
+    mutate({ email, password, nickname, termsList })
   }
 
   return (
@@ -190,7 +172,9 @@ export default function JoinPage() {
               checkboxWrapperClassName={cx('form__action-section--checkboxes')}
             />
             <div className={cx('form__action-section--buttons')}>
-              <FillButton size="large">회원가입</FillButton>
+              <FillButton size="large" disabled={isPending}>
+                회원가입
+              </FillButton>
               <div className={cx('form__action-section--login-btn')}>
                 <Link href="/login">
                   <TextButton size="small">로그인으로 돌아가기</TextButton>
