@@ -1,20 +1,13 @@
+import { ApiResponse } from 'types/common/apiResponse'
+
 export type InputType = 'email' | 'nickname'
 
-export interface AuthResponse {
-  code: string
-  result: {
-    accessToken: string
-  }
-  message: string
-}
+export type AuthResponse = ApiResponse<{ accessToken: string }>
 
-export interface CheckDuplicateResponse {
-  result: {
-    value: string
-    exists: boolean
-  }
-}
-
+export type CheckDuplicateResponse = ApiResponse<{
+  email: string
+  exists: boolean
+}>
 export interface JoinFormFieldValues {
   email: string
   nickname: string
