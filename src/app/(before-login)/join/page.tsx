@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
 import { AUTH_PATTERN } from 'constants/join/pattern'
+import { TERMS_URLS } from 'constants/join/urls'
 import { FormProvider, useForm } from 'react-hook-form'
 import { JoinFormFieldValues, Terms } from 'types/auth/auth'
 
@@ -159,10 +160,12 @@ export default function JoinPage() {
                 {
                   name: 'termsOfService',
                   label: '(필수) 이용약관',
+                  handleLabelClick: () => window.open(TERMS_URLS.TERMS_OF_SERVICE, '_blank'),
                 },
                 {
                   name: 'privacyPolicy',
                   label: '(필수) 개인정보처리방침',
+                  handleLabelClick: () => window.open(TERMS_URLS.PRIVACY_POLICY, '_blank'),
                 },
                 {
                   name: 'marketingReceive',
