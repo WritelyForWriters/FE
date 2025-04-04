@@ -14,7 +14,7 @@ export default function CompleteJoinPage() {
 
   const { mutate } = useCompleteJoin({
     onSettledHandler: () => {
-      router.push('/login')
+      router.replace('/login')
     },
   })
 
