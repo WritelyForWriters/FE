@@ -6,6 +6,7 @@ import { useAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
+import { ModalHandler } from 'types/common/modalRef'
 
 import ActionBar from '@components/action-bar/ActionBar'
 import styles from '@components/action-bar/ActionBar.module.scss'
@@ -22,11 +23,6 @@ import classNames from 'classnames/bind'
 const cx = classNames.bind(styles)
 
 type ExportMode = 'full' | 'toc'
-
-interface ModalHandler {
-  open: () => void
-  close: () => void
-}
 
 interface WorkspaceActionBarProps {
   onClickSave: () => Promise<void>

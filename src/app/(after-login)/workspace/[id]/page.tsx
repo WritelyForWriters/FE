@@ -8,6 +8,7 @@ import { useAtom, useSetAtom } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
+import { ModalHandler } from 'types/common/modalRef'
 
 import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
@@ -40,11 +41,6 @@ const TABLE_OF_CONTENTS = [
   { id: 'heading3', title: '제목 3' },
   { id: 'heading4', title: '제목 4' },
 ]
-
-interface ModalHandler {
-  open: () => void
-  close: () => void
-}
 
 export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
