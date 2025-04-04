@@ -1,6 +1,6 @@
 'use client'
 
-import { Ref, useEffect, useImperativeHandle } from 'react'
+import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
@@ -27,11 +27,12 @@ import styles from './DefaultEditor.module.scss'
 // TODO 단축키 '/'로 버블메뉴 활성화
 
 interface DefaultEditorProps {
-  ref: Ref<HandleEditor>
+  editorRef: Ref<HandleEditor>
+  isSavedRef: RefObject<boolean>
   contents?: string
 }
 
-export default function DefaultEditor({ ref, contents }: DefaultEditorProps) {
+export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
   const editable = useAtomValue(isEditableAtom)
@@ -61,10 +62,14 @@ export default function DefaultEditor({ ref, contents }: DefaultEditorProps) {
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
+    onUpdate: () => {
+      // 에디터에 변경사항이 생기면 저장 상태 false로 변경
+      isSavedRef.current = false
+    },
   })
 
   // 외부에서 에디터 인스턴스에 접근하기 위해 사용
-  useImperativeHandle(ref, () => ({
+  useImperativeHandle(editorRef, () => ({
     getEditor: () => editor,
   }))
 

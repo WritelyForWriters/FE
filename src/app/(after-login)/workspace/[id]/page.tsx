@@ -32,6 +32,12 @@ const cx = classNames.bind(styles)
  * [ ] 읽기 모드일때는 툴바 활성화 X
  * [ ] 에디터 TOC
  * [ ] 자동 저장 기능
+ *
+ * 뒤로가기 플로우
+ * - 뒤로가기 시 저장되지 않았다면 모달 오픈
+ * - 모달에서 “저장하기” > 저장 후 isSaved = true 로 바꿈 > 뒤로가기 정상 작동
+ * - 모달에서 “취소” > isSaved = false 유지 > 다시 뒤로가면 모달 재등장
+ * - 에디터애서 변경 발생 시 isSaved = false로 전환하기 > 위의 플로우 반복
  */
 
 // mock data example
@@ -46,6 +52,7 @@ export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
   const modalRef = useRef<ModalHandler | null>(null)
+  const isSavedRef = useRef(false)
   const router = useRouter()
 
   const { saveProductMutation } = useProducts()
@@ -67,6 +74,7 @@ export default function WorkSpacePage() {
         },
       })
     }
+    isSavedRef.current = true
   }
 
   // TODO hook으로 만들기
@@ -75,9 +83,15 @@ export default function WorkSpacePage() {
 
   // 뒤로 가기 이벤트 핸들러
   const handlePopState = useCallback(() => {
-    modalRef.current?.open()
-    history.pushState(null, '', '') // 현재 페이지를 다시 추가하여 뒤로 가기 무효화
-  }, [])
+    // --저장한 경우 뒤로가기 허용
+    if (isSavedRef.current) {
+      router.back()
+    } else {
+      // --그렇지 않은 경우, 모달 띄우고 현재 페이지를 다시 추가하여 뒤로가기 무효화
+      modalRef.current?.open()
+      history.pushState(null, '', '')
+    }
+  }, [router])
 
   useEffect(() => {
     // 최초 렌더링 시 현재 상태 저장 (뒤로 가기 무효화용)
@@ -122,7 +136,11 @@ export default function WorkSpacePage() {
         <div className={cx('index-space')}></div>
 
         <div className={cx('main-section__contents')}>
-          <DefaultEditor ref={editorRef} contents={productDetail?.content} />
+          <DefaultEditor
+            editorRef={editorRef}
+            contents={productDetail?.content}
+            isSavedRef={isSavedRef}
+          />
         </div>
 
         <div>
@@ -138,10 +156,15 @@ export default function WorkSpacePage() {
         title="나가기 전 작성한 내용을 저장해 주세요."
         cancelText="취소"
         confirmText="저장하기"
-        onCancel={() => modalRef.current?.close()}
+        onCancel={() => {
+          modalRef.current?.close()
+          history.pushState(null, '', '') // 현재 페이지를 다시 추가하여 뒤로 가기 무효화
+        }}
         onConfirm={async () => {
           await handleSave()
-          router.push('/')
+          isSavedRef.current = true // 저장 완료 플래그
+          modalRef.current?.close()
+          history.pushState(null, '', '') // 뒤로가기 무효화 (다시 머무르게)
         }}
       />
     </div>
