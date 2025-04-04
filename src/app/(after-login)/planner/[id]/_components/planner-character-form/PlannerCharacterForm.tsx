@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { v4 as uuidv4 } from 'uuid'
 
@@ -15,33 +15,33 @@ import styles from './PlannerCharacterForm.module.scss'
 
 const cx = classNames.bind(styles)
 
-const mockCharacter: CharacterFormValues = {
+const createCharacter = (): CharacterFormValues => ({
   id: '',
   intro: '',
   name: '',
-  age: NaN,
+  age: undefined,
   gender: '',
   occupation: '',
   appearance: '',
   personality: '',
   relationship: '',
-}
+})
 
 export default function PlannerCharacterForm() {
   const [characters, setCharacters] = useState<CharacterFormValues[]>([])
 
-  const createCharacter = (): CharacterFormValues => {
-    const characterId = uuidv4()
-    return { ...mockCharacter, id: characterId }
-  }
+  // NOTE(hajae): uuidv4는 client side에서 실행되는 함수 인데,
+  // useState를 초기화할 때(ssr) 사용하면 에러가 발생하므로 최초 마운트 후 등장인물 추가
+  useEffect(() => {
+    setCharacters([{ ...createCharacter(), id: uuidv4() }])
+  }, [])
 
   const handleAddCharacter = () => {
-    setCharacters([...characters, createCharacter()])
+    setCharacters((prev) => [...prev, { ...createCharacter(), id: uuidv4() }])
   }
 
   const handleRemoveCharacter = (id: string) => {
-    const filteredCharacters = characters.filter((character) => character.id !== id)
-    setCharacters(filteredCharacters)
+    setCharacters((prev) => prev.filter((character) => character.id !== id))
   }
 
   return (

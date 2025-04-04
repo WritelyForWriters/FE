@@ -133,11 +133,6 @@ export const PLANNER_WORLD_VIEW_ITEMS = [
     name: 'conflict',
     helperText: '갈등 주체, 원인, 주요 사건, 현재 상황',
   },
-  {
-    label: '커스텀 항목',
-    name: 'customField',
-    helperText: '',
-  },
 ] as const
 
 export const PLANNER_CHARACTER_ITEMS = [
