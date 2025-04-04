@@ -41,7 +41,14 @@ export default function PlannerCharacterForm() {
   }
 
   const handleRemoveCharacter = (id: string) => {
-    setCharacters((prev) => prev.filter((character) => character.id !== id))
+    setCharacters((prev) => {
+      const newCharacters = [...prev]
+      const index = newCharacters.findIndex((char) => char.id === id)
+      if (index !== -1) {
+        newCharacters.splice(index, 1)
+      }
+      return newCharacters
+    })
   }
 
   return (
