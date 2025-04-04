@@ -169,6 +169,9 @@ export default function PlannerIdeaNoteToolbar({ editor }: ToolbarProps) {
           U
         </ToolbarButton>
       </div>
+
+      {/* TODO(hajae): 이미지를 첨부 시, 이미지를 서버에 추가하는 작업이 필요. Base64방식을 사용해도 되나
+      이미지 서버에 추가, image url을 통한 이미지 출력 방식이 성능 저하 문제도 없을 뿐더러 최적화가 쉽기 때문에 사용 */}
     </div>
   )
 }
