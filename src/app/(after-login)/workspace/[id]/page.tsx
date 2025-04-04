@@ -45,7 +45,7 @@ const TABLE_OF_CONTENTS = [
 export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
-  const ref = useRef<ModalHandler | null>(null)
+  const modalRef = useRef<ModalHandler | null>(null)
   const router = useRouter()
 
   const { saveProductMutation } = useProducts()
@@ -75,7 +75,7 @@ export default function WorkSpacePage() {
 
   // 뒤로 가기 이벤트 핸들러
   const handlePopState = useCallback(() => {
-    ref.current?.open()
+    modalRef.current?.open()
     history.pushState(null, '', '') // 현재 페이지를 다시 추가하여 뒤로 가기 무효화
   }, [])
 
@@ -134,11 +134,11 @@ export default function WorkSpacePage() {
       </main>
 
       <Modal
-        ref={ref}
+        ref={modalRef}
         title="나가기 전 작성한 내용을 저장해 주세요."
         cancelText="취소"
         confirmText="저장하기"
-        onCancel={() => ref.current?.close()}
+        onCancel={() => modalRef.current?.close()}
         onConfirm={async () => {
           await handleSave()
           router.push('/')
