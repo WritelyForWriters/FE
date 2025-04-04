@@ -51,6 +51,25 @@
       }
     }
 
+    // NOTE(hajae): 해당 디자인이 없어서 임시 추가...
+    &__label-input {
+      position: absolute;
+
+      width: 12rem;
+      height: fit-content;
+
+      outline: 0;
+      border: 0;
+
+      background-color: color.$alert-secondary-50;
+
+      &--empty {
+        @extend %typo-label-large;
+
+        top: 1.8rem;
+      }
+    }
+
     &__wrapper {
       display: flex;
       justify-content: space-between;
