@@ -43,6 +43,8 @@ export const getProductList = async () => {
 
   if (data.code === 'RESULT-001') {
     return data.result
+  } else {
+    return []
   }
 }
 
