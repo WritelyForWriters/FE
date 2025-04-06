@@ -32,12 +32,6 @@ const cx = classNames.bind(styles)
  * [ ] 읽기 모드일때는 툴바 활성화 X
  * [ ] 에디터 TOC
  * [ ] 자동 저장 기능
- *
- * 뒤로가기 플로우
- * - 뒤로가기 시 저장되지 않았다면 모달 오픈
- * - 모달에서 “저장하기” > 저장 후 isSaved = true 로 바꿈 > 뒤로가기 정상 작동
- * - 모달에서 “취소” > isSaved = false 유지 > 다시 뒤로가면 모달 재등장
- * - 에디터애서 변경 발생 시 isSaved = false로 전환하기 > 위의 플로우 반복
  */
 
 // mock data example
@@ -169,11 +163,10 @@ export default function WorkSpacePage() {
         confirmText="저장하기"
         onCancel={() => {
           modalRef.current?.close()
-          history.pushState(null, '', '') // 현재 페이지를 다시 추가하여 뒤로 가기 무효화
         }}
         onConfirm={async () => {
           await handleSave()
-          isSavedRef.current = true // 저장 완료 플래그
+          isSavedRef.current = true
           modalRef.current?.close()
           history.pushState(null, '', '') // 뒤로가기 무효화 (다시 머무르게)
         }}
