@@ -45,7 +45,6 @@ export default function WorkspaceActionBar({
   const handleSave = async () => {
     try {
       await onClickSave()
-      alert('저장 완료!')
     } catch (error) {
       console.error(error)
     }

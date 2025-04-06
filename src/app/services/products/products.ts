@@ -43,8 +43,6 @@ export const getProductList = async () => {
 
   if (data.code === 'RESULT-001') {
     return data.result
-  } else {
-    throw new Error('작품 목록 조회 실패') // React-Query에서 에러를 받도록 처리
   }
 }
 
