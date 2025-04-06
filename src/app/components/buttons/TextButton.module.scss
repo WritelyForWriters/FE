@@ -41,6 +41,7 @@
 
   &:focus {
     background-color: color.$alert-secondary-50;
+    border-radius: 1rem;
     outline: none;
   }
 
