@@ -93,6 +93,15 @@ export default function WorkSpacePage() {
     }
   }, [router])
 
+  // 새로고침 이벤트 핸들러
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (!isSavedRef.current) {
+      e.preventDefault()
+      e.returnValue = true // legacy 브라우저를 위해 추가
+      return ''
+    }
+  }
+
   useEffect(() => {
     // 최초 렌더링 시 현재 상태 저장 (뒤로 가기 무효화용)
     if (!isClickedFirst.current) {
@@ -101,9 +110,11 @@ export default function WorkSpacePage() {
     }
 
     window.addEventListener('popstate', handlePopState)
+    window.addEventListener('beforeunload', handleBeforeUnload)
 
     return () => {
       window.removeEventListener('popstate', handlePopState)
+      window.removeEventListener('beforeunload', handleBeforeUnload)
     }
   }, [handlePopState])
 
