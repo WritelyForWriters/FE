@@ -43,8 +43,6 @@ export type CharacterFormValues = {
   customFields?: CustomField[]
 }
 
-export type CharacterFormValuesWithId = CharacterFormValues & { id: string }
-
 export type PlotFormValues = {
   content?: string
 }
