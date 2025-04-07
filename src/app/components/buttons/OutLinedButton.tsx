@@ -15,6 +15,11 @@ export default function OutLinedButton({
   shape = 'square',
   variant = 'primary',
   children,
+  ...rest
 }: ButtonPropsBase) {
-  return <button className={cx('outlined-button', size, shape, variant)}>{children}</button>
+  return (
+    <button className={cx('outlined-button', size, shape, variant)} {...rest}>
+      {children}
+    </button>
+  )
 }

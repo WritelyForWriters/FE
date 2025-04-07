@@ -4,7 +4,10 @@
  * 로그인 페이지
  * @author 선우
  */
+import { useRouter } from 'next/navigation'
+
 import { FormProvider, useForm } from 'react-hook-form'
+import { LoginFormFieldValues } from 'types/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
 import OutLinedButton from '@components/buttons/OutLinedButton'
@@ -12,31 +15,35 @@ import TextButton from '@components/buttons/TextButton'
 import Checkbox from '@components/checkbox/Checkbox'
 import TextField from '@components/text-field/TextField'
 
+import { useLogin } from '@hooks/index'
+
 import classNames from 'classnames/bind'
 
 import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface LoginFormType {
-  email: string
-  password: string
-  rememberMe: boolean
-}
-
 export default function LoginPage() {
-  const methods = useForm<LoginFormType>()
+  const router = useRouter()
+
+  const methods = useForm<LoginFormFieldValues>()
 
   const { handleSubmit } = methods
 
+  const { mutate: login } = useLogin({
+    onSuccessHandler: () => {
+      router.replace('/')
+    },
+  })
+
   // 로그인 하기
-  const handleLogin = (data: LoginFormType) => {
-    const { email, password } = data
-    console.log(`email: ${email}, password: ${password}`)
+  const handleLogin = async (data: LoginFormFieldValues) => {
+    login(data)
   }
 
-  // 로그인 유지하기
-  const handleRememberMe = async () => {}
+  const navigateTo = (url: string) => {
+    router.push(url)
+  }
 
   return (
     <main className={cx('wrapper')}>
@@ -63,7 +70,7 @@ export default function LoginPage() {
                 }}
               />
               <div className={cx('login-form__checkbox-section')}>
-                <Checkbox label="로그인 유지하기" name="rememberMe" onChange={handleRememberMe} />
+                <Checkbox label="로그인 유지하기" name="isRememberMe" />
               </div>
             </form>
           </FormProvider>
@@ -72,11 +79,11 @@ export default function LoginPage() {
           <FillButton type="submit" size="large" onClick={handleSubmit(handleLogin)}>
             로그인
           </FillButton>
-          <OutLinedButton type="button" size="large">
+          <OutLinedButton type="button" size="large" onClick={() => navigateTo('/join')}>
             회원가입
           </OutLinedButton>
           <div className={cx('btn-section__find-password')}>
-            <TextButton type="button" size="small">
+            <TextButton type="button" size="small" onClick={() => navigateTo('/find-password')}>
               비밀번호 찾기
             </TextButton>
           </div>

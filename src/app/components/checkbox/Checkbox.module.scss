@@ -28,6 +28,7 @@
     &__label {
       @include typo.typo(1.4rem, 400, 2.2rem, 0);
       color: color.$alert-secondary-900;
+      cursor: pointer;
     }
   }
 

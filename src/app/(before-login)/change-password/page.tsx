@@ -4,19 +4,14 @@
  * 비밀번호 변경 페이지
  * @author 선우
  */
-import { notFound, useRouter, useSearchParams } from 'next/navigation'
-
-import { useEffect } from 'react'
+import { useParams } from 'next/navigation'
 
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
 import { AUTH_PATTERN } from 'constants/join/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
-import { ChangePasswordFormValues } from 'types/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
 import TextField from '@components/text-field/TextField'
-
-import { useChangePassword } from '@hooks/index'
 
 import classNames from 'classnames/bind'
 
@@ -24,19 +19,15 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
+interface ResetPasswordFormValues {
+  password: string
+  confirmPassword: string
+}
+
 export default function ResetPassword() {
-  const router = useRouter()
-  const params = useSearchParams()
+  const params = useParams<{ changePasswordToken: string }>()
 
-  const changePasswordToken = params.get('changePasswordToken')!
-
-  useEffect(() => {
-    if (!changePasswordToken) {
-      return notFound()
-    }
-  }, [changePasswordToken])
-
-  const methods = useForm<ChangePasswordFormValues>({
+  const methods = useForm<ResetPasswordFormValues>({
     mode: 'onBlur',
     defaultValues: {
       password: '',
@@ -46,15 +37,11 @@ export default function ResetPassword() {
 
   const { handleSubmit, trigger, watch } = methods
 
-  const { mutate, isPending } = useChangePassword({
-    onSuccessHandler: () => {
-      router.push('/login')
-    },
-  })
+  const changePasswordToken = params?.changePasswordToken
 
-  const handleChangePassword = async (data: ChangePasswordFormValues) => {
+  const handleChangePassword = (data: ResetPasswordFormValues) => {
     const password = data.password
-    mutate({ changePasswordToken, password })
+    console.log(`changePasswordToken: ${changePasswordToken}, password: ${password}`)
   }
 
   return (
@@ -96,7 +83,7 @@ export default function ResetPassword() {
               />
             </div>
           </section>
-          <FillButton type="submit" size="large" disabled={isPending}>
+          <FillButton type="submit" size="large">
             확인
           </FillButton>
         </form>

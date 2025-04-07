@@ -7,6 +7,7 @@ type CheckBox = {
   label: string
   options?: RegisterOptions
   helperText?: string
+  handleLabelClick?: () => void
 }
 
 interface CheckboxGroupProps {
@@ -63,6 +64,7 @@ export default function CheckboxGroup({
                   options={box.options}
                   helperText={box.helperText}
                   onChange={handleSingleChange}
+                  onClick={box.handleLabelClick}
                 />
               </div>
             ))}
