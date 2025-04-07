@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 
+import AuthInterceptor from '@components/auth-interceptor/AuthInterceptor'
 import { Providers } from '@components/providers/Providers'
+import TokenRefresher from '@components/tokenRefresher/TokenRefresher'
 
 import './globals.scss'
 
@@ -25,8 +27,12 @@ export default function RootLayout({
     <html lang="ko" className={pretendard.className}>
       <body>
         <Providers>
-          <div id="modal"></div>
-          {children}
+          <AuthInterceptor>
+            <TokenRefresher>
+              <div id="modal"></div>
+              {children}
+            </TokenRefresher>
+          </AuthInterceptor>
         </Providers>
       </body>
     </html>

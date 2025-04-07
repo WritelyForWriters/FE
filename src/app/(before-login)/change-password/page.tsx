@@ -6,8 +6,8 @@
  */
 import { useParams } from 'next/navigation'
 
-import { AUTH_ERROR_MESSAGE } from 'constants/signup/message'
-import { AUTH_PATTERN } from 'constants/signup/pattern'
+import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
+import { AUTH_PATTERN } from 'constants/join/pattern'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
@@ -25,7 +25,7 @@ interface ResetPasswordFormValues {
 }
 
 export default function ResetPassword() {
-  const params = useParams<{ token: string }>()
+  const params = useParams<{ changePasswordToken: string }>()
 
   const methods = useForm<ResetPasswordFormValues>({
     mode: 'onBlur',
@@ -37,7 +37,7 @@ export default function ResetPassword() {
 
   const { handleSubmit, trigger, watch } = methods
 
-  const changePasswordToken = params?.token
+  const changePasswordToken = params?.changePasswordToken
 
   const handleChangePassword = (data: ResetPasswordFormValues) => {
     const password = data.password
