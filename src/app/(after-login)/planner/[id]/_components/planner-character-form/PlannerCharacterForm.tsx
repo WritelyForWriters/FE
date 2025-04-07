@@ -17,21 +17,27 @@ import styles from './PlannerCharacterForm.module.scss'
 
 const cx = classNames.bind(styles)
 
-const createCharacter = (): CharacterFormValues => ({
-  intro: '',
-  name: '',
-  age: undefined,
-  gender: '',
-  occupation: '',
-  appearance: '',
-  personality: '',
-  relationship: '',
-  customFields: [],
-})
-
 export default function PlannerCharacterForm() {
   const params = useParams<{ id: string }>()
   const [characters, setCharacters] = useAtom(plannerCharacterByIdAtom(params.id))
+
+  const createCharacter = (): CharacterFormValues => ({
+    intro: '',
+    name: '',
+    age: undefined,
+    gender: '',
+    occupation: '',
+    appearance: '',
+    personality: '',
+    relationship: '',
+    customFields: [
+      {
+        id: uuidv4(),
+        name: '',
+        content: '',
+      },
+    ],
+  })
 
   const handleAddCharacter = () => {
     setCharacters((prev) => ({

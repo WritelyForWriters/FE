@@ -74,7 +74,16 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
 
     if (!target) {
       set({
-        [uuidv4()]: createCharacter(),
+        [uuidv4()]: {
+          ...createCharacter(),
+          customFields: [
+            {
+              id: uuidv4(),
+              name: '',
+              content: '',
+            },
+          ],
+        },
       })
     }
   }

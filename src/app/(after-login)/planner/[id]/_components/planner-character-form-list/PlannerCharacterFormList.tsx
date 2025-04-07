@@ -62,6 +62,15 @@ export default function PlannerCharacterFormList({
     setValue(`characters[${characterId}]`, character)
   }, [])
 
+  const getTextFieldName = (name: string) => {
+    // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
+    if (name === 'customFields' && character.customFields) {
+      return `characters[${characterId}].customFields[0].content`
+    } else {
+      return `characters[${characterId}].${name}`
+    }
+  }
+
   return (
     <div className={cx('list')}>
       <div className={cx('list__title')}>
@@ -91,7 +100,7 @@ export default function PlannerCharacterFormList({
           {PLANNER_CHARACTER_ITEMS.map((item, index) => (
             <TextField
               key={`planner-character-item-${index}`}
-              name={`characters[${characterId}].${item.name}`}
+              name={getTextFieldName(item.name)}
               label={item.label}
               variant={expandItems.includes(item.name) ? 'expand' : undefined}
             />
