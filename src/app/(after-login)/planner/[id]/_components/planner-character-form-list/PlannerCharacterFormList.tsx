@@ -1,5 +1,11 @@
+import { useEffect } from 'react'
+
 import { PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
+import { useSetAtom } from 'jotai'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
+import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
+import { CharacterFormValues } from 'types/planner/plannerSynopsisFormValues'
 
 import FillButton from '@components/buttons/FillButton'
 import TextField from '@components/text-field/TextField'
@@ -15,17 +21,46 @@ const cx = classNames.bind(styles)
 const expandItems = ['intro', 'customFields']
 
 interface PlannerCharacterFormListProps {
+  paramsId: string
   arrayIndex: number
   characterId: string
+  character: CharacterFormValues
   handleRemoveCharacter: (id: string) => void
 }
 
 export default function PlannerCharacterFormList({
+  paramsId,
   arrayIndex,
   characterId,
+  character,
   handleRemoveCharacter,
 }: PlannerCharacterFormListProps) {
   const { isOpen, onToggle } = useCollapsed(true)
+  const { control, setValue } = useFormContext()
+  const setCharacters = useSetAtom(plannerCharacterByIdAtom(paramsId))
+
+  const watchedValues: CharacterFormValues = useWatch({
+    control,
+    name: `characters[${characterId}]`,
+  })
+
+  // NOTE(hajae): local storage 저장
+  useEffect(() => {
+    if (!watchedValues) return
+
+    setCharacters((prev: Record<string, CharacterFormValues>) => ({
+      ...prev,
+      [characterId]: {
+        ...prev[characterId],
+        ...watchedValues,
+      },
+    }))
+  }, [watchedValues, characterId, setCharacters])
+
+  // NOTE(hajae): local storage에 저장된 값으로 초기화
+  useEffect(() => {
+    setValue(`characters[${characterId}]`, character)
+  }, [])
 
   return (
     <div className={cx('list')}>

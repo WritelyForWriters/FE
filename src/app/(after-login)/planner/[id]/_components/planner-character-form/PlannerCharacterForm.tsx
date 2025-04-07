@@ -18,7 +18,6 @@ import styles from './PlannerCharacterForm.module.scss'
 const cx = classNames.bind(styles)
 
 const createCharacter = (): CharacterFormValues => ({
-  id: '',
   intro: '',
   name: '',
   age: undefined,
@@ -27,6 +26,7 @@ const createCharacter = (): CharacterFormValues => ({
   appearance: '',
   personality: '',
   relationship: '',
+  customFields: [],
 })
 
 export default function PlannerCharacterForm() {
@@ -34,13 +34,18 @@ export default function PlannerCharacterForm() {
   const [characters, setCharacters] = useAtom(plannerCharacterByIdAtom(params.id))
 
   const handleAddCharacter = () => {
-    const newCharacters = [...characters, { ...createCharacter(), id: uuidv4() }]
-    setCharacters(newCharacters)
+    setCharacters((prev) => ({
+      ...prev,
+      [uuidv4()]: createCharacter(),
+    }))
   }
 
   const handleRemoveCharacter = (id: string) => {
-    const newCharacters = characters.filter((char) => char.id !== id)
-    setCharacters(newCharacters)
+    setCharacters((prev) => {
+      const nextCharacters = { ...prev }
+      delete nextCharacters[id]
+      return nextCharacters
+    })
   }
 
   return (
@@ -53,10 +58,12 @@ export default function PlannerCharacterForm() {
       </div>
 
       {characters &&
-        characters.map((character, index) => (
+        Object.entries(characters).map(([id, character], index) => (
           <PlannerCharacterFormList
-            key={character.id}
-            characterId={character.id}
+            key={id}
+            paramsId={params.id}
+            characterId={id}
+            character={character}
             arrayIndex={index}
             handleRemoveCharacter={handleRemoveCharacter}
           />

@@ -42,6 +42,8 @@ export default function TextField({
   isLabelEditable = false,
   ...props
 }: TextFieldProps) {
+  const { register } = useFormContext()
+
   const {
     formState: { errors },
   } = useFormContext()
@@ -62,16 +64,20 @@ export default function TextField({
         {/* Input */}
         {(variant === 'default' || variant === 'password') && (
           <TextFieldInput
-            name={name}
             variant={variant}
             options={options}
             {...(props as InputProps)}
+            {...register(name, options)}
           />
         )}
 
         {/* Textarea */}
         {variant === 'expand' && (
-          <TextFieldTextarea name={name} options={options} {...(props as TextareaProps)} />
+          <TextFieldTextarea
+            options={options}
+            {...(props as TextareaProps)}
+            {...register(name, options)}
+          />
         )}
       </section>
 

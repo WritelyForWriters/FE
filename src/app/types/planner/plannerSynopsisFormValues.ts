@@ -31,7 +31,6 @@ export type WorldViewFormValues = {
 }
 
 export type CharacterFormValues = {
-  id: string
   intro?: string
   name?: string
   age?: number
@@ -43,6 +42,8 @@ export type CharacterFormValues = {
   relationship?: string
   customFields?: CustomField[]
 }
+
+export type CharacterFormValuesWithId = CharacterFormValues & { id: string }
 
 export type PlotFormValues = {
   content?: string

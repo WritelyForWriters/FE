@@ -10,7 +10,7 @@ export const plannerActiveTabAtom = atom<PlannerActiveTabType>('synopsis')
 type PlannerCharacterFormValuesType = PlannerCharacterFormValueType[]
 type PlannerCharacterFormValueType = {
   plannerId: string
-  characters: CharacterFormValues[]
+  characters: Record<string, CharacterFormValues>
 }
 
 // NOTE(hajae): atom with local storage
@@ -21,7 +21,6 @@ export const plannerCharacterFormValuesAtom = atomWithStorage<PlannerCharacterFo
 
 export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
   const createCharacter = (): CharacterFormValues => ({
-    id: uuidv4(),
     intro: '',
     name: '',
     age: undefined,
@@ -30,16 +29,26 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
     appearance: '',
     personality: '',
     relationship: '',
+    customFields: [],
   })
 
   const baseAtom = atom(
     (get) => {
       const allCharacters = get(plannerCharacterFormValuesAtom)
-      return allCharacters.find((character) => character.plannerId === plannerId)?.characters ?? []
+      return allCharacters.find((c) => c.plannerId === plannerId)?.characters ?? {}
     },
-    (get, set, newCharacters: CharacterFormValues[]) => {
+    (
+      get,
+      set,
+      update:
+        | Record<string, CharacterFormValues>
+        | ((prev: Record<string, CharacterFormValues>) => Record<string, CharacterFormValues>),
+    ) => {
       const allCharacters = get(plannerCharacterFormValuesAtom)
-      const idx = allCharacters.findIndex((character) => character.plannerId === plannerId)
+      const idx = allCharacters.findIndex((c) => c.plannerId === plannerId)
+
+      const prevCharacters = idx === -1 ? {} : allCharacters[idx].characters
+      const newCharacters = typeof update === 'function' ? update(prevCharacters) : update
 
       if (idx === -1) {
         set(plannerCharacterFormValuesAtom, [
@@ -60,12 +69,13 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
     const savedCharacters = JSON.parse(
       localStorage.getItem('plannerCharacterFormValues') || '[]',
     ) as PlannerCharacterFormValuesType
-    const target = savedCharacters.find(
-      (character: PlannerCharacterFormValueType) => character.plannerId === plannerId,
-    )
+
+    const target = savedCharacters.find((character) => character.plannerId === plannerId)
 
     if (!target) {
-      set([createCharacter()])
+      set({
+        [uuidv4()]: createCharacter(),
+      })
     }
   }
 
