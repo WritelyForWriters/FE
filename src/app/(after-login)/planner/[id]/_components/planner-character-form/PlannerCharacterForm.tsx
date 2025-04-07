@@ -1,7 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 
+import { useAtom } from 'jotai'
+import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { v4 as uuidv4 } from 'uuid'
 
 import FillButton from '@components/buttons/FillButton'
@@ -28,27 +30,17 @@ const createCharacter = (): CharacterFormValues => ({
 })
 
 export default function PlannerCharacterForm() {
-  const [characters, setCharacters] = useState<CharacterFormValues[]>([])
-
-  // NOTE(hajae): uuidv4는 client side에서 실행되는 함수 인데,
-  // useState를 초기화할 때(ssr) 사용하면 에러가 발생하므로 최초 마운트 후 등장인물 추가
-  useEffect(() => {
-    setCharacters([{ ...createCharacter(), id: uuidv4() }])
-  }, [])
+  const params = useParams<{ id: string }>()
+  const [characters, setCharacters] = useAtom(plannerCharacterByIdAtom(params.id))
 
   const handleAddCharacter = () => {
-    setCharacters((prev) => [...prev, { ...createCharacter(), id: uuidv4() }])
+    const newCharacters = [...characters, { ...createCharacter(), id: uuidv4() }]
+    setCharacters(newCharacters)
   }
 
   const handleRemoveCharacter = (id: string) => {
-    setCharacters((prev) => {
-      const newCharacters = [...prev]
-      const index = newCharacters.findIndex((char) => char.id === id)
-      if (index !== -1) {
-        newCharacters.splice(index, 1)
-      }
-      return newCharacters
-    })
+    const newCharacters = characters.filter((char) => char.id !== id)
+    setCharacters(newCharacters)
   }
 
   return (
