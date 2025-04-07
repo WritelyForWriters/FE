@@ -20,6 +20,7 @@ interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   options?: RegisterOptions
   helperText?: string
+  onClick?: () => void
 }
 
 export default function Checkbox({
@@ -28,6 +29,7 @@ export default function Checkbox({
   options,
   helperText,
   onChange,
+  onClick,
   ...props
 }: CheckboxProps) {
   const {
@@ -58,7 +60,7 @@ export default function Checkbox({
             onChange?.(e)
           }}
         />
-        <label className={cx('checkbox-field__fieldset__label')} htmlFor={name}>
+        <label className={cx('checkbox-field__fieldset__label')} htmlFor={name} onClick={onClick}>
           {label}
         </label>
       </section>
