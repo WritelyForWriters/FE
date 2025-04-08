@@ -1,7 +1,7 @@
 export type PlannerSynopsisFormValues = {
   synopsis: SynopsisFormValues
-  worldView: WorldViewFormValues
-  character: CharacterFormValues[]
+  worldview: WorldViewFormValues
+  characters: CharacterFormValues[]
   plot: PlotFormValues
   ideaNote: IdeaNoteFormValues
 }
