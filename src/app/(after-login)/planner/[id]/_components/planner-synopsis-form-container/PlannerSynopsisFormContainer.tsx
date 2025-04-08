@@ -1,7 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-
 import { useAtom } from 'jotai'
 import { plannerActiveTabAtom } from 'store/plannerAtoms'
 
@@ -28,8 +26,6 @@ const TABLE_OF_CONTENTS = [
 
 export default function PlannerSynopsisFormContainer() {
   const [activeTab] = useAtom(plannerActiveTabAtom)
-  // TODO(hajae): idea note value 추후 처리
-  const [ideaValue] = useState('')
 
   return (
     <form
@@ -53,10 +49,6 @@ export default function PlannerSynopsisFormContainer() {
           <PlannerIdeaNote />
         )}
       </div>
-
-      {/* NOTE(hajae): Tab 변경시 활성화된 Tab의 필드만 렌더링 되므로 실제 보이는 필드만 submit하게 됨
-      따라서 렌더링되지 않는 상태에서 데이터도 유지하면서, onSubmit에서 둘 다 포함할 수 있도록 추가 */}
-      <input type="hidden" name="idea" value={ideaValue} />
     </form>
   )
 }

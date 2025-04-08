@@ -28,11 +28,16 @@ import plannerStyles from './PlannerIdeaNoteEditor.module.scss'
 
 interface PlannerIdeaNoteEditorProps {
   ref: Ref<HandleEditor>
+  onUpdate: () => void
   contents?: string
 }
 
 // NOTE(hajae): 기존 Default Editor를 참고하여 작성, 소현님 Branch 참고하여 일부분 수정 했습니다.
-export default function PlannerIdeaNoteEditor({ ref, contents }: PlannerIdeaNoteEditorProps) {
+export default function PlannerIdeaNoteEditor({
+  ref,
+  onUpdate,
+  contents,
+}: PlannerIdeaNoteEditorProps) {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
   const editable = useAtomValue(isEditableAtom)
@@ -70,7 +75,12 @@ export default function PlannerIdeaNoteEditor({ ref, contents }: PlannerIdeaNote
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '',
+    onUpdate,
   })
+
+  useImperativeHandle(ref, () => ({
+    getEditor: () => editor,
+  }))
 
   useEffect(() => {
     if (!editor) {

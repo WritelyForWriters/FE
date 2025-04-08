@@ -3,6 +3,7 @@ export type PlannerSynopsisFormValues = {
   worldView: WorldViewFormValues
   character: CharacterFormValues[]
   plot: PlotFormValues
+  ideaNote: IdeaNoteFormValues
 }
 
 export type SynopsisFormValues = {
@@ -48,3 +49,8 @@ export type PlotFormValues = {
 }
 
 export type CustomField = { id: string; name: string; content: string }
+
+export type IdeaNoteFormValues = {
+  title: string
+  content: string
+}
