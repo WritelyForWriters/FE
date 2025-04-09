@@ -19,6 +19,14 @@ export default function PlannerPage() {
     formState: { isValid },
   } = methods
 
+  /* TODO(hajae):
+   * [x] type 작성
+   * [ ] api/ 작성
+   * [ ] services/ 작성 (parsing)
+   * [ ] Header - Data Fetch 후 저장된 데이터가 있으면 저장하기 버튼 없으면 수정하기
+   * [ ] Form - Set Form Value
+   */
+
   return (
     <div className={cx('container')}>
       <PlannerActionBar isValidFormValues={isValid} />
