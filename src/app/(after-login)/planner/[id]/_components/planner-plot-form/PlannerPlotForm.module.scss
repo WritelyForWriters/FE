@@ -1,0 +1,21 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography' as typo;
+@use '@styles/colors' as color;
+
+.plot-form {
+  @include mixin.flex(column, flex-start);
+  gap: 1.6rem;
+
+  padding-bottom: 97px;
+  width: 368px;
+
+  &__title {
+    @extend %typo-title-medium;
+
+    margin-top: 4rem;
+  }
+
+  > div {
+    width: 100%;
+  }
+}

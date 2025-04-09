@@ -51,6 +51,25 @@
       }
     }
 
+    // NOTE(hajae): 해당 디자인이 없어서 임시 추가...
+    &__label-input {
+      position: absolute;
+
+      width: 12rem;
+      height: fit-content;
+
+      outline: 0;
+      border: 0;
+
+      background-color: color.$alert-secondary-50;
+
+      &--empty {
+        @extend %typo-label-large;
+
+        top: 1.8rem;
+      }
+    }
+
     &__wrapper {
       display: flex;
       justify-content: space-between;
@@ -69,6 +88,7 @@
       margin: 1.6rem 0 0.7rem 0;
       width: calc(100% - 3rem);
 
+      background-color: transparent;
       border: 0;
       outline: 0;
       font-weight: 400;
@@ -105,7 +125,8 @@
 
   &__helper-text {
     @extend %typo-body-small;
-    @include mixin.flex(row, center, flex-start);
+    @include mixin.flex(column, flex-start, center);
+    gap: 2.5px;
 
     min-height: 2.4rem;
 

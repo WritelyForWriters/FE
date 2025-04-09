@@ -1,0 +1,18 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.character-form {
+  @include mixin.flex(column, flex-start);
+  gap: 1.6rem;
+
+  width: 368px;
+
+  &__title {
+    @include mixin.flex(row, center, space-between);
+    @extend %typo-title-medium;
+
+    margin-top: 4rem;
+    width: 100%;
+  }
+}

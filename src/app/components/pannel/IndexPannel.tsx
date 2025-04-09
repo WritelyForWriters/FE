@@ -1,6 +1,6 @@
 'use client'
 
-import { MouseEvent } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 
 import Pannel from '@components/pannel/Pannel'
 
@@ -23,10 +23,45 @@ interface IndexPannelProps {
 
 export default function IndexPannel({ toc }: IndexPannelProps) {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
+  const [activeId, setActiveId] = useState<string | null>(null)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     onClose()
+  }
+
+  useEffect(() => {
+    // NOTE(hajae): IntersectionObserver로 목차 활성화 감지
+    // https://developer.mozilla.org/ko/docs/Web/API/IntersectionObserver
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id)
+          }
+        })
+      },
+      {
+        threshold: [0.45],
+      },
+    )
+
+    toc.forEach(({ id }) => {
+      const element = document.getElementById(id)
+      if (element) observer.observe(element)
+    })
+
+    return () => {
+      toc.forEach(({ id }) => {
+        const element = document.getElementById(id)
+        if (element) observer.unobserve(element)
+      })
+    }
+  }, [toc])
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) element.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
@@ -35,7 +70,15 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
         <Pannel onClick={handleCollapsedPannel} title="목차" variant>
           <ul className={cx('index-list')}>
             {toc.map(({ id, title }) => (
-              <li key={id}>{title}</li>
+              <li
+                key={id}
+                className={cx('index-list__item', {
+                  'index-list__item--active': activeId === id,
+                })}
+                onClick={() => scrollToSection(id)}
+              >
+                {title}
+              </li>
             ))}
           </ul>
         </Pannel>

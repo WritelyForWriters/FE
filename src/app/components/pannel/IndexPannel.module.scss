@@ -27,7 +27,7 @@
     display: none;
   }
 
-  li {
+  &__item {
     @extend %typo-body-medium;
     color: color.$alert-secondary-300;
     font-weight: 400;
@@ -35,6 +35,10 @@
     &:hover {
       color: color.$alert-secondary-900;
       cursor: pointer;
+    }
+
+    &--active {
+      color: color.$alert-secondary-900;
     }
   }
 }

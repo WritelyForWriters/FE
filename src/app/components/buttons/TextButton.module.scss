@@ -8,6 +8,8 @@
   color: color.$alert-secondary-900;
   gap: 0.4rem;
 
+  border-radius: 0.8rem;
+
   &.square {
     &.primary {
       &.large {
@@ -46,7 +48,6 @@
 
   &:hover {
     background-color: color.$alert-secondary-50;
-    border-radius: 0.8rem;
   }
 
   &:disabled {

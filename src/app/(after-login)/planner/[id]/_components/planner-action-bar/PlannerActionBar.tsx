@@ -11,7 +11,11 @@ import classNames from 'classnames/bind'
 
 const cx = classNames.bind(styles)
 
-export default function PlannerActionBar() {
+interface PlannerActionBarProps {
+  isValidFormValues: boolean
+}
+
+export default function PlannerActionBar({ isValidFormValues }: PlannerActionBarProps) {
   // 액션바 내 좌측 영역
   const ActionSectionContent = () => {
     // 저장 여부 판단 state
@@ -37,7 +41,7 @@ export default function PlannerActionBar() {
     return (
       <>
         {!hasSaved ? (
-          <TextButton size="large" onClick={() => handleSave()}>
+          <TextButton size="large" onClick={() => handleSave()} disabled={!isValidFormValues}>
             저장하기
           </TextButton>
         ) : (
