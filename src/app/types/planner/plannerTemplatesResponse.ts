@@ -1,3 +1,15 @@
+import { ApiResponse } from 'types/common/apiResponse'
+
+export type PlannerTemplatesResponse = ApiResponse<PlannerTemplates>
+export type PlannerTemplates = {
+  id: string
+  characters: Character[]
+  ideaNote: IdeaNote
+  plot: Plot
+  synopsis: Synopsis
+  worldview: Worldview
+}
+
 type CustomField = {
   id: string
   name: string
@@ -50,13 +62,4 @@ type Worldview = {
   occupation: string
   conflict: string
   customFields: CustomField[]
-}
-
-export type PlannerTemplatesResponse = {
-  id: string
-  characters: Character[]
-  ideaNote: IdeaNote
-  plot: Plot
-  synopsis: Synopsis
-  worldview: Worldview
 }

@@ -1,7 +1,7 @@
 import { CharacterFormValues, PlannerSynopsisFormValues } from './plannerSynopsisFormValues'
 import { PlannerTemplatesResponse } from './plannerTemplatesResponse'
 
-export type PlannerTemplatesRequest = Omit<PlannerTemplatesResponse, 'id'>
+export type PlannerTemplatesRequest = Omit<PlannerTemplatesResponse['result'], 'id'>
 
 export const PlannerTemplatesRequest = {
   from: (
