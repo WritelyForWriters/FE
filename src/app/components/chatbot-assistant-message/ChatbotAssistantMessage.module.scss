@@ -1,0 +1,43 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.assistant-message {
+  @include mixin.display-flex();
+  flex-direction: column;
+  color: color.$core-secondary-100;
+  @extend %typo-title-medium;
+  margin-bottom: 1.6rem;
+
+  &__body {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 0.8rem;
+
+    blockquote {
+      max-width: 24rem;
+      border-left: 0.1rem solid black;
+      padding: 0.8rem 0rem 0.8rem 1rem;
+    }
+
+    &-content {
+      @include mixin.display-flex();
+      align-items: center;
+      gap: 1.6rem;
+
+      p:nth-of-type(1) {
+        max-width: 24rem;
+      }
+
+      p:nth-of-type(2) {
+        @extend %typo-label-small; // TODO: 수정 예정
+        color: #929292;
+      }
+    }
+
+    &:hover {
+      background-color: color.$alert-secondary-100;
+      border-radius: 1.2rem;
+    }
+  }
+}
