@@ -5,8 +5,11 @@
 .assistant-message {
   @include mixin.display-flex();
   flex-direction: column;
-  color: color.$core-secondary-100;
+  gap: 0.8rem;
+
   @extend %typo-title-medium;
+  color: color.$core-secondary-100;
+
   margin-bottom: 1.6rem;
 
   &__body {
@@ -14,10 +17,14 @@
     flex-direction: column;
     gap: 0.8rem;
 
-    blockquote {
-      max-width: 24rem;
-      border-left: 0.1rem solid black;
-      padding: 0.8rem 0rem 0.8rem 1rem;
+    &-meta {
+      padding: 0.8rem 0rem 0.8rem 0rem;
+
+      blockquote {
+        max-width: 24rem;
+        border-left: 0.1rem solid black;
+        padding-left: 1rem;
+      }
     }
 
     &-content {
@@ -38,6 +45,13 @@
     &:hover {
       background-color: color.$alert-secondary-100;
       border-radius: 1.2rem;
+      padding: 0.8rem 1.2rem 0.8rem 1.2rem;
     }
+  }
+
+  &__footer {
+    @include mixin.display-flex();
+    align-items: center;
+    gap: 0.4rem;
   }
 }

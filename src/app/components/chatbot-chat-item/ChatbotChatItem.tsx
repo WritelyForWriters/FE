@@ -8,6 +8,7 @@ import styles from './ChatbotChatItem.module.scss'
 const cx = classNames.bind(styles)
 
 interface ChatbotChatItemProps {
+  id: string
   type: string
   memberMessage: {
     content: string
@@ -20,6 +21,7 @@ interface ChatbotChatItemProps {
 }
 
 export default function ChatbotChatItem({
+  id,
   type,
   memberMessage,
   assistantMessage,
@@ -27,7 +29,12 @@ export default function ChatbotChatItem({
   return (
     <div className={cx('chat-item')}>
       <ChatbotMemberMessage type={type} {...memberMessage} />
-      <ChatbotAssistantMessage messages={assistantMessage} quote={memberMessage.content} />
+      <ChatbotAssistantMessage
+        id={id}
+        type={type}
+        messages={assistantMessage}
+        quote={memberMessage.content}
+      />
     </div>
   )
 }

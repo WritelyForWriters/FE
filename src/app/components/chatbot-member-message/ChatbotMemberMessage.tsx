@@ -40,6 +40,15 @@ export default function ChatbotMemberMessage({ type, prompt, content }: MemberMe
       break
   }
 
+  const handleFavorite = () => {
+    if (isFavorite) {
+      // 즐겨찾기 삭제
+    } else {
+      // 즐겨찾기 추가
+    }
+    setIsFavorite(!isFavorite)
+  }
+
   return (
     <div
       className={cx('member-message')}
@@ -47,18 +56,26 @@ export default function ChatbotMemberMessage({ type, prompt, content }: MemberMe
       onMouseLeave={() => setMouseOver(false)}
     >
       <div className={cx('member-message__body')}>
-        {type !== 'chat' && (
-          <p className={cx('member-message__type')}>
-            <Image src={imgSrc} alt={strType} width={20} height={20} />
-            {strType}
-          </p>
+        {(type !== 'chat' || content) && (
+          <div className={cx('member-message__meta')}>
+            {type !== 'chat' && (
+              <p className={cx('member-message__meta-type')}>
+                <Image src={imgSrc} alt={strType} width={20} height={20} />
+                {strType}
+              </p>
+            )}
+            {content && (
+              <div className={cx('member-message__meta-content')}>
+                <blockquote>{content}</blockquote>
+              </div>
+            )}
+          </div>
         )}
-        {content && <blockquote>{content}</blockquote>}
-        <p className={cx('member-message__content')}>{prompt}</p>
+        <p>{prompt}</p>
       </div>
-      {type === 'chat' && (mouseOver || isFavorite) && (
+      {(mouseOver || isFavorite) && (
         <div className={cx('member-message__footer')}>
-          <button onClick={() => setIsFavorite(!isFavorite)}>
+          <button onClick={handleFavorite}>
             <FaStar color={isFavorite ? '#1A1A1A' : '#CCCCCC'} size={20} />
           </button>
         </div>
