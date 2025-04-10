@@ -2,18 +2,44 @@ import ChatbotChatItem from '@components/chatbot-chat-item/ChatbotChatItem'
 
 const CHATS = [
   {
-    id: '01961989-1b2e-79db-ad15-8a99d19f5afe',
-    type: 'chat',
+    id: '01961ab0-4562-71cb-a964-7fd4a3d88f67',
+    type: 'auto modify',
     memberMessage: {
-      content: '하지만 한 CEO는 진짜 감정을 지닌 AI를 만들려 한다.',
-      prompt: '이 문장 어때?',
+      content: '그리고 그 과정에서 과거 사랑과 마주하게 된다.',
+      prompt: null,
+    },
+    assistantMessage: {
+      content: '그리고 그 과정에서 과거의 사랑과 마주하게 된다.',
+      isApplied: false,
+    },
+    createdAt: '2025-04-09T22:14:41.893651',
+  },
+  {
+    id: '01961994-33d1-755d-b786-de74c4077e28',
+    type: 'user modify',
+    memberMessage: {
+      content: 'AI가 감정을 흉내 내는 세상',
+      prompt: '문장 다듬어줘',
+    },
+    assistantMessage: {
+      content: 'AI가 감정을 모방하는 세상',
+      isApplied: false,
+    },
+    createdAt: '2025-04-09T17:04:25.172873',
+  },
+  {
+    id: '01961982-7cf1-78c5-9661-ab9e936884a8',
+    type: 'feedback',
+    memberMessage: {
+      content: 'AI가 감정을 흉내 내는 세상. 하지만 한 CEO는 진짜 감정을 지닌 AI를 만들려 한다.',
+      prompt: '문장 수정해줘',
     },
     assistantMessage: {
       content:
-        '어떤 문장에 대한 평가를 원하시는지 명확하게 알려주시면 더 정확한 피드백을 드릴 수 있습니다.  같은 정보를 알려주세요.   **어떤 측면에서 평가를 원하시나요?** (예: 문장의 명확성, 흥미도, 문맥과의 적합성, 문법적 정확성 등)신 정보들을 바탕으로 문장을 분석하고, 개선점을 제안해 드리겠습니다.',
+        'AI가 감정을 흉내 내는 세상. 그 속에서 한 CEO는 진짜 감정을 지닌 AI를 만들려 한다.:했습니다.  단순히 마침표로 연결된 것보다 맥락상 더 매끄럽게 이어지도록 했습니다.  원문의 간결한 스타일을 유지하면서 문장 간의 관계를 명확히 드러냈습니다.',
       isApplied: false,
     },
-    createdAt: '2025-04-09T16:52:17.969285',
+    createdAt: '2025-04-09T16:45:04.245849',
   },
   {
     id: '01961988-99b7-7539-9b18-9e607c0ac387',
@@ -28,60 +54,6 @@ const CHATS = [
       isApplied: false,
     },
     createdAt: '2025-04-09T16:51:44.826282',
-  },
-  {
-    id: '01961987-d363-730d-8571-70ac135e2002',
-    type: 'auto modify',
-    memberMessage: {
-      content: '하지만 한 CEO는 진짜 감정을 지닌 AI를 만들려 한다.',
-      prompt: null,
-    },
-    assistantMessage: {
-      content: '하지만 한 CEO는 진짜 감정을 가진 AI를 만들려 한다.',
-      isApplied: false,
-    },
-    createdAt: '2025-04-09T16:50:54.054138',
-  },
-  {
-    id: '01961985-b46f-70fd-b93a-08a6e7ad6365',
-    type: 'user modify',
-    memberMessage: {
-      content: 'AI가 감정을 흉내 내는 세상',
-      prompt: '문장 다듬어줘',
-    },
-    assistantMessage: {
-      content: 'AI가 감정을 모방하는 세상',
-      isApplied: false,
-    },
-    createdAt: '2025-04-09T16:48:35.058694',
-  },
-  {
-    id: '01961983-af6e-757a-a390-bfa6f80333c9',
-    type: 'user modify',
-    memberMessage: {
-      content: 'AI가 감정을 흉내 내는 세상',
-      prompt: '문장 다듬어줘',
-    },
-    assistantMessage: {
-      content: 'AI가 감정을 모방하는 세상',
-      isApplied: false,
-    },
-    createdAt: '2025-04-09T16:46:22.705103',
-  },
-  {
-    id: '01961982-7cf1-78c5-9661-ab9e936884a8',
-    type: 'feedback',
-    memberMessage: {
-      content:
-        'AI가 감정을 흉내 내는 세상. 하지만 한 CEO는 진짜 감정을 지닌 AI를 만들려 한다. 문장 수정해줘',
-      prompt: null,
-    },
-    assistantMessage: {
-      content:
-        'AI가 감정을 흉내 내는 세상. 그 속에서 한 CEO는 진짜 감정을 지닌 AI를 만들려 한다.:했습니다.  단순히 마침표로 연결된 것보다 맥락상 더 매끄럽게 이어지도록 했습니다.  원문의 간결한 스타일을 유지하면서 문장 간의 관계를 명확히 드러냈습니다.',
-      isApplied: false,
-    },
-    createdAt: '2025-04-09T16:45:04.245849',
   },
 ]
 
