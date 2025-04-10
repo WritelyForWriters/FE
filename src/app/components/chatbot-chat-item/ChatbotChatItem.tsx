@@ -27,7 +27,7 @@ export default function ChatbotChatItem({
   assistantMessage,
 }: ChatbotChatItemProps) {
   return (
-    <div className={cx('chat-item')}>
+    <li className={cx('chat-item')}>
       <ChatbotMemberMessage type={type} {...memberMessage} />
       <ChatbotAssistantMessage
         id={id}
@@ -35,6 +35,6 @@ export default function ChatbotChatItem({
         messages={assistantMessage}
         quote={memberMessage.content}
       />
-    </div>
+    </li>
   )
 }

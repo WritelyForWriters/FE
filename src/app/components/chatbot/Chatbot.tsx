@@ -8,8 +8,8 @@ const cx = classNames.bind(styles)
 
 export default function Chatbot() {
   return (
-    <div className={cx('chatbot')}>
+    <ul className={cx('chatbot')}>
       <ChatbotChatItems />
-    </div>
+    </ul>
   )
 }
