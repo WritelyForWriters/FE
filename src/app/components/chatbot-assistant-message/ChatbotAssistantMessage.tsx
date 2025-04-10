@@ -18,7 +18,7 @@ const cx = classNames.bind(styles)
 interface ChatbotAssistantMessageProps {
   id: string
   type: string
-  messages: {
+  message: {
     content: string
     isApplied: boolean
   }
@@ -28,11 +28,14 @@ interface ChatbotAssistantMessageProps {
 export default function ChatbotAssistantMessage({
   id,
   type,
-  messages,
+  message,
   quote,
 }: ChatbotAssistantMessageProps) {
+  const [isMouseOver, setIsMouseOver] = useState(false)
   const [isPinned, setIsPinned] = useState(false)
   const setChatbotMode = useSetAtom(chatbotModeAtom)
+
+  const ellipsisQuote = quote.length > 20 ? quote.slice(0, 20) + '...' : quote
 
   // TODO: 탐색 모드 전환 시 id 사용 예정
   console.log(id)
@@ -46,33 +49,51 @@ export default function ChatbotAssistantMessage({
     setIsPinned(!isPinned)
   }
 
+  const handleFeedback = (direction: 'up' | 'down') => {
+    // TODO: 평가 API 연동
+    console.log(direction)
+  }
+
   return (
-    <div className={cx('assistant-message')} onClick={() => setChatbotMode('search')}>
-      <div className={cx('assistant-message__body')}>
+    <div
+      className={cx('assistant-message')}
+      onClick={() => setChatbotMode('search')}
+      onMouseOver={() => setIsMouseOver(true)}
+      onMouseLeave={() => setIsMouseOver(false)}
+    >
+      <div
+        className={cx('assistant-message__body', {
+          'assistant-message__body--hover': isMouseOver,
+        })}
+      >
         {quote && (
           <div className={cx('assistant-message__body-meta')}>
-            <blockquote>{quote}</blockquote>
+            <blockquote>{ellipsisQuote}</blockquote>
           </div>
         )}
         <div className={cx('assistant-message__body-content')}>
-          <p>{messages.content}</p>
-          {type !== 'chat' && <p>{messages.isApplied ? '적용됨' : '적용 안 됨'}</p>}
+          <p>{message.content}</p>
+          {type !== 'chat' && <p>{message.isApplied ? '적용됨' : '적용 안 됨'}</p>}
         </div>
       </div>
       <div className={cx('assistant-message__footer')}>
-        <button onClick={handlePin}>
-          {isPinned ? (
-            <BsFillPinFill color="#CCCCCC" size={20} />
-          ) : (
-            <BsPin color="#CCCCCC" size={20} />
-          )}
-        </button>
-        <button>
-          <LuThumbsUp color="#CCCCCC" size={20} />
-        </button>
-        <button>
-          <LuThumbsDown color="#CCCCCC" size={20} />
-        </button>
+        {isMouseOver && (
+          <>
+            <button type="button" onClick={handlePin}>
+              {isPinned ? (
+                <BsFillPinFill color="#CCCCCC" size={20} />
+              ) : (
+                <BsPin color="#CCCCCC" size={20} />
+              )}
+            </button>
+            <button type="button" onClick={() => handleFeedback('up')}>
+              <LuThumbsUp color="#CCCCCC" size={20} />
+            </button>
+            <button type="button" onClick={() => handleFeedback('down')}>
+              <LuThumbsDown color="#CCCCCC" size={20} />
+            </button>
+          </>
+        )}
       </div>
     </div>
   )

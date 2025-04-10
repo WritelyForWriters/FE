@@ -20,7 +20,7 @@ interface MemberMessageProps {
 
 export default function ChatbotMemberMessage({ type, prompt, content }: MemberMessageProps) {
   const [mouseOver, setMouseOver] = useState(false)
-  const [isFavorite, setIsFavorite] = useState(true)
+  const [isFavorite, setIsFavorite] = useState(false)
 
   let strType = ''
   let imgSrc = ''

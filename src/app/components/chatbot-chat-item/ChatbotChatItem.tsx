@@ -32,7 +32,7 @@ export default function ChatbotChatItem({
       <ChatbotAssistantMessage
         id={id}
         type={type}
-        messages={assistantMessage}
+        message={assistantMessage}
         quote={memberMessage.content}
       />
     </li>
