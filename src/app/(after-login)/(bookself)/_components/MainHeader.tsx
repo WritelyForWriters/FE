@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 
-import { postProducts } from 'api/products/products'
 import { MAX_PRODUCT_COUNT } from 'constants/bookself/number'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 
@@ -11,6 +10,7 @@ import SelectMenu from '@components/select-menu/SelectMenu'
 import { useToast } from '@components/toast/ToastProvider'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
+import { useProducts } from '@hooks/products/useProductsMutation'
 import { useGetProductList } from '@hooks/products/useProductsQueries'
 
 import classNames from 'classnames/bind'
@@ -25,6 +25,7 @@ export default function MainHeader() {
   const showToast = useToast()
 
   const { data } = useGetProductList()
+  const { createProductIdMutation } = useProducts()
 
   const onClickOpenDropdown = () => {
     if (data?.length && data?.length >= MAX_PRODUCT_COUNT) {
@@ -34,15 +35,14 @@ export default function MainHeader() {
   }
 
   const onClickWriting = async (route: 'workspace' | 'planner') => {
-    try {
-      const productId = await postProducts()
-
-      if (productId) {
-        router.push(`/${route}/${productId}`)
-      }
-    } catch (error) {
-      console.log(error)
-    }
+    createProductIdMutation.mutate(
+      {},
+      {
+        onSuccess: (productId: string) => {
+          router.push(`/${route}/${productId}`)
+        },
+      },
+    )
   }
 
   return (

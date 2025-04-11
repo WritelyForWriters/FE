@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { saveProduct } from 'api/products/products'
+import { postProducts, saveProduct } from 'api/products/products'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { UseMutationCustomOptions } from 'types/common/reactQueryCustomOption'
@@ -13,10 +13,27 @@ const useSaveProduct = (mutationOptions?: UseMutationCustomOptions) => {
   })
 }
 
+const useCreateProductId = (mutationOptions?: UseMutationCustomOptions) => {
+  return useMutation({
+    mutationFn: postProducts,
+    ...mutationOptions,
+  })
+}
+
 export const useProducts = () => {
   const queryClient = useQueryClient()
   const showToast = useToast()
 
+  // 작품 생성
+  const createProductIdMutation = useCreateProductId({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY.PRODUCT_LIST],
+      })
+    },
+  })
+
+  // 적품 저장
   const saveProductMutation = useSaveProduct({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -30,6 +47,7 @@ export const useProducts = () => {
   })
 
   return {
+    createProductIdMutation,
     saveProductMutation,
   }
 }
