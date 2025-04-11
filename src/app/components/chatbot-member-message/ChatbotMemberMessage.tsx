@@ -73,7 +73,7 @@ export default function ChatbotMemberMessage({ type, prompt, content }: MemberMe
         )}
         <p>{prompt}</p>
       </div>
-      {(mouseOver || isFavorite) && (
+      {type === 'chat' && (mouseOver || isFavorite) && (
         <div className={cx('member-message__footer')}>
           <button onClick={handleFavorite}>
             <FaStar color={isFavorite ? '#1A1A1A' : '#CCCCCC'} size={20} />
