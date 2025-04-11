@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { getProductDetail, getProductList } from 'api/products/products'
 import { QUERY_KEY } from 'constants/common/queryKeys'
-import { getProductDetail, getProductList } from 'services/products/products'
 import { UseQueryCustomOptions } from 'types/common/reactQueryCustomOption'
 import { ProductDetailDto, ProductDto } from 'types/products'
 

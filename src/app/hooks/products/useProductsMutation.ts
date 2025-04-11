@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { saveProduct } from 'api/products/products'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
-import { saveProduct } from 'services/products/products'
 import { UseMutationCustomOptions } from 'types/common/reactQueryCustomOption'
 
 import { useToast } from '@components/toast/ToastProvider'
