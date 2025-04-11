@@ -1,5 +1,7 @@
-import { getMeProfile } from 'services/members/members'
-import { ProductDto } from 'types/products'
+'use client'
+
+import { useGetProductList } from '@hooks/products/useProductsQueries'
+import { useGetMeProfile } from '@hooks/profile/useProfileQueries'
 
 import CardList from './CardList'
 
@@ -9,12 +11,9 @@ import styles from './Dashboard.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface DashboardProps {
-  productList?: ProductDto[]
-}
-
-export default async function Dashboard({ productList }: DashboardProps) {
-  const profile = await getMeProfile()
+export default function Dashboard() {
+  const { data: profile } = useGetMeProfile()
+  const { data: productList } = useGetProductList()
 
   return (
     <main className={cx('wrapper')}>
