@@ -3,7 +3,7 @@ import {
   ProductDetailResponseType,
   ProductIdResponseType,
   ProductListResponseType,
-  SaveProductDataType,
+  SaveProductRequestType,
 } from 'types/products'
 
 // 작품 ID 생성
@@ -18,13 +18,8 @@ export const getProductList = async () => {
   return res.data.result
 }
 
-interface SaveProductType {
-  productId: string
-  product: SaveProductDataType
-}
-
 // 작품 저장
-export const saveProduct = async ({ productId, product }: SaveProductType) => {
+export const saveProduct = async ({ productId, product }: SaveProductRequestType) => {
   const res = await authInstance.post(`/products/${productId}`, product)
   return res.data.result as string
 }

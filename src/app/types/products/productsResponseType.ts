@@ -1,3 +1,9 @@
+import { ApiResponse } from 'types/common/apiResponse'
+
+export type ProductIdResponseType = ApiResponse<string>
+export type ProductListResponseType = ApiResponse<ProductDto[]>
+export type ProductDetailResponseType = ApiResponse<ProductDetailDto>
+
 export interface ProductDto {
   id: string
   title: string | null
