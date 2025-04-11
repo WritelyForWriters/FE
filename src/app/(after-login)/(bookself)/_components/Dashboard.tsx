@@ -1,7 +1,6 @@
 'use client'
 
-import { useGetProductList } from '@hooks/products/useProductsQueries'
-import { useGetMeProfile } from '@hooks/profile/useProfileQueries'
+import { useGetMeProfile, useGetProductList } from '@hooks/index'
 
 import CardList from './CardList'
 

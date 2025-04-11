@@ -14,8 +14,7 @@ import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
-import { useProducts } from '@hooks/products/useProductsMutation'
-import { useGetProductDetail } from '@hooks/products/useProductsQueries'
+import { useGetProductDetail, useProducts } from '@hooks/index'
 
 import MemoPannel from './_components/memo-pannel/MemoPannel'
 import PlannerPannel from './_components/planner-pannel/PlannerPannel'

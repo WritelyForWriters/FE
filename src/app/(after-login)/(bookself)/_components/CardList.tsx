@@ -7,7 +7,7 @@ import { MouseEvent } from 'react'
 
 import { ProductDto } from 'types/products'
 
-import { useGetProductList } from '@hooks/products/useProductsQueries'
+import { useGetProductList } from '@hooks/index'
 
 import { formatDate } from '@utils/formatDate'
 
