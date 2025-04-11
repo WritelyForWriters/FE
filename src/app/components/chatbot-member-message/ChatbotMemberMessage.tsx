@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 
 import { FaStar } from 'react-icons/fa6'
+import { MemberMessageType } from 'types/chatbot/chatbot'
 
 import classNames from 'classnames/bind'
 
@@ -13,32 +14,29 @@ import styles from './ChatbotMemberMessage.module.scss'
 const cx = classNames.bind(styles)
 
 interface MemberMessageProps {
-  type: string
+  type: MemberMessageType
   prompt: string | null
   content?: string
+}
+
+const getMessageMeta = (type: MemberMessageType) => {
+  switch (type) {
+    case 'auto modify':
+      return { strType: '자동 수정', imgSrc: '/icons/ai-option1.svg' }
+    case 'user modify':
+      return { strType: '수동 수정', imgSrc: '/icons/ai-option2.svg' }
+    case 'feedback':
+      return { strType: '구간 피드백', imgSrc: '/icons/ai-option3.svg' }
+    default:
+      return { strType: '', imgSrc: '' }
+  }
 }
 
 export default function ChatbotMemberMessage({ type, prompt, content }: MemberMessageProps) {
   const [mouseOver, setMouseOver] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
 
-  let strType = ''
-  let imgSrc = ''
-
-  switch (type) {
-    case 'auto modify':
-      strType = '자동 수정'
-      imgSrc = '/icons/ai-option1.svg'
-      break
-    case 'user modify':
-      strType = '수동 수정'
-      imgSrc = '/icons/ai-option2.svg'
-      break
-    case 'feedback':
-      strType = '구간 피드백'
-      imgSrc = '/icons/ai-option3.svg'
-      break
-  }
+  const { strType, imgSrc } = getMessageMeta(type)
 
   const handleFavorite = () => {
     if (isFavorite) {
