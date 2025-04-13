@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 
 import { useCallback, useEffect, useRef } from 'react'
 
+import { Editor } from '@tiptap/react'
 import { useAtom, useSetAtom } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
@@ -15,6 +16,8 @@ import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
 import { useGetProductDetail, useProducts } from '@hooks/index'
+
+import { addHeadingIds } from '@utils/addHeadingId'
 
 import MemoPannel from './_components/memo-pannel/MemoPannel'
 import PlannerPannel from './_components/planner-pannel/PlannerPannel'
@@ -56,13 +59,14 @@ export default function WorkSpacePage() {
 
   const handleSave = async () => {
     if (editorRef.current) {
-      const editor = editorRef.current.getEditor()
+      const editor = editorRef.current.getEditor() as Editor
+      const contentsWithIds = addHeadingIds(editor.getJSON()) // heading에 id속성 부여된 최종 에디터 content
 
       saveProductMutation.mutate({
         productId: params.id,
         product: {
           title: productTitle,
-          content: JSON.stringify(editor?.getJSON()),
+          content: JSON.stringify(contentsWithIds),
           isAutoSave: false,
         },
       })
