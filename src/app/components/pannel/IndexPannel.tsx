@@ -2,6 +2,8 @@
 
 import { MouseEvent, useEffect, useState } from 'react'
 
+import { TocItemType } from 'types/common/pannel'
+
 import Pannel from '@components/pannel/Pannel'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
@@ -12,13 +14,8 @@ import styles from './IndexPannel.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface TocItem {
-  id: string
-  title: string
-}
-
 interface IndexPannelProps {
-  toc: TocItem[]
+  toc: TocItemType[]
 }
 
 export default function IndexPannel({ toc }: IndexPannelProps) {
