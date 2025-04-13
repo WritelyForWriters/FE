@@ -1,8 +1,12 @@
 'use client'
 
-import { ChangeEvent, KeyboardEvent, useRef, useState } from 'react'
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 
+import { useAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
+import { isEditableAtom } from 'store/editorAtoms'
+import { productTitleAtom } from 'store/productsAtoms'
+import { ModalHandler } from 'types/common/modalRef'
 
 import ActionBar from '@components/action-bar/ActionBar'
 import styles from '@components/action-bar/ActionBar.module.scss'
@@ -20,32 +24,27 @@ const cx = classNames.bind(styles)
 
 type ExportMode = 'full' | 'toc'
 
-interface ModalHandler {
-  open: () => void
-  close: () => void
-}
-
 interface WorkspaceActionBarProps {
   onClickSave: () => Promise<void>
+  initialTitle?: string | null
+  isInitialAccess: boolean
 }
 
-export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarProps) {
+export default function WorkspaceActionBar({
+  onClickSave,
+  initialTitle,
+  isInitialAccess,
+}: WorkspaceActionBarProps) {
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
 
-  // 저장 여부 판단 state
-  const [hasSaved, setHasSaved] = useState(false)
-
   // 읽기/쓰기 모드를 구분하는 state
-  const [isContentEditing, setIsContentEditing] = useState(true)
+  const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
 
   // 저장 버튼 클릭 트리거 이벤트
   const handleSave = async () => {
-    setHasSaved(true)
-
     try {
       await onClickSave()
-      alert('저장 완료!')
     } catch (error) {
       console.error(error)
     }
@@ -94,7 +93,7 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
       <>
         {isContentEditing ? (
           <>
-            <TextButton size="large" onClick={() => handleSave()}>
+            <TextButton size="large" onClick={handleSave}>
               저장하기
             </TextButton>
             <div className={cx('export-button-wrapper')}>
@@ -137,23 +136,32 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
     const [isTitleEditing, setIsTitleEditing] = useState(false)
 
     // 타이틀명 state
-    const [title, setTitle] = useState('타이틀')
+    const [title, setTitle] = useState(initialTitle) // 로컬 상태 관리
+    const [titleAtom, setTitleAtom] = useAtom(productTitleAtom) // 전역 상태 관리
 
     // 엔터키 트리거 이벤트
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         setIsTitleEditing(false)
+        setTitleAtom(title as string)
       }
     }
 
+    useEffect(() => {
+      setTitle(titleAtom)
+    }, [titleAtom])
+
     return (
       <>
-        {isTitleEditing ? (
+        {isTitleEditing && isContentEditing ? (
           <input
             className={cx('action-bar-input')}
-            value={title}
+            value={title as string}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-            onBlur={() => setIsTitleEditing(false)}
+            onBlur={() => {
+              setIsTitleEditing(false)
+              setTitleAtom(title as string)
+            }}
             onKeyDown={handleKeyDown}
           />
         ) : (
@@ -175,7 +183,7 @@ export default function WorkspaceActionBar({ onClickSave }: WorkspaceActionBarPr
           <EditModeSwitch
             isSelected={!isContentEditing}
             onClick={() => setIsContentEditing(false)}
-            disabled={!hasSaved}
+            disabled={isInitialAccess}
           >
             읽기 모드
           </EditModeSwitch>

@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { ReactNode } from 'react'
 
 import { MdHome } from 'react-icons/md'
@@ -17,19 +19,14 @@ interface ActionBarProps {
 }
 
 export default function ActionBar({ actionSection, titleSection, extraSection }: ActionBarProps) {
-  // 홈 버튼 클릭 트리거 이벤트
-  const handleHomeClick = () => {
-    alert('내 서재로 이동합니다.')
-  }
-
   return (
     <div className={cx('action-bar-wrapper')}>
       <div className={cx('action-bar-inner-container')}>
         <section className={cx('action-bar-action-section')}>
           {/* 홈 버튼 */}
-          <button onClick={handleHomeClick}>
+          <Link href="/">
             <MdHome size={24}></MdHome>
-          </button>
+          </Link>
           {actionSection}
         </section>
         <section className={cx('action-bar-info-section')}>
