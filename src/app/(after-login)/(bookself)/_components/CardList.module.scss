@@ -1,6 +1,12 @@
 @use '@styles/colors' as color;
 @use '@styles/mixins' as mixin;
 
+.dashboard__contents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem;
+}
+
 .item {
   height: 219.323px;
   padding: 22.351px;

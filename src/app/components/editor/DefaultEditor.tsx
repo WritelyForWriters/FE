@@ -1,6 +1,6 @@
 'use client'
 
-import { Ref, useImperativeHandle } from 'react'
+import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
@@ -12,8 +12,8 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { useAtom, useSetAtom } from 'jotai'
-import { activeMenuAtom, selectionAtom } from 'store/editorAtoms'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { activeMenuAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
 
 import BlockquoteExtension from '@extensions/Blockquote'
@@ -27,14 +27,18 @@ import styles from './DefaultEditor.module.scss'
 // TODO 단축키 '/'로 버블메뉴 활성화
 
 interface DefaultEditorProps {
-  ref: Ref<HandleEditor>
+  editorRef: Ref<HandleEditor>
+  isSavedRef: RefObject<boolean>
+  contents?: string
 }
 
-export default function DefaultEditor({ ref }: DefaultEditorProps) {
+export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
+  const editable = useAtomValue(isEditableAtom)
 
   const editor = useEditor({
+    editable,
     extensions: [
       Document,
       BlockquoteExtension,
@@ -57,22 +61,35 @@ export default function DefaultEditor({ ref }: DefaultEditorProps) {
       }),
     ],
     immediatelyRender: false,
-    content: `
-      Nothing is impossible, the word itself says “I’m possible!”
-      <p></p>
-      <p>드래그해서 수정하기</p>
-      <p>Audrey Hepburn</p>
-    `,
+    content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
+    onUpdate: () => {
+      // 에디터에 변경사항이 생기면 저장 상태 false로 변경
+      isSavedRef.current = false
+    },
   })
 
   // 외부에서 에디터 인스턴스에 접근하기 위해 사용
-  useImperativeHandle(ref, () => ({
+  useImperativeHandle(editorRef, () => ({
     getEditor: () => editor,
   }))
 
   const handleActiveMenu = () => {
     setActiveMenu('aiToolbar')
   }
+
+  useEffect(() => {
+    if (!editor) {
+      return undefined
+    }
+    editor.setEditable(editable)
+  }, [editor, editable])
+
+  // 에디터 초기 content 데이터 보여주기
+  useEffect(() => {
+    if (editor && contents && contents !== null) {
+      editor.commands.setContent(JSON.parse(contents))
+    }
+  }, [editor, contents])
 
   if (!editor) {
     return null
@@ -94,7 +111,9 @@ export default function DefaultEditor({ ref }: DefaultEditorProps) {
           },
         }}
         // --shouldShow: 버블 메뉴 표시를 제어하는 콜백
-        shouldShow={({ state }) => !state.selection.empty}
+        /* MEMO(Sohyun): DefaultEditor내부에서 editable 상태에따른 화면을 구현하고 싶었으나, 버블메뉴 shouldShow 상태 제어가 안되는 문제가 있음
+          editable상태가 shouldShow에 즉각반영이 안됨, (참고) https://tiptap.dev/docs/guides/output-json-html#render */
+        shouldShow={({ state }) => editable && !state.selection.empty}
       >
         {activeMenu === 'defaultToolbar' ? (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
