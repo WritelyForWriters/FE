@@ -2,7 +2,7 @@
 
 import { use, useEffect } from 'react'
 
-import { fetchProductsTemplates } from 'api/products/Products'
+import { fetchProductsTemplates } from 'api/products/products'
 import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { accessTokenAtom } from 'store/accessTokenAtom'
