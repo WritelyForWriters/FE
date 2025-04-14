@@ -1,4 +1,5 @@
 import AuthAxios from 'api/core/AuthInstance'
+import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 import { PlannerTemplatesResponse } from 'types/planner/plannerTemplatesResponse'
 import { ProductsResponse } from 'types/products/productsResponse'
 
@@ -14,7 +15,7 @@ export const fetchProductsTemplates = async (productId: string) => {
 
 export const createProductsTemplates = async (
   productId: string,
-  request: PlannerTemplatesResponse,
+  request: PlannerTemplatesRequest,
 ) => {
   const res = await AuthAxios.post(`/products/${productId}/templates`, { ...request })
   return res.data
