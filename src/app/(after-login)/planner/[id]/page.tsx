@@ -1,11 +1,10 @@
 'use client'
 
-import { use, useEffect } from 'react'
+import { use } from 'react'
 
-import { fetchProductsTemplates } from 'api/products/products'
-import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
-import { accessTokenAtom } from 'store/accessTokenAtom'
+
+import { useFetchProductTemplates } from '@hooks/products/useProductsQueries'
 
 import { PlannerSynopsisFormValues } from '../../../types/planner/plannerSynopsisFormValues'
 import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
@@ -24,27 +23,19 @@ export default function PlannerPage(props: { params: Params }) {
   const params = use(props.params)
   const id = params.id
 
-  const accessToken = useAtomValue(accessTokenAtom)
+  // const accessToken = useAtomValue(accessTokenAtom)
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
     formState: { isValid },
   } = methods
 
-  useEffect(() => {
-    const fetch = async () => {
-      const result = await fetchProductsTemplates(id)
-      console.log('result: ', result)
-    }
-
-    if (accessToken) {
-      fetch()
-    }
-  }, [accessToken, id])
+  const { data: templates } = useFetchProductTemplates(id)
+  console.log(templates)
 
   /* TODO(hajae):
    * [x] type 작성
    * [x] api/ 작성
-   * [ ] services/ 작성 (parsing)
+   * [x] useProductsQueries 작성
    * [ ] Header - Data Fetch 후 저장된 데이터가 있으면 저장하기 버튼 없으면 수정하기
    * [ ] Form - Set Form Value
    */
