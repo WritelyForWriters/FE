@@ -13,13 +13,14 @@ const cx = classNames.bind(styles)
 
 interface PlannerActionBarProps {
   isValidFormValues: boolean
+  isSaved: boolean
 }
 
-export default function PlannerActionBar({ isValidFormValues }: PlannerActionBarProps) {
+export default function PlannerActionBar({ isValidFormValues, isSaved }: PlannerActionBarProps) {
   // 액션바 내 좌측 영역
   const ActionSectionContent = () => {
     // 저장 여부 판단 state
-    const [hasSaved, setHasSaved] = useState(false)
+    const [hasSaved, setHasSaved] = useState(isSaved)
 
     // 저장 버튼 클릭 트리거 이벤트
     const handleSave = () => {
