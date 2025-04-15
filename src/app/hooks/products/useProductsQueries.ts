@@ -32,6 +32,7 @@ export const useFetchProductTemplates = (
   return useQuery({
     queryKey: [QUERY_KEY.PRODUCT_TEMPLATES, productId],
     queryFn: () => fetchProductsTemplates(productId),
+    enabled: !!productId,
     ...queryOptions,
   })
 }

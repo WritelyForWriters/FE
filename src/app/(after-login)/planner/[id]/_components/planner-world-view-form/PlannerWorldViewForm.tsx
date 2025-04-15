@@ -37,7 +37,7 @@ export default function PlannerWorldViewForm() {
       {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
         <TextField
           key={`planner-world-view-item-${index}`}
-          name={`worldView.${item.name}`}
+          name={`worldview.${item.name}`}
           label={item.label}
           variant="expand"
           helperText={item.helperText}
@@ -46,10 +46,10 @@ export default function PlannerWorldViewForm() {
       {customFields.map((field) => (
         <TextField
           key={field.id}
-          name={`worldView.customFields[${field.id}].content`}
+          name={`worldview.customFields[${field.id}].content`}
           label="커스텀 항목"
           variant="expand"
-          labelName={`worldView.customFields[${field.id}].name`}
+          labelName={`worldview.customFields[${field.id}].name`}
           isLabelEditable={true}
         />
       ))}

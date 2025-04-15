@@ -31,7 +31,7 @@ export const PlannerTemplatesRequest = {
         occupation: formValues.worldview.occupation || '',
         conflict: formValues.worldview.conflict || '',
         customFields: formValues.worldview.customFields
-          ? formValues.worldview.customFields.map((field) => ({
+          ? Object.values(formValues.worldview.customFields).map((field) => ({
               id: field.id,
               name: field.name,
               content: field.content,
@@ -61,8 +61,8 @@ export const PlannerTemplatesRequest = {
         content: formValues.plot.content || '',
       },
       ideaNote: {
-        title: formValues.ideaNote.title,
-        content: formValues.ideaNote.content,
+        title: formValues.ideaNote.title || '',
+        content: formValues.ideaNote.content || '',
       },
     }
   },

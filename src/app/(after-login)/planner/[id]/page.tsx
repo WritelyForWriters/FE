@@ -2,8 +2,12 @@
 
 import { use, useEffect, useState } from 'react'
 
+import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
+import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
+import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
+import { useCreateProductTemplates } from '@hooks/products/useProductsMutation'
 import { useFetchProductTemplates } from '@hooks/products/useProductsQueries'
 
 import { PlannerSynopsisFormValues } from '../../../types/planner/plannerSynopsisFormValues'
@@ -24,13 +28,16 @@ export default function PlannerPage(props: { params: Params }) {
   const id = params.id
 
   const [isSaved, setIsSaved] = useState(false)
+  const characters = useAtomValue(plannerCharacterByIdAtom(id))
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
     formState: { isValid },
+    handleSubmit,
   } = methods
 
   const { data: templates } = useFetchProductTemplates(id)
+  const { mutate: createTemplate } = useCreateProductTemplates()
 
   useEffect(() => {
     if (templates) {
@@ -57,7 +64,21 @@ export default function PlannerPage(props: { params: Params }) {
 
   return (
     <div className={cx('container')}>
-      <PlannerActionBar isValidFormValues={isValid} isSaved={isSaved} />
+      <PlannerActionBar
+        isValidFormValues={isValid}
+        isSaved={isSaved}
+        onSubmit={handleSubmit((formValues) => {
+          const request = PlannerTemplatesRequest.from(formValues, characters)
+
+          console.log('formValues: ', formValues)
+          console.log('request: ', request)
+
+          createTemplate({
+            productId: id,
+            request: request,
+          })
+        })}
+      />
       <div className={cx('main-section')}>
         <PlannerTabs />
         <FormProvider {...methods}>
