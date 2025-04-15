@@ -1,4 +1,5 @@
-import Chatbot from '@components/chatbot/Chatbot'
+import Dashboard from '(after-login)/(bookself)/_components/Dashboard'
+import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 
 /**
  * TODO
@@ -7,10 +8,11 @@ import Chatbot from '@components/chatbot/Chatbot'
  * [ ] 로그인 여부에 따른 버튼 UI -> 로그인 기능 완료 후
  */
 
-export default async function Home() {
+export default function Home() {
   return (
     <div>
-      <Chatbot />
+      <MainHeader />
+      <Dashboard />
     </div>
   )
 }

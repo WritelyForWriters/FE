@@ -16,6 +16,23 @@
   :first-child {
     margin-top: 0;
     outline: none;
+
+    // 읽기 모드 상태일때
+    &[contenteditable='false'] {
+      cursor: default;
+    }
+  }
+
+  p {
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 2rem;
+  }
+
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 3.6rem;
   }
 
   blockquote {
@@ -23,6 +40,4 @@
     margin: 1.6rem 0;
     padding-left: 1.6rem;
   }
-
-  // TODO heading 등 정의 필요
 }
