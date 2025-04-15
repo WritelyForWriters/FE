@@ -23,15 +23,13 @@ const expandItems = ['intro', 'customFields']
 interface PlannerCharacterFormListProps {
   paramsId: string
   arrayIndex: number
-  characterId: string
   character: CharacterFormValues
-  handleRemoveCharacter: (id: string) => void
+  handleRemoveCharacter: (index: number) => void
 }
 
 export default function PlannerCharacterFormList({
   paramsId,
   arrayIndex,
-  characterId,
   character,
   handleRemoveCharacter,
 }: PlannerCharacterFormListProps) {
@@ -41,33 +39,34 @@ export default function PlannerCharacterFormList({
 
   const watchedValues: CharacterFormValues = useWatch({
     control,
-    name: `characters[${characterId}]`,
+    name: `characters[${arrayIndex}]`,
   })
 
   // NOTE(hajae): local storage 저장
   useEffect(() => {
     if (!watchedValues) return
 
-    setCharacters((prev: Record<string, CharacterFormValues>) => ({
-      ...prev,
-      [characterId]: {
-        ...prev[characterId],
+    setCharacters((prev) => {
+      const next = [...prev]
+      next[arrayIndex] = {
+        ...next[arrayIndex],
         ...watchedValues,
-      },
-    }))
-  }, [watchedValues, characterId, setCharacters])
+      }
+      return next
+    })
+  }, [watchedValues, arrayIndex, setCharacters])
 
   // NOTE(hajae): local storage에 저장된 값으로 초기화
   useEffect(() => {
-    setValue(`characters[${characterId}]`, character)
+    setValue(`characters[${arrayIndex}]`, character)
   }, [])
 
   const getTextFieldName = (name: string) => {
     // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
     if (name === 'customFields' && character.customFields) {
-      return `characters[${characterId}].customFields[0].content`
+      return `characters[${arrayIndex}].customFields[0].content`
     } else {
-      return `characters[${characterId}].${name}`
+      return `characters[${arrayIndex}].${name}`
     }
   }
 
@@ -81,7 +80,7 @@ export default function PlannerCharacterFormList({
               size="small"
               variant="secondary"
               type="button"
-              onClick={() => handleRemoveCharacter(characterId)}
+              onClick={() => handleRemoveCharacter(arrayIndex)}
             >
               삭제하기
             </FillButton>

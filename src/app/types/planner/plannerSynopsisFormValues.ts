@@ -32,6 +32,7 @@ export type WorldViewFormValues = {
 }
 
 export type CharacterFormValues = {
+  id?: string
   intro?: string
   name?: string
   age?: number

@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation'
 
 import { useAtom } from 'jotai'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
-import { v4 as uuidv4 } from 'uuid'
 
 import FillButton from '@components/buttons/FillButton'
 
@@ -19,9 +18,12 @@ const cx = classNames.bind(styles)
 
 export default function PlannerCharacterForm() {
   const params = useParams<{ id: string }>()
-  const [characters, setCharacters] = useAtom(plannerCharacterByIdAtom(params.id))
+  const [characters, setCharacters] = useAtom<CharacterFormValues[]>(
+    plannerCharacterByIdAtom(params.id),
+  )
 
   const createCharacter = (): CharacterFormValues => ({
+    id: '',
     intro: '',
     name: '',
     age: undefined,
@@ -32,7 +34,7 @@ export default function PlannerCharacterForm() {
     relationship: '',
     customFields: [
       {
-        id: uuidv4(),
+        id: '',
         name: '',
         content: '',
       },
@@ -42,15 +44,15 @@ export default function PlannerCharacterForm() {
   const handleAddCharacter = () => {
     setCharacters((prev) => ({
       ...prev,
-      [uuidv4()]: createCharacter(),
+      ...createCharacter(),
     }))
   }
 
-  const handleRemoveCharacter = (id: string) => {
+  const handleRemoveCharacter = (index: number) => {
     setCharacters((prev) => {
-      const nextCharacters = { ...prev }
-      delete nextCharacters[id]
-      return nextCharacters
+      const next = [...prev]
+      next.splice(index, 1)
+      return next
     })
   }
 
@@ -64,11 +66,10 @@ export default function PlannerCharacterForm() {
       </div>
 
       {characters &&
-        Object.entries(characters).map(([id, character], index) => (
+        characters.map((character, index) => (
           <PlannerCharacterFormList
-            key={id}
+            key={character.id || index}
             paramsId={params.id}
-            characterId={id}
             character={character}
             arrayIndex={index}
             handleRemoveCharacter={handleRemoveCharacter}

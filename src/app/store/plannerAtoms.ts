@@ -1,7 +1,6 @@
 import { atom } from 'jotai'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
 import { CharacterFormValues } from 'types/planner/plannerSynopsisFormValues'
-import { v4 as uuidv4 } from 'uuid'
 
 type PlannerActiveTabType = 'synopsis' | 'ideaNote'
 
@@ -10,7 +9,7 @@ export const plannerActiveTabAtom = atom<PlannerActiveTabType>('synopsis')
 type PlannerCharacterFormValuesType = PlannerCharacterFormValueType[]
 type PlannerCharacterFormValueType = {
   plannerId: string
-  characters: Record<string, CharacterFormValues>
+  characters: CharacterFormValues[]
 }
 
 // NOTE(hajae): atom with local storage
@@ -21,6 +20,7 @@ export const plannerCharacterFormValuesAtom = atomWithStorage<PlannerCharacterFo
 
 export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
   const createCharacter = (): CharacterFormValues => ({
+    id: '',
     intro: '',
     name: '',
     age: undefined,
@@ -35,19 +35,17 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
   const baseAtom = atom(
     (get) => {
       const allCharacters = get(plannerCharacterFormValuesAtom)
-      return allCharacters.find((c) => c.plannerId === plannerId)?.characters ?? {}
+      return allCharacters.find((character) => character.plannerId === plannerId)?.characters ?? []
     },
     (
       get,
       set,
-      update:
-        | Record<string, CharacterFormValues>
-        | ((prev: Record<string, CharacterFormValues>) => Record<string, CharacterFormValues>),
+      update: CharacterFormValues[] | ((prev: CharacterFormValues[]) => CharacterFormValues[]),
     ) => {
       const allCharacters = get(plannerCharacterFormValuesAtom)
       const idx = allCharacters.findIndex((c) => c.plannerId === plannerId)
 
-      const prevCharacters = idx === -1 ? {} : allCharacters[idx].characters
+      const prevCharacters = idx === -1 ? [] : allCharacters[idx].characters
       const newCharacters = typeof update === 'function' ? update(prevCharacters) : update
 
       if (idx === -1) {
@@ -71,20 +69,11 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
     ) as PlannerCharacterFormValuesType
 
     const target = savedCharacters.find((character) => character.plannerId === plannerId)
+    console.log('savedCharacters', savedCharacters)
+    console.log('target', target)
 
-    if (!target) {
-      set({
-        [uuidv4()]: {
-          ...createCharacter(),
-          customFields: [
-            {
-              id: uuidv4(),
-              name: '',
-              content: '',
-            },
-          ],
-        },
-      })
+    if (!target || target.characters.length === 0) {
+      set([createCharacter()])
     }
   }
 

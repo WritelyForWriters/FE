@@ -6,7 +6,7 @@ export type PlannerTemplatesRequest = Omit<PlannerTemplatesResponse['result'], '
 export const PlannerTemplatesRequest = {
   from: (
     formValues: PlannerSynopsisFormValues,
-    characters: { [id: string]: CharacterFormValues },
+    characters: CharacterFormValues[],
   ): PlannerTemplatesRequest => {
     return {
       synopsis: {
@@ -38,8 +38,8 @@ export const PlannerTemplatesRequest = {
             }))
           : [],
       },
-      characters: Object.entries(characters).map(([id, character]) => ({
-        id: id,
+      characters: characters.map((character) => ({
+        id: character.id || '',
         intro: character.intro || '',
         name: character.name || '',
         age: character.age,
