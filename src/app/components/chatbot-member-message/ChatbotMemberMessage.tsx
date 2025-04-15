@@ -16,6 +16,7 @@ const cx = classNames.bind(styles)
 interface MemberMessageProps {
   type: MemberMessageType
   prompt: string | null
+  isFavoritedPrompt: boolean
   content?: string
 }
 
@@ -32,9 +33,14 @@ const getMessageMeta = (type: MemberMessageType) => {
   }
 }
 
-export default function ChatbotMemberMessage({ type, prompt, content }: MemberMessageProps) {
+export default function ChatbotMemberMessage({
+  type,
+  prompt,
+  isFavoritedPrompt,
+  content,
+}: MemberMessageProps) {
   const [mouseOver, setMouseOver] = useState(false)
-  const [isFavorite, setIsFavorite] = useState(false)
+  const [isFavorite, setIsFavorite] = useState(isFavoritedPrompt)
 
   const { strType, imgSrc } = getMessageMeta(type)
 

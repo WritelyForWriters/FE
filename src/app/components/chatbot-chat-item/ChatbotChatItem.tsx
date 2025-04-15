@@ -1,3 +1,5 @@
+import { MemberMessageType } from 'types/chatbot/chatbot'
+
 import ChatbotAssistantMessage from '@components/chatbot-assistant-message/ChatbotAssistantMessage'
 import ChatbotMemberMessage from '@components/chatbot-member-message/ChatbotMemberMessage'
 
@@ -9,10 +11,11 @@ const cx = classNames.bind(styles)
 
 interface ChatbotChatItemProps {
   id: string
-  type: string
+  type: MemberMessageType
   memberMessage: {
     content: string
     prompt: string | null
+    isFavoritedPrompt: boolean
   }
   assistantMessage: {
     content: string

@@ -7,6 +7,7 @@ const CHATS = [
     memberMessage: {
       content: '그리고 그 과정에서 과거 사랑과 마주하게 된다.',
       prompt: null,
+      isFavoritedPrompt: false,
     },
     assistantMessage: {
       content: '그리고 그 과정에서 과거의 사랑과 마주하게 된다.',
@@ -20,6 +21,7 @@ const CHATS = [
     memberMessage: {
       content: 'AI가 감정을 흉내 내는 세상',
       prompt: '문장 다듬어줘',
+      isFavoritedPrompt: false,
     },
     assistantMessage: {
       content: 'AI가 감정을 모방하는 세상',
@@ -33,6 +35,7 @@ const CHATS = [
     memberMessage: {
       content: 'AI가 감정을 흉내 내는 세상. 하지만 한 CEO는 진짜 감정을 지닌 AI를 만들려 한다.',
       prompt: '문장 수정해줘',
+      isFavoritedPrompt: false,
     },
     assistantMessage: {
       content:
@@ -47,6 +50,7 @@ const CHATS = [
     memberMessage: {
       content: '',
       prompt: '안녕',
+      isFavoritedPrompt: true,
     },
     assistantMessage: {
       content:
@@ -55,7 +59,7 @@ const CHATS = [
     },
     createdAt: '2025-04-09T16:51:44.826282',
   },
-]
+] as const
 
 export default function ChatbotChatItems() {
   return (
