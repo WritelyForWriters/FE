@@ -1,6 +1,8 @@
 'use client'
 
-import { KeyboardEvent, useState } from 'react'
+import Image from 'next/image'
+
+import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useAtom, useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -8,9 +10,11 @@ import { FaRegStar } from 'react-icons/fa'
 import { FaCircleArrowUp } from 'react-icons/fa6'
 import { MdLanguage, MdOutlineLightbulb } from 'react-icons/md'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
+import { chatModeAtom } from 'store/chatModeAtom'
 import { clickedButtonAtom } from 'store/clickedButtonAtom'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
+import { ChatbotFormData } from 'types/chatbot/chatbot'
 
 import AutoResizingTextArea from '@components/auto-resizing-textarea/AutoResizingTextarea'
 import FillButton from '@components/buttons/FillButton'
@@ -22,17 +26,17 @@ import classNames from 'classnames/bind'
 import styles from './ChatbotChatInput.module.scss'
 
 const FAVORITE_PROMPTS = [
-  '즐겨찾는 프롬프트1',
-  '즐겨찾는 프롬프트2',
-  '즐겨찾는 프롬프트3',
-  '즐겨찾는 프롬프트4',
+  '즐겨찾는 프롬프트 1',
+  '즐겨찾는 프롬프트 2',
+  '즐겨찾는 프롬프트 3',
+  '즐겨찾는 프롬프트 4',
 ]
 
 const RECOMMEND_PROMPTS = [
-  '추천 프롬프트1',
-  '추천 프롬프트2',
-  '추천 프롬프트3',
-  '추천 프롬프트4',
+  '추천 프롬프트 1',
+  '추천 프롬프트 2',
+  '추천 프롬프트 3',
+  '추천 프롬프트 4',
   '추천 프롬프트 5',
 ]
 
@@ -42,26 +46,34 @@ export default function ChatbotChatInput() {
   const [isFavoriteMenuOpen, setIsFavoriteMenuOpen] = useState(false)
   const [isRecommendMenuOpen, setIsRecommendMenuOpen] = useState(false)
 
+  const inputMode = useAtomValue(chatInputModeAtom) // 입력 모드 | 탐색 모드
   const content = useAtomValue(selectedRangeAtom)
+
+  const [chatMode, setChatMode] = useAtom(chatModeAtom) // 일반 모드 | 웹 검색 모드
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
   const [clickedButton, setClickedButton] = useAtom(clickedButtonAtom)
 
-  const method = useForm({
+  const method = useForm<ChatbotFormData>({
     defaultValues: {
-      content,
+      productId: '', // TODO: API 연동 시 작품 ID 반영
+      content: content ?? '',
       prompt,
     },
   })
 
-  const mode = useAtomValue(chatInputModeAtom)
+  const { register, setValue, handleSubmit } = method
 
-  const { handleSubmit } = method
+  useEffect(() => {
+    setValue('content', content ?? '')
+  }, [content, setValue])
 
-  const handleFormSubmit = (data: { content: string | undefined; prompt: string | null }) => {
-    // 검색 모드 분기 처리
-    if (clickedButton === 'search') {
-      console.log(data)
+  const handleFormSubmit = (data: ChatbotFormData) => {
+    if (chatMode === 'web') {
+      // 웹 검색 모드
+    } else {
+      // 일반 모드
     }
+    console.log(data)
   }
 
   const handleChatInputKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -71,14 +83,18 @@ export default function ChatbotChatInput() {
     }
   }
 
-  const handleClickButton = (type: 'search' | 'favorite' | 'recommend') => {
-    if (clickedButton === 'search' && type === 'search') {
+  const handleClickButton = (type: 'web' | 'favorite' | 'recommend') => {
+    if (clickedButton === 'web' && type === 'web') {
+      setChatMode('default')
       setClickedButton(null)
     } else {
       setClickedButton(type)
     }
 
     switch (type) {
+      case 'web':
+        setChatMode(type)
+        break
       case 'favorite':
         setIsFavoriteMenuOpen(true)
         break
@@ -88,11 +104,15 @@ export default function ChatbotChatInput() {
     }
   }
 
+  const handleNavigateMessage = (direction: 'up' | 'down') => {
+    console.log(direction)
+  }
+
   return (
     <FormProvider {...method}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className={cx('chatbox')}>
-          {mode === 'input' && (
+          {inputMode === 'input' && (
             <>
               {content && (
                 <section className={cx('chatbox__quote')}>
@@ -106,20 +126,21 @@ export default function ChatbotChatInput() {
                 className={cx('chatbox__message')}
                 prompt={prompt}
               />
+              <input type="hidden" {...register('content')} />
             </>
           )}
           <section className={cx('chatbox__buttons')}>
-            {mode === 'input' && (
+            {inputMode === 'input' ? (
               <div className={cx('chatbox__buttons-left')}>
                 <OutLinedButton
                   type="button"
-                  name="search"
+                  name="web"
                   size="small"
                   shape="pill"
                   variant="secondary"
                   iconPosition="leading"
                   iconType={<MdLanguage color="#808080" size={16} />}
-                  onClick={() => handleClickButton('search')}
+                  onClick={() => handleClickButton('web')}
                 >
                   검색
                 </OutLinedButton>
@@ -141,19 +162,17 @@ export default function ChatbotChatInput() {
                   style={{ width: 'auto', left: 70, bottom: 35 }}
                 >
                   {FAVORITE_PROMPTS.map((item, idx) => (
-                    <>
-                      <SelectMenu.Option
-                        key={idx}
-                        option={{
-                          handleAction: () => {
-                            setPrompt(item)
-                            setIsFavoriteMenuOpen(false)
-                          },
-                        }}
-                      >
-                        {item}
-                      </SelectMenu.Option>
-                    </>
+                    <SelectMenu.Option
+                      key={idx}
+                      option={{
+                        handleAction: () => {
+                          setPrompt(item)
+                          setIsFavoriteMenuOpen(false)
+                        },
+                      }}
+                    >
+                      {item}
+                    </SelectMenu.Option>
                   ))}
                 </SelectMenu>
                 <OutLinedButton
@@ -174,31 +193,42 @@ export default function ChatbotChatInput() {
                   style={{ width: 'auto', left: 150, bottom: 35 }}
                 >
                   {RECOMMEND_PROMPTS.map((item, idx) => (
-                    <>
-                      <SelectMenu.Option
-                        key={idx}
-                        option={{
-                          handleAction: () => {
-                            setPrompt(item)
-                            setIsRecommendMenuOpen(false)
-                          },
-                        }}
-                      >
-                        {item}
-                      </SelectMenu.Option>
-                    </>
+                    <SelectMenu.Option
+                      key={idx}
+                      option={{
+                        handleAction: () => {
+                          setPrompt(item)
+                          setIsRecommendMenuOpen(false)
+                        },
+                      }}
+                    >
+                      {item}
+                    </SelectMenu.Option>
                   ))}
                 </SelectMenu>
               </div>
+            ) : (
+              <div></div>
             )}
             <div className={cx('chatbox__buttons-right')}>
-              <FillButton
-                size="xsmall"
-                shape="pill"
-                variant="secondary"
-                iconPosition="only"
-                iconType={<FaCircleArrowUp color="#1a1a1a" size={16} />}
-              />
+              {inputMode === 'input' ? (
+                <FillButton
+                  size="xsmall"
+                  shape="pill"
+                  variant="secondary"
+                  iconPosition="only"
+                  iconType={<FaCircleArrowUp color="#1a1a1a" size={16} />}
+                />
+              ) : (
+                <>
+                  <button type="button" onClick={() => handleNavigateMessage('up')}>
+                    <Image src="/icons/expand-circle-up.svg" alt="위" width={24} height={24} />
+                  </button>
+                  <button type="button" onClick={() => handleNavigateMessage('down')}>
+                    <Image src="/icons/expand-circle-down.svg" alt="아래" width={24} height={24} />
+                  </button>
+                </>
+              )}
             </div>
           </section>
         </div>

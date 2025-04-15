@@ -1,3 +1,3 @@
 import { atom } from 'jotai'
 
-export const clickedButtonAtom = atom<'search' | 'favorite' | 'recommend' | null>(null)
+export const clickedButtonAtom = atom<'web' | 'favorite' | 'recommend' | null>(null)

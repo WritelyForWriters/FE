@@ -50,6 +50,8 @@
     }
 
     &-right {
+      @include mixin.display-flex();
+      gap: 0.4rem;
     }
   }
 }
