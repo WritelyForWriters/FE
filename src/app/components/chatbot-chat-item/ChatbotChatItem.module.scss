@@ -1,0 +1,9 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.chat-item {
+  @include mixin.display-flex();
+  flex-direction: column;
+  gap: 1.6rem;
+}

@@ -1,0 +1,50 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.member-message {
+  @include mixin.display-flex();
+  flex-direction: column;
+  align-self: flex-end;
+  gap: 0.8rem;
+
+  max-width: 24rem;
+  @extend %typo-title-medium;
+
+  color: color.$core-secondary-100;
+
+  &__body {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 0.4rem;
+
+    background-color: color.$alert-secondary-100;
+    border-radius: 1.2rem;
+    padding: 0.8rem 1.2rem;
+  }
+
+  &__meta {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 0.4rem;
+
+    &-type {
+      @include mixin.display-flex();
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    &-content {
+      padding: 0.8rem 0rem 0.8rem 0rem;
+
+      blockquote {
+        border-left: 0.1rem solid black;
+        padding-left: 1rem;
+      }
+    }
+  }
+
+  &__footer {
+    text-align: right;
+  }
+}
