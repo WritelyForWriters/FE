@@ -1,3 +1,7 @@
+import { PLANNER_SYNOPSIS_LENGTH } from 'constants/planner/plannerConstants'
+
+import { PlannerTemplates, Synopsis } from './plannerTemplatesResponse'
+
 export type PlannerSynopsisFormValues = {
   synopsis: SynopsisFormValues
   worldview: WorldViewFormValues
@@ -54,4 +58,28 @@ export type CustomField = { id: string; name: string; content: string }
 export type IdeaNoteFormValues = {
   title: string
   content: string
+}
+
+export const PlannerSynopsisFormValues = {
+  from: (res: PlannerTemplates): PlannerSynopsisFormValues => {
+    return {
+      synopsis: PlannerSynopsisFormValues.toSynopsisFormValues(res.synopsis),
+      worldview: res.worldview,
+      characters: res.characters,
+      plot: res.plot,
+      ideaNote: res.ideaNote,
+    }
+  },
+  toSynopsisFormValues: (synopsis: Synopsis): SynopsisFormValues => {
+    const genres = synopsis.genre.split(', ')
+    const length = PLANNER_SYNOPSIS_LENGTH.find((length) => length.value === synopsis.length)
+
+    return {
+      ...synopsis,
+      genre: genres.map((genre) => {
+        return { label: genre, value: genre }
+      }),
+      length: length,
+    }
+  },
 }
