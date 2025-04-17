@@ -23,12 +23,18 @@ const cx = classNames.bind(styles)
 
 type Params = Promise<{ id: string }>
 
-export default function PlannerPage(props: { params: Params }) {
-  const params = use(props.params)
-  const id = params.id
+function usePlannerData(params: Params) {
+  const { id } = use(params)
+  const { data: templates } = useFetchProductTemplates(id)
+  const characters = useAtomValue(plannerCharacterByIdAtom(id))
+
+  return { id, templates, characters }
+}
+
+export default function PlannerPage({ params }: { params: Params }) {
+  const { id, templates, characters } = usePlannerData(params)
 
   const [isSaved, setIsSaved] = useState(false)
-  const characters = useAtomValue(plannerCharacterByIdAtom(id))
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
@@ -37,7 +43,6 @@ export default function PlannerPage(props: { params: Params }) {
     handleSubmit,
   } = methods
 
-  const { data: templates } = useFetchProductTemplates(id)
   const { mutate: createTemplate } = useCreateProductTemplates()
 
   useEffect(() => {
@@ -51,33 +56,31 @@ export default function PlannerPage(props: { params: Params }) {
           templates.worldview !== null,
       )
 
-      const templateToFormValues = PlannerSynopsisFormValues.from(templates)
+      const values = PlannerSynopsisFormValues.from(templates)
 
-      setValue('synopsis', templateToFormValues.synopsis)
-      setValue('worldview', templateToFormValues.worldview)
-      setValue('characters', templateToFormValues.characters)
-      setValue('plot', templateToFormValues.plot)
-      setValue('ideaNote', templateToFormValues.ideaNote)
+      setValue('synopsis', values.synopsis)
+      setValue('worldview', values.worldview)
+      setValue('characters', values.characters)
+      setValue('plot', values.plot)
+      setValue('ideaNote', values.ideaNote)
     }
-  }, [templates])
+  }, [setValue, templates])
+
+  const handleFormSubmit = handleSubmit((formValues) => {
+    const request = PlannerTemplatesRequest.from(formValues, characters)
+
+    console.log('formValues: ', formValues)
+    console.log('request: ', request)
+
+    createTemplate({
+      productId: id,
+      request,
+    })
+  })
 
   return (
     <div className={cx('container')}>
-      <PlannerActionBar
-        isValidFormValues={isValid}
-        isSaved={isSaved}
-        onSubmit={handleSubmit((formValues) => {
-          const request = PlannerTemplatesRequest.from(formValues, characters)
-
-          console.log('formValues: ', formValues)
-          console.log('request: ', request)
-
-          createTemplate({
-            productId: id,
-            request: request,
-          })
-        })}
-      />
+      <PlannerActionBar isValidFormValues={isValid} isSaved={isSaved} onSubmit={handleFormSubmit} />
       <div className={cx('main-section')}>
         <PlannerTabs />
         <FormProvider {...methods}>
