@@ -32,6 +32,7 @@ export default function PlannerPage(props: { params: Params }) {
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
+    setValue,
     formState: { isValid },
     handleSubmit,
   } = methods
@@ -50,17 +51,15 @@ export default function PlannerPage(props: { params: Params }) {
           templates.worldview !== null,
       )
 
-      console.log(templates)
+      const templateToFormValues = PlannerSynopsisFormValues.from(templates)
+
+      setValue('synopsis', templateToFormValues.synopsis)
+      setValue('worldview', templateToFormValues.worldview)
+      setValue('characters', templateToFormValues.characters)
+      setValue('plot', templateToFormValues.plot)
+      setValue('ideaNote', templateToFormValues.ideaNote)
     }
   }, [templates])
-
-  /* TODO(hajae):
-   * [x] type 작성
-   * [x] api/ 작성
-   * [x] useProductsQueries 작성
-   * [x] Header - Data Fetch 후 저장된 데이터가 있으면 저장하기 버튼 없으면 수정하기
-   * [ ] Form - Set Form Value
-   */
 
   return (
     <div className={cx('container')}>

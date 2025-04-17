@@ -39,7 +39,7 @@ type Plot = {
   content: string
 }
 
-type Synopsis = {
+export type Synopsis = {
   genre: string
   length: string
   purpose: string
