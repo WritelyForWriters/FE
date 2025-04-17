@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { PLANNER_WORLD_VIEW_ITEMS } from 'constants/planner/plannerConstants'
-import { v4 as uuidv4 } from 'uuid'
 
 import TextButton from '@components/buttons/TextButton'
 import TextField from '@components/text-field/TextField'
@@ -21,14 +20,12 @@ type CustomField = {
 export default function PlannerWorldViewForm() {
   const [customFields, setCustomFields] = useState<CustomField[]>([])
 
-  // NOTE(hajae): uuidv4는 client side에서 실행되는 함수 인데,
-  // useState의 초기화할 때(ssr) 사용하면 에러가 발생하므로 최초 마운트 후 커스텀 필드 추가
   useEffect(() => {
-    setCustomFields([{ id: uuidv4(), name: '', content: '' }])
+    setCustomFields([{ id: '', name: '', content: '' }])
   }, [])
 
   const handleAddCustomField = () => {
-    setCustomFields((prev) => [...prev, { id: uuidv4(), name: '', content: '' }])
+    setCustomFields((prev) => [...prev, { id: '', name: '', content: '' }])
   }
 
   return (
@@ -43,13 +40,13 @@ export default function PlannerWorldViewForm() {
           helperText={item.helperText}
         />
       ))}
-      {customFields.map((field) => (
+      {customFields.map((field, index) => (
         <TextField
           key={field.id}
-          name={`worldview.customFields[${field.id}].content`}
+          name={`worldview.customFields[${index}].content`}
           label="커스텀 항목"
           variant="expand"
-          labelName={`worldview.customFields[${field.id}].name`}
+          labelName={`worldview.customFields[${index}].name`}
           isLabelEditable={true}
         />
       ))}
