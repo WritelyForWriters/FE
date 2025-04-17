@@ -23,7 +23,7 @@ export function Toast({ type, message, onClose }: ToastProps) {
   }, [onClose])
 
   return (
-    <div className={cx('toast-wrapper')}>
+    <div className={cx('toast-wrapper')} style={{ zIndex: 10 }}>
       <div className={cx('toast')}>
         {type === 'success' ? (
           <FaCircleCheck size={20} color="#20ACE8" />
