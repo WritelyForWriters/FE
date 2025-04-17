@@ -42,10 +42,7 @@ export default function PlannerCharacterForm() {
   })
 
   const handleAddCharacter = () => {
-    setCharacters((prev) => ({
-      ...prev,
-      ...createCharacter(),
-    }))
+    setCharacters((prev) => [...prev, createCharacter()])
   }
 
   const handleRemoveCharacter = (index: number) => {
