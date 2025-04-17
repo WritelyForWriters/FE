@@ -35,11 +35,6 @@ export default function PlannerActionBar({
       alert('저장 완료!')
     }
 
-    // 수정 버튼 클릭 트리거 이벤트
-    const handleModify = () => {
-      alert('수정 모드!')
-    }
-
     // 삭제 버튼 클릭 트리거 이벤트
     const handleDelete = () => {
       alert('삭제 완료!')
@@ -53,7 +48,7 @@ export default function PlannerActionBar({
           </TextButton>
         ) : (
           <>
-            <TextButton size="large" onClick={() => handleModify()}>
+            <TextButton size="large" onClick={() => handleSave()}>
               수정하기
             </TextButton>
             <TextButton size="large" onClick={() => handleDelete()}>
