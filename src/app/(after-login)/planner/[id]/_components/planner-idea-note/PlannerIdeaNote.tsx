@@ -8,14 +8,14 @@ import PlannerIdeaNoteEditor from '@components/editor/planner-idea-note-editor/P
 
 export default function PlannerIdeaNote() {
   const { watch, setValue } = useFormContext()
-  const ideaNoteValue = watch('ideaNote')
+  const ideaNoteValue = watch('ideaNote.content')
   const editorRef = useRef<HandleEditor>(null)
 
   const handleUpdate = () => {
     if (!editorRef.current) return
 
     const json: JSONContent | undefined = editorRef.current.getEditor()?.getJSON()
-    setValue('ideaNote', JSON.stringify(json))
+    setValue('ideaNote.content', JSON.stringify(json))
   }
 
   return (
