@@ -1,3 +1,5 @@
+'use client'
+
 import Dashboard from '(after-login)/(bookself)/_components/Dashboard'
 import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 
