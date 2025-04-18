@@ -32,6 +32,10 @@
     color: color.$alert-secondary-300;
     font-weight: 400;
 
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
     &:hover {
       color: color.$alert-secondary-900;
       cursor: pointer;
