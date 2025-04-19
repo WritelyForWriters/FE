@@ -18,8 +18,7 @@ import IndexPannel from '@components/pannel/IndexPannel'
 
 import { useGetProductDetail, useProducts } from '@hooks/index'
 
-import { addHeadingIds } from '@utils/addHeadingId'
-import { getTocFromEditor } from '@utils/getTocFromEditor'
+import { addHeadingIds, getTocFromEditor } from '@utils/index'
 
 import MemoPannel from './_components/memo-pannel/MemoPannel'
 import PlannerPannel from './_components/planner-pannel/PlannerPannel'
