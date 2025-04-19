@@ -34,8 +34,8 @@ const cx = classNames.bind(styles)
 /**
  * TODO 작업공간 페이지 중 에디터 관련
  * [ ] 읽기 모드일때는 툴바 활성화 X
- * [ ] 에디터 TOC
- * [ ] 자동 저장 기능
+ * [x] 에디터 TOC
+ * [ ] 자동 저장 기능 + TOC 업데이트
  */
 
 export default function WorkSpacePage() {
@@ -121,7 +121,7 @@ export default function WorkSpacePage() {
     if (!productDetail?.title && !productDetail?.content) {
       setIsContentEditing(true)
     }
-    // TODO(Sohyun): editor가 업데이트될 때마다 toc 업데이트 하기(editor.on and update)
+    // 에디터 저장한 값으로 toc 업데이트
     if (productDetail?.content) {
       const contentJSON = JSON.parse(productDetail.content)
       const toc = getTocFromEditor(contentJSON)
