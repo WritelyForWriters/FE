@@ -36,7 +36,7 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => {
             return (
-              // MEMO(Sohyun): 에디터 제목으로 목차 인덱스를 isIntersecting이 시에 여러 개의 요소를 감지하고 있고,
+              // MEMO(Sohyun): 에디터 제목으로 목차 인덱스를 isIntersecting할 시에 여러 개의 요소를 감지하고 있고,
               // 이 중 마지막으로 감지된 요소가 setActiveId에 들어가면서 가장 맨 마지막 제목이 활성화되는 문제가 있음.
               // 따라서, 화면 맨 위(viewport top)로부터 얼마나 떨어져 있는지를 계산하여 뷰포트에서 가장 위에 가까운 heading이 0번 인덱스로 오도록 적용
               (a.target as HTMLElement).getBoundingClientRect().top -
