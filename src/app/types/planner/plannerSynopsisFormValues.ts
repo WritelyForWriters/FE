@@ -70,7 +70,18 @@ export const PlannerSynopsisFormValues = {
       ideaNote: res.ideaNote,
     }
   },
+
   toSynopsisFormValues: (synopsis: Synopsis): SynopsisFormValues => {
+    if (!synopsis) {
+      return {
+        genre: [],
+        length: undefined,
+        purpose: '',
+        logline: '',
+        example: '',
+      }
+    }
+
     const genres = synopsis.genre.split(', ')
     const length = PLANNER_SYNOPSIS_LENGTH.find((length) => length.value === synopsis.length)
 
