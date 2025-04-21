@@ -67,9 +67,10 @@ export default function PlannerPage({ params }: { params: Params }) {
   }, [setValue, templates])
 
   const handleFormSubmit = handleSubmit((formValues) => {
+    console.log('formValues: ', formValues)
+
     const request = PlannerTemplatesRequest.from(formValues, characters)
 
-    console.log('formValues: ', formValues)
     console.log('request: ', request)
 
     createTemplate({

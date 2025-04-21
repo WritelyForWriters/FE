@@ -42,7 +42,7 @@ export default function PlannerWorldViewForm() {
       ))}
       {customFields.map((field, index) => (
         <TextField
-          key={field.id}
+          key={field.id || index}
           name={`worldview.customFields[${index}].content`}
           label="커스텀 항목"
           variant="expand"

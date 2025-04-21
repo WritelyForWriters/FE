@@ -39,7 +39,7 @@ export const PlannerTemplatesRequest = {
           : [],
       },
       characters: characters.map((character) => ({
-        id: character.id || '',
+        id: character.id || undefined,
         intro: character.intro || '',
         name: character.name || '',
         age: character.age,
@@ -51,9 +51,9 @@ export const PlannerTemplatesRequest = {
         relationship: character.relationship || '',
         customFields: character.customFields
           ? character.customFields.map((field) => ({
-              id: field.id,
-              name: field.name,
-              content: field.content,
+              id: field.id || '',
+              name: field.name || '커스텀 필드',
+              content: field.content || '',
             }))
           : [],
       })),

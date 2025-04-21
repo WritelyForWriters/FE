@@ -65,7 +65,7 @@ export default function PlannerCharacterForm() {
       {characters &&
         characters.map((character, index) => (
           <PlannerCharacterFormList
-            key={character.id || index}
+            key={character.id ? `${character.id}-${index}` : `${index}`}
             paramsId={params.id}
             character={character}
             arrayIndex={index}

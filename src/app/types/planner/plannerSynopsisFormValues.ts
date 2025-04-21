@@ -64,10 +64,10 @@ export const PlannerSynopsisFormValues = {
   from: (res: PlannerTemplates): PlannerSynopsisFormValues => {
     return {
       synopsis: PlannerSynopsisFormValues.toSynopsisFormValues(res.synopsis),
-      worldview: res.worldview,
-      characters: res.characters,
-      plot: res.plot,
-      ideaNote: res.ideaNote,
+      worldview: PlannerSynopsisFormValues.toWorldViewFormValues(res.worldview),
+      characters: PlannerSynopsisFormValues.toCharacterFormValues(res.characters),
+      plot: PlannerSynopsisFormValues.toPlotFormValues(res.plot),
+      ideaNote: PlannerSynopsisFormValues.toIdeaNoteFormValues(res.ideaNote),
     }
   },
 
@@ -92,5 +92,60 @@ export const PlannerSynopsisFormValues = {
       }),
       length: length,
     }
+  },
+
+  toWorldViewFormValues: (worldview: WorldViewFormValues): WorldViewFormValues => {
+    if (!worldview) {
+      return {
+        geography: '',
+        history: '',
+        politics: '',
+        society: '',
+        religion: '',
+        economy: '',
+        technology: '',
+        lifestyle: '',
+        language: '',
+        culture: '',
+        species: '',
+        occupation: '',
+        conflict: '',
+        customFields: [],
+      }
+    }
+
+    return worldview
+  },
+
+  toCharacterFormValues: (characters: CharacterFormValues[]): CharacterFormValues[] => {
+    if (!characters) {
+      return []
+    }
+
+    return characters.map((character) => ({
+      ...character,
+      customFields: character.customFields || [],
+    }))
+  },
+
+  toPlotFormValues: (plot: PlotFormValues): PlotFormValues => {
+    if (!plot) {
+      return {
+        content: '',
+      }
+    }
+
+    return plot
+  },
+
+  toIdeaNoteFormValues: (ideaNote: IdeaNoteFormValues): IdeaNoteFormValues => {
+    if (!ideaNote) {
+      return {
+        title: '',
+        content: '',
+      }
+    }
+
+    return ideaNote
   },
 }

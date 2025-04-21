@@ -17,7 +17,7 @@ type CustomField = {
 }
 
 export type Character = {
-  id: string
+  id?: string
   intro: string
   name: string
   age?: number
