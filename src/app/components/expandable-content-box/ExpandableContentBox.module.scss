@@ -1,0 +1,51 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.content-box {
+  @include mixin.display-flex();
+  align-items: center;
+  padding: 1.2rem 1.6rem;
+
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 1.2rem;
+
+  width: 100%;
+
+  &__body {
+    @include mixin.display-flex();
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+  }
+
+  &__main {
+    @include mixin.display-flex();
+    gap: 0.4rem;
+    align-items: center;
+
+    width: 95%;
+  }
+
+  &__icon {
+    @include mixin.display-flex();
+    width: 2rem;
+    padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+  }
+
+  &__content {
+    @include typo.typo(14px, 400, 20px, 0);
+    color: color.$core-secondary-100;
+
+    &--collapse {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__button {
+    @include mixin.display-flex();
+  }
+}
