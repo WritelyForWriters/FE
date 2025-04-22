@@ -102,6 +102,10 @@ export default function PlannerCharacterFormList({
               name={getTextFieldName(item.name)}
               label={item.label}
               variant={expandItems.includes(item.name) ? 'expand' : undefined}
+              labelName={
+                item.name === 'customFields' ? `characters[${arrayIndex}].customFields[0].name` : ''
+              }
+              isLabelEditable={item.name === 'customFields'}
             />
           ))}
         </div>
