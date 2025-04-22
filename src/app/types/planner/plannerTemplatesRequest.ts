@@ -52,7 +52,7 @@ export const PlannerTemplatesRequest = {
         customFields: character.customFields
           ? character.customFields.map((field) => ({
               id: field.id || '',
-              name: field.name || '커스텀 필드',
+              name: field.name || '',
               content: field.content || '',
             }))
           : [],
