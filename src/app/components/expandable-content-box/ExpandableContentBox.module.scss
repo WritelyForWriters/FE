@@ -38,10 +38,16 @@
     @include typo.typo(14px, 400, 20px, 0);
     color: color.$core-secondary-100;
 
+    width: 95%;
+
     &--collapse {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      p,
+      span {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
 

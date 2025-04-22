@@ -15,11 +15,11 @@ import styles from './ExpandableContentBox.module.scss'
 const cx = classNames.bind(styles)
 
 interface ExpandableContentBoxProps {
-  content: ReactNode
+  children: ReactNode
   leftIcon?: ReactNode
 }
 
-export default function ExpandableContentBox({ content, leftIcon }: ExpandableContentBoxProps) {
+export default function ExpandableContentBox({ children, leftIcon }: ExpandableContentBoxProps) {
   const { isOpen, onToggle } = useCollapsed()
 
   return (
@@ -30,18 +30,22 @@ export default function ExpandableContentBox({ content, leftIcon }: ExpandableCo
           <div
             className={cx('content-box__content', { 'content-box__content--collapse': !isOpen })}
           >
-            {content}
+            {children}
           </div>
         </div>
-        <div className={cx('content-box__button')}>
+        <button
+          type="button"
+          className={cx('content-box__button')}
+          onClick={onToggle}
+          aria-expanded={isOpen}
+        >
           <Image
             src={isOpen ? '/icons/arrow-up.svg' : '/icons/arrow-down.svg'}
             alt={isOpen ? '콘텐츠 접기' : '콘텐츠 펼치기'}
-            onClick={onToggle}
             width={20}
             height={20}
           />
-        </div>
+        </button>
       </div>
     </div>
   )
