@@ -33,7 +33,6 @@ function usePlannerData(params: Params) {
 
 export default function PlannerPage({ params }: { params: Params }) {
   const { id, templates, characters } = usePlannerData(params)
-
   const [isSaved, setIsSaved] = useState(false)
 
   const methods = useForm<PlannerSynopsisFormValues>()
@@ -60,18 +59,16 @@ export default function PlannerPage({ params }: { params: Params }) {
 
       setValue('synopsis', values.synopsis)
       setValue('worldview', values.worldview)
-      setValue('characters', values.characters)
+      // NOTE(hajae): local storage에 저장된 캐릭터가 우선
+      // https://www.notion.so/1678209b09f98067a6e7c8e3ef8b08ff?d=1cb8209b09f980e8bfb9001c4c150e72&pvs=4#1718209b09f980a6afbfd4244f71cb25
+      setValue('characters', characters ?? values.characters)
       setValue('plot', values.plot)
       setValue('ideaNote', values.ideaNote)
     }
   }, [setValue, templates])
 
   const handleFormSubmit = handleSubmit((formValues) => {
-    console.log('formValues: ', formValues)
-
     const request = PlannerTemplatesRequest.from(formValues, characters)
-
-    console.log('request: ', request)
 
     createTemplate({
       productId: id,
