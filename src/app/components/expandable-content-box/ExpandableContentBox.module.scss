@@ -12,6 +12,8 @@
 
   width: 100%;
 
+  z-index: 999;
+
   &__body {
     @include mixin.display-flex();
     justify-content: space-between;
