@@ -1,0 +1,31 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.chatbot-window {
+  @include mixin.display-flex();
+  flex-direction: column;
+  padding: 1.6rem;
+  gap: 1.6rem;
+
+  min-width: 35.6rem;
+
+  &__header {
+    @include mixin.display-flex();
+    justify-content: space-between;
+    align-items: center;
+
+    &-content {
+      @include typo.typo(14px, 600, 16px, 0);
+      color: color.$core-secondary-100;
+    }
+  }
+
+  &__body {
+    width: 100%;
+  }
+
+  &__footer {
+    width: 100%;
+  }
+}
