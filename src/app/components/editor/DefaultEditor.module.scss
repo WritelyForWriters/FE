@@ -33,6 +33,10 @@
     font-size: 2.4rem;
     font-weight: 700;
     line-height: 3.6rem;
+
+    // MEMO(Sohyun): 고정된 헤더로인해 스크롤이 상단에 올라갔을 때 가려지는 문제가 있어서
+    // 뷰포트(화면에 보이는 영역)의 상단에 도달했을 때 추가적인 여백을 지정
+    scroll-margin-top: 124px;
   }
 
   blockquote {

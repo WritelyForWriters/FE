@@ -2,19 +2,23 @@
 
 import { useParams, useRouter } from 'next/navigation'
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { Editor } from '@tiptap/react'
 import { useAtom, useSetAtom } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
+import { TocItemType } from 'types/common/pannel'
 
 import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
 import { useGetProductDetail, useProducts } from '@hooks/index'
+
+import { addHeadingIds, getTocFromEditor } from '@utils/index'
 
 import MemoPannel from './_components/memo-pannel/MemoPannel'
 import PlannerPannel from './_components/planner-pannel/PlannerPannel'
@@ -29,17 +33,9 @@ const cx = classNames.bind(styles)
 /**
  * TODO 작업공간 페이지 중 에디터 관련
  * [ ] 읽기 모드일때는 툴바 활성화 X
- * [ ] 에디터 TOC
- * [ ] 자동 저장 기능
+ * [x] 에디터 TOC
+ * [ ] 자동 저장 기능 + TOC 업데이트
  */
-
-// mock data example
-const TABLE_OF_CONTENTS = [
-  { id: 'heading1', title: '제목 1' },
-  { id: 'heading2', title: '제목 2' },
-  { id: 'heading3', title: '제목 3' },
-  { id: 'heading4', title: '제목 4' },
-]
 
 export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
@@ -54,15 +50,18 @@ export default function WorkSpacePage() {
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
 
+  const [editorIndexToc, setEditorIndexToc] = useState<TocItemType[]>([])
+
   const handleSave = async () => {
     if (editorRef.current) {
-      const editor = editorRef.current.getEditor()
+      const editor = editorRef.current.getEditor() as Editor
+      const contentsWithIds = addHeadingIds(editor.getJSON()) // heading에 id속성 부여된 최종 에디터 content
 
       saveProductMutation.mutate({
         productId: params.id,
         product: {
           title: productTitle,
-          content: JSON.stringify(editor?.getJSON()),
+          content: JSON.stringify(contentsWithIds),
           isAutoSave: false,
         },
       })
@@ -121,6 +120,12 @@ export default function WorkSpacePage() {
     if (!productDetail?.title && !productDetail?.content) {
       setIsContentEditing(true)
     }
+    // 에디터 저장한 값으로 toc 업데이트
+    if (productDetail?.content) {
+      const contentJSON = JSON.parse(productDetail.content)
+      const toc = getTocFromEditor(contentJSON)
+      setEditorIndexToc(toc)
+    }
   }, [productDetail, setProductTitle, setIsContentEditing])
 
   return (
@@ -134,8 +139,7 @@ export default function WorkSpacePage() {
       <div className={cx('header-space')}></div>
 
       <main className={cx('main-section')}>
-        {/* TODO ToC 데이터를 IndexPannel로 전달 */}
-        <IndexPannel toc={TABLE_OF_CONTENTS} />
+        <IndexPannel toc={editorIndexToc} />
 
         <div className={cx('index-space')}></div>
 

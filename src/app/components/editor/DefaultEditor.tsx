@@ -17,6 +17,7 @@ import { activeMenuAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms
 import { HandleEditor } from 'types/common/editor'
 
 import BlockquoteExtension from '@extensions/Blockquote'
+import HeadingExtension from '@extensions/Heading'
 import Indent from '@extensions/Indent'
 
 import PromptMenu from './PromptMenu'
@@ -47,6 +48,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       Heading.configure({
         levels: [1],
       }),
+      HeadingExtension,
       Indent,
       Bold,
       Italic,

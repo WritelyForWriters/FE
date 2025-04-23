@@ -2,6 +2,8 @@
 
 import { MouseEvent, useEffect, useState } from 'react'
 
+import { TocItemType } from 'types/common/pannel'
+
 import Pannel from '@components/pannel/Pannel'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
@@ -12,13 +14,8 @@ import styles from './IndexPannel.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface TocItem {
-  id: string
-  title: string
-}
-
 interface IndexPannelProps {
-  toc: TocItem[]
+  toc: TocItemType[]
 }
 
 export default function IndexPannel({ toc }: IndexPannelProps) {
@@ -35,14 +32,27 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
     // https://developer.mozilla.org/ko/docs/Web/API/IntersectionObserver
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id)
-          }
-        })
+        const visibleHeadings = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => {
+            return (
+              // MEMO(Sohyun): 에디터 제목으로 목차 인덱스를 isIntersecting할 시에 여러 개의 요소를 감지하고 있고,
+              // 이 중 마지막으로 감지된 요소가 setActiveId에 들어가면서 가장 맨 마지막 제목이 활성화되는 문제가 있음.
+              // 따라서, 화면 맨 위(viewport top)로부터 얼마나 떨어져 있는지를 계산하여 뷰포트에서 가장 위에 가까운 heading이 0번 인덱스로 오도록 적용
+              (a.target as HTMLElement).getBoundingClientRect().top -
+              (b.target as HTMLElement).getBoundingClientRect().top
+            )
+          })
+
+        // 0번 인덱스에 해당하는 요소만 setActiveId에 들어가도록
+        if (visibleHeadings.length > 0) {
+          const topHeading = visibleHeadings[0]
+          setActiveId(topHeading.target.id)
+        }
       },
       {
-        threshold: [0.45],
+        rootMargin: `-124px 0px -40% 0px`, // 고정된 헤더 높이만큼 위로올리고, 뷰포트 하단 60% 만큼 유효한 영역으로 설정
+        threshold: [0], // 요소가 1픽셀이라도 화면에 보이면 감지
       },
     )
 
