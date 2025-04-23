@@ -4,6 +4,7 @@
 
 .outlined-button {
   @include mixin.flex();
+  gap: 0.4rem;
 
   &.large {
     &.square {
@@ -13,22 +14,44 @@
         border: 1px solid color.$alert-secondary-900;
         border-radius: 1rem;
         padding: 1.2rem;
-        gap: 0.4rem;
+
+        &:active {
+          background-color: color.$alert-secondary-100 !important;
+        }
+
+        &:focus {
+          background-color: color.$alert-secondary-50;
+          outline: none;
+        }
+
+        &:hover {
+          background-color: color.$alert-secondary-50;
+        }
       }
     }
   }
 
-  &:active {
-    background-color: color.$alert-secondary-100 !important;
+  &.small {
+    &.pill {
+      &.secondary {
+        padding: 0.4rem 0.8rem 0.4rem 0.6rem;
+        border: 1px solid color.$alert-secondary-100;
+        border-radius: 4rem;
+
+        @extend %typo-label-medium;
+        color: color.$alert-secondary-600;
+      }
+
+      &:active {
+        border: none;
+        background-color: color.$alert-secondary-200;
+      }
+    }
   }
 
-  &:focus {
-    background-color: color.$alert-secondary-50;
-    outline: none;
-  }
-
-  &:hover {
-    background-color: color.$alert-secondary-50;
+  &--active {
+    border: none;
+    background-color: color.$alert-secondary-200;
   }
 
   &:disabled {
