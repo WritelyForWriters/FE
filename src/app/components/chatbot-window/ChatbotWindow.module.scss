@@ -8,7 +8,8 @@
   padding: 1.6rem;
   gap: 1.6rem;
 
-  min-width: 35.6rem;
+  min-width: 37.5rem;
+  max-height: 69.8rem;
 
   &__header {
     @include mixin.display-flex();
@@ -16,6 +17,10 @@
     align-items: center;
 
     &-content {
+      @include mixin.display-flex();
+      align-items: center;
+      gap: 0.4rem;
+
       @include typo.typo(14px, 600, 16px, 0);
       color: color.$core-secondary-100;
     }
@@ -23,9 +28,17 @@
 
   &__body {
     width: 100%;
+    overflow-y: auto;
+
+    > div {
+      position: sticky;
+      top: 0;
+    }
   }
 
   &__footer {
     width: 100%;
+    position: sticky;
+    bottom: 0;
   }
 }
