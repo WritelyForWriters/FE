@@ -1,6 +1,6 @@
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
 
-export const computeChatbotPosition = (faviconX: number, faviconY: number) => {
+export const computeChatbotAbsolutePosition = (faviconX: number, faviconY: number) => {
   let computedX, computedY
 
   if (faviconX >= CHATBOT_DEFAULT_SIZE.width) {
