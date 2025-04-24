@@ -1,0 +1,62 @@
+import authInstance from 'api/core/AuthInstance'
+
+// AI 어시스턴트 사용 내역 조회
+// TODO
+// [ ] 무한 스크롤 구현
+export const getAssistantHistory = async (productId: string) => {
+  const res = await authInstance.get(`/assistant/histories?productId=${productId}`)
+
+  return res.data
+}
+
+// 즐겨찾는 프롬프트 조회
+export const getFavoritePrompts = async (productId: string) => {
+  const res = await authInstance.get(`/products/${productId}/favorite-prompts`)
+
+  return res.data
+}
+
+// 프롬프트 즐겨찾기 추가
+export const addFavoriteMessage = async ({
+  productId,
+  assistantId,
+}: {
+  productId: string
+  assistantId: string
+}) => {
+  await authInstance.post(`/products/${productId}/favorite-prompts/${assistantId}`)
+}
+
+// 프롬프트 즐겨찾기 삭제
+export const removeFavoriteMessage = async ({
+  productId,
+  messageId,
+}: {
+  productId: string
+  messageId: string
+}) => {
+  await authInstance.delete(`/products/${productId}/favorite-prompts/${messageId}`)
+}
+
+// 고정 메시지 조회
+export const getFixedMessage = async (productId: string) => {
+  const res = await authInstance.get(`/products/${productId}/fixed-messages`)
+
+  return res.data
+}
+
+// 고정 메시지 설정
+export const pinMessage = async ({
+  productId,
+  assistantId,
+}: {
+  productId: string
+  assistantId: string
+}) => {
+  await authInstance.post(`/products/${productId}/fixed-messages/${assistantId}`)
+}
+
+// 고정 메시지 해제
+export const unPinMessage = async (productId: string) => {
+  await authInstance.delete(`/products/${productId}/fixed-messages`)
+}
