@@ -9,51 +9,61 @@ import { useEffect, useState } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
 import { DraggableEvent } from 'react-draggable'
 import { Rnd } from 'react-rnd'
-import { chatbotPositionAtom } from 'store/chatbotPositionAtom'
-import { favicionPositionAtom } from 'store/faviconRelativePosition'
+import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
+import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
+import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 
 import Favicon from '@components/favicon/Favicon'
 
-import { computeChatbotPosition } from '@utils/computeChatbotPosition'
+import { computeChatbotAbsolutePosition } from '@utils/computeChatbotPosition'
 
 export default function ChatbotFloatingFavicon() {
   const [isLoading, setIsLoading] = useState(true)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [faviconAbsolutePosition, setFaviconAbsolutePosition] = useState({ x: 0, y: 0 })
 
-  const [relativePosition, setRelativePosition] = useAtom(favicionPositionAtom)
+  const [faviconRelativePosition, setFaviconRelativePosition] = useAtom(faviconRelativePositionAtom)
+
   const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
-  const setChatbotPosition = useSetAtom(chatbotPositionAtom)
-
-  const recalculatePosition = () => {
-    const x = relativePosition.xRatio * window.innerWidth
-    const y = relativePosition.yRatio * window.innerHeight
-
-    setPosition({ x, y })
-    setChatbotPosition(computeChatbotPosition(x, y))
-  }
+  const setChatbotAbsolutePosition = useSetAtom(chatbotAbsolutePositionAtom)
+  const setChatbotRelativePosition = useSetAtom(chatbotRelativePositionAtom)
 
   useEffect(() => {
+    const recalculatePosition = () => {
+      const x = faviconRelativePosition.xRatio * window.innerWidth
+      const y = faviconRelativePosition.yRatio * window.innerHeight
+
+      setFaviconAbsolutePosition({ x, y })
+      setChatbotAbsolutePosition(computeChatbotAbsolutePosition(x, y))
+    }
+
     recalculatePosition()
 
-    setIsLoading(false)
     window.addEventListener('resize', recalculatePosition)
+    setIsLoading(false)
+
     return () => window.removeEventListener('resize', recalculatePosition)
-  }, [])
+  }, [faviconRelativePosition, setChatbotAbsolutePosition])
 
   const handleDragStop = (_: DraggableEvent, data: { x: number; y: number }) => {
-    const xRatio = data.x / window.innerWidth
-    const yRatio = data.y / window.innerHeight
+    setFaviconAbsolutePosition({ x: data.x, y: data.y })
 
-    setPosition({ x: data.x, y: data.y })
-    setRelativePosition({ xRatio, yRatio })
-    setChatbotPosition(computeChatbotPosition(data.x, data.y))
+    const faviconXRatio = data.x / window.innerWidth
+    const faviconYRatio = data.y / window.innerHeight
+    setFaviconRelativePosition({ xRatio: faviconXRatio, yRatio: faviconYRatio })
+
+    const { x: chatbotX, y: chatbotY } = computeChatbotAbsolutePosition(data.x, data.y)
+    setChatbotAbsolutePosition({ x: chatbotX, y: chatbotY })
+
+    const chatbotXRatio = chatbotX / window.innerWidth
+    const chatbotYRatio = chatbotY / window.innerHeight
+    setChatbotRelativePosition({ xRatio: chatbotXRatio, yRatio: chatbotYRatio })
   }
 
   if (!isLoading) {
     return (
       <Rnd
-        position={position}
+        position={faviconAbsolutePosition}
         size={{ width: 88, height: 88 }}
         onDragStop={handleDragStop}
         enableResizing={false}
