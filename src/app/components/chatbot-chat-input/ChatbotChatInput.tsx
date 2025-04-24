@@ -21,16 +21,11 @@ import FillButton from '@components/buttons/FillButton'
 import OutLinedButton from '@components/buttons/OutLinedButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
 
+import { useGetFavoritePrompts } from '@hooks/chatbot/useGetFavoritePrompts'
+
 import classNames from 'classnames/bind'
 
 import styles from './ChatbotChatInput.module.scss'
-
-const FAVORITE_PROMPTS = [
-  '즐겨찾는 프롬프트 1',
-  '즐겨찾는 프롬프트 2',
-  '즐겨찾는 프롬프트 3',
-  '즐겨찾는 프롬프트 4',
-]
 
 const RECOMMEND_PROMPTS = [
   '추천 프롬프트 1',
@@ -52,6 +47,13 @@ export default function ChatbotChatInput() {
   const [chatMode, setChatMode] = useAtom(chatModeAtom) // 일반 모드 | 웹 검색 모드
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
   const [clickedButton, setClickedButton] = useAtom(clickedButtonAtom)
+
+  // TODO: 작품 ID 전역 변수에 저장 필요
+  const productId = '0196197e-cb29-7798-ae3f-88a1fbb9aed0'
+
+  const { data } = useGetFavoritePrompts(productId)
+
+  const favoritePrompts = data?.result ?? []
 
   const method = useForm<ChatbotFormData>({
     defaultValues: {
@@ -161,17 +163,17 @@ export default function ChatbotChatInput() {
                   isOpen={isFavoriteMenuOpen}
                   style={{ width: 'auto', left: 70, bottom: 35 }}
                 >
-                  {FAVORITE_PROMPTS.map((item, idx) => (
+                  {favoritePrompts.map((item: { messageId: string; prompt: string }) => (
                     <SelectMenu.Option
-                      key={idx}
+                      key={item.messageId}
                       option={{
                         handleAction: () => {
-                          setPrompt(item)
+                          setPrompt(item.prompt)
                           setIsFavoriteMenuOpen(false)
                         },
                       }}
                     >
-                      {item}
+                      {item.prompt}
                     </SelectMenu.Option>
                   ))}
                 </SelectMenu>

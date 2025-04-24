@@ -4,8 +4,12 @@ import Image from 'next/image'
 
 import { useState } from 'react'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { FaStar } from 'react-icons/fa6'
 import { MemberMessageType } from 'types/chatbot/chatbot'
+
+import { useAddFavoriteMessage } from '@hooks/chatbot/useAddFavoriteMessage'
+import { useRemoveFavoriteMessage } from '@hooks/chatbot/useRemoveFavoriteMessage'
 
 import classNames from 'classnames/bind'
 
@@ -14,7 +18,9 @@ import styles from './ChatbotMemberMessage.module.scss'
 const cx = classNames.bind(styles)
 
 interface MemberMessageProps {
+  assistantId: string
   type: MemberMessageType
+  id: string
   prompt: string | null
   isFavoritedPrompt: boolean
   content?: string
@@ -34,21 +40,35 @@ const getMessageMeta = (type: MemberMessageType) => {
 }
 
 export default function ChatbotMemberMessage({
+  assistantId,
   type,
+  id,
   prompt,
   isFavoritedPrompt,
   content,
 }: MemberMessageProps) {
+  const queryClient = useQueryClient()
+
   const [mouseOver, setMouseOver] = useState(false)
   const [isFavorite, setIsFavorite] = useState(isFavoritedPrompt)
 
+  // TODO: productId 전역 변수에 저장 필요
+  const productId = '0196197e-cb29-7798-ae3f-88a1fbb9aed0'
   const { strType, imgSrc } = getMessageMeta(type)
+
+  const { mutate: addFavoriteMessage, isSuccess: isAddSuccess } = useAddFavoriteMessage()
+  const { mutate: removeFavoriteMessage, isSuccess: isRemoveSuccess } = useRemoveFavoriteMessage()
+
+  if (isAddSuccess || isRemoveSuccess) {
+    queryClient.invalidateQueries({ queryKey: ['assistant-history', productId] })
+    queryClient.invalidateQueries({ queryKey: ['favorite-prompts', productId] })
+  }
 
   const handleFavorite = () => {
     if (isFavorite) {
-      // 즐겨찾기 삭제
+      removeFavoriteMessage({ productId, messageId: id })
     } else {
-      // 즐겨찾기 추가
+      addFavoriteMessage({ productId, assistantId })
     }
     setIsFavorite(!isFavorite)
   }
