@@ -14,6 +14,7 @@ import { FiInfo } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
 import { Rnd } from 'react-rnd'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
+import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 
@@ -36,6 +37,7 @@ export default function ChatbotWindow() {
   const [chatbotAbsolutePosition, setChatbotAbsolutePosition] = useAtom(chatbotAbsolutePositionAtom)
 
   const chatbotRelativePosition = useAtomValue(chatbotRelativePositionAtom)
+  const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
 
   useEffect(() => {
     const updateChatbotPositionFromRatio = () => {
@@ -117,14 +119,13 @@ export default function ChatbotWindow() {
               </button>
             </div>
             <div className={cx('chatbot-window__body')}>
-              <ExpandableContentBox
-                leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}
-              >
-                <p>
-                  동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세 무궁화 삼천리
-                  화려강산
-                </p>
-              </ExpandableContentBox>
+              {chatbotFixedMessage && (
+                <ExpandableContentBox
+                  leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}
+                >
+                  <p>{chatbotFixedMessage.content}</p>
+                </ExpandableContentBox>
+              )}
               <ChatbotMessageList />
             </div>
             <div className={cx('chatbot-window__footer')}>

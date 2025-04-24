@@ -2,12 +2,15 @@
 
 import { useState } from 'react'
 
-import { useSetAtom } from 'jotai'
+import { QueryClient } from '@tanstack/react-query'
+import { useAtom, useSetAtom } from 'jotai'
 import { BsFillPinFill } from 'react-icons/bs'
-import { BsPin } from 'react-icons/bs'
-import { LuThumbsUp } from 'react-icons/lu'
-import { LuThumbsDown } from 'react-icons/lu'
+import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
+import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotModeAtom } from 'store/chatbotModeAtom'
+
+import { usePinMessage } from '@hooks/chatbot/usePinMessage'
+import { useUnPinMessage } from '@hooks/chatbot/useUnPinMessage'
 
 import classNames from 'classnames/bind'
 
@@ -16,37 +19,58 @@ import styles from './ChatbotAssistantMessage.module.scss'
 const cx = classNames.bind(styles)
 
 interface ChatbotAssistantMessageProps {
-  id: string
+  assistantId: string
   type: string
+  quote: string
   message: {
+    id: string
     content: string
     isApplied: boolean
   }
-  quote: string
 }
 
 export default function ChatbotAssistantMessage({
-  id,
+  assistantId,
   type,
-  message,
   quote,
+  message,
 }: ChatbotAssistantMessageProps) {
+  const queryClient = new QueryClient()
+
   const [isMouseOver, setIsMouseOver] = useState(false)
-  const [isPinned, setIsPinned] = useState(false)
+
+  const [fixedMessage, setFixedMessage] = useAtom(chatbotFixedMessageAtom)
   const setChatbotMode = useSetAtom(chatbotModeAtom)
+
+  // TODO: 작품 ID 전역 변수에 저장 필요
+  const productId = '0196197e-cb29-7798-ae3f-88a1fbb9aed0'
 
   const ellipsisQuote = quote.length > 20 ? quote.slice(0, 20) + '...' : quote
 
   // TODO: 탐색 모드 전환 시 id 사용 예정
-  console.log(id)
+  console.log(message.id)
+
+  const { mutate: pinMessage, isSuccess: isPinSuccess } = usePinMessage()
+  const { mutate: unPinMessage, isSuccess: isUnPinSuccess } = useUnPinMessage()
 
   const handlePin = () => {
-    if (isPinned) {
-      // 메시지 고정 해제
+    if (!fixedMessage) {
+      pinMessage({ productId, assistantId })
+
+      setFixedMessage({ messageId: message.id, content: message.content })
     } else {
-      // 메시지 고정
+      unPinMessage(productId)
+      setFixedMessage(null)
+
+      if (fixedMessage.messageId !== message.id) {
+        pinMessage({ productId, assistantId })
+        setFixedMessage({ messageId: message.id, content: message.content })
+      }
     }
-    setIsPinned(!isPinned)
+
+    if (isPinSuccess || isUnPinSuccess) {
+      queryClient.invalidateQueries({ queryKey: ['fixed-message', productId] })
+    }
   }
 
   const handleFeedback = (direction: 'up' | 'down') => {
@@ -80,11 +104,7 @@ export default function ChatbotAssistantMessage({
         {isMouseOver && (
           <>
             <button type="button" onClick={handlePin}>
-              {isPinned ? (
-                <BsFillPinFill color="#CCCCCC" size={20} />
-              ) : (
-                <BsPin color="#CCCCCC" size={20} />
-              )}
+              <BsFillPinFill color="#CCCCCC" size={20} />
             </button>
             <button type="button" onClick={() => handleFeedback('up')}>
               <LuThumbsUp color="#CCCCCC" size={20} />
