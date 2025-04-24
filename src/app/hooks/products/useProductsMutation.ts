@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { postProducts, saveProduct } from 'api/products/products'
+import { createProductsTemplates, postProducts, saveProduct } from 'api/products/products'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { UseMutationCustomOptions } from 'types/common/reactQueryCustomOption'
+import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
 import { useToast } from '@components/toast/ToastProvider'
 
@@ -50,4 +51,12 @@ export const useProducts = () => {
     createProductIdMutation,
     saveProductMutation,
   }
+}
+
+export const useCreateProductTemplates = (mutationOptions?: UseMutationCustomOptions) => {
+  return useMutation({
+    mutationFn: ({ productId, request }: { productId: string; request: PlannerTemplatesRequest }) =>
+      createProductsTemplates(productId, request),
+    ...mutationOptions,
+  })
 }
