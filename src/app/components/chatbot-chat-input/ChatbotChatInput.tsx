@@ -4,6 +4,9 @@ import Image from 'next/image'
 
 import { KeyboardEvent, useEffect, useState } from 'react'
 
+import { useQueryClient } from '@tanstack/react-query'
+import { CHAT_ERROR_MESSAGE } from 'constants/chatbot/message'
+import { RECOMMEND_PROMPTS } from 'constants/chatbot/recommendPrompts'
 import { useAtom, useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FaRegStar } from 'react-icons/fa'
@@ -14,39 +17,37 @@ import { chatModeAtom } from 'store/chatModeAtom'
 import { clickedButtonAtom } from 'store/clickedButtonAtom'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
-import { ChatbotFormData } from 'types/chatbot/chatbot'
+import { ChatbotFormData, RecommendPrompt } from 'types/chatbot/chatbot'
 
 import AutoResizingTextArea from '@components/auto-resizing-textarea/AutoResizingTextarea'
 import FillButton from '@components/buttons/FillButton'
 import OutLinedButton from '@components/buttons/OutLinedButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
+import { useToast } from '@components/toast/ToastProvider'
 
 import { useGetFavoritePrompts } from '@hooks/chatbot/useGetFavoritePrompts'
+import { useSubmitDefaultChatMessage } from '@hooks/chatbot/useSubmitMeesage'
 
 import classNames from 'classnames/bind'
 
 import styles from './ChatbotChatInput.module.scss'
 
-const RECOMMEND_PROMPTS = [
-  '추천 프롬프트 1',
-  '추천 프롬프트 2',
-  '추천 프롬프트 3',
-  '추천 프롬프트 4',
-  '추천 프롬프트 5',
-]
-
 const cx = classNames.bind(styles)
 
 export default function ChatbotChatInput() {
+  const queryClient = useQueryClient()
+
   const [isFavoriteMenuOpen, setIsFavoriteMenuOpen] = useState(false)
   const [isRecommendMenuOpen, setIsRecommendMenuOpen] = useState(false)
 
   const inputMode = useAtomValue(chatInputModeAtom) // 입력 모드 | 탐색 모드
-  const content = useAtomValue(selectedRangeAtom)
 
+  const [content, setContent] = useAtom(selectedRangeAtom)
   const [chatMode, setChatMode] = useAtom(chatModeAtom) // 일반 모드 | 웹 검색 모드
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
   const [clickedButton, setClickedButton] = useAtom(clickedButtonAtom)
+
+  const showToast = useToast()
 
   // TODO: 작품 ID 전역 변수에 저장 필요
   const productId = '0196197e-cb29-7798-ae3f-88a1fbb9aed0'
@@ -57,31 +58,41 @@ export default function ChatbotChatInput() {
 
   const method = useForm<ChatbotFormData>({
     defaultValues: {
-      productId: '', // TODO: API 연동 시 작품 ID 반영
+      productId,
       content: content ?? '',
       prompt,
     },
   })
 
-  const { register, setValue, handleSubmit } = method
+  const { register, setValue, handleSubmit, reset } = method
+
+  const { mutate: submitDefaultChatMessage, isPending } = useSubmitDefaultChatMessage({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['assistant-history', productId] })
+    },
+  })
 
   useEffect(() => {
     setValue('content', content ?? '')
   }, [content, setValue])
 
-  const handleFormSubmit = (data: ChatbotFormData) => {
+  const handleSubmitChatMessage = (data: ChatbotFormData) => {
     if (chatMode === 'web') {
       // 웹 검색 모드
+      // submitWebSearchChatMessage(data)
     } else {
       // 일반 모드
+      submitDefaultChatMessage(data)
     }
-    console.log(data)
+
+    setContent('')
+    reset({ productId, content: '', prompt: '' })
   }
 
   const handleChatInputKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(handleFormSubmit)()
+      handleSubmit(handleSubmitChatMessage)()
     }
   }
 
@@ -106,13 +117,23 @@ export default function ChatbotChatInput() {
     }
   }
 
+  const handleRecommendPromptSelect = (item: RecommendPrompt) => {
+    if (item.requiresSection) {
+      showToast('warning', CHAT_ERROR_MESSAGE.SELECTED_REQUIRED)
+      // TODO: 선택 구간 없으면 토스트 노출
+    } else {
+      setPrompt(item.prompt)
+      setIsRecommendMenuOpen(false)
+    }
+  }
+
   const handleNavigateMessage = (direction: 'up' | 'down') => {
     console.log(direction)
   }
 
   return (
     <FormProvider {...method}>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={handleSubmit(handleSubmitChatMessage)}>
         <div className={cx('chatbox')}>
           {inputMode === 'input' && (
             <>
@@ -192,19 +213,16 @@ export default function ChatbotChatInput() {
                 <SelectMenu
                   handleClose={() => setIsRecommendMenuOpen(false)}
                   isOpen={isRecommendMenuOpen}
-                  style={{ width: 'auto', left: 150, bottom: 35 }}
+                  style={{ width: 'auto', left: 150, bottom: 35, position: 'fixed', zIndex: 1000 }}
                 >
-                  {RECOMMEND_PROMPTS.map((item, idx) => (
+                  {RECOMMEND_PROMPTS.map((item: RecommendPrompt, idx) => (
                     <SelectMenu.Option
                       key={idx}
                       option={{
-                        handleAction: () => {
-                          setPrompt(item)
-                          setIsRecommendMenuOpen(false)
-                        },
+                        handleAction: () => handleRecommendPromptSelect(item),
                       }}
                     >
-                      {item}
+                      {item.prompt}
                     </SelectMenu.Option>
                   ))}
                 </SelectMenu>
@@ -215,6 +233,8 @@ export default function ChatbotChatInput() {
             <div className={cx('chatbox__buttons-right')}>
               {inputMode === 'input' ? (
                 <FillButton
+                  disabled={isPending}
+                  type="submit"
                   size="xsmall"
                   shape="pill"
                   variant="secondary"
