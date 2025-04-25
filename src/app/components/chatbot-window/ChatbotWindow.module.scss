@@ -16,6 +16,10 @@
     justify-content: space-between;
     align-items: center;
 
+    &:global(.drag-handle) {
+      cursor: move;
+    }
+
     &-content {
       @include mixin.display-flex();
       align-items: center;
