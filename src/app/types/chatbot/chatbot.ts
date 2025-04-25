@@ -21,3 +21,14 @@ export interface ChatItem {
     isApplied: boolean
   }
 }
+
+export interface RecommendPrompt {
+  prompt: string
+  requiresSection: boolean
+}
+
+export interface FeedbackFormData {
+  isGood: boolean
+  feedbackType?: 'AWKWARD_SENTENCE' | 'INACCURATE_INFO' | 'UNAPPLIED_SETTING' | 'ETC'
+  feedback?: string
+}
