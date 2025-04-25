@@ -1,4 +1,5 @@
 import authInstance from 'api/core/AuthInstance'
+import { ChatbotFormData, FeedbackFormData } from 'types/chatbot/chatbot'
 
 // AI 어시스턴트 사용 내역 조회
 // TODO
@@ -59,4 +60,25 @@ export const pinMessage = async ({
 // 고정 메시지 해제
 export const unPinMessage = async (productId: string) => {
   await authInstance.delete(`/products/${productId}/fixed-messages`)
+}
+
+// 응답 평가
+export const submitFeedback = async ({
+  assistantId,
+  formData,
+}: {
+  assistantId: string
+  formData: FeedbackFormData
+}) => {
+  await authInstance.post(`/assistant/${assistantId}/evaluate`, formData)
+}
+
+// 자유 대화 메시지 전송
+export const submitDefaultChatMessage = async (formData: ChatbotFormData) => {
+  const res = await authInstance.post('/assistant/chat/messages', formData)
+
+  const { assistantId } = res.data.result
+
+  // TODO: sessionId에 대해 논의 필요
+  await authInstance.get(`/assistant/chat/stream?assistantId=${assistantId}&sessionId=1`)
 }
