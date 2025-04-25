@@ -26,7 +26,7 @@ import SelectMenu from '@components/select-menu/SelectMenu'
 import { useToast } from '@components/toast/ToastProvider'
 
 import { useGetFavoritePrompts } from '@hooks/chatbot/useGetFavoritePrompts'
-import { useSubmitDefaultChatMessage } from '@hooks/chatbot/useSubmitMeesage'
+import { useSubmitDefaultChatMessage } from '@hooks/chatbot/useSubmitDefaultChatMessage'
 
 import classNames from 'classnames/bind'
 
