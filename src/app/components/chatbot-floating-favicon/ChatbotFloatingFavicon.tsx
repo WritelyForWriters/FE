@@ -19,6 +19,9 @@ import Favicon from '@components/favicon/Favicon'
 import { computeChatbotAbsolutePosition } from '@utils/computeChatbotPosition'
 
 export default function ChatbotFloatingFavicon() {
+  const innerWidth = window.innerWidth
+  const innerHeight = window.innerHeight
+
   const [isLoading, setIsLoading] = useState(true)
   const [faviconAbsolutePosition, setFaviconAbsolutePosition] = useState({ x: 0, y: 0 })
 
@@ -30,11 +33,11 @@ export default function ChatbotFloatingFavicon() {
 
   useEffect(() => {
     const recalculatePosition = () => {
-      const x = faviconRelativePosition.xRatio * window.innerWidth
+      const x = faviconRelativePosition.xRatio * innerWidth
       const y = faviconRelativePosition.yRatio * window.innerHeight
 
       setFaviconAbsolutePosition({ x, y })
-      setChatbotAbsolutePosition(computeChatbotAbsolutePosition(x, y))
+      setChatbotAbsolutePosition(computeChatbotAbsolutePosition(x, y, innerWidth, innerHeight))
     }
 
     recalculatePosition()
@@ -48,15 +51,20 @@ export default function ChatbotFloatingFavicon() {
   const handleDragStop = (_: DraggableEvent, data: { x: number; y: number }) => {
     setFaviconAbsolutePosition({ x: data.x, y: data.y })
 
-    const faviconXRatio = data.x / window.innerWidth
-    const faviconYRatio = data.y / window.innerHeight
+    const faviconXRatio = data.x / innerWidth
+    const faviconYRatio = data.y / innerHeight
     setFaviconRelativePosition({ xRatio: faviconXRatio, yRatio: faviconYRatio })
 
-    const { x: chatbotX, y: chatbotY } = computeChatbotAbsolutePosition(data.x, data.y)
+    const { x: chatbotX, y: chatbotY } = computeChatbotAbsolutePosition(
+      data.x,
+      data.y,
+      innerWidth,
+      innerHeight,
+    )
     setChatbotAbsolutePosition({ x: chatbotX, y: chatbotY })
 
-    const chatbotXRatio = chatbotX / window.innerWidth
-    const chatbotYRatio = chatbotY / window.innerHeight
+    const chatbotXRatio = chatbotX / innerWidth
+    const chatbotYRatio = chatbotY / innerHeight
     setChatbotRelativePosition({ xRatio: chatbotXRatio, yRatio: chatbotYRatio })
   }
 
