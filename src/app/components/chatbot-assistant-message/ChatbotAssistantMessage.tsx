@@ -10,6 +10,7 @@ import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotModeAtom } from 'store/chatbotModeAtom'
 
 import { usePinMessage } from '@hooks/chatbot/usePinMessage'
+import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
 import { useUnPinMessage } from '@hooks/chatbot/useUnPinMessage'
 
 import classNames from 'classnames/bind'
@@ -42,6 +43,8 @@ export default function ChatbotAssistantMessage({
   const [fixedMessage, setFixedMessage] = useAtom(chatbotFixedMessageAtom)
   const setChatbotMode = useSetAtom(chatbotModeAtom)
 
+  const { mutate: submitFeedback } = useSubmitFeedback()
+
   // TODO: 작품 ID 전역 변수에 저장 필요
   const productId = '0196197e-cb29-7798-ae3f-88a1fbb9aed0'
 
@@ -73,9 +76,17 @@ export default function ChatbotAssistantMessage({
     }
   }
 
-  const handleFeedback = (direction: 'up' | 'down') => {
-    // TODO: 평가 API 연동
-    console.log(direction)
+  const handleSubmitFeedback = (isGood: boolean) => {
+    if (isGood) {
+      submitFeedback({
+        assistantId,
+        formData: {
+          isGood,
+        },
+      })
+    } else {
+      // TODO: 피드백 입력창 디자인 추가되면 수정
+    }
   }
 
   return (
@@ -106,12 +117,16 @@ export default function ChatbotAssistantMessage({
             <button type="button" onClick={handlePin}>
               <BsFillPinFill color="#CCCCCC" size={20} />
             </button>
-            <button type="button" onClick={() => handleFeedback('up')}>
-              <LuThumbsUp color="#CCCCCC" size={20} />
-            </button>
-            <button type="button" onClick={() => handleFeedback('down')}>
-              <LuThumbsDown color="#CCCCCC" size={20} />
-            </button>
+            {type === 'chat' && (
+              <>
+                <button type="button" onClick={() => handleSubmitFeedback(true)}>
+                  <LuThumbsUp color="#CCCCCC" size={20} />
+                </button>
+                <button type="button" onClick={() => handleSubmitFeedback(false)}>
+                  <LuThumbsDown color="#CCCCCC" size={20} />
+                </button>
+              </>
+            )}
           </>
         )}
       </div>
