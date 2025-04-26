@@ -3,7 +3,6 @@ import localFont from 'next/font/local'
 
 import AuthInterceptor from '@components/auth-interceptor/AuthInterceptor'
 import { Providers } from '@components/providers/Providers'
-import TokenRefresher from '@components/tokenRefresher/TokenRefresher'
 
 import './globals.scss'
 
@@ -28,10 +27,8 @@ export default function RootLayout({
       <body>
         <Providers>
           <AuthInterceptor>
-            <TokenRefresher>
-              <div id="modal"></div>
-              {children}
-            </TokenRefresher>
+            <div id="modal"></div>
+            {children}
           </AuthInterceptor>
         </Providers>
       </body>

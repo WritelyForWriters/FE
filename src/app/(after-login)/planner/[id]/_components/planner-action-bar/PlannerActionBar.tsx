@@ -13,24 +13,26 @@ const cx = classNames.bind(styles)
 
 interface PlannerActionBarProps {
   isValidFormValues: boolean
+  isSaved: boolean
+  onSubmit: () => void
 }
 
-export default function PlannerActionBar({ isValidFormValues }: PlannerActionBarProps) {
+export default function PlannerActionBar({
+  isValidFormValues,
+  isSaved,
+  onSubmit,
+}: PlannerActionBarProps) {
   // 액션바 내 좌측 영역
   const ActionSectionContent = () => {
     // 저장 여부 판단 state
-    const [hasSaved, setHasSaved] = useState(false)
+    const [hasSaved, setHasSaved] = useState(isSaved)
 
     // 저장 버튼 클릭 트리거 이벤트
     const handleSave = () => {
+      if (!isValidFormValues) return
+      onSubmit()
       setHasSaved(true)
-
       alert('저장 완료!')
-    }
-
-    // 수정 버튼 클릭 트리거 이벤트
-    const handleModify = () => {
-      alert('수정 모드!')
     }
 
     // 삭제 버튼 클릭 트리거 이벤트
@@ -46,7 +48,7 @@ export default function PlannerActionBar({ isValidFormValues }: PlannerActionBar
           </TextButton>
         ) : (
           <>
-            <TextButton size="large" onClick={() => handleModify()}>
+            <TextButton size="large" onClick={() => handleSave()}>
               수정하기
             </TextButton>
             <TextButton size="large" onClick={() => handleDelete()}>
