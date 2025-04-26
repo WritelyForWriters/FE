@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 import { QueryClient } from '@tanstack/react-query'
+import { QUERY_KEY } from 'constants/common/queryKeys'
 import { useAtom, useSetAtom } from 'jotai'
 import { BsFillPinFill } from 'react-icons/bs'
 import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
@@ -72,7 +73,7 @@ export default function ChatbotAssistantMessage({
     }
 
     if (isPinSuccess || isUnPinSuccess) {
-      queryClient.invalidateQueries({ queryKey: ['fixed-message', productId] })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY.FIXED_MESSAGE(productId) })
     }
   }
 

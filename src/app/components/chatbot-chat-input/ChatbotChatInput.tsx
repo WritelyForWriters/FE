@@ -7,6 +7,7 @@ import { KeyboardEvent, useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { CHAT_ERROR_MESSAGE } from 'constants/chatbot/message'
 import { RECOMMEND_PROMPTS } from 'constants/chatbot/recommendPrompts'
+import { QUERY_KEY } from 'constants/common/queryKeys'
 import { useAtom, useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FaRegStar } from 'react-icons/fa'
@@ -68,7 +69,7 @@ export default function ChatbotChatInput() {
 
   const { mutate: submitDefaultChatMessage, isPending } = useSubmitDefaultChatMessage({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assistant-history', productId] })
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY.ASSISTANT_HISTORY(productId) })
     },
   })
 
