@@ -18,6 +18,12 @@ import Favicon from '@components/favicon/Favicon'
 
 import { computeChatbotAbsolutePosition } from '@utils/computeChatbotPosition'
 
+import classNames from 'classnames/bind'
+
+import styles from './ChatbotFloatingFavicon.module.scss'
+
+const cx = classNames.bind(styles)
+
 export default function ChatbotFloatingFavicon() {
   const innerWidth = window.innerWidth
   const innerHeight = window.innerHeight
@@ -72,14 +78,17 @@ export default function ChatbotFloatingFavicon() {
     return (
       <Rnd
         position={faviconAbsolutePosition}
-        size={{ width: 88, height: 88 }}
         onDragStop={handleDragStop}
         enableResizing={false}
         bounds="window"
+        dragHandleClassName="drag-handle"
       >
-        <Favicon onClick={() => setIsChatbotOpen(true)}>
-          <Image src="/icons/chat.svg" alt="chatbot favicon" width={20} height={18} />
-        </Favicon>
+        <div className={cx('favicon-wrapper')}>
+          <Favicon onClick={() => setIsChatbotOpen(true)}>
+            <Image src="/icons/chat.svg" alt="chatbot favicon" width={20} height={18} />
+          </Favicon>
+          <div className="drag-handle" style={{ width: 20, height: 56, cursor: 'move' }}></div>
+        </div>
       </Rnd>
     )
   }
