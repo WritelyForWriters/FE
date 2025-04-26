@@ -1,5 +1,5 @@
 import authInstance from 'api/core/AuthInstance'
-import { ChatbotFormData, FeedbackFormData } from 'types/chatbot/chatbot'
+import { ChatbotFormData, ChatbotWebSearchFormData, FeedbackFormData } from 'types/chatbot/chatbot'
 
 // AI 어시스턴트 사용 내역 조회
 // TODO
@@ -81,4 +81,9 @@ export const submitDefaultChatMessage = async (formData: ChatbotFormData) => {
 
   // TODO: sessionId에 대해 논의 필요
   await authInstance.get(`/assistant/chat/stream?assistantId=${assistantId}&sessionId=1`)
+}
+
+// 자유 대화 메시지 전송(웹 검색 모드)
+export const submitWebSearchChatMessage = async (formData: ChatbotWebSearchFormData) => {
+  await authInstance.post('/assistant/chat/research', formData)
 }

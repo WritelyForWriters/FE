@@ -28,6 +28,7 @@ import { useToast } from '@components/toast/ToastProvider'
 
 import { useGetFavoritePrompts } from '@hooks/chatbot/useGetFavoritePrompts'
 import { useSubmitDefaultChatMessage } from '@hooks/chatbot/useSubmitDefaultChatMessage'
+import { useSubmitWebSearchChatMessage } from '@hooks/chatbot/useSubmitWebSearchChatMessage'
 
 import classNames from 'classnames/bind'
 
@@ -67,11 +68,19 @@ export default function ChatbotChatInput() {
 
   const { register, setValue, handleSubmit, reset } = method
 
-  const { mutate: submitDefaultChatMessage, isPending } = useSubmitDefaultChatMessage({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY.ASSISTANT_HISTORY(productId) })
-    },
-  })
+  const { mutate: submitDefaultChatMessage, isPending: isDefaultPending } =
+    useSubmitDefaultChatMessage({
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY.ASSISTANT_HISTORY(productId) })
+      },
+    })
+
+  const { mutate: submitWebSearchChatMessage, isPending: isWebSearchPending } =
+    useSubmitWebSearchChatMessage({
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY.ASSISTANT_HISTORY(productId) })
+      },
+    })
 
   useEffect(() => {
     setValue('content', content ?? '')
@@ -79,10 +88,8 @@ export default function ChatbotChatInput() {
 
   const handleSubmitChatMessage = (data: ChatbotFormData) => {
     if (chatMode === 'web') {
-      // 웹 검색 모드
-      // submitWebSearchChatMessage(data)
+      submitWebSearchChatMessage({ ...data, sessionId: productId })
     } else {
-      // 일반 모드
       submitDefaultChatMessage(data)
     }
 
@@ -234,7 +241,7 @@ export default function ChatbotChatInput() {
             <div className={cx('chatbox__buttons-right')}>
               {inputMode === 'input' ? (
                 <FillButton
-                  disabled={isPending}
+                  disabled={isDefaultPending || isWebSearchPending}
                   type="submit"
                   size="xsmall"
                   shape="pill"

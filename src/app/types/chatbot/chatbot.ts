@@ -4,6 +4,10 @@ export interface ChatbotFormData {
   prompt: string
 }
 
+export interface ChatbotWebSearchFormData extends ChatbotFormData {
+  sessionId: string
+}
+
 export type MemberMessageType = 'auto modify' | 'user modify' | 'feedback' | 'chat'
 
 export interface ChatItem {
