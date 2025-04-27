@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
-import { DELAY_TIME } from 'constants/workspace/number'
+import { DELAY_TIME_FOR_TEST } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
 import { editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
@@ -59,14 +59,19 @@ export default function WorkSpacePage() {
       const editor = editorRef.current.getEditor() as Editor
       const contentsWithIds = addHeadingIds(editor.getJSON()) // heading에 id속성 부여된 최종 에디터 content
 
-      saveProductMutation.mutate({
-        productId: params.id,
-        product: {
-          title: productTitle,
-          content: JSON.stringify(contentsWithIds),
-          isAutoSave: false,
+      saveProductMutation.mutate(
+        {
+          productId: params.id,
+          product: {
+            title: productTitle,
+            content: JSON.stringify(contentsWithIds),
+            isAutoSave: false,
+          },
         },
-      })
+        {
+          onSuccess: () => localStorage.removeItem(`workspace-${params.id}`),
+        },
+      )
     }
     isSavedRef.current = true
   }
@@ -143,7 +148,7 @@ export default function WorkSpacePage() {
       setEditorIndexToc(toc)
       // 자동 저장된 내용으로 에디터 업데이트
       editor.commands.setContent(contentsWithIds)
-    }, DELAY_TIME)
+    }, DELAY_TIME_FOR_TEST)
 
     return () => {
       clearInterval(interval)
