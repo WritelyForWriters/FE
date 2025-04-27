@@ -148,6 +148,7 @@ export default function WorkSpacePage() {
             editorRef={editorRef}
             contents={productDetail?.content}
             isSavedRef={isSavedRef}
+            productId={params.id}
           />
         </div>
 

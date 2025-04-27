@@ -1,4 +1,5 @@
 import { atom } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
 
 type ToolbarType = 'defaultToolbar' | 'aiToolbar'
 
@@ -18,3 +19,9 @@ export const promptValueAtom = atom('')
 
 // 에디터 상태(읽기, 쓰기)
 export const isEditableAtom = atom(true)
+
+// 에디터 내용을 로컬스토리지에 저장하기 위한 atom
+// atomWithStorage는 기본 로컬스토리지 사용
+export const editorContentAtom = (productId: string) => {
+  return atomWithStorage(`workspace-${productId}`, '')
+}

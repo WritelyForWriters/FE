@@ -13,8 +13,10 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { activeMenuAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms'
+import { activeMenuAtom, editorContentAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
+
+import { addHeadingIds } from '@utils/addHeadingId'
 
 import BlockquoteExtension from '@extensions/Blockquote'
 import HeadingExtension from '@extensions/Heading'
@@ -31,12 +33,21 @@ interface DefaultEditorProps {
   editorRef: Ref<HandleEditor>
   isSavedRef: RefObject<boolean>
   contents?: string
+  productId: string
 }
 
-export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
+export default function DefaultEditor({
+  editorRef,
+  isSavedRef,
+  contents,
+  productId,
+}: DefaultEditorProps) {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
   const editable = useAtomValue(isEditableAtom)
+
+  const editorContent = editorContentAtom(productId)
+  const setEditorContent = useSetAtom(editorContent)
 
   const editor = useEditor({
     editable,
@@ -78,6 +89,29 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const handleActiveMenu = () => {
     setActiveMenu('aiToolbar')
   }
+
+  /**
+   * TODO
+   * [x] 5분 마다 자동저장
+   * [ ] toc 반영
+   * [ ] 저장 후 로컬스토리지 제거
+   */
+  useEffect(() => {
+    if (!editor) return
+
+    const interval = setInterval(
+      () => {
+        const contentsWithIds = addHeadingIds(editor.getJSON())
+        setEditorContent(JSON.stringify(contentsWithIds))
+        console.log(`5분마다 저장 완료 ✅, ${JSON.stringify(contentsWithIds)}`) // 삭제하기
+      },
+      5 * 60 * 1000, // 상수화
+    )
+    return () => {
+      clearInterval(interval)
+    }
+    // MEMO(Sohyun): dependency array에 setEditorContent를 넣게 되면 입력중에 interval 시작, 종료가 반복되므로 제외
+  }, [editor])
 
   useEffect(() => {
     if (!editor) {
