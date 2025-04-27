@@ -140,8 +140,13 @@ export default function WorkSpacePage() {
         const contentsWithIds = addHeadingIds(editor.getJSON())
         setEditorContent(JSON.stringify(contentsWithIds))
         console.log(`5분마다 저장 완료 ✅, ${JSON.stringify(contentsWithIds)}`) // 삭제하기
+        // toc 업데이트
+        const toc = getTocFromEditor(contentsWithIds)
+        setEditorIndexToc(toc)
+        // 자동 저장된 내용으로 에디터 업데이트
+        editor.commands.setContent(contentsWithIds)
       },
-      30 * 1000, // 상수화
+      5 * 60 * 1000, // 상수화
     )
     return () => {
       clearInterval(interval)
