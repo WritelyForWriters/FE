@@ -171,8 +171,7 @@ export default function WorkspaceActionBar({
             {title}
           </span>
         )}
-        {/* Note: description은 동적 렌더링 필요 */}
-        <span className={cx('description')}>{autoSave.message}</span>
+        {isContentEditing && <span className={cx('description')}>{autoSave.message}</span>}
       </>
     )
   }
