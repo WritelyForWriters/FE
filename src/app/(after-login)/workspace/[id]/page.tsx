@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { useAtom, useSetAtom } from 'jotai'
-import { isEditableAtom } from 'store/editorAtoms'
+import { editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
@@ -49,6 +49,8 @@ export default function WorkSpacePage() {
 
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
+  const editorContent = editorContentAtom(params.id)
+  const setEditorContent = useSetAtom(editorContent)
 
   const [editorIndexToc, setEditorIndexToc] = useState<TocItemType[]>([])
 
@@ -128,6 +130,25 @@ export default function WorkSpacePage() {
     }
   }, [productDetail, setProductTitle, setIsContentEditing])
 
+  useEffect(() => {
+    if (!editorRef.current) return
+
+    const interval = setInterval(
+      () => {
+        if (!editorRef.current) return
+        const editor = editorRef.current.getEditor() as Editor
+        const contentsWithIds = addHeadingIds(editor.getJSON())
+        setEditorContent(JSON.stringify(contentsWithIds))
+        console.log(`5분마다 저장 완료 ✅, ${JSON.stringify(contentsWithIds)}`) // 삭제하기
+      },
+      30 * 1000, // 상수화
+    )
+    return () => {
+      clearInterval(interval)
+    }
+    // MEMO(Sohyun): dependency array에 setEditorContent를 넣게 되면 입력중에 interval 시작, 종료가 반복되므로 제외
+  }, [])
+
   return (
     <div className={cx('container')}>
       <WorkspaceActionBar
@@ -148,7 +169,6 @@ export default function WorkSpacePage() {
             editorRef={editorRef}
             contents={productDetail?.content}
             isSavedRef={isSavedRef}
-            productId={params.id}
           />
         </div>
 
