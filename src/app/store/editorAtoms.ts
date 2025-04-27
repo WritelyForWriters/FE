@@ -1,3 +1,4 @@
+import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 
@@ -25,3 +26,8 @@ export const isEditableAtom = atom(true)
 export const editorContentAtom = (productId: string) => {
   return atomWithStorage(`workspace-${productId}`, '')
 }
+
+// 에디터 자동 저장 관련 상태 메세지
+export const autoSaveMessageAtom = atom({
+  message: AUTO_SAVE_MESSAGE.WRITING,
+})

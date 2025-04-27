@@ -5,9 +5,10 @@ import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
+import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME_FOR_TEST } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
-import { editorContentAtom, isEditableAtom } from 'store/editorAtoms'
+import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
@@ -51,6 +52,7 @@ export default function WorkSpacePage() {
   const setIsContentEditing = useSetAtom(isEditableAtom)
   const editorContent = editorContentAtom(params.id)
   const setEditorContent = useSetAtom(editorContent)
+  const setAutoSaveMessage = useSetAtom(autoSaveMessageAtom)
 
   const [editorIndexToc, setEditorIndexToc] = useState<TocItemType[]>([])
 
@@ -140,14 +142,23 @@ export default function WorkSpacePage() {
 
     const interval = setInterval(() => {
       if (!editorRef.current) return
+
       const editor = editorRef.current.getEditor() as Editor
       const contentsWithIds = addHeadingIds(editor.getJSON())
       setEditorContent(JSON.stringify(contentsWithIds))
+
       // toc 업데이트
       const toc = getTocFromEditor(contentsWithIds)
       setEditorIndexToc(toc)
+
       // 자동 저장된 내용으로 에디터 업데이트
       editor.commands.setContent(contentsWithIds)
+
+      setAutoSaveMessage({ message: AUTO_SAVE_MESSAGE.SAVING })
+
+      setTimeout(() => {
+        setAutoSaveMessage({ message: AUTO_SAVE_MESSAGE.WRITING })
+      }, 3000)
     }, DELAY_TIME_FOR_TEST)
 
     return () => {
