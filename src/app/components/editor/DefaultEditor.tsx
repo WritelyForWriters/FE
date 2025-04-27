@@ -25,8 +25,6 @@ import Toolbar from './Toolbar'
 
 import styles from './DefaultEditor.module.scss'
 
-// TODO 단축키 '/'로 버블메뉴 활성화
-
 interface DefaultEditorProps {
   editorRef: Ref<HandleEditor>
   isSavedRef: RefObject<boolean>

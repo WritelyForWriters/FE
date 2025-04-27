@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
+import { DELAY_TIME } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
 import { editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
@@ -33,8 +34,7 @@ const cx = classNames.bind(styles)
 /**
  * TODO 작업공간 페이지 중 에디터 관련
  * [ ] 읽기 모드일때는 툴바 활성화 X
- * [x] 에디터 TOC
- * [ ] 자동 저장 기능 + TOC 업데이트
+ * [ ] 단축키 '/'로 버블메뉴 활성화
  */
 
 export default function WorkSpacePage() {
@@ -133,21 +133,18 @@ export default function WorkSpacePage() {
   useEffect(() => {
     if (!editorRef.current) return
 
-    const interval = setInterval(
-      () => {
-        if (!editorRef.current) return
-        const editor = editorRef.current.getEditor() as Editor
-        const contentsWithIds = addHeadingIds(editor.getJSON())
-        setEditorContent(JSON.stringify(contentsWithIds))
-        console.log(`5분마다 저장 완료 ✅, ${JSON.stringify(contentsWithIds)}`) // 삭제하기
-        // toc 업데이트
-        const toc = getTocFromEditor(contentsWithIds)
-        setEditorIndexToc(toc)
-        // 자동 저장된 내용으로 에디터 업데이트
-        editor.commands.setContent(contentsWithIds)
-      },
-      5 * 60 * 1000, // 상수화
-    )
+    const interval = setInterval(() => {
+      if (!editorRef.current) return
+      const editor = editorRef.current.getEditor() as Editor
+      const contentsWithIds = addHeadingIds(editor.getJSON())
+      setEditorContent(JSON.stringify(contentsWithIds))
+      // toc 업데이트
+      const toc = getTocFromEditor(contentsWithIds)
+      setEditorIndexToc(toc)
+      // 자동 저장된 내용으로 에디터 업데이트
+      editor.commands.setContent(contentsWithIds)
+    }, DELAY_TIME)
+
     return () => {
       clearInterval(interval)
     }
