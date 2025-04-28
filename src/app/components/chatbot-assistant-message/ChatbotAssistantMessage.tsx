@@ -51,9 +51,6 @@ export default function ChatbotAssistantMessage({
 
   const ellipsisQuote = quote.length > 20 ? quote.slice(0, 20) + '...' : quote
 
-  // TODO: 탐색 모드 전환 시 id 사용 예정
-  console.log(message.id)
-
   const { mutate: pinMessage, isSuccess: isPinSuccess } = usePinMessage()
   const { mutate: unPinMessage, isSuccess: isUnPinSuccess } = useUnPinMessage()
 
