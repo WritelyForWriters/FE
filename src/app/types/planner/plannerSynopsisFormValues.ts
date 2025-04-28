@@ -44,7 +44,6 @@ export type CharacterFormValues = {
   occupation?: string
   appearance?: string
   personality?: string
-  characteristic?: string
   relationship?: string
   customFields?: CustomField[]
 }

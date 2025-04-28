@@ -25,7 +25,6 @@ export type Character = {
   occupation?: string
   appearance?: string
   personality?: string
-  characteristic?: string
   relationship?: string
   customFields?: CustomField[]
 }

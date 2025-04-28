@@ -48,7 +48,6 @@ export const PlannerTemplatesRequest = {
         occupation: character.occupation,
         appearance: character.appearance,
         personality: character.personality,
-        characteristic: character.characteristic,
         relationship: character.relationship,
         customFields: character.customFields
           ? character.customFields.map((field) => ({
