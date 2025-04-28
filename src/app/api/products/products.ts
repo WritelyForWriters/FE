@@ -1,4 +1,5 @@
 import { default as AuthAxios, default as authInstance } from 'api/core/AuthInstance'
+import { IdeaNotePresignedUrlRequest } from 'types/planner/ideaNotePresignedUrl'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 import { PlannerTemplatesResponse } from 'types/planner/plannerTemplatesResponse'
 import {
@@ -41,5 +42,10 @@ export const createProductsTemplates = async (
   request: PlannerTemplatesRequest,
 ) => {
   const res = await AuthAxios.post(`/products/${productId}/templates`, { ...request })
+  return res.data
+}
+
+export const createFilesPresignedUrl = async (request: IdeaNotePresignedUrlRequest) => {
+  const res = await AuthAxios.post(`/files/presigned-url`, { ...request })
   return res.data
 }
