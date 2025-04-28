@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useEffect } from 'react'
 
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
+import { CHATBOT_URLS } from 'constants/chatbot/urls'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAtom, useAtomValue } from 'jotai'
 import { Direction } from 're-resizable/lib/resizer'
@@ -162,8 +163,10 @@ export default function ChatbotWindow() {
               <div className={cx('chatbot-window__header', { 'drag-handle': true })}>
                 <div className={cx('chatbot-window__header-content')}>
                   <p>챗봇</p>
-                  {/* TODO: 아이콘 클릭 시 노션 페이지로 이동 */}
-                  <button type="button">
+                  <button
+                    type="button"
+                    onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
+                  >
                     <FiInfo size={20} color="#CCCCCC" />
                   </button>
                 </div>
