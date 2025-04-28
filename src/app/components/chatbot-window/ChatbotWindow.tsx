@@ -4,7 +4,7 @@
  */
 import Image from 'next/image'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
 import { CHATBOT_URLS } from 'constants/chatbot/urls'
@@ -24,6 +24,8 @@ import ChatbotChatInput from '@components/chatbot-chat-input/ChatbotChatInput'
 import ChatbotMessageList from '@components/chatbot-message-list/ChatbotMessageList'
 import ExpandableContentBox from '@components/expandable-content-box/ExpandableContentBox'
 
+import { computeRelativePosition } from '@utils/computeRelativePosition'
+
 import { chatbotAbsoluteSizeAtom } from './../../store/chatbotAbsoluteSizeAtom'
 import { chatbotRelativeSizeAtom } from './../../store/chatbotRelativeSizeAtom'
 
@@ -36,8 +38,10 @@ const cx = classNames.bind(styles)
 type ResizeDirection = Direction
 
 export default function ChatbotWindow() {
-  const innerWidth = window.innerWidth
-  const innerHeight = window.innerHeight
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  })
 
   const [isChatbotOpen, setIsChatbotOpen] = useAtom(isChatbotOpenAtom)
 
@@ -50,27 +54,33 @@ export default function ChatbotWindow() {
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
 
   useEffect(() => {
-    const updateSizeAndPositionFromRatio = () => {
-      setChatbotAbsoluteSize({
-        width: innerWidth * chatbotRelativeSize.widthRatio,
-        height: innerHeight * chatbotRelativeSize.heightRatio,
-      })
-
-      setChatbotAbsolutePosition({
-        x: innerWidth * chatbotRelativePosition.xRatio,
-        y: innerHeight * chatbotRelativePosition.yRatio,
-      })
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight })
     }
 
-    updateSizeAndPositionFromRatio()
-    window.addEventListener('resize', updateSizeAndPositionFromRatio)
+    handleResize()
 
-    return () => window.removeEventListener('resize', updateSizeAndPositionFromRatio)
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    const { width, height } = windowSize
+
+    setChatbotAbsoluteSize({
+      width: width * chatbotRelativeSize.widthRatio,
+      height: height * chatbotRelativeSize.heightRatio,
+    })
+
+    setChatbotAbsolutePosition({
+      x: width * chatbotRelativePosition.xRatio,
+      y: height * chatbotRelativePosition.yRatio,
+    })
   }, [
     chatbotRelativeSize,
     chatbotRelativePosition,
-    innerWidth,
-    innerHeight,
+    windowSize,
     setChatbotAbsolutePosition,
     setChatbotAbsoluteSize,
   ])
@@ -81,14 +91,16 @@ export default function ChatbotWindow() {
     ref: HTMLElement,
     delta: { width: number; height: number },
   ) => {
+    const { width, height } = windowSize
+
     const newWidth = ref.offsetWidth
     const newHeight = ref.offsetHeight
 
     setChatbotAbsoluteSize({ width: newWidth, height: newHeight })
 
     setChatbotRelativeSize({
-      widthRatio: newWidth / innerWidth,
-      heightRatio: newHeight / innerHeight,
+      widthRatio: newWidth / width,
+      heightRatio: newHeight / height,
     })
 
     if (direction.includes('left') || direction.includes('top')) {
@@ -96,10 +108,7 @@ export default function ChatbotWindow() {
         const newX = direction.includes('left') ? prev.x - delta.width : prev.x
         const newY = direction.includes('top') ? prev.y - delta.height : prev.y
 
-        setChatbotRelativePosition({
-          xRatio: newX / innerWidth,
-          yRatio: newY / innerHeight,
-        })
+        setChatbotRelativePosition(computeRelativePosition(newX, newY, width, height))
 
         return { x: newX, y: newY }
       })
@@ -107,15 +116,14 @@ export default function ChatbotWindow() {
   }
 
   const handleDragStop = (_: DraggableEvent, data: DraggableData) => {
+    const { width, height } = windowSize
+
     setChatbotAbsolutePosition({
       x: data.x,
       y: data.y,
     })
 
-    setChatbotRelativePosition({
-      xRatio: data.x / innerWidth,
-      yRatio: data.y / innerHeight,
-    })
+    setChatbotRelativePosition(computeRelativePosition(data.x, data.y, width, height))
   }
 
   const handleCloseClick = () => setIsChatbotOpen(false)

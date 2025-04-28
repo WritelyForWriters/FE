@@ -17,6 +17,7 @@ import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import Favicon from '@components/favicon/Favicon'
 
 import { computeChatbotAbsolutePosition } from '@utils/computeChatbotPosition'
+import { computeRelativePosition } from '@utils/computeRelativePosition'
 
 import classNames from 'classnames/bind'
 
@@ -25,10 +26,10 @@ import styles from './ChatbotFloatingFavicon.module.scss'
 const cx = classNames.bind(styles)
 
 export default function ChatbotFloatingFavicon() {
-  const innerWidth = window.innerWidth
-  const innerHeight = window.innerHeight
-
-  const [isLoading, setIsLoading] = useState(true)
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  })
   const [faviconAbsolutePosition, setFaviconAbsolutePosition] = useState({ x: 0, y: 0 })
 
   const [faviconRelativePosition, setFaviconRelativePosition] = useAtom(faviconRelativePositionAtom)
@@ -38,58 +39,60 @@ export default function ChatbotFloatingFavicon() {
   const setChatbotRelativePosition = useSetAtom(chatbotRelativePositionAtom)
 
   useEffect(() => {
-    const recalculatePosition = () => {
-      const x = faviconRelativePosition.xRatio * innerWidth
-      const y = faviconRelativePosition.yRatio * window.innerHeight
-
-      setFaviconAbsolutePosition({ x, y })
-      setChatbotAbsolutePosition(computeChatbotAbsolutePosition(x, y, innerWidth, innerHeight))
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight })
     }
 
-    recalculatePosition()
+    window.addEventListener('resize', handleResize)
 
-    window.addEventListener('resize', recalculatePosition)
-    setIsLoading(false)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
-    return () => window.removeEventListener('resize', recalculatePosition)
-  }, [faviconRelativePosition, setChatbotAbsolutePosition])
+  useEffect(() => {
+    const { width, height } = windowSize
+
+    const x = faviconRelativePosition.xRatio * width
+    const y = faviconRelativePosition.yRatio * height
+
+    setFaviconAbsolutePosition({ x, y })
+
+    const { x: chatbotX, y: chatbotY } = computeChatbotAbsolutePosition(x, y, width, height)
+
+    setChatbotAbsolutePosition({ x: chatbotX, y: chatbotY })
+    setChatbotRelativePosition(computeRelativePosition(chatbotX, chatbotY, width, height))
+  }, [faviconRelativePosition, windowSize, setChatbotAbsolutePosition, setChatbotRelativePosition])
 
   const handleDragStop = (_: DraggableEvent, data: { x: number; y: number }) => {
-    setFaviconAbsolutePosition({ x: data.x, y: data.y })
+    const { width, height } = windowSize
 
-    const faviconXRatio = data.x / innerWidth
-    const faviconYRatio = data.y / innerHeight
-    setFaviconRelativePosition({ xRatio: faviconXRatio, yRatio: faviconYRatio })
+    setFaviconAbsolutePosition({ x: data.x, y: data.y })
+    setFaviconRelativePosition(computeRelativePosition(data.x, data.y, width, height))
 
     const { x: chatbotX, y: chatbotY } = computeChatbotAbsolutePosition(
       data.x,
       data.y,
-      innerWidth,
-      innerHeight,
+      width,
+      height,
     )
+
     setChatbotAbsolutePosition({ x: chatbotX, y: chatbotY })
-
-    const chatbotXRatio = chatbotX / innerWidth
-    const chatbotYRatio = chatbotY / innerHeight
-    setChatbotRelativePosition({ xRatio: chatbotXRatio, yRatio: chatbotYRatio })
+    setChatbotRelativePosition(computeRelativePosition(chatbotX, chatbotY, width, height))
   }
 
-  if (!isLoading) {
-    return (
-      <Rnd
-        position={faviconAbsolutePosition}
-        onDragStop={handleDragStop}
-        enableResizing={false}
-        bounds="window"
-        dragHandleClassName="drag-handle"
-      >
-        <div className={cx('favicon-wrapper')}>
-          <Favicon onClick={() => setIsChatbotOpen(true)}>
-            <Image src="/icons/chat.svg" alt="chatbot favicon" width={20} height={18} />
-          </Favicon>
-          <div className="drag-handle" style={{ width: 20, height: 56, cursor: 'move' }}></div>
-        </div>
-      </Rnd>
-    )
-  }
+  return (
+    <Rnd
+      position={faviconAbsolutePosition}
+      onDragStop={handleDragStop}
+      enableResizing={false}
+      bounds="window"
+      dragHandleClassName="drag-handle"
+    >
+      <div className={cx('favicon-wrapper')}>
+        <Favicon onClick={() => setIsChatbotOpen(true)}>
+          <Image src="/icons/chat.svg" alt="chatbot favicon" width={20} height={18} />
+        </Favicon>
+        <div className="drag-handle" style={{ width: 20, height: 56, cursor: 'move' }}></div>
+      </div>
+    </Rnd>
+  )
 }
