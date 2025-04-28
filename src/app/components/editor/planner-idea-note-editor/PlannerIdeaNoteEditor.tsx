@@ -42,6 +42,7 @@ export default function PlannerIdeaNoteEditor({
   contents,
 }: PlannerIdeaNoteEditorProps) {
   const createPresignedUrlMutation = useCreateFilesPresignedUrl({
+    // NOTE(hajae): 이미지 업로드 순서는 useIdeaNoteImageUpload.ts 참고
     onSuccess: (fileGetUrl) => {
       if (editor) {
         editor
