@@ -1,12 +1,18 @@
 import { useMutation } from '@tanstack/react-query'
-import { createFilesPresignedUrl } from 'api/products/products'
+import { createFilesPresignedUrl, updateIdeaNoteImage } from 'api/products/products'
 import { UseMutationCustomOptions } from 'types/common/reactQueryCustomOption'
-import { IdeaNotePresignedUrlRequest } from 'types/planner/ideaNotePresignedUrl'
+import {
+  IdeaNotePresignedUrlRequest,
+  IdeaNotePresignedUrlResponse,
+} from 'types/planner/ideaNotePresignedUrl'
 
 export const useCreateFilesPresignedUrl = (mutationOptions?: UseMutationCustomOptions) => {
   return useMutation({
-    mutationFn: ({ request }: { request: IdeaNotePresignedUrlRequest }) =>
-      createFilesPresignedUrl(request),
+    mutationFn: async ({ request, file }: { request: IdeaNotePresignedUrlRequest; file: File }) => {
+      const res: IdeaNotePresignedUrlResponse = await createFilesPresignedUrl(request)
+      await updateIdeaNoteImage(res.result.filePutUrl, file)
+      return res.result.fileGetUrl
+    },
     ...mutationOptions,
   })
 }
