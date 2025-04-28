@@ -8,7 +8,7 @@ export const QUERY_KEY = Object.freeze({
   ME_PROFILE: 'getMeProfile',
 
   // 챗봇
-  ASSISTANT_HISTORY: (productId: string) => ['assistant-history', productId],
-  FAVORITE_PROMPTS: (productId: string) => ['favorite-prompts', productId],
-  FIXED_MESSAGE: (productId: string) => ['fixed-message', productId],
+  ASSISTANT_HISTORY: 'getAssistantHistory',
+  FAVORITE_PROMPTS: 'getFavoritePrompts',
+  FIXED_MESSAGE: 'getFixedMessage',
 })

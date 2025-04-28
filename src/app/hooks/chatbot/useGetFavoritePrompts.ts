@@ -4,7 +4,7 @@ import { QUERY_KEY } from 'constants/common/queryKeys'
 
 export const useGetFavoritePrompts = (productId: string) => {
   return useQuery({
-    queryKey: QUERY_KEY.FAVORITE_PROMPTS(productId),
+    queryKey: [QUERY_KEY.FAVORITE_PROMPTS, productId],
     queryFn: () => getFavoritePrompts(productId),
   })
 }

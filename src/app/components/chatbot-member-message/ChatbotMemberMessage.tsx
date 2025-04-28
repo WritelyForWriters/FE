@@ -61,8 +61,8 @@ export default function ChatbotMemberMessage({
   const { mutate: removeFavoriteMessage, isSuccess: isRemoveSuccess } = useRemoveFavoriteMessage()
 
   if (isAddSuccess || isRemoveSuccess) {
-    queryClient.invalidateQueries({ queryKey: QUERY_KEY.ASSISTANT_HISTORY(productId) })
-    queryClient.invalidateQueries({ queryKey: QUERY_KEY.FAVORITE_PROMPTS(productId) })
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ASSISTANT_HISTORY, productId] })
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FAVORITE_PROMPTS, productId] })
   }
 
   const handleFavorite = () => {

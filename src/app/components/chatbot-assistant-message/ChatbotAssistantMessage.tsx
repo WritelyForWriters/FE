@@ -73,7 +73,7 @@ export default function ChatbotAssistantMessage({
     }
 
     if (isPinSuccess || isUnPinSuccess) {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY.FIXED_MESSAGE(productId) })
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FIXED_MESSAGE, productId] })
     }
   }
 

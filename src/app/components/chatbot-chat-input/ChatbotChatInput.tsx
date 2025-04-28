@@ -71,14 +71,14 @@ export default function ChatbotChatInput() {
   const { mutate: submitDefaultChatMessage, isPending: isDefaultPending } =
     useSubmitDefaultChatMessage({
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEY.ASSISTANT_HISTORY(productId) })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ASSISTANT_HISTORY, productId] })
       },
     })
 
   const { mutate: submitWebSearchChatMessage, isPending: isWebSearchPending } =
     useSubmitWebSearchChatMessage({
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: QUERY_KEY.ASSISTANT_HISTORY(productId) })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ASSISTANT_HISTORY, productId] })
       },
     })
 
