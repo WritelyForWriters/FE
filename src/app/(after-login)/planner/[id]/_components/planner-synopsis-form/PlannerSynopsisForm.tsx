@@ -6,6 +6,8 @@ import {
 import Dropdown from '@components/dropdown/Dropdown'
 import TextField from '@components/text-field/TextField'
 
+import PlannerFieldWithButton from '../planner-field-with-button/PlannerFieldWithButton'
+
 import classNames from 'classnames/bind'
 
 import styles from './PlannerSynopsisForm.module.scss'
@@ -39,7 +41,11 @@ export default function PlannerSynopsisForm() {
         options={PLANNER_SYNOPSIS_LENGTH}
         isRequired={false}
       />
-      <TextField name="synopsis.purpose" label="기획 의도" variant="expand" />
+
+      <PlannerFieldWithButton name="synopsis.purpose">
+        <TextField name="synopsis.purpose" label="기획 의도" variant="expand" />
+      </PlannerFieldWithButton>
+
       <TextField
         name="synopsis.logline"
         label="로그 라인"
