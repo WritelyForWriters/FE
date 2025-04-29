@@ -1,0 +1,23 @@
+@use '@styles/mixins' as mixin;
+
+.wrapper {
+  @include mixin.flex(row, center, null, nowrap);
+  min-height: 48px;
+
+  &--has-helper {
+    min-height: 80px;
+  }
+}
+
+.field-with-button {
+  @include mixin.flex(row, center, null, nowrap);
+  position: relative;
+  width: 100%;
+
+  &__delete-button {
+    position: absolute;
+    right: 0;
+
+    transform: translateX(calc(100% + 10px));
+  }
+}

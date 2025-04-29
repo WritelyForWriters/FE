@@ -42,7 +42,7 @@ export default function PlannerSynopsisForm() {
         isRequired={false}
       />
 
-      <PlannerFieldWithButton name="synopsis.purpose">
+      <PlannerFieldWithButton name="synopsis.purpose" hasHelperText={false}>
         <TextField name="synopsis.purpose" label="기획 의도" variant="expand" />
       </PlannerFieldWithButton>
 
@@ -52,7 +52,9 @@ export default function PlannerSynopsisForm() {
         variant="expand"
         options={{ required: { value: true, message: 'required' } }}
       />
-      <TextField name="synopsis.example" label="예시 문장" variant="expand" />
+      <PlannerFieldWithButton name="synopsis.example" hasHelperText={false}>
+        <TextField name="synopsis.example" label="예시 문장" variant="expand" />
+      </PlannerFieldWithButton>
     </div>
   )
 }

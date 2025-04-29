@@ -1,6 +1,8 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 import { useFormContext } from 'react-hook-form'
+
+import FillButton from '@components/buttons/FillButton'
 
 import classNames from 'classnames/bind'
 
@@ -10,11 +12,24 @@ const cx = classNames.bind(styles)
 interface PlannerFieldWithButtonProps {
   children: ReactNode
   name: string
+  hasHelperText?: boolean
 }
 
-export default function PlannerFieldWithButton({ children, name }: PlannerFieldWithButtonProps) {
-  const { getValues, unregister } = useFormContext()
-  const [isShow, setIsShow] = useState(getValues(name) === null)
+export default function PlannerFieldWithButton({
+  children,
+  name,
+  hasHelperText = true,
+}: PlannerFieldWithButtonProps) {
+  const { watch, unregister } = useFormContext()
+  const [isShow, setIsShow] = useState(true)
+  const initialValue = watch(name)
+
+  // NOTE(hajae): 삭제된 항목은 null로 반환되어 초기 렌더링 시 화면에 표시하지 않는다
+  useEffect(() => {
+    if (initialValue === null) {
+      setIsShow(false)
+    }
+  }, [watch, name, initialValue])
 
   const removeField = (setter: (v: boolean) => void) => {
     unregister(name)
@@ -26,19 +41,35 @@ export default function PlannerFieldWithButton({ children, name }: PlannerFieldW
   }
 
   return (
-    <>
+    <div
+      className={cx('wrapper', {
+        'wrapper--has-helper': hasHelperText,
+      })}
+    >
       {isShow ? (
         <div className={cx('field-with-button')}>
           {children}
-          <button type="button" onClick={() => removeField(setIsShow)}>
-            삭제하기
-          </button>
+          <div className={cx('field-with-button__delete-button')}>
+            <FillButton
+              type="button"
+              size="small"
+              variant="secondary"
+              onClick={() => removeField(setIsShow)}
+            >
+              삭제하기
+            </FillButton>
+          </div>
         </div>
       ) : (
-        <button type="button" onClick={() => restoreField(setIsShow)}>
-          추가하기
-        </button>
+        <FillButton
+          type="button"
+          size="small"
+          variant="secondary"
+          onClick={() => restoreField(setIsShow)}
+        >
+          삭제된 항목 추가
+        </FillButton>
       )}
-    </>
+    </div>
   )
 }
