@@ -52,7 +52,7 @@ export type PlotFormValues = {
   content?: string
 }
 
-export type CustomField = { id: string; name: string; content: string }
+export type CustomField = { id?: string; name: string; content: string }
 
 export type IdeaNoteFormValues = {
   title: string

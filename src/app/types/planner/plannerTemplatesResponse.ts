@@ -11,7 +11,7 @@ export type PlannerTemplates = {
 }
 
 type CustomField = {
-  id: string
+  id?: string
   name: string
   content: string
 }
