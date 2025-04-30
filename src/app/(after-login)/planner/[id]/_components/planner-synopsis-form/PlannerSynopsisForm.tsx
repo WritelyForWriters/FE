@@ -33,14 +33,16 @@ export default function PlannerSynopsisForm() {
         isMulti={true}
         isRequired={true}
       />
-      <Dropdown
-        name="synopsis.length"
-        type="outlined"
-        placeholder="분량"
-        label="분량"
-        options={PLANNER_SYNOPSIS_LENGTH}
-        isRequired={false}
-      />
+      <PlannerFieldWithButton name="synopsis.length" hasHelperText={false}>
+        <Dropdown
+          name="synopsis.length"
+          type="outlined"
+          placeholder="분량"
+          label="분량"
+          options={PLANNER_SYNOPSIS_LENGTH}
+          isRequired={false}
+        />
+      </PlannerFieldWithButton>
 
       <PlannerFieldWithButton name="synopsis.purpose" hasHelperText={false}>
         <TextField name="synopsis.purpose" label="기획 의도" variant="expand" />

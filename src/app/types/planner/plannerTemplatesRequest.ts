@@ -12,7 +12,11 @@ export const PlannerTemplatesRequest = {
       // NOTE(hajae): 값이 존재하지 않으면 '', 삭제한 항목이면 undefined로 삭제 유무를 구분한다.
       synopsis: {
         genre: formValues.synopsis.genre.map((genre) => genre.value).join(', '),
-        length: formValues.synopsis.length?.value || '',
+        length: formValues.synopsis.length
+          ? formValues.synopsis.length.value
+          : formValues.synopsis.length === undefined
+            ? undefined
+            : '',
         purpose: formValues.synopsis.purpose,
         logline: formValues.synopsis.logline,
         example: formValues.synopsis.example,

@@ -12,7 +12,7 @@ export type PlannerSynopsisFormValues = {
 
 export type SynopsisFormValues = {
   genre: { label: string; value: string }[]
-  length?: { label: string; value: string }
+  length?: { label: string; value: string } | null
   purpose?: string
   logline: string
   example?: string
@@ -74,7 +74,7 @@ export const PlannerSynopsisFormValues = {
     if (!synopsis) {
       return {
         genre: [],
-        length: undefined,
+        length: null,
         purpose: '',
         logline: '',
         example: '',
@@ -89,7 +89,7 @@ export const PlannerSynopsisFormValues = {
       genre: genres.map((genre) => {
         return { label: genre, value: genre }
       }),
-      length: length,
+      length: synopsis.length === '' || length ? length : null,
     }
   },
 

@@ -30,6 +30,10 @@ export default function PlannerFieldWithButton({
       setIsShow(false)
     } else if (initialValue === '' || initialValue) {
       setIsShow(true)
+    } else if (name === 'synopsis.length' && initialValue === undefined) {
+      // NOTE(hajae): synopsis.length는 객체이기에 ''와 같은 빈값을 받을 수 없어 undefined로.
+      // null일때는 비표시, undefined일때는 표시
+      setIsShow(true)
     }
   }, [watch, name, initialValue])
 
