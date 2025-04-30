@@ -9,7 +9,7 @@ import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME_FOR_TEST } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
-import { productTitleAtom } from 'store/productsAtoms'
+import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 import { TocItemType } from 'types/common/pannel'
@@ -53,6 +53,7 @@ export default function WorkSpacePage() {
   const editorContent = editorContentAtom(params.id)
   const setEditorContent = useSetAtom(editorContent)
   const setAutoSaveMessage = useSetAtom(autoSaveMessageAtom)
+  const setProductId = useSetAtom(productIdAtom)
 
   const [editorIndexToc, setEditorIndexToc] = useState<TocItemType[]>([])
 
@@ -102,6 +103,12 @@ export default function WorkSpacePage() {
       return ''
     }
   }
+
+  useEffect(() => {
+    if (params.id) {
+      setProductId(params.id)
+    }
+  }, [params.id, setProductId])
 
   useEffect(() => {
     // 최초 렌더링 시 현재 상태 저장 (뒤로 가기 무효화용)
