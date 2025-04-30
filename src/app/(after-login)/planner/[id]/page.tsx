@@ -37,7 +37,7 @@ export default function PlannerPage({ params }: { params: Params }) {
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
-    setValue,
+    reset,
     formState: { isValid },
     handleSubmit,
   } = methods
@@ -57,16 +57,17 @@ export default function PlannerPage({ params }: { params: Params }) {
 
       const values = PlannerSynopsisFormValues.from(templates)
 
-      setValue('synopsis', values.synopsis)
-      setValue('synopsis.length', values.synopsis.length) // NOTE(hajae): nested object 필드. setValue('synopsis')만으로는 하위 필드 변경 감지 안됨
-      setValue('worldview', values.worldview)
-      // NOTE(hajae): local storage에 저장된 캐릭터가 우선
-      // https://www.notion.so/1678209b09f98067a6e7c8e3ef8b08ff?d=1cb8209b09f980e8bfb9001c4c150e72&pvs=4#1718209b09f980a6afbfd4244f71cb25
-      setValue('characters', characters ?? values.characters)
-      setValue('plot', values.plot)
-      setValue('ideaNote', values.ideaNote)
+      reset({
+        synopsis: values.synopsis,
+        worldview: values.worldview,
+        // NOTE(hajae): local storage에 저장된 캐릭터가 우선
+        // https://www.notion.so/1678209b09f98067a6e7c8e3ef8b08ff?d=1cb8209b09f980e8bfb9001c4c150e72&pvs=4#1718209b09f980a6afbfd4244f71cb25
+        characters: values.characters, // TODO(hajae): characters ?? values.characters -> id도 같이 덮어버려 request error 발생
+        plot: values.plot,
+        ideaNote: values.ideaNote,
+      })
     }
-  }, [setValue, templates])
+  }, [reset, templates])
 
   const handleFormSubmit = handleSubmit((formValues) => {
     const request = PlannerTemplatesRequest.from(formValues, characters)

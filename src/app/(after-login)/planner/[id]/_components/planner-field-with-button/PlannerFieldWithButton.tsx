@@ -20,7 +20,7 @@ export default function PlannerFieldWithButton({
   name,
   hasHelperText = true,
 }: PlannerFieldWithButtonProps) {
-  const { watch, unregister } = useFormContext()
+  const { watch, unregister, register, setValue } = useFormContext()
   const [isShow, setIsShow] = useState(true)
   const initialValue = watch(name)
 
@@ -28,6 +28,8 @@ export default function PlannerFieldWithButton({
   useEffect(() => {
     if (initialValue === null) {
       setIsShow(false)
+    } else if (initialValue === '' || initialValue) {
+      setIsShow(true)
     }
   }, [watch, name, initialValue])
 
@@ -37,6 +39,8 @@ export default function PlannerFieldWithButton({
   }
 
   const restoreField = (setter: (v: boolean) => void) => {
+    register(name)
+    setValue(name, '')
     setter(true)
   }
 
