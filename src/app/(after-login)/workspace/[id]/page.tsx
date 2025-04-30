@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
-import { DELAY_TIME_FOR_TEST } from 'constants/workspace/number'
+import { DELAY_TIME } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
@@ -166,7 +166,7 @@ export default function WorkSpacePage() {
       setTimeout(() => {
         setAutoSaveMessage({ message: AUTO_SAVE_MESSAGE.WRITING })
       }, 3000)
-    }, DELAY_TIME_FOR_TEST)
+    }, DELAY_TIME)
 
     return () => {
       clearInterval(interval)
