@@ -2,9 +2,9 @@
 
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
-import { isEditableAtom } from 'store/editorAtoms'
+import { autoSaveMessageAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 import { ModalHandler } from 'types/common/modalRef'
 
@@ -139,6 +139,8 @@ export default function WorkspaceActionBar({
     const [title, setTitle] = useState(initialTitle) // 로컬 상태 관리
     const [titleAtom, setTitleAtom] = useAtom(productTitleAtom) // 전역 상태 관리
 
+    const autoSave = useAtomValue(autoSaveMessageAtom)
+
     // 엔터키 트리거 이벤트
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
@@ -169,8 +171,7 @@ export default function WorkspaceActionBar({
             {title}
           </span>
         )}
-        {/* Note: description은 동적 렌더링 필요 */}
-        <span className={cx('description')}>저장 중</span>
+        {isContentEditing && <span className={cx('description')}>{autoSave.message}</span>}
       </>
     )
   }
