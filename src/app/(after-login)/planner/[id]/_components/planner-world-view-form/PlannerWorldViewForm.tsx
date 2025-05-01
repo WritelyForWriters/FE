@@ -5,6 +5,8 @@ import { PLANNER_WORLD_VIEW_ITEMS } from 'constants/planner/plannerConstants'
 import TextButton from '@components/buttons/TextButton'
 import TextField from '@components/text-field/TextField'
 
+import PlannerFieldWithButton from '../planner-field-with-button/PlannerFieldWithButton'
+
 import classNames from 'classnames/bind'
 
 import styles from './PlannerWorldViewForm.module.scss'
@@ -32,13 +34,19 @@ export default function PlannerWorldViewForm() {
     <div className={cx('world-view-form')} id="heading2">
       <div className={cx('world-view-form__title')}>세계관</div>
       {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
-        <TextField
-          key={`planner-world-view-item-${index}`}
+        <PlannerFieldWithButton
+          key={item.name}
           name={`worldview.${item.name}`}
-          label={item.label}
-          variant="expand"
-          helperText={item.helperText}
-        />
+          hasHelperText={true}
+        >
+          <TextField
+            key={`planner-world-view-item-${index}`}
+            name={`worldview.${item.name}`}
+            label={item.label}
+            variant="expand"
+            helperText={item.helperText}
+          />
+        </PlannerFieldWithButton>
       ))}
       {customFields.map((field, index) => (
         <TextField
