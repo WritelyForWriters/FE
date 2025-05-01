@@ -16,8 +16,14 @@
 
   &__delete-button {
     position: absolute;
+    padding: 10px;
     right: 0;
 
-    transform: translateX(calc(100% + 10px));
+    transform: translateX(100%);
+    visibility: hidden;
+  }
+
+  &:hover .field-with-button__delete-button {
+    visibility: visible;
   }
 }

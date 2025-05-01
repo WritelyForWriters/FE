@@ -33,7 +33,7 @@ export default function PlannerSynopsisForm() {
         isMulti={true}
         isRequired={true}
       />
-      <PlannerFieldWithButton name="synopsis.length" hasHelperText={false}>
+      <PlannerFieldWithButton name="synopsis.length" hasHelperText={false} isDropdown={true}>
         <Dropdown
           name="synopsis.length"
           type="outlined"
