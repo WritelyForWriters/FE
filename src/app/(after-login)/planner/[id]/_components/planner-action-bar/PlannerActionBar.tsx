@@ -32,7 +32,6 @@ export default function PlannerActionBar({
       if (!isValidFormValues) return
       onSubmit()
       setHasSaved(true)
-      alert('저장 완료!')
     }
 
     // 삭제 버튼 클릭 트리거 이벤트

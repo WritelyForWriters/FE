@@ -7,6 +7,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
+import { useToast } from '@components/toast/ToastProvider'
+
 import { useCreateProductTemplates } from '@hooks/products/useProductsMutation'
 import { useFetchProductTemplates } from '@hooks/products/useProductsQueries'
 
@@ -27,12 +29,13 @@ function usePlannerData(params: Params) {
   const { id } = use(params)
   const { data: templates } = useFetchProductTemplates(id)
   const characters = useAtomValue(plannerCharacterByIdAtom(id))
+  const showToast = useToast()
 
-  return { id, templates, characters }
+  return { id, templates, characters, showToast }
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
-  const { id, templates, characters } = usePlannerData(params)
+  const { id, templates, characters, showToast } = usePlannerData(params)
   const [isSaved, setIsSaved] = useState(false)
 
   const methods = useForm<PlannerSynopsisFormValues>()
@@ -42,7 +45,16 @@ export default function PlannerPage({ params }: { params: Params }) {
     handleSubmit,
   } = methods
 
-  const { mutate: createTemplate } = useCreateProductTemplates()
+  const { mutate: createTemplate, isSuccess } = useCreateProductTemplates()
+
+  const handleFormSubmit = handleSubmit((formValues) => {
+    const request = PlannerTemplatesRequest.from(formValues, characters)
+
+    createTemplate({
+      productId: id,
+      request,
+    })
+  })
 
   useEffect(() => {
     if (templates) {
@@ -69,14 +81,11 @@ export default function PlannerPage({ params }: { params: Params }) {
     }
   }, [reset, templates])
 
-  const handleFormSubmit = handleSubmit((formValues) => {
-    const request = PlannerTemplatesRequest.from(formValues, characters)
-
-    createTemplate({
-      productId: id,
-      request,
-    })
-  })
+  useEffect(() => {
+    if (isSuccess) {
+      showToast('success', '저장이 완료되었습니다.')
+    }
+  }, [isSuccess, showToast])
 
   return (
     <div className={cx('container')}>
