@@ -12,6 +12,8 @@ import TextField from '@components/text-field/TextField'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
+import PlannerFieldWithButton from '../planner-field-with-button/PlannerFieldWithButton'
+
 import classNames from 'classnames/bind'
 
 import styles from './PlannerCharacterFormList.module.scss'
@@ -96,18 +98,34 @@ export default function PlannerCharacterFormList({
 
       {isOpen && (
         <div className={cx('list__items')}>
-          {PLANNER_CHARACTER_ITEMS.map((item, index) => (
-            <TextField
-              key={`planner-character-item-${index}`}
-              name={getTextFieldName(item.name)}
-              label={item.label}
-              variant={expandItems.includes(item.name) ? 'expand' : undefined}
-              labelName={
-                item.name === 'customFields' ? `characters[${arrayIndex}].customFields[0].name` : ''
-              }
-              isLabelEditable={item.name === 'customFields'}
-            />
-          ))}
+          {PLANNER_CHARACTER_ITEMS.map((item, index) =>
+            // NOTE(hajae): 등장인물 이름은 삭제 불가이기 때문에 조건 추가
+            item.name !== 'name' ? (
+              <PlannerFieldWithButton
+                key={`planner-character-item-${index}`}
+                name={getTextFieldName(item.name)}
+              >
+                <TextField
+                  name={getTextFieldName(item.name)}
+                  label={item.label}
+                  variant={expandItems.includes(item.name) ? 'expand' : undefined}
+                  labelName={
+                    item.name === 'customFields'
+                      ? `characters[${arrayIndex}].customFields[0].name`
+                      : ''
+                  }
+                  isLabelEditable={item.name === 'customFields'}
+                />
+              </PlannerFieldWithButton>
+            ) : (
+              <TextField
+                key={`planner-character-item-${index}`}
+                name={getTextFieldName(item.name)}
+                label={item.label}
+                variant={expandItems.includes(item.name) ? 'expand' : undefined}
+              />
+            ),
+          )}
         </div>
       )}
     </div>
