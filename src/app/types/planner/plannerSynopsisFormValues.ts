@@ -74,7 +74,7 @@ export const PlannerSynopsisFormValues = {
     if (!synopsis) {
       return {
         genre: [],
-        length: null,
+        length: undefined,
         purpose: '',
         logline: '',
         example: '',
