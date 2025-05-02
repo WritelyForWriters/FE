@@ -14,6 +14,7 @@ interface PlannerFieldWithButtonProps {
   name: string
   hasHelperText?: boolean
   isDropdown?: boolean
+  onDelete?: () => void
 }
 
 export default function PlannerFieldWithButton({
@@ -21,6 +22,7 @@ export default function PlannerFieldWithButton({
   name,
   hasHelperText = true,
   isDropdown = false,
+  onDelete,
 }: PlannerFieldWithButtonProps) {
   const { watch, unregister, register, setValue } = useFormContext()
   const [isShow, setIsShow] = useState(true)
@@ -45,6 +47,7 @@ export default function PlannerFieldWithButton({
     setIsDeleted(true)
     setter(false)
     unregister(name)
+    if (onDelete) onDelete()
   }
 
   const restoreField = (setter: (v: boolean) => void) => {

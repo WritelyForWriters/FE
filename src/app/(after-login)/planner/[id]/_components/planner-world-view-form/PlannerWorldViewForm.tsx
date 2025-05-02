@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-
 import { PLANNER_WORLD_VIEW_ITEMS } from 'constants/planner/plannerConstants'
+import { useFormContext } from 'react-hook-form'
 
 import TextButton from '@components/buttons/TextButton'
 import TextField from '@components/text-field/TextField'
@@ -20,14 +19,17 @@ type CustomField = {
 }
 
 export default function PlannerWorldViewForm() {
-  const [customFields, setCustomFields] = useState<CustomField[]>([])
-
-  useEffect(() => {
-    setCustomFields([{ id: '', name: '', content: '' }])
-  }, [])
+  const { watch, setValue } = useFormContext()
+  const customFields: CustomField[] = watch('worldview.customFields') || []
 
   const handleAddCustomField = () => {
-    setCustomFields((prev) => [...prev, { id: '', name: '', content: '' }])
+    setValue('worldview.customFields', [...customFields, { id: '', name: '', content: '' }])
+  }
+
+  const handleDeleteCustomField = (index: number) => {
+    const updated = [...customFields]
+    updated.splice(index, 1)
+    setValue('worldview.customFields', updated)
   }
 
   return (
@@ -49,14 +51,20 @@ export default function PlannerWorldViewForm() {
         </PlannerFieldWithButton>
       ))}
       {customFields.map((field, index) => (
-        <TextField
+        <PlannerFieldWithButton
           key={field.id || index}
-          name={`worldview.customFields[${index}].content`}
-          label="커스텀 항목"
-          variant="expand"
-          labelName={`worldview.customFields[${index}].name`}
-          isLabelEditable={true}
-        />
+          name={`worldview.customFields[${index}]`}
+          hasHelperText={false}
+          onDelete={() => handleDeleteCustomField(index)}
+        >
+          <TextField
+            name={`worldview.customFields[${index}].content`}
+            label="커스텀 항목"
+            variant="expand"
+            labelName={`worldview.customFields[${index}].name`}
+            isLabelEditable={true}
+          />
+        </PlannerFieldWithButton>
       ))}
       {customFields.length < 15 && (
         <div className={cx('world-view-form__add-custom-field')}>
