@@ -33,7 +33,7 @@ export default function PlannerSynopsisForm() {
         isMulti={true}
         isRequired={true}
       />
-      <PlannerFieldWithButton name="synopsis.length" hasHelperText={false} isDropdown={true}>
+      <PlannerFieldWithButton name="synopsis.length" isDropdown={true}>
         <Dropdown
           name="synopsis.length"
           type="outlined"
@@ -44,7 +44,7 @@ export default function PlannerSynopsisForm() {
         />
       </PlannerFieldWithButton>
 
-      <PlannerFieldWithButton name="synopsis.purpose" hasHelperText={false}>
+      <PlannerFieldWithButton name="synopsis.purpose">
         <TextField name="synopsis.purpose" label="기획 의도" variant="expand" />
       </PlannerFieldWithButton>
 
@@ -54,7 +54,7 @@ export default function PlannerSynopsisForm() {
         variant="expand"
         options={{ required: { value: true, message: 'required' } }}
       />
-      <PlannerFieldWithButton name="synopsis.example" hasHelperText={false}>
+      <PlannerFieldWithButton name="synopsis.example">
         <TextField name="synopsis.example" label="예시 문장" variant="expand" />
       </PlannerFieldWithButton>
     </div>

@@ -12,7 +12,6 @@ const cx = classNames.bind(styles)
 interface PlannerFieldWithButtonProps {
   children: ReactNode
   name: string
-  hasHelperText?: boolean
   isDropdown?: boolean
   onDelete?: () => void
 }
@@ -20,7 +19,6 @@ interface PlannerFieldWithButtonProps {
 export default function PlannerFieldWithButton({
   children,
   name,
-  hasHelperText = true,
   isDropdown = false,
   onDelete,
 }: PlannerFieldWithButtonProps) {
@@ -58,11 +56,7 @@ export default function PlannerFieldWithButton({
   }
 
   return (
-    <div
-      className={cx('wrapper', {
-        'wrapper--has-helper': hasHelperText,
-      })}
-    >
+    <div className={cx('wrapper')}>
       {isShow ? (
         <div className={cx('field-with-button')}>
           {children}

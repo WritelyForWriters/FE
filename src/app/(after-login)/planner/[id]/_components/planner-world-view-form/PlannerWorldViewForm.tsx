@@ -36,11 +36,7 @@ export default function PlannerWorldViewForm() {
     <div className={cx('world-view-form')} id="heading2">
       <div className={cx('world-view-form__title')}>세계관</div>
       {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
-        <PlannerFieldWithButton
-          key={item.name}
-          name={`worldview.${item.name}`}
-          hasHelperText={true}
-        >
+        <PlannerFieldWithButton key={item.name} name={`worldview.${item.name}`}>
           <TextField
             key={`planner-world-view-item-${index}`}
             name={`worldview.${item.name}`}
@@ -54,7 +50,6 @@ export default function PlannerWorldViewForm() {
         <PlannerFieldWithButton
           key={field.id || index}
           name={`worldview.customFields[${index}]`}
-          hasHelperText={false}
           onDelete={() => handleDeleteCustomField(index)}
         >
           <TextField

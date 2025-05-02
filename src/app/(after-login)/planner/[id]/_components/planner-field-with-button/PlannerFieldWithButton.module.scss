@@ -2,11 +2,8 @@
 
 .wrapper {
   @include mixin.flex(row, center, null, nowrap);
-  min-height: 48px;
-
-  &--has-helper {
-    min-height: 80px;
-  }
+  min-height: 4.8rem;
+  max-height: 8rem;
 }
 
 .field-with-button {
@@ -16,8 +13,8 @@
 
   &__delete-button {
     position: absolute;
-    padding: 1rem;
-    top: 1rem;
+    padding: 1.2rem 0 1.2rem 1.2rem;
+    top: 0;
     right: 0;
 
     transform: translateX(100%);
