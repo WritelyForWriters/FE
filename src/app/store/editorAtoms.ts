@@ -31,3 +31,9 @@ export const editorContentAtom = (productId: string) => {
 export const autoSaveMessageAtom = atom({
   message: AUTO_SAVE_MESSAGE.WRITING,
 })
+
+// 선택한 원본 텍스트 저장
+export const originalPhraseAtom = atom('')
+
+// AI 수정 메세지 저장
+export const aiResultAtom = atom('대체 텍스트입니다!')

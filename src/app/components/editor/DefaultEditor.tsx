@@ -13,7 +13,13 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { activeMenuAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms'
+import {
+  activeMenuAtom,
+  // aiResultAtom,
+  isEditableAtom,
+  originalPhraseAtom,
+  selectionAtom,
+} from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
 
 import BlockquoteExtension from '@extensions/Blockquote'
@@ -35,6 +41,9 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
   const editable = useAtomValue(isEditableAtom)
+  const setOriginalText = useSetAtom(originalPhraseAtom)
+
+  // const [aiResult, setAiResult] = useAtom(aiResultAtom)
 
   const editor = useEditor({
     editable,
@@ -73,9 +82,42 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     getEditor: () => editor,
   }))
 
+  // --드래그한 영역 저장 및 하이라이트
+  const handleTextSelection = () => {
+    const { state } = editor!
+    const { from, to } = state.selection
+
+    if (from !== to) {
+      setSelection({ from, to })
+      // TODO 하이라이트
+      // editor?.commands.setMark('highlight', { color: '#FFFAE5' })
+      return { from, to }
+    }
+    return null
+  }
+
   const handleActiveMenu = () => {
     setActiveMenu('aiToolbar')
+
+    // --선택한 원본 text 저장
+    const selection = handleTextSelection()
+    console.log(selection)
+    if (editor && selection) {
+      const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
+      setOriginalText(originPhrase)
+      console.log(originPhrase)
+    }
   }
+
+  // useEffect(() => {
+  //   if (aiResult && selection) {
+  //     editor?.commands.insertContentAt(selection, aiResult)
+  //     editor?.commands.unsetMark('highlight')
+  //     // 상태 초기화
+  //     setAiResult('')
+  //     setSelection(null)
+  //   }
+  // }, [aiResult, selection])
 
   useEffect(() => {
     if (!editor) {
@@ -103,7 +145,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           duration: 100,
           maxWidth: 'none',
           onHidden: () => {
-            setActiveMenu('defaultToolbar')
+            // setActiveMenu('defaultToolbar')
             setSelection(null)
 
             // TODO remove text highlight 적용이 안되는 문제
@@ -115,12 +157,13 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           editable상태가 shouldShow에 즉각반영이 안됨, (참고) https://tiptap.dev/docs/guides/output-json-html#render */
         shouldShow={({ state }) => editable && !state.selection.empty}
       >
-        {activeMenu === 'defaultToolbar' ? (
+        {activeMenu === 'defaultToolbar' && (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
-        ) : (
-          <PromptMenu editor={editor} />
         )}
       </BubbleMenu>
+
+      {activeMenu === 'aiToolbar' && <PromptMenu editor={editor} />}
+
       <EditorContent editor={editor} className={styles.tiptap} />
     </section>
   )
