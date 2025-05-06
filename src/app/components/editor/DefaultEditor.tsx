@@ -50,6 +50,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const productId = useAtomValue(productIdAtom)
 
   const selectionRef = useRef<TextSelectionRangeType | null>(null)
+  const originalSelectionRef = useRef<TextSelectionRangeType | null>(null)
   const promptValueRef = useRef('')
 
   const { isOpen, onOpen, onClose } = useCollapsed()
@@ -104,6 +105,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
     if (from !== to) {
       selectionRef.current = { from, to }
+      originalSelectionRef.current = { from, to }
 
       // --하이라이트
       editor?.commands.setMark('highlight', { color: '#FFFAE5' })
@@ -161,9 +163,11 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }
 
   // 적용할 범위를 정확히 지정한 후 하이라이트 제거
-  const clearHighlight = () => {
-    if (selectionRef.current) {
-      editor?.chain().setTextSelection(selectionRef.current).unsetMark('highlight').run()
+  const clearHighlight = (originalSelection?: TextSelectionRangeType) => {
+    const selection = originalSelection ?? selectionRef.current
+
+    if (selection) {
+      editor?.chain().setTextSelection(selection).unsetMark('highlight').run()
     }
   }
 
@@ -185,7 +189,10 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           editor?.commands.insertContentAt(selectionRef.current, originalText)
         }
         setActiveMenu('defaultToolbar')
-        clearHighlight()
+        if (originalSelectionRef.current) {
+          clearHighlight(originalSelectionRef.current)
+          originalSelectionRef.current = null
+        }
         onClose()
         break
 
