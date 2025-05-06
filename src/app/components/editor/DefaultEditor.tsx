@@ -110,7 +110,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     if (from !== to) {
       selectionRef.current = { from, to }
 
-      // TODO 하이라이트
+      // --하이라이트
       editor?.commands.setMark('highlight', { color: '#FFFAE5' })
       return { from, to }
     }
@@ -126,15 +126,12 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     if (editor && selection) {
       const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
       setOriginalText(originPhrase)
-      console.log(originPhrase)
     }
   }
 
   // (방법 2)
   useEffect(() => {
     if (aiResult && selectionRef.current) {
-      console.log(selectionRef.current)
-
       editor?.commands.insertContentAt(selectionRef.current, aiResult)
       selectionRef.current = {
         from: selectionRef.current.from,
@@ -156,10 +153,10 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       })
 
       if (response.id) {
-        // TODO (방법 1) selection을 받아와서 대체 텍스트 삽입
+        // (방법 1) selection을 받아와서 대체 텍스트 삽입
         // editor.commands.insertContentAt(selection, response.answer)
 
-        // TODO (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
+        // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
         setAiResult(response.answer)
         onOpen()
       }
@@ -229,10 +226,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         tippyOptions={{
           duration: 100,
           maxWidth: 'none',
-          onHidden: () => {
-            // TODO remove text highlight 적용이 안되는 문제
-            // editor.chain().focus().unsetMark('highlight').run()
-          },
         }}
         // --shouldShow: 버블 메뉴 표시를 제어하는 콜백
         /* MEMO(Sohyun): DefaultEditor내부에서 editable 상태에따른 화면을 구현하고 싶었으나, 버블메뉴 shouldShow 상태 제어가 안되는 문제가 있음

@@ -12,7 +12,7 @@ interface TextSelectionRangeType {
   to: number
 }
 
-// 에디터 selection 상태 (드래그한 텍스트 범위)
+// 에디터 selection 상태 (드래그한 텍스트 범위) > 현재 작품 플래너에서만 사용
 export const selectionAtom = atom<TextSelectionRangeType | null>(null)
 
 // prompt 입력 값
