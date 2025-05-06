@@ -133,21 +133,19 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   // (방법 2)
   useEffect(() => {
     if (aiResult && selectionRef.current) {
+      console.log(selectionRef.current)
+
       editor?.commands.insertContentAt(selectionRef.current, aiResult)
+      selectionRef.current = {
+        from: selectionRef.current.from,
+        to: selectionRef.current.from + aiResult.length,
+      }
+
       editor?.commands.unsetMark('highlight')
 
       setAiResult('')
     }
   }, [aiResult])
-
-  const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
-    // TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 API 연동
-
-    switch (option) {
-      case 'cancel':
-        setActiveMenu('defaultToolbar')
-    }
-  }
 
   const handleAIPrompt = async () => {
     if (!promptValueRef || !selectionRef.current) return
@@ -169,6 +167,15 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       }
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
+    // TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 API 연동
+
+    switch (option) {
+      case 'cancel':
+        setActiveMenu('defaultToolbar')
     }
   }
 
