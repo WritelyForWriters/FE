@@ -172,13 +172,18 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     switch (option) {
       case 'apply':
         setActiveMenu('defaultToolbar')
-        // editor?.chain().focus().unsetMark('highlight').run()
+        if (selectionRef.current) {
+          // 적용할 범위를 정확히 지정한 후 하이라이트 제거
+          editor?.chain().setTextSelection(selectionRef.current).unsetMark('highlight').run()
+        }
         onClose()
         break
 
       case 'recreate':
         handleAIPrompt()
-        // editor?.chain().focus().unsetMark('highlight').run()
+        if (selectionRef.current) {
+          editor?.chain().setTextSelection(selectionRef.current).unsetMark('highlight').run()
+        }
         onClose()
         break
 
@@ -188,7 +193,9 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         }
         editor?.commands.unsetMark('highlight')
         setActiveMenu('defaultToolbar')
-        // editor?.chain().focus().unsetMark('highlight').run()
+        if (selectionRef.current) {
+          editor?.chain().setTextSelection(selectionRef.current).unsetMark('highlight').run()
+        }
         onClose()
         break
 
