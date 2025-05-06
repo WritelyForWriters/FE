@@ -141,8 +141,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         to: selectionRef.current.from + aiResult.length,
       }
 
-      editor?.commands.unsetMark('highlight')
-
       setAiResult('')
     }
   }, [aiResult])
@@ -171,11 +169,31 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }
 
   const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
-    // TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 API 연동
-
     switch (option) {
-      case 'cancel':
+      case 'apply':
         setActiveMenu('defaultToolbar')
+        // editor?.chain().focus().unsetMark('highlight').run()
+        onClose()
+        break
+
+      case 'recreate':
+        handleAIPrompt()
+        // editor?.chain().focus().unsetMark('highlight').run()
+        onClose()
+        break
+
+      case 'cancel':
+        if (selectionRef.current) {
+          editor?.commands.insertContentAt(selectionRef.current, originalText)
+        }
+        editor?.commands.unsetMark('highlight')
+        setActiveMenu('defaultToolbar')
+        // editor?.chain().focus().unsetMark('highlight').run()
+        onClose()
+        break
+
+      default:
+        break
     }
   }
 
