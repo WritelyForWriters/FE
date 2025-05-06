@@ -115,9 +115,9 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const handleActiveMenu = () => {
     setActiveMenu('aiToolbar')
 
-    // --선택한 원본 text 저장
     const selection = handleTextSelection()
 
+    // --선택한 원본 text 저장
     if (editor && selection) {
       const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
       setOriginalText(originPhrase)
@@ -177,7 +177,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
       case 'recreate':
         handleAIPrompt()
-        clearHighlight()
         onClose()
         break
 
