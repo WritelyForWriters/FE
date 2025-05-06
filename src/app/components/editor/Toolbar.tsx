@@ -203,11 +203,15 @@ export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
             <Image src="/icons/ai-option2.svg" alt="수동수정" width={20} height={20} />
             수동 수정
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+          <SelectMenu.Option
+            option={{ className: styles['select-option'], handleAction: handleActiveMenu }}
+          >
             <Image src="/icons/ai-option3.svg" alt="구간피드백" width={20} height={20} />
             구간 피드백
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+          <SelectMenu.Option
+            option={{ className: styles['select-option'], handleAction: handleActiveMenu }}
+          >
             <Image src="/icons/ai-option4.svg" alt="자유대화" width={20} height={20} />
             자유 대화
           </SelectMenu.Option>
