@@ -36,4 +36,4 @@ export const autoSaveMessageAtom = atom({
 export const originalPhraseAtom = atom('')
 
 // AI 수정 메세지 저장
-export const aiResultAtom = atom('대체 텍스트입니다!')
+export const aiResultAtom = atom('')

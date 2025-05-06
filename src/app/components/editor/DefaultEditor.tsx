@@ -1,6 +1,8 @@
 'use client'
 
-import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
+import Image from 'next/image'
+
+import { ChangeEvent, Ref, RefObject, useEffect, useImperativeHandle, useRef } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
@@ -12,21 +14,23 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import {
-  activeMenuAtom,
-  // aiResultAtom,
-  isEditableAtom,
-  originalPhraseAtom,
-  selectionAtom,
-} from 'store/editorAtoms'
+import { postUserModify } from 'api/ai-assistant/aiAssistant'
+import { useAtom, useAtomValue } from 'jotai'
+import { FaCheck } from 'react-icons/fa6'
+import { IoClose } from 'react-icons/io5'
+import { activeMenuAtom, aiResultAtom, isEditableAtom, originalPhraseAtom } from 'store/editorAtoms'
+import { productIdAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
+
+import FillButton from '@components/buttons/FillButton'
+import SelectMenu from '@components/select-menu/SelectMenu'
+
+import { useCollapsed } from '@hooks/common/useCollapsed'
 
 import BlockquoteExtension from '@extensions/Blockquote'
 import HeadingExtension from '@extensions/Heading'
 import Indent from '@extensions/Indent'
 
-import PromptMenu from './PromptMenu'
 import Toolbar from './Toolbar'
 
 import styles from './DefaultEditor.module.scss'
@@ -37,13 +41,23 @@ interface DefaultEditorProps {
   contents?: string
 }
 
+interface TextSelectionRangeType {
+  from: number
+  to: number
+}
+
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
-  const setSelection = useSetAtom(selectionAtom)
-  const editable = useAtomValue(isEditableAtom)
-  const setOriginalText = useSetAtom(originalPhraseAtom)
+  const [originalText, setOriginalText] = useAtom(originalPhraseAtom)
+  const [aiResult, setAiResult] = useAtom(aiResultAtom)
 
-  // const [aiResult, setAiResult] = useAtom(aiResultAtom)
+  const editable = useAtomValue(isEditableAtom)
+  const productId = useAtomValue(productIdAtom)
+
+  const selectionRef = useRef<TextSelectionRangeType | null>(null)
+  const promptValueRef = useRef('')
+
+  const { isOpen, onOpen, onClose } = useCollapsed()
 
   const editor = useEditor({
     editable,
@@ -82,15 +96,22 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     getEditor: () => editor,
   }))
 
+  // --프롬프트 입력
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    promptValueRef.current = e.target.value
+  }
+
   // --드래그한 영역 저장 및 하이라이트
   const handleTextSelection = () => {
-    const { state } = editor!
-    const { from, to } = state.selection
+    if (!editor) return
+
+    const { from, to } = editor.state.selection
 
     if (from !== to) {
-      setSelection({ from, to })
+      selectionRef.current = { from, to }
+
       // TODO 하이라이트
-      // editor?.commands.setMark('highlight', { color: '#FFFAE5' })
+      editor?.commands.setMark('highlight', { color: '#FFFAE5' })
       return { from, to }
     }
     return null
@@ -101,7 +122,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
     // --선택한 원본 text 저장
     const selection = handleTextSelection()
-    console.log(selection)
+
     if (editor && selection) {
       const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
       setOriginalText(originPhrase)
@@ -109,15 +130,47 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     }
   }
 
-  // useEffect(() => {
-  //   if (aiResult && selection) {
-  //     editor?.commands.insertContentAt(selection, aiResult)
-  //     editor?.commands.unsetMark('highlight')
-  //     // 상태 초기화
-  //     setAiResult('')
-  //     setSelection(null)
-  //   }
-  // }, [aiResult, selection])
+  // (방법 2)
+  useEffect(() => {
+    if (aiResult && selectionRef.current) {
+      editor?.commands.insertContentAt(selectionRef.current, aiResult)
+      editor?.commands.unsetMark('highlight')
+
+      setAiResult('')
+    }
+  }, [aiResult])
+
+  const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
+    // TODO 선택한 텍스트 구간과 AI 선택 메뉴를 바탕으로 API 연동
+
+    switch (option) {
+      case 'cancel':
+        setActiveMenu('defaultToolbar')
+    }
+  }
+
+  const handleAIPrompt = async () => {
+    if (!promptValueRef || !selectionRef.current) return
+
+    try {
+      const response = await postUserModify({
+        productId,
+        content: originalText,
+        prompt: promptValueRef.current,
+      })
+
+      if (response.id) {
+        // TODO (방법 1) selection을 받아와서 대체 텍스트 삽입
+        // editor.commands.insertContentAt(selection, response.answer)
+
+        // TODO (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
+        setAiResult(response.answer)
+        onOpen()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     if (!editor) {
@@ -145,9 +198,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           duration: 100,
           maxWidth: 'none',
           onHidden: () => {
-            // setActiveMenu('defaultToolbar')
-            setSelection(null)
-
             // TODO remove text highlight 적용이 안되는 문제
             // editor.chain().focus().unsetMark('highlight').run()
           },
@@ -162,7 +212,47 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         )}
       </BubbleMenu>
 
-      {activeMenu === 'aiToolbar' && <PromptMenu editor={editor} />}
+      {activeMenu === 'aiToolbar' && (
+        <div className={styles.container}>
+          <div className={styles['prompt-menu']}>
+            <input
+              autoFocus
+              className={styles['prompt-menu__input']}
+              onChange={handleChangeInput}
+            />
+
+            <FillButton
+              size="medium"
+              variant="primary"
+              style={{
+                padding: '0.8rem 1.2rem',
+                height: '100%',
+              }}
+              onClick={() => handleAIPrompt()}
+            >
+              생성하기
+            </FillButton>
+          </div>
+
+          {/* TODO 툴바 메뉴 전환 */}
+          <div className={styles['select-menu']}>
+            <SelectMenu handleClose={onClose} isOpen={isOpen}>
+              <SelectMenu.Option option={{ handleAction: handleOptionClick('apply') }}>
+                <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
+                이대로 수정하기
+              </SelectMenu.Option>
+              <SelectMenu.Option option={{ handleAction: handleOptionClick('recreate') }}>
+                <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
+                다시 생성하기
+              </SelectMenu.Option>
+              <SelectMenu.Option option={{ handleAction: handleOptionClick('cancel') }}>
+                <IoClose color="#CCCCCC" fontSize={20} />
+                취소하기
+              </SelectMenu.Option>
+            </SelectMenu>
+          </div>
+        </div>
+      )}
 
       <EditorContent editor={editor} className={styles.tiptap} />
     </section>
