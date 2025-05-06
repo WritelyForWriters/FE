@@ -20,7 +20,7 @@ import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 import { activeMenuAtom, aiResultAtom, isEditableAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { productIdAtom } from 'store/productsAtoms'
-import { HandleEditor } from 'types/common/editor'
+import { HandleEditor, TextSelectionRangeType } from 'types/common/editor'
 
 import FillButton from '@components/buttons/FillButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
@@ -39,11 +39,6 @@ interface DefaultEditorProps {
   editorRef: Ref<HandleEditor>
   isSavedRef: RefObject<boolean>
   contents?: string
-}
-
-interface TextSelectionRangeType {
-  from: number
-  to: number
 }
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
@@ -165,22 +160,24 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     }
   }
 
+  // 적용할 범위를 정확히 지정한 후 하이라이트 제거
+  const clearHighlight = () => {
+    if (selectionRef.current) {
+      editor?.chain().setTextSelection(selectionRef.current).unsetMark('highlight').run()
+    }
+  }
+
   const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
     switch (option) {
       case 'apply':
         setActiveMenu('defaultToolbar')
-        if (selectionRef.current) {
-          // 적용할 범위를 정확히 지정한 후 하이라이트 제거
-          editor?.chain().setTextSelection(selectionRef.current).unsetMark('highlight').run()
-        }
+        clearHighlight()
         onClose()
         break
 
       case 'recreate':
         handleAIPrompt()
-        if (selectionRef.current) {
-          editor?.chain().setTextSelection(selectionRef.current).unsetMark('highlight').run()
-        }
+        clearHighlight()
         onClose()
         break
 
@@ -188,11 +185,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         if (selectionRef.current) {
           editor?.commands.insertContentAt(selectionRef.current, originalText)
         }
-        editor?.commands.unsetMark('highlight')
         setActiveMenu('defaultToolbar')
-        if (selectionRef.current) {
-          editor?.chain().setTextSelection(selectionRef.current).unsetMark('highlight').run()
-        }
+        clearHighlight()
         onClose()
         break
 
@@ -244,6 +238,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
               autoFocus
               className={styles['prompt-menu__input']}
               onChange={handleChangeInput}
+              placeholder="프롬프트를 입력해 주세요."
             />
 
             <FillButton

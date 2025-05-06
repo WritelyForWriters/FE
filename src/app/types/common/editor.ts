@@ -5,3 +5,8 @@ import { Editor } from '@tiptap/react'
 export interface HandleEditor {
   getEditor: () => Editor | null
 }
+
+export interface TextSelectionRangeType {
+  from: number
+  to: number
+}
