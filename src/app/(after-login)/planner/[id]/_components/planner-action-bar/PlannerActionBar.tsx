@@ -10,6 +10,8 @@ import TextButton from '@components/buttons/TextButton'
 import { useProducts } from '@hooks/products/useProductsMutation'
 import { useGetProductDetail } from '@hooks/products/useProductsQueries'
 
+import { formatMillisecondToMinute } from '@utils/formatDate'
+
 import classNames from 'classnames/bind'
 
 const cx = classNames.bind(styles)
@@ -18,6 +20,7 @@ interface PlannerActionBarProps {
   productId: string
   isValidFormValues: boolean
   isSaved: boolean
+  autoSaveTimer: number
   onSubmit: () => void
 }
 
@@ -25,6 +28,7 @@ export default function PlannerActionBar({
   productId,
   isValidFormValues,
   isSaved,
+  autoSaveTimer,
   onSubmit,
 }: PlannerActionBarProps) {
   const { data: productDetail } = useGetProductDetail(productId)
@@ -100,8 +104,10 @@ export default function PlannerActionBar({
             {title}
           </span>
         )}
-        {/* Note: description은 동적 렌더링 필요 */}
-        <span className={cx('description')}>저장 중</span>
+        {/* NOTE(hajae): 현재 테스트 */}
+        <span className={cx('description')}>
+          {formatMillisecondToMinute(autoSaveTimer)}분 뒤에 자동 저장됩니다.
+        </span>
       </>
     )
   }

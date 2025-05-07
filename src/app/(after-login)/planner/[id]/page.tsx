@@ -9,6 +9,7 @@ import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
 import { useToast } from '@components/toast/ToastProvider'
 
+import { useAutoSaveTimer } from '@hooks/products/useAutoSaveTimer'
 import { useCreateProductTemplates } from '@hooks/products/useProductsMutation'
 import { useFetchProductTemplates } from '@hooks/products/useProductsQueries'
 
@@ -30,12 +31,13 @@ function usePlannerData(params: Params) {
   const { data: templates } = useFetchProductTemplates(id)
   const characters = useAtomValue(plannerCharacterByIdAtom(id))
   const showToast = useToast()
+  const { autoSaveTimer } = useAutoSaveTimer()
 
-  return { id, templates, characters, showToast }
+  return { id, templates, characters, showToast, autoSaveTimer }
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
-  const { id, templates, characters, showToast } = usePlannerData(params)
+  const { id, templates, characters, showToast, autoSaveTimer } = usePlannerData(params)
   const [isSaved, setIsSaved] = useState(false)
 
   const methods = useForm<PlannerSynopsisFormValues>()
@@ -94,6 +96,7 @@ export default function PlannerPage({ params }: { params: Params }) {
         isValidFormValues={isValid}
         isSaved={isSaved}
         onSubmit={handleFormSubmit}
+        autoSaveTimer={autoSaveTimer}
       />
       <div className={cx('main-section')}>
         <PlannerTabs />
