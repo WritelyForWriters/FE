@@ -22,21 +22,12 @@ export default function PlannerActionBar({
   isSaved,
   onSubmit,
 }: PlannerActionBarProps) {
-  // 액션바 내 좌측 영역
   const ActionSectionContent = () => {
-    // 저장 여부 판단 state
     const [hasSaved, setHasSaved] = useState(isSaved)
-
-    // 저장 버튼 클릭 트리거 이벤트
     const handleSave = () => {
       if (!isValidFormValues) return
       onSubmit()
       setHasSaved(true)
-    }
-
-    // 삭제 버튼 클릭 트리거 이벤트
-    const handleDelete = () => {
-      alert('삭제 완료!')
     }
 
     return (
@@ -50,24 +41,16 @@ export default function PlannerActionBar({
             <TextButton size="large" onClick={() => handleSave()}>
               수정하기
             </TextButton>
-            <TextButton size="large" onClick={() => handleDelete()}>
-              삭제하기
-            </TextButton>
           </>
         )}
       </>
     )
   }
 
-  // 액션바 내 가운데 영역
   const TitleSectionContent = () => {
-    // 타이틀 수정 모드를 구분하는 state
     const [isTitleEditing, setIsTitleEditing] = useState(false)
-
-    // 타이틀명 state
     const [title, setTitle] = useState('타이틀')
 
-    // 엔터키 트리거 이벤트
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         setIsTitleEditing(false)
