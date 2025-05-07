@@ -89,7 +89,12 @@ export default function PlannerPage({ params }: { params: Params }) {
 
   return (
     <div className={cx('container')}>
-      <PlannerActionBar isValidFormValues={isValid} isSaved={isSaved} onSubmit={handleFormSubmit} />
+      <PlannerActionBar
+        productId={id}
+        isValidFormValues={isValid}
+        isSaved={isSaved}
+        onSubmit={handleFormSubmit}
+      />
       <div className={cx('main-section')}>
         <PlannerTabs />
         <FormProvider {...methods}>
