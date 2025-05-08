@@ -18,9 +18,7 @@ const cx = classNames.bind(styles)
 
 export default function PlannerCharacterForm() {
   const params = useParams<{ id: string }>()
-  const [characters, setCharacters] = useAtom<CharacterFormValues[]>(
-    plannerCharacterByIdAtom(params.id),
-  )
+  const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(params.id))
 
   const createCharacter = (): CharacterFormValues => ({
     id: '',
@@ -42,12 +40,12 @@ export default function PlannerCharacterForm() {
   })
 
   const handleAddCharacter = () => {
-    setCharacters((prev) => [...prev, createCharacter()])
+    setFormValues([...formValues.characters, createCharacter()])
   }
 
   const handleRemoveCharacter = (index: number) => {
-    const newCharacters = characters.filter((_, i) => i !== index)
-    setCharacters(newCharacters)
+    const newCharacters = formValues.characters.filter((_, i) => i !== index)
+    setFormValues(newCharacters)
   }
 
   return (
@@ -59,8 +57,8 @@ export default function PlannerCharacterForm() {
         </FillButton>
       </div>
 
-      {characters &&
-        characters.map((character, index) => (
+      {formValues.characters &&
+        formValues.characters.map((character, index) => (
           <PlannerCharacterFormList
             key={character.id ? `${character.id}-${index}` : `${index}`}
             paramsId={params.id}

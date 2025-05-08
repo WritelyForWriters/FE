@@ -29,11 +29,11 @@ type Params = Promise<{ id: string }>
 function usePlannerData(params: Params) {
   const { id } = use(params)
   const { data: templates } = useFetchProductTemplates(id)
-  const characters = useAtomValue(plannerCharacterByIdAtom(id))
+  const formValues = useAtomValue(plannerCharacterByIdAtom(id))
   const showToast = useToast()
   const { autoSaveTimer } = useAutoSaveTimer()
 
-  return { id, templates, characters, showToast, autoSaveTimer }
+  return { id, templates, characters: formValues.characters, showToast, autoSaveTimer }
 }
 
 export default function PlannerPage({ params }: { params: Params }) {

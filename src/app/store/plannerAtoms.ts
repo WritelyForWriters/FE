@@ -1,19 +1,21 @@
 import { Getter, Setter, atom } from 'jotai'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
-import { CharacterFormValues } from 'types/planner/plannerSynopsisFormValues'
+import {
+  CharacterFormValues,
+  PlannerSynopsisFormValues,
+} from 'types/planner/plannerSynopsisFormValues'
 
 type PlannerActiveTabType = 'synopsis' | 'ideaNote'
 
 export const plannerActiveTabAtom = atom<PlannerActiveTabType>('synopsis')
 
-type PlannerCharacterFormValuesType = PlannerCharacterFormValueType[]
-type PlannerCharacterFormValueType = {
+type PlannerTemplateFormValuesType = PlannerTemplateFormValueType[]
+type PlannerTemplateFormValueType = {
   plannerId: string
-  characters: CharacterFormValues[]
-}
+} & PlannerSynopsisFormValues
 
 // NOTE(hajae): atom with local storage
-export const plannerCharacterFormValuesAtom = atomWithStorage<PlannerCharacterFormValuesType>(
+export const plannerCharacterFormValuesAtom = atomWithStorage<PlannerTemplateFormValuesType>(
   'plannerCharacterFormValues',
   [],
 )
@@ -34,32 +36,45 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
 
   const getCharactersByPlannerId = (get: Getter) => {
     const all = get(plannerCharacterFormValuesAtom)
-    return all.find((entry) => entry.plannerId === plannerId)?.characters ?? []
+    return (
+      all.find((entry) => entry.plannerId === plannerId) ??
+      ({
+        plannerId,
+        ...PlannerSynopsisFormValues.from(undefined),
+      } as PlannerTemplateFormValueType)
+    )
   }
 
   const updateCharactersByPlannerId = (
     get: Getter,
     set: Setter,
-    update: CharacterFormValues[] | ((prev: CharacterFormValues[]) => CharacterFormValues[]),
+    update: CharacterFormValues[] | PlannerSynopsisFormValues,
   ) => {
-    const characterForms = get(plannerCharacterFormValuesAtom)
-    const targetFromIndex = characterForms.findIndex((form) => form.plannerId === plannerId)
-    const prev = characterForms[targetFromIndex].characters
-    const updatedForm = typeof update === 'function' ? update(prev) : update
+    const formValues = get(plannerCharacterFormValuesAtom)
+    const hasExisting = formValues.some((form) => form.plannerId === plannerId)
 
-    const updatedCharacterForms =
-      targetFromIndex === -1
-        ? [...characterForms, { plannerId, characters: [...updatedForm] }]
-        : characterForms.map((form, index) =>
-            index === targetFromIndex
-              ? {
-                  ...form,
-                  characters: [...updatedForm],
-                }
-              : form,
-          )
+    // NOTE(hajae): 캐릭터는 실시간 저장이기때문에 로직 분리
+    if (Array.isArray(update)) {
+      const updated = formValues.map((form) =>
+        form.plannerId === plannerId ? { ...form, characters: [...update] } : form,
+      )
+      set(plannerCharacterFormValuesAtom, updated)
+      return
+    }
 
-    set(plannerCharacterFormValuesAtom, updatedCharacterForms)
+    if (hasExisting) {
+      // NOTE(hajae): 기존 템플릿 업데이트
+      const updated = formValues.map((form) =>
+        form.plannerId === plannerId
+          ? { plannerId, ...(update as PlannerSynopsisFormValues) }
+          : form,
+      )
+      set(plannerCharacterFormValuesAtom, updated)
+    } else {
+      // NOTE(hajae): 새 템플릿 추가
+      const updated = [...formValues, { plannerId, ...(update as PlannerSynopsisFormValues) }]
+      set(plannerCharacterFormValuesAtom, updated)
+    }
   }
 
   const baseAtom = atom(getCharactersByPlannerId, updateCharactersByPlannerId)
@@ -69,11 +84,15 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
   baseAtom.onMount = (set) => {
     const saved = JSON.parse(
       localStorage.getItem('plannerCharacterFormValues') || '[]',
-    ) as PlannerCharacterFormValuesType
+    ) as PlannerTemplateFormValuesType
     const entry = saved.find((item) => item.plannerId === plannerId)
 
-    if (!entry || entry.characters.length === 0) {
-      set([createCharacter()])
+    if (!entry) {
+      set({
+        plannerId,
+        ...PlannerSynopsisFormValues.from(undefined),
+        characters: [createCharacter()],
+      } as PlannerTemplateFormValueType)
     }
   }
 

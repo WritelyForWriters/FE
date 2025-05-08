@@ -60,17 +60,17 @@ export type IdeaNoteFormValues = {
 }
 
 export const PlannerSynopsisFormValues = {
-  from: (res: PlannerTemplates): PlannerSynopsisFormValues => {
+  from: (res: PlannerTemplates | undefined): PlannerSynopsisFormValues => {
     return {
-      synopsis: PlannerSynopsisFormValues.toSynopsisFormValues(res.synopsis),
-      worldview: PlannerSynopsisFormValues.toWorldViewFormValues(res.worldview),
-      characters: PlannerSynopsisFormValues.toCharacterFormValues(res.characters),
-      plot: PlannerSynopsisFormValues.toPlotFormValues(res.plot),
-      ideaNote: PlannerSynopsisFormValues.toIdeaNoteFormValues(res.ideaNote),
+      synopsis: PlannerSynopsisFormValues.toSynopsisFormValues(res?.synopsis),
+      worldview: PlannerSynopsisFormValues.toWorldViewFormValues(res?.worldview),
+      characters: PlannerSynopsisFormValues.toCharacterFormValues(res?.characters),
+      plot: PlannerSynopsisFormValues.toPlotFormValues(res?.plot),
+      ideaNote: PlannerSynopsisFormValues.toIdeaNoteFormValues(res?.ideaNote),
     }
   },
 
-  toSynopsisFormValues: (synopsis: Synopsis): SynopsisFormValues => {
+  toSynopsisFormValues: (synopsis: Synopsis | undefined): SynopsisFormValues => {
     if (!synopsis) {
       return {
         genre: [],
@@ -93,7 +93,7 @@ export const PlannerSynopsisFormValues = {
     }
   },
 
-  toWorldViewFormValues: (worldview: WorldViewFormValues): WorldViewFormValues => {
+  toWorldViewFormValues: (worldview: WorldViewFormValues | undefined): WorldViewFormValues => {
     if (!worldview) {
       return {
         geography: '',
@@ -116,7 +116,7 @@ export const PlannerSynopsisFormValues = {
     return worldview
   },
 
-  toCharacterFormValues: (characters: CharacterFormValues[]): CharacterFormValues[] => {
+  toCharacterFormValues: (characters: CharacterFormValues[] | undefined): CharacterFormValues[] => {
     if (!characters) {
       return []
     }
@@ -127,7 +127,7 @@ export const PlannerSynopsisFormValues = {
     }))
   },
 
-  toPlotFormValues: (plot: PlotFormValues): PlotFormValues => {
+  toPlotFormValues: (plot: PlotFormValues | undefined): PlotFormValues => {
     if (!plot) {
       return {
         content: '',
@@ -137,7 +137,7 @@ export const PlannerSynopsisFormValues = {
     return plot
   },
 
-  toIdeaNoteFormValues: (ideaNote: IdeaNoteFormValues): IdeaNoteFormValues => {
+  toIdeaNoteFormValues: (ideaNote: IdeaNoteFormValues | undefined): IdeaNoteFormValues => {
     if (!ideaNote) {
       return {
         title: '',
