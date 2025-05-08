@@ -46,11 +46,8 @@ export default function PlannerCharacterForm() {
   }
 
   const handleRemoveCharacter = (index: number) => {
-    setCharacters((prev) => {
-      const next = [...prev]
-      next.splice(index, 1)
-      return next
-    })
+    const newCharacters = characters.filter((_, i) => i !== index)
+    setCharacters(newCharacters)
   }
 
   return (

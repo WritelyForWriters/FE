@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react'
 
-import { useAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
@@ -29,16 +29,15 @@ type Params = Promise<{ id: string }>
 function usePlannerData(params: Params) {
   const { id } = use(params)
   const { data: templates } = useFetchProductTemplates(id)
-  const [characters, setCharacters] = useAtom(plannerCharacterByIdAtom(id))
+  const characters = useAtomValue(plannerCharacterByIdAtom(id))
   const showToast = useToast()
   const { autoSaveTimer } = useAutoSaveTimer()
 
-  return { id, templates, characters, setCharacters, showToast, autoSaveTimer }
+  return { id, templates, characters, showToast, autoSaveTimer }
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
-  const { id, templates, characters, setCharacters, showToast, autoSaveTimer } =
-    usePlannerData(params)
+  const { id, templates, characters, showToast, autoSaveTimer } = usePlannerData(params)
   const [isSaved, setIsSaved] = useState(false)
 
   const methods = useForm<PlannerSynopsisFormValues>()
@@ -70,39 +69,12 @@ export default function PlannerPage({ params }: { params: Params }) {
           templates.worldview !== null,
       )
 
-      const values = PlannerSynopsisFormValues.from(templates)
-
-      if (
-        values.characters.length > 0 &&
-        characters.length > 0 &&
-        values.characters.length === characters.length
-      ) {
-        const updatedCharacters = characters.map((char, index) => ({
-          ...char,
-          id: values.characters[index].id,
-        }))
-
-        setCharacters(updatedCharacters)
-
-        reset({
-          synopsis: values.synopsis,
-          worldview: values.worldview,
-          characters: updatedCharacters,
-          plot: values.plot,
-          ideaNote: values.ideaNote,
-        })
-
-        return
-      }
-
       reset({
-        synopsis: values.synopsis,
-        worldview: values.worldview,
-        // NOTE(hajae): local storage에 저장된 캐릭터가 우선
-        // https://www.notion.so/1678209b09f98067a6e7c8e3ef8b08ff?d=1cb8209b09f980e8bfb9001c4c150e72&pvs=4#1718209b09f980a6afbfd4244f71cb25
-        characters: characters ?? values.characters,
-        plot: values.plot,
-        ideaNote: values.ideaNote,
+        synopsis: templates.synopsis,
+        worldview: templates.worldview,
+        characters: characters ?? templates.characters,
+        plot: templates.plot,
+        ideaNote: templates.ideaNote,
       })
     }
   }, [reset, templates])

@@ -42,17 +42,24 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
     set: Setter,
     update: CharacterFormValues[] | ((prev: CharacterFormValues[]) => CharacterFormValues[]),
   ) => {
-    const all = get(plannerCharacterFormValuesAtom)
-    const index = all.findIndex((entry) => entry.plannerId === plannerId)
-    const prev = index === -1 ? [] : all[index].characters
-    const next = typeof update === 'function' ? update(prev) : update
+    const characterForms = get(plannerCharacterFormValuesAtom)
+    const targetFromIndex = characterForms.findIndex((form) => form.plannerId === plannerId)
+    const prev = characterForms[targetFromIndex].characters
+    const updatedForm = typeof update === 'function' ? update(prev) : update
 
-    const updatedAll =
-      index === -1
-        ? [...all, { plannerId, characters: next }]
-        : all.map((entry, i) => (i === index ? { ...entry, characters: next } : entry))
+    const updatedCharacterForms =
+      targetFromIndex === -1
+        ? [...characterForms, { plannerId, characters: [...updatedForm] }]
+        : characterForms.map((form, index) =>
+            index === targetFromIndex
+              ? {
+                  ...form,
+                  characters: [...updatedForm],
+                }
+              : form,
+          )
 
-    set(plannerCharacterFormValuesAtom, updatedAll)
+    set(plannerCharacterFormValuesAtom, updatedCharacterForms)
   }
 
   const baseAtom = atom(getCharactersByPlannerId, updateCharactersByPlannerId)
