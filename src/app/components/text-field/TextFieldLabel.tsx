@@ -78,7 +78,6 @@ export default function TextFieldLabel({
         />
       ) : (
         <label
-          htmlFor={name}
           className={cx('text-field__fieldset__label', {
             'text-field__fieldset__label--active': value,
             'text-field__fieldset__label--editable': isLabelEditable,

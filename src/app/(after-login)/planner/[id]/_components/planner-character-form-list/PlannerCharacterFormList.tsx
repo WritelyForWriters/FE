@@ -36,7 +36,7 @@ export default function PlannerCharacterFormList({
   handleRemoveCharacter,
 }: PlannerCharacterFormListProps) {
   const { isOpen, onToggle } = useCollapsed(true)
-  const { control, setValue } = useFormContext()
+  const { control } = useFormContext()
   const setCharacters = useSetAtom(plannerCharacterByIdAtom(paramsId))
 
   const watchedValues: CharacterFormValues = useWatch({
@@ -57,11 +57,6 @@ export default function PlannerCharacterFormList({
       return next
     })
   }, [watchedValues, arrayIndex, setCharacters])
-
-  // NOTE(hajae): local storage에 저장된 값으로 초기화
-  useEffect(() => {
-    setValue(`characters[${arrayIndex}]`, character)
-  }, [])
 
   const getTextFieldName = (name: string) => {
     // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
