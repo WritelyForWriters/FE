@@ -14,7 +14,7 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { postUserModify } from 'api/ai-assistant/aiAssistant'
+import { postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
 import { useAtom, useAtomValue } from 'jotai'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
@@ -54,6 +54,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const promptValueRef = useRef('')
 
   const { isOpen, onOpen, onClose } = useCollapsed()
+
+  const feedbackInput = useRef<string | null>(null)
 
   const editor = useEditor({
     editable,
@@ -114,8 +116,28 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     return null
   }
 
+  const handleAiFeedback = async (originPhrase: string) => {
+    try {
+      const response = await postFeedback({
+        productId,
+        content: originPhrase,
+      })
+
+      if (response.id) {
+        feedbackInput.current = response.answer
+        onOpen()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleActiveMenu = () => {
-    setActiveMenu('aiToolbar')
+    // 수동 수정 눌렀을 때
+    // setActiveMenu('aiToolbar')
+
+    // 구간피드백 눌렀을 때
+    setActiveMenu('feedback')
 
     const selection = handleTextSelection()
 
@@ -123,6 +145,9 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     if (editor && selection) {
       const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
       setOriginalText(originPhrase)
+
+      // 구간 피드백에 대한 api를 호출하고 거기서 얻은 응답을 input에 넣어서 보여줘야 함
+      handleAiFeedback(originPhrase)
     }
   }
 
@@ -234,6 +259,40 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       >
         {activeMenu === 'defaultToolbar' && (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
+        )}
+        {/* 구간 피드백 */}
+        {activeMenu === 'feedback' && (
+          <div>
+            <div className={styles['prompt-menu']}>
+              <input
+                readOnly
+                className={styles['prompt-menu__input']}
+                onChange={handleChangeInput}
+                value={
+                  feedbackInput.current
+                    ? feedbackInput.current
+                    : '선택한 구간에 대한 피드백을 생성하고 있어요.'
+                }
+              />
+            </div>
+
+            <div className={styles['select-menu']}>
+              <SelectMenu handleClose={onClose} isOpen={isOpen}>
+                <SelectMenu.Option option={{ handleAction: handleOptionClick('apply') }}>
+                  <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
+                  이대로 수정하기
+                </SelectMenu.Option>
+                <SelectMenu.Option option={{ handleAction: handleOptionClick('recreate') }}>
+                  <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
+                  다시 생성하기
+                </SelectMenu.Option>
+                <SelectMenu.Option option={{ handleAction: handleOptionClick('cancel') }}>
+                  <IoClose color="#CCCCCC" fontSize={20} />
+                  취소하기
+                </SelectMenu.Option>
+              </SelectMenu>
+            </div>
+          </div>
         )}
       </BubbleMenu>
 

@@ -3,7 +3,7 @@ import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { TextSelectionRangeType } from 'types/common/editor'
 
-type ToolbarType = 'defaultToolbar' | 'aiToolbar'
+type ToolbarType = 'defaultToolbar' | 'aiToolbar' | 'feedback'
 
 // 에디터 툴바 상태
 export const activeMenuAtom = atom<ToolbarType>('defaultToolbar')
