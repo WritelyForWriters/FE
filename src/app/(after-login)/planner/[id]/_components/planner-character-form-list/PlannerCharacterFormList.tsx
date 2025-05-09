@@ -25,14 +25,12 @@ const expandItems = ['intro', 'customFields']
 interface PlannerCharacterFormListProps {
   paramsId: string
   arrayIndex: number
-  character: CharacterFormValues
   handleRemoveCharacter: (index: number) => void
 }
 
 export default function PlannerCharacterFormList({
   paramsId,
   arrayIndex,
-  character,
   handleRemoveCharacter,
 }: PlannerCharacterFormListProps) {
   const { isOpen, onToggle } = useCollapsed(true)
@@ -41,7 +39,7 @@ export default function PlannerCharacterFormList({
 
   const getTextFieldName = (name: string) => {
     // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
-    if (name === 'customFields' && character.customFields) {
+    if (name === 'customFields' && formValues.characters[arrayIndex].customFields) {
       return `characters[${arrayIndex}].customFields[0].content`
     } else {
       return `characters[${arrayIndex}].${name}`
