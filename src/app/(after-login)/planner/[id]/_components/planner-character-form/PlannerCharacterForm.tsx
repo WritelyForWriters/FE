@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation'
 
 import { useEffect } from 'react'
 
+import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
 import { useAtom } from 'jotai'
 import { useFormContext } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
@@ -24,27 +25,7 @@ export default function PlannerCharacterForm() {
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(params.id))
 
   const handleAddCharacter = () => {
-    setFormValues([
-      ...formValues.characters,
-      {
-        id: '',
-        intro: '',
-        name: '',
-        age: undefined,
-        gender: '',
-        occupation: '',
-        appearance: '',
-        personality: '',
-        relationship: '',
-        customFields: [
-          {
-            id: '',
-            name: '',
-            content: '',
-          },
-        ],
-      },
-    ])
+    setFormValues([...formValues.characters, NEW_PLANNER_CHARACTER])
   }
 
   const handleRemoveCharacter = (index: number) => {

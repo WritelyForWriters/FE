@@ -1,3 +1,4 @@
+import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
 import { Getter, Setter, atom } from 'jotai'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
 import {
@@ -21,19 +22,6 @@ export const plannerCharacterFormValuesAtom = atomWithStorage<PlannerTemplateFor
 )
 
 export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
-  const createCharacter = (): CharacterFormValues => ({
-    id: '',
-    intro: '',
-    name: '',
-    age: undefined,
-    gender: '',
-    occupation: '',
-    appearance: '',
-    personality: '',
-    relationship: '',
-    customFields: [],
-  })
-
   const getCharactersByPlannerId = (get: Getter) => {
     const all = get(plannerCharacterFormValuesAtom)
     return (
@@ -91,7 +79,7 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
       set({
         plannerId,
         ...PlannerSynopsisFormValues.from(undefined),
-        characters: [createCharacter()],
+        characters: [NEW_PLANNER_CHARACTER],
       } as PlannerTemplateFormValueType)
     }
   }

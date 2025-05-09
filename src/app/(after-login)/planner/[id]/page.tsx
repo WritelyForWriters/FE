@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react'
 
-import { useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
@@ -29,15 +29,23 @@ type Params = Promise<{ id: string }>
 function usePlannerData(params: Params) {
   const { id } = use(params)
   const { data: templates } = useFetchProductTemplates(id)
-  const formValues = useAtomValue(plannerCharacterByIdAtom(id))
+  const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
   const showToast = useToast()
   const { autoSaveTimer } = useAutoSaveTimer()
 
-  return { id, templates, characters: formValues.characters, showToast, autoSaveTimer }
+  return {
+    id,
+    templates,
+    characters: formValues.characters,
+    setCharacters: setFormValues,
+    showToast,
+    autoSaveTimer,
+  }
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
-  const { id, templates, characters, showToast, autoSaveTimer } = usePlannerData(params)
+  const { id, templates, characters, setCharacters, showToast, autoSaveTimer } =
+    usePlannerData(params)
   const [isSaved, setIsSaved] = useState(false)
 
   const methods = useForm<PlannerSynopsisFormValues>()
@@ -68,6 +76,31 @@ export default function PlannerPage({ params }: { params: Params }) {
           templates.synopsis !== null ||
           templates.worldview !== null,
       )
+
+      // NOTE(hajae): 서버에 저장된 ID가 존재하고, Local Storage에 저장된 ID가 없을 경우 ID를 SET
+      // 현재 사양은 클라이언트에 저장된 데이터를 우선으로 Character를 SET
+      if (
+        templates.characters.length > 0 &&
+        characters.length > 0 &&
+        characters.some((c) => !c.id)
+      ) {
+        const updatedCharacters = characters.map((character, index) => ({
+          ...character,
+          id: templates.characters[index]?.id ?? '',
+        }))
+
+        setCharacters(updatedCharacters)
+
+        reset({
+          synopsis: templates.synopsis,
+          worldview: templates.worldview,
+          characters: updatedCharacters,
+          plot: templates.plot,
+          ideaNote: templates.ideaNote,
+        })
+
+        return
+      }
 
       reset({
         synopsis: templates.synopsis,
