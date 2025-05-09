@@ -1,18 +1,14 @@
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
+import { TextSelectionRangeType } from 'types/common/editor'
 
 type ToolbarType = 'defaultToolbar' | 'aiToolbar'
 
 // 에디터 툴바 상태
 export const activeMenuAtom = atom<ToolbarType>('defaultToolbar')
 
-interface TextSelectionRangeType {
-  from: number
-  to: number
-}
-
-// 에디터 selection 상태 (드래그한 텍스트 범위)
+// 에디터 selection 상태 (드래그한 텍스트 범위) > 현재 작품 플래너에서만 사용
 export const selectionAtom = atom<TextSelectionRangeType | null>(null)
 
 // prompt 입력 값
@@ -31,3 +27,9 @@ export const editorContentAtom = (productId: string) => {
 export const autoSaveMessageAtom = atom({
   message: AUTO_SAVE_MESSAGE.WRITING,
 })
+
+// 선택한 원본 텍스트 저장
+export const originalPhraseAtom = atom('')
+
+// AI 수정 메세지 저장
+export const aiResultAtom = atom('')
