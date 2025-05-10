@@ -24,6 +24,7 @@ import { HandleEditor, TextSelectionRangeType } from 'types/common/editor'
 
 import FillButton from '@components/buttons/FillButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
+import SelectMenuContent from '@components/select-menu/SelectMenuContent'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
@@ -54,6 +55,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const promptValueRef = useRef('')
 
   const { isOpen, onOpen, onClose } = useCollapsed()
+  const { onOpen: onOpenFeedback, onClose: onCloseFeedback } = useCollapsed()
 
   const feedbackInput = useRef<string | null>(null)
 
@@ -125,7 +127,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
       if (response.id) {
         feedbackInput.current = response.answer
-        onOpen()
+        // onOpen()
+        onOpenFeedback()
       }
     } catch (error) {
       console.log(error)
@@ -199,13 +202,13 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
     switch (option) {
       case 'apply':
-        setActiveMenu('defaultToolbar')
-        clearHighlight()
+        // setActiveMenu('defaultToolbar')
+        // clearHighlight()
         onClose()
         break
 
       case 'recreate':
-        handleAIPrompt()
+        // handleAIPrompt()
         onClose()
         break
 
@@ -219,6 +222,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           originalSelectionRef.current = null
         }
         onClose()
+        onCloseFeedback()
         break
 
       default:
@@ -251,6 +255,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         tippyOptions={{
           duration: 100,
           maxWidth: 'none',
+          interactive: true,
         }}
         // --shouldShow: 버블 메뉴 표시를 제어하는 콜백
         /* MEMO(Sohyun): DefaultEditor내부에서 editable 상태에따른 화면을 구현하고 싶었으나, 버블메뉴 shouldShow 상태 제어가 안되는 문제가 있음
@@ -260,6 +265,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         {activeMenu === 'defaultToolbar' && (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
         )}
+
         {/* 구간 피드백 */}
         {activeMenu === 'feedback' && (
           <div>
@@ -277,25 +283,26 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
             </div>
 
             <div className={styles['select-menu']}>
-              <SelectMenu handleClose={onClose} isOpen={isOpen}>
-                <SelectMenu.Option option={{ handleAction: handleOptionClick('apply') }}>
+              <SelectMenuContent>
+                <SelectMenuContent.Option option={{ handleAction: handleOptionClick('apply') }}>
                   <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
                   이대로 수정하기
-                </SelectMenu.Option>
-                <SelectMenu.Option option={{ handleAction: handleOptionClick('recreate') }}>
+                </SelectMenuContent.Option>
+                <SelectMenuContent.Option option={{ handleAction: handleOptionClick('recreate') }}>
                   <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
                   다시 생성하기
-                </SelectMenu.Option>
-                <SelectMenu.Option option={{ handleAction: handleOptionClick('cancel') }}>
+                </SelectMenuContent.Option>
+                <SelectMenuContent.Option option={{ handleAction: handleOptionClick('cancel') }}>
                   <IoClose color="#CCCCCC" fontSize={20} />
                   취소하기
-                </SelectMenu.Option>
-              </SelectMenu>
+                </SelectMenuContent.Option>
+              </SelectMenuContent>
             </div>
           </div>
         )}
       </BubbleMenu>
 
+      {/* 수동 수정 */}
       {activeMenu === 'aiToolbar' && (
         <div className={styles.container}>
           <div className={styles['prompt-menu']}>
@@ -319,7 +326,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
             </FillButton>
           </div>
 
-          {/* TODO 툴바 메뉴 전환 */}
           <div className={styles['select-menu']}>
             <SelectMenu handleClose={onClose} isOpen={isOpen}>
               <SelectMenu.Option option={{ handleAction: handleOptionClick('apply') }}>
