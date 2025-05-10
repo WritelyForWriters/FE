@@ -20,7 +20,12 @@ import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 import { activeMenuAtom, aiResultAtom, isEditableAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { productIdAtom } from 'store/productsAtoms'
-import { HandleEditor, TextSelectionRangeType } from 'types/common/editor'
+import {
+  ActionOptionType,
+  AiassistantOptionType,
+  HandleEditor,
+  TextSelectionRangeType,
+} from 'types/common/editor'
 
 import FillButton from '@components/buttons/FillButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
@@ -135,21 +140,22 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     }
   }
 
-  const handleActiveMenu = () => {
-    // 수동 수정 눌렀을 때
-    // setActiveMenu('aiToolbar')
-
-    // 구간피드백 눌렀을 때
-    setActiveMenu('feedback')
+  const handleActiveMenu = (type: AiassistantOptionType) => {
+    if (!editor) return
 
     const selection = handleTextSelection()
+    if (!selection) return
 
-    // --선택한 원본 text 저장
-    if (editor && selection) {
-      const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
-      setOriginalText(originPhrase)
+    // 선택한 원본 text 저장
+    const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
+    setOriginalText(originPhrase)
 
-      // 구간 피드백에 대한 api를 호출하고 거기서 얻은 응답을 input에 넣어서 보여줘야 함
+    if (type === 'user-modify') {
+      setActiveMenu('user-modify')
+    }
+
+    if (type === 'feedback') {
+      setActiveMenu('feedback')
       handleAiFeedback(originPhrase)
     }
   }
@@ -199,26 +205,17 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     }
   }
 
-  const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
+  const handleOptionClickUserModify = (option: ActionOptionType) => () => {
     switch (option) {
       case 'apply':
         setActiveMenu('defaultToolbar')
         clearHighlight()
-        // onClose()
-
-        // TODO 에디터에 피드백 문구 추출해서 삽입 => 피드백 받은 문구만 api 응답으로 받을 수 있는지 확인하기
-        // TODO 구간 피드백 응답이 길어지기 때문에 UI 수정이 필요
-        if (feedbackInput.current) {
-          setAiResult(feedbackInput.current)
-        }
-        feedbackInput.current = null
-        onCloseFeedback()
+        onClose()
         break
 
       case 'recreate':
-        // handleAIPrompt()
-        // onClose()
-        handleAiFeedback(originalText)
+        handleAIPrompt()
+        onClose()
         break
 
       case 'cancel':
@@ -231,6 +228,43 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           originalSelectionRef.current = null
         }
         onClose()
+        feedbackInput.current = null
+        onCloseFeedback()
+        break
+
+      default:
+        break
+    }
+  }
+
+  const handleOptionClickFeedback = (option: ActionOptionType) => () => {
+    switch (option) {
+      case 'apply':
+        setActiveMenu('defaultToolbar')
+        clearHighlight()
+
+        // TODO 에디터에 피드백 문구 추출해서 삽입 => 피드백 받은 문구만 api 응답으로 받을 수 있는지 확인하기
+        // TODO 구간 피드백 응답이 길어지기 때문에 UI 수정이 필요
+        if (feedbackInput.current) {
+          setAiResult(feedbackInput.current)
+        }
+        feedbackInput.current = null
+        onCloseFeedback()
+        break
+
+      case 'recreate':
+        handleAiFeedback(originalText)
+        break
+
+      case 'cancel':
+        if (selectionRef.current) {
+          editor?.commands.insertContentAt(selectionRef.current, originalText)
+        }
+        setActiveMenu('defaultToolbar')
+        if (originalSelectionRef.current) {
+          clearHighlight(originalSelectionRef.current)
+          originalSelectionRef.current = null
+        }
         feedbackInput.current = null
         onCloseFeedback()
         break
@@ -294,15 +328,21 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
             <div className={styles['select-menu']}>
               <SelectMenuContent>
-                <SelectMenuContent.Option option={{ handleAction: handleOptionClick('apply') }}>
+                <SelectMenuContent.Option
+                  option={{ handleAction: handleOptionClickFeedback('apply') }}
+                >
                   <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
                   이대로 수정하기
                 </SelectMenuContent.Option>
-                <SelectMenuContent.Option option={{ handleAction: handleOptionClick('recreate') }}>
+                <SelectMenuContent.Option
+                  option={{ handleAction: handleOptionClickFeedback('recreate') }}
+                >
                   <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
                   다시 생성하기
                 </SelectMenuContent.Option>
-                <SelectMenuContent.Option option={{ handleAction: handleOptionClick('cancel') }}>
+                <SelectMenuContent.Option
+                  option={{ handleAction: handleOptionClickFeedback('cancel') }}
+                >
                   <IoClose color="#CCCCCC" fontSize={20} />
                   취소하기
                 </SelectMenuContent.Option>
@@ -313,7 +353,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       </BubbleMenu>
 
       {/* 수동 수정 */}
-      {activeMenu === 'aiToolbar' && (
+      {activeMenu === 'user-modify' && (
         <div className={styles.container}>
           <div className={styles['prompt-menu']}>
             <input
@@ -338,15 +378,15 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
           <div className={styles['select-menu']}>
             <SelectMenu handleClose={onClose} isOpen={isOpen}>
-              <SelectMenu.Option option={{ handleAction: handleOptionClick('apply') }}>
+              <SelectMenu.Option option={{ handleAction: handleOptionClickUserModify('apply') }}>
                 <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
                 이대로 수정하기
               </SelectMenu.Option>
-              <SelectMenu.Option option={{ handleAction: handleOptionClick('recreate') }}>
+              <SelectMenu.Option option={{ handleAction: handleOptionClickUserModify('recreate') }}>
                 <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
                 다시 생성하기
               </SelectMenu.Option>
-              <SelectMenu.Option option={{ handleAction: handleOptionClick('cancel') }}>
+              <SelectMenu.Option option={{ handleAction: handleOptionClickUserModify('cancel') }}>
                 <IoClose color="#CCCCCC" fontSize={20} />
                 취소하기
               </SelectMenu.Option>

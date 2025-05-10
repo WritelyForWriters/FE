@@ -1,9 +1,7 @@
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import { TextSelectionRangeType } from 'types/common/editor'
-
-type ToolbarType = 'defaultToolbar' | 'aiToolbar' | 'feedback'
+import { TextSelectionRangeType, ToolbarType } from 'types/common/editor'
 
 // 에디터 툴바 상태
 export const activeMenuAtom = atom<ToolbarType>('defaultToolbar')

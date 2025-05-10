@@ -10,3 +10,7 @@ export interface TextSelectionRangeType {
   from: number
   to: number
 }
+
+export type ToolbarType = 'defaultToolbar' | 'user-modify' | 'feedback'
+export type AiassistantOptionType = 'auto-modify' | 'user-modify' | 'feedback' | 'free-chat'
+export type ActionOptionType = 'apply' | 'recreate' | 'cancel'
