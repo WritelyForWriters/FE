@@ -126,8 +126,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       })
 
       if (response.id) {
+        // TODO 로딩중일때
         feedbackInput.current = response.answer
-        // onOpen()
         onOpenFeedback()
       }
     } catch (error) {
@@ -202,14 +202,23 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const handleOptionClick = (option: 'apply' | 'recreate' | 'cancel') => () => {
     switch (option) {
       case 'apply':
-        // setActiveMenu('defaultToolbar')
-        // clearHighlight()
-        onClose()
+        setActiveMenu('defaultToolbar')
+        clearHighlight()
+        // onClose()
+
+        // TODO 에디터에 피드백 문구 추출해서 삽입 => 피드백 받은 문구만 api 응답으로 받을 수 있는지 확인하기
+        // TODO 구간 피드백 응답이 길어지기 때문에 UI 수정이 필요
+        if (feedbackInput.current) {
+          setAiResult(feedbackInput.current)
+        }
+        feedbackInput.current = null
+        onCloseFeedback()
         break
 
       case 'recreate':
         // handleAIPrompt()
-        onClose()
+        // onClose()
+        handleAiFeedback(originalText)
         break
 
       case 'cancel':
@@ -222,6 +231,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           originalSelectionRef.current = null
         }
         onClose()
+        feedbackInput.current = null
         onCloseFeedback()
         break
 
