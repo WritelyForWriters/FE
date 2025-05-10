@@ -39,6 +39,24 @@ export default function FeedbackMenu({ feedbackText, onOptionClick }: FeedbackMe
             <IoClose color="#CCCCCC" fontSize={20} />
             취소하기
           </SelectMenuContent.Option>
+          <div className={styles['divide-line']}></div>
+          <SelectMenuContent.Option option={{ handleAction: onOptionClick('apply') }}>
+            <Image src="/icons/feedback-good-icon.svg" alt="good" width={20} height={20} />
+            응답이 마음에 들어요
+          </SelectMenuContent.Option>
+          <SelectMenuContent.Option option={{ handleAction: onOptionClick('recreate') }}>
+            <Image src="/icons/feedback-bad-icon.svg" alt="not good" width={20} height={20} />
+            응답이 별로에요
+          </SelectMenuContent.Option>
+          <SelectMenuContent.Option option={{ handleAction: onOptionClick('cancel') }}>
+            <Image
+              src="/icons/permanent-saved-icon.svg"
+              alt="답변 영구 보관하기"
+              width={20}
+              height={20}
+            />
+            답변 영구 보관하기
+          </SelectMenuContent.Option>
         </SelectMenuContent>
       </div>
     </div>

@@ -67,6 +67,24 @@ export default function ManualModification({
             <IoClose color="#CCCCCC" fontSize={20} />
             취소하기
           </SelectMenu.Option>
+          <div className={styles['divide-line']}></div>
+          <SelectMenu.Option option={{ handleAction: onOptionClick('apply') }}>
+            <Image src="/icons/feedback-good-icon.svg" alt="good" width={20} height={20} />
+            응답이 마음에 들어요
+          </SelectMenu.Option>
+          <SelectMenu.Option option={{ handleAction: onOptionClick('recreate') }}>
+            <Image src="/icons/feedback-bad-icon.svg" alt="not good" width={20} height={20} />
+            응답이 별로에요
+          </SelectMenu.Option>
+          <SelectMenu.Option option={{ handleAction: onOptionClick('cancel') }}>
+            <Image
+              src="/icons/permanent-saved-icon.svg"
+              alt="답변 영구 보관하기"
+              width={20}
+              height={20}
+            />
+            답변 영구 보관하기
+          </SelectMenu.Option>
         </SelectMenu>
       </div>
     </div>
