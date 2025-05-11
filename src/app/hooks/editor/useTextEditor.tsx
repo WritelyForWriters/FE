@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 import { Editor } from '@tiptap/react'
-import { postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
+import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
 import { useAtom, useAtomValue } from 'jotai'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { productIdAtom } from 'store/productsAtoms'
@@ -31,6 +31,11 @@ export function useTextEditor(editor: Editor | null) {
     onOpen: onOpenFeedback,
     onClose: onCloseFeedback,
   } = useCollapsed()
+  const {
+    isOpen: isAutoModifyVisible,
+    onOpen: onOpenAutoModifyVisible,
+    onClose: onCloseAutoModifyVisible,
+  } = useCollapsed()
 
   // 드래그한 영역 저장 및 하이라이트
   const handleTextSelection = () => {
@@ -57,6 +62,11 @@ export function useTextEditor(editor: Editor | null) {
     const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
     setOriginalText(originPhrase)
 
+    if (type === 'auto-modify' && originPhrase) {
+      setActiveMenu('auto-modify')
+      handleAiAutoModify(originPhrase)
+    }
+
     if (type === 'user-modify') {
       setActiveMenu('user-modify')
     }
@@ -69,6 +79,25 @@ export function useTextEditor(editor: Editor | null) {
 
   const handlePromptChange = (value: string) => {
     promptValueRef.current = value
+  }
+
+  const handleAiAutoModify = async (originPhrase: string) => {
+    if (!selectionRef.current || !editor) return
+
+    try {
+      const response = await postAutoModify({
+        productId,
+        content: originPhrase ?? originalText,
+      })
+
+      if (response.id) {
+        // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
+        setAiResult(response.answer)
+        onOpenAutoModifyVisible()
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleAiPrompt = async () => {
@@ -117,6 +146,36 @@ export function useTextEditor(editor: Editor | null) {
 
     if (selection && editor) {
       editor.chain().setTextSelection(selection).unsetMark('highlight').run()
+    }
+  }
+
+  const handleOptionClickAutoModify = (option: ActionOptionType) => () => {
+    switch (option) {
+      case 'apply':
+        setActiveMenu('defaultToolbar')
+        clearHighlight()
+        onCloseAutoModifyVisible()
+        break
+
+      case 'recreate':
+        handleAiAutoModify(originalText)
+        break
+
+      case 'cancel':
+        if (selectionRef.current && editor) {
+          editor.commands.insertContentAt(selectionRef.current, originalText)
+        }
+        setActiveMenu('defaultToolbar')
+        if (originalSelectionRef.current) {
+          clearHighlight(originalSelectionRef.current)
+          originalSelectionRef.current = null
+        }
+        onCloseAutoModifyVisible()
+        feedbackInput.current = null
+        break
+
+      default:
+        break
     }
   }
 
@@ -206,10 +265,13 @@ export function useTextEditor(editor: Editor | null) {
     isOpen,
     onClose,
     isFeedbackOpen,
+    selectionRef,
+    isAutoModifyVisible,
     feedbackInput,
     handleActiveMenu,
     handlePromptChange,
     handleAiPrompt,
+    handleOptionClickAutoModify,
     handleOptionClickUserModify,
     handleOptionClickFeedback,
   }
