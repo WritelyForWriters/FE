@@ -106,7 +106,9 @@ export default function PlannerActionBar({
         )}
         {/* NOTE(hajae): 현재 테스트 */}
         <span className={cx('description')}>
-          {formatMillisecondToMinute(autoSaveTimer)}분 뒤에 자동 저장됩니다.
+          {autoSaveTimer > 0
+            ? `${formatMillisecondToMinute(autoSaveTimer)}분 뒤에 자동 저장됩니다.`
+            : '저장 중입니다.'}
         </span>
       </>
     )

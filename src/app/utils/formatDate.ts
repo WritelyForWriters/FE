@@ -15,5 +15,5 @@ export const formatDate = (dateString: string) => {
 }
 
 export const formatMillisecondToMinute = (millisecond: number) => {
-  return Math.floor(millisecond / 60000)
+  return Math.ceil(millisecond / 60000)
 }

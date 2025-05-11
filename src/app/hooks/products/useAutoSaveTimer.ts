@@ -16,10 +16,13 @@ export const useAutoSaveTimer = (initialTime = 300000) => {
         return time - 1000
       } else {
         stopTimer()
+        setTimeout(() => {
+          setAutoSaveTimer(initialTime)
+        }, 3000)
         return 0
       }
     },
-    [stopTimer],
+    [stopTimer, initialTime],
   )
 
   const startTimer = useCallback(() => {

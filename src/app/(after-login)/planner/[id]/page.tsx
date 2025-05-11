@@ -31,26 +31,27 @@ function usePlannerData(params: Params) {
   const { data: templates } = useFetchProductTemplates(id)
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
   const showToast = useToast()
-  const { autoSaveTimer } = useAutoSaveTimer()
+  const { autoSaveTimer } = useAutoSaveTimer(300000)
 
   return {
     id,
     templates,
-    characters: formValues.characters,
-    setCharacters: setFormValues,
+    formValues,
+    setFormValues,
     showToast,
     autoSaveTimer,
   }
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
-  const { id, templates, characters, setCharacters, showToast, autoSaveTimer } =
+  const { id, templates, formValues, setFormValues, showToast, autoSaveTimer } =
     usePlannerData(params)
   const [isSaved, setIsSaved] = useState(false)
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
     reset,
+    getValues,
     formState: { isValid },
     handleSubmit,
   } = methods
@@ -58,7 +59,7 @@ export default function PlannerPage({ params }: { params: Params }) {
   const { mutate: createTemplate, isSuccess } = useCreateProductTemplates()
 
   const handleFormSubmit = handleSubmit((formValues) => {
-    const request = PlannerTemplatesRequest.from(formValues, characters)
+    const request = PlannerTemplatesRequest.from(formValues, formValues.characters)
 
     createTemplate({
       productId: id,
@@ -75,15 +76,15 @@ export default function PlannerPage({ params }: { params: Params }) {
       // 현재 사양은 클라이언트에 저장된 데이터를 우선으로 Character를 SET
       if (
         templates.characters.length > 0 &&
-        characters.length > 0 &&
-        characters.some((c) => !c.id)
+        formValues.characters.length > 0 &&
+        formValues.characters.some((c) => !c.id)
       ) {
-        const updatedCharacters = characters.map((character, index) => ({
+        const updatedCharacters = formValues.characters.map((character, index) => ({
           ...character,
           id: templates.characters[index]?.id ?? '',
         }))
 
-        setCharacters(updatedCharacters)
+        setFormValues(updatedCharacters)
 
         reset({
           synopsis: templates.synopsis,
@@ -97,11 +98,11 @@ export default function PlannerPage({ params }: { params: Params }) {
       }
 
       reset({
-        synopsis: templates.synopsis,
-        worldview: templates.worldview,
-        characters: characters ?? templates.characters,
-        plot: templates.plot,
-        ideaNote: templates.ideaNote,
+        synopsis: formValues.synopsis ?? templates.synopsis,
+        worldview: formValues.worldview ?? templates.worldview,
+        characters: formValues.characters ?? templates.characters,
+        plot: formValues.plot ?? templates.plot,
+        ideaNote: formValues.ideaNote ?? templates.ideaNote,
       })
     }
   }, [reset, templates])
@@ -111,6 +112,12 @@ export default function PlannerPage({ params }: { params: Params }) {
       showToast('success', '저장이 완료되었습니다.')
     }
   }, [isSuccess])
+
+  useEffect(() => {
+    if (autoSaveTimer === 0) {
+      setFormValues(getValues())
+    }
+  }, [autoSaveTimer])
 
   return (
     <div className={cx('container')}>
