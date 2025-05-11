@@ -23,6 +23,7 @@ import HeadingExtension from '@extensions/Heading'
 import Indent from '@extensions/Indent'
 
 import Toolbar from './Toolbar'
+import AutoModifyMenu from './ai-assistant-interface/AutoModifyMenu'
 import FeedbackMenu from './ai-assistant-interface/FeedbackMenu'
 import ManualModification from './ai-assistant-interface/ManualModification'
 
@@ -79,9 +80,12 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     isOpen,
     onClose,
     feedbackInput,
+    selectionRef,
+    isAutoModifyVisible,
     handleActiveMenu,
     handlePromptChange,
     handleAiPrompt,
+    handleOptionClickAutoModify,
     handleOptionClickUserModify,
     handleOptionClickFeedback,
   } = useTextEditor(editor)
@@ -130,6 +134,16 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           />
         )}
       </BubbleMenu>
+
+      {/* 자동 수정 */}
+      {activeMenu === 'auto-modify' && (
+        <AutoModifyMenu
+          editor={editor}
+          selectionRef={selectionRef}
+          isVisible={isAutoModifyVisible}
+          onOptionClick={handleOptionClickAutoModify}
+        />
+      )}
 
       {/* 수동 수정 */}
       {activeMenu === 'user-modify' && (
