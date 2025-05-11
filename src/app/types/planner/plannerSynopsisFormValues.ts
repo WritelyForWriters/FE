@@ -8,6 +8,7 @@ export type PlannerSynopsisFormValues = {
   characters: CharacterFormValues[]
   plot: PlotFormValues
   ideaNote: IdeaNoteFormValues
+  isSaved: boolean
 }
 
 export type SynopsisFormValues = {
@@ -67,6 +68,12 @@ export const PlannerSynopsisFormValues = {
       characters: PlannerSynopsisFormValues.toCharacterFormValues(res?.characters),
       plot: PlannerSynopsisFormValues.toPlotFormValues(res?.plot),
       ideaNote: PlannerSynopsisFormValues.toIdeaNoteFormValues(res?.ideaNote),
+      isSaved:
+        (res?.characters?.length ?? 0) > 0 ||
+        res?.ideaNote !== null ||
+        res?.plot !== null ||
+        res?.synopsis !== null ||
+        res?.worldview !== null,
     }
   },
 

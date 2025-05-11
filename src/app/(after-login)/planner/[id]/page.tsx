@@ -69,13 +69,7 @@ export default function PlannerPage({ params }: { params: Params }) {
   useEffect(() => {
     if (templates) {
       // NOTE(hajae): fetch된 데이터가 하나라도 있으면 이미 저장된 상태로 간주
-      setIsSaved(
-        templates.characters.length > 0 ||
-          templates.ideaNote !== null ||
-          templates.plot !== null ||
-          templates.synopsis !== null ||
-          templates.worldview !== null,
-      )
+      setIsSaved(templates.isSaved)
 
       // NOTE(hajae): 서버에 저장된 ID가 존재하고, Local Storage에 저장된 ID가 없을 경우 ID를 SET
       // 현재 사양은 클라이언트에 저장된 데이터를 우선으로 Character를 SET
