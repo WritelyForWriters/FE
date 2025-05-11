@@ -62,7 +62,7 @@ export const PlannerTemplatesRequest = {
           : [],
       })),
       plot: {
-        content: formValues.plot.content,
+        content: formValues.plot?.content,
       },
       ideaNote: {
         title: formValues.ideaNote.title || '',
