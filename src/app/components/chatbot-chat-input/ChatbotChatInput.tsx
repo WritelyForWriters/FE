@@ -16,6 +16,7 @@ import { MdLanguage, MdOutlineLightbulb } from 'react-icons/md'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatModeAtom } from 'store/chatModeAtom'
 import { clickedButtonAtom } from 'store/clickedButtonAtom'
+import { productIdAtom } from 'store/productsAtoms'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { ChatbotFormData, RecommendPrompt } from 'types/chatbot/chatbot'
@@ -48,11 +49,9 @@ export default function ChatbotChatInput() {
   const [chatMode, setChatMode] = useAtom(chatModeAtom) // 일반 모드 | 웹 검색 모드
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
   const [clickedButton, setClickedButton] = useAtom(clickedButtonAtom)
+  const productId = useAtomValue(productIdAtom)
 
   const showToast = useToast()
-
-  // TODO: 작품 ID 전역 변수에 저장 필요
-  const productId = '0196197e-cb29-7798-ae3f-88a1fbb9aed0'
 
   const { data } = useGetFavoritePrompts(productId)
 

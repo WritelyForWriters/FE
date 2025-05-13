@@ -6,7 +6,9 @@ import { useState } from 'react'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEY } from 'constants/common/queryKeys'
+import { useAtomValue } from 'jotai'
 import { FaStar } from 'react-icons/fa6'
+import { productIdAtom } from 'store/productsAtoms'
 import { MemberMessageType } from 'types/chatbot/chatbot'
 
 import { useAddFavoriteMessage } from '@hooks/chatbot/useAddFavoriteMessage'
@@ -53,8 +55,8 @@ export default function ChatbotMemberMessage({
   const [mouseOver, setMouseOver] = useState(false)
   const [isFavorite, setIsFavorite] = useState(isFavoritedPrompt)
 
-  // TODO: productId 전역 변수에 저장 필요
-  const productId = '0196197e-cb29-7798-ae3f-88a1fbb9aed0'
+  const productId = useAtomValue(productIdAtom)
+
   const { strType, imgSrc } = getMessageMeta(type)
 
   const { mutate: addFavoriteMessage, isSuccess: isAddSuccess } = useAddFavoriteMessage()
