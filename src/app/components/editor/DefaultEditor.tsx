@@ -12,20 +12,21 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { activeMenuAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms'
+import { useAtomValue } from 'jotai'
+import { isEditableAtom } from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
+
+import { useTextEditor } from '@hooks/editor/useTextEditor'
 
 import BlockquoteExtension from '@extensions/Blockquote'
 import HeadingExtension from '@extensions/Heading'
 import Indent from '@extensions/Indent'
 
-import PromptMenu from './PromptMenu'
 import Toolbar from './Toolbar'
+import FeedbackMenu from './ai-assistant-interface/FeedbackMenu'
+import ManualModification from './ai-assistant-interface/ManualModification'
 
 import styles from './DefaultEditor.module.scss'
-
-// TODO 단축키 '/'로 버블메뉴 활성화
 
 interface DefaultEditorProps {
   editorRef: Ref<HandleEditor>
@@ -34,8 +35,6 @@ interface DefaultEditorProps {
 }
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
-  const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
-  const setSelection = useSetAtom(selectionAtom)
   const editable = useAtomValue(isEditableAtom)
 
   const editor = useEditor({
@@ -75,9 +74,17 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     getEditor: () => editor,
   }))
 
-  const handleActiveMenu = () => {
-    setActiveMenu('aiToolbar')
-  }
+  const {
+    activeMenu,
+    isOpen,
+    onClose,
+    feedbackInput,
+    handleActiveMenu,
+    handlePromptChange,
+    handleAiPrompt,
+    handleOptionClickUserModify,
+    handleOptionClickFeedback,
+  } = useTextEditor(editor)
 
   useEffect(() => {
     if (!editor) {
@@ -104,25 +111,37 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         tippyOptions={{
           duration: 100,
           maxWidth: 'none',
-          onHidden: () => {
-            setActiveMenu('defaultToolbar')
-            setSelection(null)
-
-            // TODO remove text highlight 적용이 안되는 문제
-            // editor.chain().focus().unsetMark('highlight').run()
-          },
+          interactive: true,
         }}
         // --shouldShow: 버블 메뉴 표시를 제어하는 콜백
         /* MEMO(Sohyun): DefaultEditor내부에서 editable 상태에따른 화면을 구현하고 싶었으나, 버블메뉴 shouldShow 상태 제어가 안되는 문제가 있음
           editable상태가 shouldShow에 즉각반영이 안됨, (참고) https://tiptap.dev/docs/guides/output-json-html#render */
         shouldShow={({ state }) => editable && !state.selection.empty}
       >
-        {activeMenu === 'defaultToolbar' ? (
+        {activeMenu === 'defaultToolbar' && (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
-        ) : (
-          <PromptMenu editor={editor} />
+        )}
+
+        {/* 구간 피드백 */}
+        {activeMenu === 'feedback' && (
+          <FeedbackMenu
+            feedbackText={feedbackInput.current}
+            onOptionClick={handleOptionClickFeedback}
+          />
         )}
       </BubbleMenu>
+
+      {/* 수동 수정 */}
+      {activeMenu === 'user-modify' && (
+        <ManualModification
+          isOpen={isOpen}
+          onClose={onClose}
+          onPromptChange={handlePromptChange}
+          onAiPrompt={handleAiPrompt}
+          onOptionClick={handleOptionClickUserModify}
+        />
+      )}
+
       <EditorContent editor={editor} className={styles.tiptap} />
     </section>
   )

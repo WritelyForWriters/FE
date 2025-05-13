@@ -5,9 +5,11 @@ import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
+import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
+import { DELAY_TIME } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
-import { isEditableAtom } from 'store/editorAtoms'
-import { productTitleAtom } from 'store/productsAtoms'
+import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
+import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 import { TocItemType } from 'types/common/pannel'
@@ -33,8 +35,7 @@ const cx = classNames.bind(styles)
 /**
  * TODO 작업공간 페이지 중 에디터 관련
  * [ ] 읽기 모드일때는 툴바 활성화 X
- * [x] 에디터 TOC
- * [ ] 자동 저장 기능 + TOC 업데이트
+ * [ ] 단축키 '/'로 버블메뉴 활성화
  */
 
 export default function WorkSpacePage() {
@@ -49,6 +50,10 @@ export default function WorkSpacePage() {
 
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
+  const editorContent = editorContentAtom(params.id)
+  const setEditorContent = useSetAtom(editorContent)
+  const setAutoSaveMessage = useSetAtom(autoSaveMessageAtom)
+  const setProductId = useSetAtom(productIdAtom)
 
   const [editorIndexToc, setEditorIndexToc] = useState<TocItemType[]>([])
 
@@ -57,14 +62,19 @@ export default function WorkSpacePage() {
       const editor = editorRef.current.getEditor() as Editor
       const contentsWithIds = addHeadingIds(editor.getJSON()) // heading에 id속성 부여된 최종 에디터 content
 
-      saveProductMutation.mutate({
-        productId: params.id,
-        product: {
-          title: productTitle,
-          content: JSON.stringify(contentsWithIds),
-          isAutoSave: false,
+      saveProductMutation.mutate(
+        {
+          productId: params.id,
+          product: {
+            title: productTitle,
+            content: JSON.stringify(contentsWithIds),
+            isAutoSave: false,
+          },
         },
-      })
+        {
+          onSuccess: () => localStorage.removeItem(`workspace-${params.id}`),
+        },
+      )
     }
     isSavedRef.current = true
   }
@@ -93,6 +103,12 @@ export default function WorkSpacePage() {
       return ''
     }
   }
+
+  useEffect(() => {
+    if (params.id) {
+      setProductId(params.id)
+    }
+  }, [params.id, setProductId])
 
   useEffect(() => {
     // 최초 렌더링 시 현재 상태 저장 (뒤로 가기 무효화용)
@@ -127,6 +143,36 @@ export default function WorkSpacePage() {
       setEditorIndexToc(toc)
     }
   }, [productDetail, setProductTitle, setIsContentEditing])
+
+  useEffect(() => {
+    if (!editorRef.current) return
+
+    const interval = setInterval(() => {
+      if (!editorRef.current) return
+
+      const editor = editorRef.current.getEditor() as Editor
+      const contentsWithIds = addHeadingIds(editor.getJSON())
+      setEditorContent(JSON.stringify(contentsWithIds))
+
+      // toc 업데이트
+      const toc = getTocFromEditor(contentsWithIds)
+      setEditorIndexToc(toc)
+
+      // 자동 저장된 내용으로 에디터 업데이트
+      editor.commands.setContent(contentsWithIds)
+
+      setAutoSaveMessage({ message: AUTO_SAVE_MESSAGE.SAVING })
+
+      setTimeout(() => {
+        setAutoSaveMessage({ message: AUTO_SAVE_MESSAGE.WRITING })
+      }, 3000)
+    }, DELAY_TIME)
+
+    return () => {
+      clearInterval(interval)
+    }
+    // MEMO(Sohyun): dependency array에 setEditorContent를 넣게 되면 입력중에 interval 시작, 종료가 반복되므로 제외
+  }, [])
 
   return (
     <div className={cx('container')}>

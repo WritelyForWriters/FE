@@ -4,6 +4,7 @@ import { ReactNode, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { IoIosArrowDown } from 'react-icons/io'
+import { AiassistantOptionType } from 'types/common/editor'
 
 import SelectMenu from '@components/select-menu/SelectMenu'
 
@@ -30,7 +31,7 @@ function ToolbarButton({ children, isActive, onClick, className }: ToolbarButton
 
 interface ToolbarProps {
   editor: Editor
-  handleActiveMenu: () => void
+  handleActiveMenu: (type: AiassistantOptionType) => void
 }
 
 export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
@@ -193,21 +194,39 @@ export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
           isOpen={isAiOption}
           style={{ top: '36px', width: '121px' }}
         >
-          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+          <SelectMenu.Option
+            option={{
+              className: styles['select-option'],
+              handleAction: () => handleActiveMenu('auto-modify'),
+            }}
+          >
             <Image src="/icons/ai-option1.svg" alt="자동수정" width={20} height={20} />
             자동 수정
           </SelectMenu.Option>
           <SelectMenu.Option
-            option={{ className: styles['select-option'], handleAction: handleActiveMenu }}
+            option={{
+              className: styles['select-option'],
+              handleAction: () => handleActiveMenu('user-modify'),
+            }}
           >
             <Image src="/icons/ai-option2.svg" alt="수동수정" width={20} height={20} />
             수동 수정
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+          <SelectMenu.Option
+            option={{
+              className: styles['select-option'],
+              handleAction: () => handleActiveMenu('feedback'),
+            }}
+          >
             <Image src="/icons/ai-option3.svg" alt="구간피드백" width={20} height={20} />
             구간 피드백
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ className: styles['select-option'] }}>
+          <SelectMenu.Option
+            option={{
+              className: styles['select-option'],
+              handleAction: () => handleActiveMenu('free-chat'),
+            }}
+          >
             <Image src="/icons/ai-option4.svg" alt="자유대화" width={20} height={20} />
             자유 대화
           </SelectMenu.Option>

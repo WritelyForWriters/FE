@@ -13,7 +13,7 @@ export const useDetectClose = (onClose: () => void) => {
     document.addEventListener('mousedown', onClick)
 
     return () => {
-      document.addEventListener('mousedown', onClick)
+      document.removeEventListener('mousedown', onClick)
     }
   }, [onClose])
 

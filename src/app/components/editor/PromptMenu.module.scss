@@ -2,6 +2,11 @@
 @use '@styles/colors' as color;
 @use '@styles/mixins' as mixin;
 
+.container {
+  position: fixed;
+  z-index: 10;
+}
+
 .prompt-menu {
   width: 462px;
   height: 52px;
