@@ -8,16 +8,19 @@ import { Editor } from '@tiptap/react'
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
+import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 import { TocItemType } from 'types/common/pannel'
 
+import ChatbotLauncher from '@components/chatbot-launcher/ChatbotLauncher'
 import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
+import { useGetFixedMessage } from '@hooks/chatbot/useGetFixedMessage'
 import { useGetProductDetail, useProducts } from '@hooks/index'
 
 import { addHeadingIds, getTocFromEditor } from '@utils/index'
@@ -53,7 +56,10 @@ export default function WorkSpacePage() {
   const editorContent = editorContentAtom(params.id)
   const setEditorContent = useSetAtom(editorContent)
   const setAutoSaveMessage = useSetAtom(autoSaveMessageAtom)
-  const setProductId = useSetAtom(productIdAtom)
+  const [productId, setProductId] = useAtom(productIdAtom)
+  const setFixedMessage = useSetAtom(chatbotFixedMessageAtom)
+
+  const { data: fixedMessage } = useGetFixedMessage(productId)
 
   const [editorIndexToc, setEditorIndexToc] = useState<TocItemType[]>([])
 
@@ -174,6 +180,17 @@ export default function WorkSpacePage() {
     // MEMO(Sohyun): dependency array에 setEditorContent를 넣게 되면 입력중에 interval 시작, 종료가 반복되므로 제외
   }, [])
 
+  useEffect(() => {
+    setFixedMessage(
+      fixedMessage?.result
+        ? {
+            messageId: fixedMessage.result.messageId,
+            content: fixedMessage.result.content,
+          }
+        : null,
+    )
+  }, [fixedMessage, setFixedMessage, productId])
+
   return (
     <div className={cx('container')}>
       <WorkspaceActionBar
@@ -204,6 +221,10 @@ export default function WorkSpacePage() {
           </div>
         </div>
       </main>
+
+      <div>
+        <ChatbotLauncher />
+      </div>
 
       <Modal
         ref={modalRef}
