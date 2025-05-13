@@ -18,6 +18,7 @@ export const useAutoSaveTimer = (initialTime = 300000) => {
         stopTimer()
         setTimeout(() => {
           setAutoSaveTimer(initialTime)
+          startTimer()
         }, 3000)
         return 0
       }
