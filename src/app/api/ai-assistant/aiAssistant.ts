@@ -6,6 +6,12 @@ interface PromptData {
   prompt: string
 }
 
+// 자동 수정
+export const postAutoModify = async (promptData: Omit<PromptData, 'prompt'>) => {
+  const res = await authInstance.post('/assistant/auto-modify', promptData)
+  return res.data.result
+}
+
 // 수동 수정
 export const postUserModify = async (promptData: PromptData) => {
   const res = await authInstance.post('/assistant/user-modify', promptData)
