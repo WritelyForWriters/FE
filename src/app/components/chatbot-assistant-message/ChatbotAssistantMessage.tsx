@@ -4,11 +4,13 @@ import { useState } from 'react'
 
 import { QueryClient } from '@tanstack/react-query'
 import { QUERY_KEY } from 'constants/common/queryKeys'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { BsFillPinFill } from 'react-icons/bs'
 import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
+import ReactMarkdown from 'react-markdown'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotModeAtom } from 'store/chatbotModeAtom'
+import { productIdAtom } from 'store/productsAtoms'
 
 import { usePinMessage } from '@hooks/chatbot/usePinMessage'
 import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
@@ -42,12 +44,10 @@ export default function ChatbotAssistantMessage({
   const [isMouseOver, setIsMouseOver] = useState(false)
 
   const [fixedMessage, setFixedMessage] = useAtom(chatbotFixedMessageAtom)
+  const productId = useAtomValue(productIdAtom)
   const setChatbotMode = useSetAtom(chatbotModeAtom)
 
   const { mutate: submitFeedback } = useSubmitFeedback()
-
-  // TODO: 작품 ID 전역 변수에 저장 필요
-  const productId = '0196197e-cb29-7798-ae3f-88a1fbb9aed0'
 
   const ellipsisQuote = quote.length > 20 ? quote.slice(0, 20) + '...' : quote
 
@@ -105,8 +105,7 @@ export default function ChatbotAssistantMessage({
           </div>
         )}
         <div className={cx('assistant-message__body-content')}>
-          <p>{message.content}</p>
-          {type !== 'chat' && <p>{message.isApplied ? '적용됨' : '적용 안 됨'}</p>}
+          <ReactMarkdown>{message.content}</ReactMarkdown>
         </div>
       </div>
       <div className={cx('assistant-message__footer')}>
