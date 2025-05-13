@@ -52,7 +52,14 @@ export default function PlannerSynopsisForm() {
         name="synopsis.logline"
         label="로그 라인"
         variant="expand"
-        options={{ required: { value: true, message: 'required' } }}
+        options={{
+          required: { value: true, message: 'required' },
+          validate: (value) => {
+            if (value.trim() === '') {
+              return false
+            }
+          },
+        }}
       />
       <PlannerFieldWithButton name="synopsis.example">
         <TextField name="synopsis.example" label="예시 문장" variant="expand" />
