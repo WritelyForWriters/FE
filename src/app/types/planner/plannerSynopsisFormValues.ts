@@ -8,11 +8,12 @@ export type PlannerSynopsisFormValues = {
   characters: CharacterFormValues[]
   plot: PlotFormValues
   ideaNote: IdeaNoteFormValues
+  isSaved: boolean
 }
 
 export type SynopsisFormValues = {
   genre: { label: string; value: string }[]
-  length?: { label: string; value: string }
+  length?: { label: string; value: string } | null
   purpose?: string
   logline: string
   example?: string
@@ -44,7 +45,6 @@ export type CharacterFormValues = {
   occupation?: string
   appearance?: string
   personality?: string
-  characteristic?: string
   relationship?: string
   customFields?: CustomField[]
 }
@@ -53,7 +53,7 @@ export type PlotFormValues = {
   content?: string
 }
 
-export type CustomField = { id: string; name: string; content: string }
+export type CustomField = { id?: string; name: string; content: string }
 
 export type IdeaNoteFormValues = {
   title: string
@@ -61,17 +61,23 @@ export type IdeaNoteFormValues = {
 }
 
 export const PlannerSynopsisFormValues = {
-  from: (res: PlannerTemplates): PlannerSynopsisFormValues => {
+  from: (res: PlannerTemplates | undefined): PlannerSynopsisFormValues => {
     return {
-      synopsis: PlannerSynopsisFormValues.toSynopsisFormValues(res.synopsis),
-      worldview: PlannerSynopsisFormValues.toWorldViewFormValues(res.worldview),
-      characters: PlannerSynopsisFormValues.toCharacterFormValues(res.characters),
-      plot: PlannerSynopsisFormValues.toPlotFormValues(res.plot),
-      ideaNote: PlannerSynopsisFormValues.toIdeaNoteFormValues(res.ideaNote),
+      synopsis: PlannerSynopsisFormValues.toSynopsisFormValues(res?.synopsis),
+      worldview: PlannerSynopsisFormValues.toWorldViewFormValues(res?.worldview),
+      characters: PlannerSynopsisFormValues.toCharacterFormValues(res?.characters),
+      plot: PlannerSynopsisFormValues.toPlotFormValues(res?.plot),
+      ideaNote: PlannerSynopsisFormValues.toIdeaNoteFormValues(res?.ideaNote),
+      isSaved:
+        (res?.characters?.length ?? 0) > 0 ||
+        res?.ideaNote !== null ||
+        res?.plot !== null ||
+        res?.synopsis !== null ||
+        res?.worldview !== null,
     }
   },
 
-  toSynopsisFormValues: (synopsis: Synopsis): SynopsisFormValues => {
+  toSynopsisFormValues: (synopsis: Synopsis | undefined): SynopsisFormValues => {
     if (!synopsis) {
       return {
         genre: [],
@@ -90,11 +96,11 @@ export const PlannerSynopsisFormValues = {
       genre: genres.map((genre) => {
         return { label: genre, value: genre }
       }),
-      length: length,
+      length: synopsis.length === '' || length ? length : null,
     }
   },
 
-  toWorldViewFormValues: (worldview: WorldViewFormValues): WorldViewFormValues => {
+  toWorldViewFormValues: (worldview: WorldViewFormValues | undefined): WorldViewFormValues => {
     if (!worldview) {
       return {
         geography: '',
@@ -117,7 +123,7 @@ export const PlannerSynopsisFormValues = {
     return worldview
   },
 
-  toCharacterFormValues: (characters: CharacterFormValues[]): CharacterFormValues[] => {
+  toCharacterFormValues: (characters: CharacterFormValues[] | undefined): CharacterFormValues[] => {
     if (!characters) {
       return []
     }
@@ -128,7 +134,7 @@ export const PlannerSynopsisFormValues = {
     }))
   },
 
-  toPlotFormValues: (plot: PlotFormValues): PlotFormValues => {
+  toPlotFormValues: (plot: PlotFormValues | undefined): PlotFormValues => {
     if (!plot) {
       return {
         content: '',
@@ -138,7 +144,7 @@ export const PlannerSynopsisFormValues = {
     return plot
   },
 
-  toIdeaNoteFormValues: (ideaNote: IdeaNoteFormValues): IdeaNoteFormValues => {
+  toIdeaNoteFormValues: (ideaNote: IdeaNoteFormValues | undefined): IdeaNoteFormValues => {
     if (!ideaNote) {
       return {
         title: '',

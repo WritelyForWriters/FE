@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+
 import { useAtom } from 'jotai'
 import { plannerActiveTabAtom } from 'store/plannerAtoms'
 
@@ -25,7 +27,13 @@ const TABLE_OF_CONTENTS = [
 ]
 
 export default function PlannerSynopsisFormContainer() {
-  const [activeTab] = useAtom(plannerActiveTabAtom)
+  const [activeTab, setActiveTab] = useAtom(plannerActiveTabAtom)
+
+  // NOTE(hajae): jotai는 전역상태이기 때문에 메모리에 상태가 살아있어서 아이디어 탭에서 페이지 이동후 다시 돌아올 경우
+  // 아이디어 탭이 활성화되어있음. 따라서, 마운트 될때 탭을 초기화하는 과정이 필요.
+  useEffect(() => {
+    setActiveTab('synopsis')
+  }, [])
 
   return (
     <form

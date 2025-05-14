@@ -2,12 +2,15 @@
 
 import { useParams } from 'next/navigation'
 
+import { useEffect } from 'react'
+
+import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
 import { useAtom } from 'jotai'
+import { useFormContext } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 
 import FillButton from '@components/buttons/FillButton'
 
-import { CharacterFormValues } from '../../../../../types/planner/plannerSynopsisFormValues'
 import PlannerCharacterFormList from '../planner-character-form-list/PlannerCharacterFormList'
 
 import classNames from 'classnames/bind'
@@ -18,40 +21,22 @@ const cx = classNames.bind(styles)
 
 export default function PlannerCharacterForm() {
   const params = useParams<{ id: string }>()
-  const [characters, setCharacters] = useAtom<CharacterFormValues[]>(
-    plannerCharacterByIdAtom(params.id),
-  )
-
-  const createCharacter = (): CharacterFormValues => ({
-    id: '',
-    intro: '',
-    name: '',
-    age: undefined,
-    gender: '',
-    occupation: '',
-    appearance: '',
-    personality: '',
-    relationship: '',
-    customFields: [
-      {
-        id: '',
-        name: '',
-        content: '',
-      },
-    ],
-  })
+  const { setValue } = useFormContext()
+  const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(params.id))
 
   const handleAddCharacter = () => {
-    setCharacters((prev) => [...prev, createCharacter()])
+    setFormValues([...formValues.characters, NEW_PLANNER_CHARACTER])
   }
 
   const handleRemoveCharacter = (index: number) => {
-    setCharacters((prev) => {
-      const next = [...prev]
-      next.splice(index, 1)
-      return next
-    })
+    const newCharacters = formValues.characters.filter((_, i) => i !== index)
+    setFormValues(newCharacters)
   }
+
+  // NOTE(hajae): 캐릭터 추가 삭제 후, local storage만 갱신하고 있기때문에 character 수가 달라지면 set 해준다.
+  useEffect(() => {
+    setValue('characters', formValues.characters)
+  }, [setValue, formValues.characters.length])
 
   return (
     <div className={cx('character-form')} id="heading3">
@@ -62,12 +47,11 @@ export default function PlannerCharacterForm() {
         </FillButton>
       </div>
 
-      {characters &&
-        characters.map((character, index) => (
+      {formValues.characters &&
+        formValues.characters.map((character, index) => (
           <PlannerCharacterFormList
             key={character.id ? `${character.id}-${index}` : `${index}`}
             paramsId={params.id}
-            character={character}
             arrayIndex={index}
             handleRemoveCharacter={handleRemoveCharacter}
           />

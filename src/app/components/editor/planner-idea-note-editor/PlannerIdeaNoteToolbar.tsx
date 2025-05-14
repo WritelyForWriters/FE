@@ -1,13 +1,16 @@
 import Image from 'next/image'
 
-import { ReactNode, useState } from 'react'
+import { ChangeEvent, ReactNode, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
+import { FaRegImage } from 'react-icons/fa6'
 import { IoIosArrowDown } from 'react-icons/io'
+import { IdeaNotePresignedUrlRequest } from 'types/planner/ideaNotePresignedUrl'
 
 import SelectMenu from '@components/select-menu/SelectMenu'
 
 import { useIndent, useTextAlign, useTextFormat, useTextMark } from '@hooks/index'
+import { useCreateFilesPresignedUrl } from '@hooks/products/useIdeaNoteImageUpload'
 
 import styles from './PlannerIdeaNoteToolbar.module.scss'
 
@@ -33,6 +36,41 @@ interface ToolbarProps {
 }
 
 export default function PlannerIdeaNoteToolbar({ editor }: ToolbarProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const createPresignedUrlMutation = useCreateFilesPresignedUrl({
+    onSuccess: (fileGetUrl) => {
+      if (editor) {
+        editor
+          .chain()
+          .focus()
+          .setImage({ src: fileGetUrl as string })
+          .run()
+      }
+    },
+    onError: (error) => {
+      console.error('이미지 업로드 실패', error)
+    },
+  })
+
+  const handleImageButtonClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const request = IdeaNotePresignedUrlRequest.from(file.name, file.size)
+
+    createPresignedUrlMutation.mutate({
+      request,
+      file,
+    })
+
+    event.target.value = ''
+  }
+
   const [isTextFormatMenuOpen, setIsTextFormatMenuOpen] = useState(false)
   const [isTextAlignMenuOpen, setIsTextAlignMenuOpen] = useState(false)
 
@@ -170,8 +208,20 @@ export default function PlannerIdeaNoteToolbar({ editor }: ToolbarProps) {
         </ToolbarButton>
       </div>
 
-      {/* TODO(hajae): 이미지를 첨부 시, 이미지를 서버에 추가하는 작업이 필요. Base64방식을 사용해도 되나
-      이미지 서버에 추가, image url을 통한 이미지 출력 방식이 성능 저하 문제도 없을 뿐더러 최적화가 쉽기 때문에 사용 */}
+      <div className={styles.line} />
+
+      <div className={styles['text-mark']}>
+        <ToolbarButton>
+          <FaRegImage size={14} onClick={handleImageButtonClick} />
+        </ToolbarButton>
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
+      </div>
     </div>
   )
 }

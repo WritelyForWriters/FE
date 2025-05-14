@@ -17,6 +17,9 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { activeMenuAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms'
 import ImageResize from 'tiptap-extension-resize-image'
 import { HandleEditor } from 'types/common/editor'
+import { IdeaNotePresignedUrlRequest } from 'types/planner/ideaNotePresignedUrl'
+
+import { useCreateFilesPresignedUrl } from '@hooks/products/useIdeaNoteImageUpload'
 
 import BlockquoteExtension from '@extensions/Blockquote'
 import Indent from '@extensions/Indent'
@@ -38,6 +41,22 @@ export default function PlannerIdeaNoteEditor({
   onUpdate,
   contents,
 }: PlannerIdeaNoteEditorProps) {
+  const createPresignedUrlMutation = useCreateFilesPresignedUrl({
+    // NOTE(hajae): 이미지 업로드 순서는 useIdeaNoteImageUpload.ts 참고
+    onSuccess: (fileGetUrl) => {
+      if (editor) {
+        editor
+          .chain()
+          .focus()
+          .setImage({ src: fileGetUrl as string })
+          .run()
+      }
+    },
+    onError: (error) => {
+      console.error('이미지 업로드 실패', error)
+    },
+  })
+
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
   const editable = useAtomValue(isEditableAtom)
@@ -96,9 +115,49 @@ export default function PlannerIdeaNoteEditor({
     }
   }, [editor, contents])
 
-  useImperativeHandle(ref, () => ({
-    getEditor: () => editor,
-  }))
+  useEffect(() => {
+    if (!editor) return
+
+    const handlePaste = async (event: ClipboardEvent) => {
+      const items = event.clipboardData?.items
+      if (!items) return
+
+      // NOTE(hajae): 붙여넣기 시 base64 이미지가 포함되어 있는지 확인
+      const htmlData = event.clipboardData?.getData('text/html')
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = htmlData ?? ''
+      const hasBase64Image = !!tempDiv.querySelector('img[src^="data:image/"]')
+
+      // NOTE(hajae): base64 이미지가 포함되어 있으면 기본 붙여넣기 동작을 막음
+      if (hasBase64Image) {
+        event.preventDefault()
+      }
+
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          event.preventDefault()
+
+          const file = item.getAsFile()
+          if (!file) return
+
+          const request = IdeaNotePresignedUrlRequest.from(file.name, file.size)
+
+          createPresignedUrlMutation.mutate({
+            request: request,
+            file,
+          })
+
+          break
+        }
+      }
+    }
+
+    editor.view.dom.addEventListener('paste', handlePaste, true)
+
+    return () => {
+      editor.view.dom.removeEventListener('paste', handlePaste, true)
+    }
+  }, [createPresignedUrlMutation, editor])
 
   if (!editor) {
     return null

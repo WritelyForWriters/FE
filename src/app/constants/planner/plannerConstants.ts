@@ -1,4 +1,18 @@
+import { CharacterFormValues } from 'types/planner/plannerSynopsisFormValues'
 import { PlannerTabType } from 'types/planner/plannerTab'
+
+export const NEW_PLANNER_CHARACTER: CharacterFormValues = {
+  id: '',
+  intro: '',
+  name: '',
+  age: undefined,
+  gender: '',
+  occupation: '',
+  appearance: '',
+  personality: '',
+  relationship: '',
+  customFields: [],
+}
 
 export const PLANNER_TABS: PlannerTabType[] = [
   {

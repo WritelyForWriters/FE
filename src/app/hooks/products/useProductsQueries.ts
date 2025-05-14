@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchProductsTemplates, getProductDetail, getProductList } from 'api/products/products'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { UseQueryCustomOptions } from 'types/common/reactQueryCustomOption'
-import { PlannerTemplates } from 'types/planner/plannerTemplatesResponse'
+import { PlannerSynopsisFormValues } from 'types/planner/plannerSynopsisFormValues'
 import { ProductDetailDto, ProductDto } from 'types/products'
 
 export const useGetProductList = (queryOptions?: UseQueryCustomOptions<ProductDto[]>) => {
@@ -27,7 +27,7 @@ export const useGetProductDetail = (
 
 export const useFetchProductTemplates = (
   productId: string,
-  queryOptions?: UseQueryCustomOptions<PlannerTemplates>,
+  queryOptions?: UseQueryCustomOptions<PlannerSynopsisFormValues>,
 ) => {
   return useQuery({
     queryKey: [QUERY_KEY.PRODUCT_TEMPLATES, productId],

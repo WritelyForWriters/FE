@@ -11,7 +11,7 @@ export type PlannerTemplates = {
 }
 
 type CustomField = {
-  id: string
+  id?: string
   name: string
   content: string
 }
@@ -25,7 +25,6 @@ export type Character = {
   occupation?: string
   appearance?: string
   personality?: string
-  characteristic?: string
   relationship?: string
   customFields?: CustomField[]
 }

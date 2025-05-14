@@ -13,3 +13,7 @@ export const formatDate = (dateString: string) => {
 
   return `${year}.${month}.${day}`
 }
+
+export const formatMillisecondToMinute = (millisecond: number) => {
+  return Math.ceil(millisecond / 60000)
+}

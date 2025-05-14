@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
-
 import { PLANNER_WORLD_VIEW_ITEMS } from 'constants/planner/plannerConstants'
+import { useFormContext } from 'react-hook-form'
 
 import TextButton from '@components/buttons/TextButton'
 import TextField from '@components/text-field/TextField'
+
+import PlannerFieldWithButton from '../planner-field-with-button/PlannerFieldWithButton'
 
 import classNames from 'classnames/bind'
 
@@ -18,37 +19,47 @@ type CustomField = {
 }
 
 export default function PlannerWorldViewForm() {
-  const [customFields, setCustomFields] = useState<CustomField[]>([])
-
-  useEffect(() => {
-    setCustomFields([{ id: '', name: '', content: '' }])
-  }, [])
+  const { watch, setValue } = useFormContext()
+  const customFields: CustomField[] = watch('worldview.customFields') || []
 
   const handleAddCustomField = () => {
-    setCustomFields((prev) => [...prev, { id: '', name: '', content: '' }])
+    setValue('worldview.customFields', [...customFields, { id: '', name: '', content: '' }])
+  }
+
+  const handleDeleteCustomField = (index: number) => {
+    const updated = [...customFields]
+    updated.splice(index, 1)
+    setValue('worldview.customFields', updated)
   }
 
   return (
     <div className={cx('world-view-form')} id="heading2">
       <div className={cx('world-view-form__title')}>세계관</div>
       {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
-        <TextField
-          key={`planner-world-view-item-${index}`}
-          name={`worldview.${item.name}`}
-          label={item.label}
-          variant="expand"
-          helperText={item.helperText}
-        />
+        <PlannerFieldWithButton key={item.name} name={`worldview.${item.name}`}>
+          <TextField
+            key={`planner-world-view-item-${index}`}
+            name={`worldview.${item.name}`}
+            label={item.label}
+            variant="expand"
+            helperText={item.helperText}
+          />
+        </PlannerFieldWithButton>
       ))}
       {customFields.map((field, index) => (
-        <TextField
+        <PlannerFieldWithButton
           key={field.id || index}
-          name={`worldview.customFields[${index}].content`}
-          label="커스텀 항목"
-          variant="expand"
-          labelName={`worldview.customFields[${index}].name`}
-          isLabelEditable={true}
-        />
+          name={`worldview.customFields[${index}]`}
+          onDelete={() => handleDeleteCustomField(index)}
+        >
+          <TextField
+            name={`worldview.customFields[${index}].content`}
+            label="커스텀 항목"
+            variant="expand"
+            labelName={`worldview.customFields[${index}].name`}
+            isLabelEditable={true}
+          />
+        </PlannerFieldWithButton>
       ))}
       {customFields.length < 15 && (
         <div className={cx('world-view-form__add-custom-field')}>

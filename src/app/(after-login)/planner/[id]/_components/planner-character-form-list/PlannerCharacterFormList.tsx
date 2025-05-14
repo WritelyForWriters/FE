@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 import { PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
-import { useSetAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
@@ -11,6 +11,8 @@ import FillButton from '@components/buttons/FillButton'
 import TextField from '@components/text-field/TextField'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
+
+import PlannerFieldWithButton from '../planner-field-with-button/PlannerFieldWithButton'
 
 import classNames from 'classnames/bind'
 
@@ -23,19 +25,26 @@ const expandItems = ['intro', 'customFields']
 interface PlannerCharacterFormListProps {
   paramsId: string
   arrayIndex: number
-  character: CharacterFormValues
   handleRemoveCharacter: (index: number) => void
 }
 
 export default function PlannerCharacterFormList({
   paramsId,
   arrayIndex,
-  character,
   handleRemoveCharacter,
 }: PlannerCharacterFormListProps) {
   const { isOpen, onToggle } = useCollapsed(true)
-  const { control, setValue } = useFormContext()
-  const setCharacters = useSetAtom(plannerCharacterByIdAtom(paramsId))
+  const { control } = useFormContext()
+  const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(paramsId))
+
+  const getTextFieldName = (name: string) => {
+    // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
+    if (name === 'customFields' && formValues.characters[arrayIndex].customFields) {
+      return `characters[${arrayIndex}].customFields[0].content`
+    } else {
+      return `characters[${arrayIndex}].${name}`
+    }
+  }
 
   const watchedValues: CharacterFormValues = useWatch({
     control,
@@ -46,29 +55,12 @@ export default function PlannerCharacterFormList({
   useEffect(() => {
     if (!watchedValues) return
 
-    setCharacters((prev) => {
-      const next = [...prev]
-      next[arrayIndex] = {
-        ...next[arrayIndex],
-        ...watchedValues,
-      }
-      return next
-    })
-  }, [watchedValues, arrayIndex, setCharacters])
-
-  // NOTE(hajae): local storage에 저장된 값으로 초기화
-  useEffect(() => {
-    setValue(`characters[${arrayIndex}]`, character)
-  }, [])
-
-  const getTextFieldName = (name: string) => {
-    // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
-    if (name === 'customFields' && character.customFields) {
-      return `characters[${arrayIndex}].customFields[0].content`
-    } else {
-      return `characters[${arrayIndex}].${name}`
-    }
-  }
+    setFormValues(
+      formValues.characters.map((character, index) =>
+        index === arrayIndex ? watchedValues : character,
+      ),
+    )
+  }, [watchedValues, arrayIndex, setFormValues])
 
   return (
     <div className={cx('list')}>
@@ -96,18 +88,34 @@ export default function PlannerCharacterFormList({
 
       {isOpen && (
         <div className={cx('list__items')}>
-          {PLANNER_CHARACTER_ITEMS.map((item, index) => (
-            <TextField
-              key={`planner-character-item-${index}`}
-              name={getTextFieldName(item.name)}
-              label={item.label}
-              variant={expandItems.includes(item.name) ? 'expand' : undefined}
-              labelName={
-                item.name === 'customFields' ? `characters[${arrayIndex}].customFields[0].name` : ''
-              }
-              isLabelEditable={item.name === 'customFields'}
-            />
-          ))}
+          {PLANNER_CHARACTER_ITEMS.map((item, index) =>
+            // NOTE(hajae): 등장인물 이름은 삭제 불가이기 때문에 조건 추가
+            item.name !== 'name' ? (
+              <PlannerFieldWithButton
+                key={`planner-character-item-${index}`}
+                name={getTextFieldName(item.name)}
+              >
+                <TextField
+                  name={getTextFieldName(item.name)}
+                  label={item.label}
+                  variant={expandItems.includes(item.name) ? 'expand' : undefined}
+                  labelName={
+                    item.name === 'customFields'
+                      ? `characters[${arrayIndex}].customFields[0].name`
+                      : ''
+                  }
+                  isLabelEditable={item.name === 'customFields'}
+                />
+              </PlannerFieldWithButton>
+            ) : (
+              <TextField
+                key={`planner-character-item-${index}`}
+                name={getTextFieldName(item.name)}
+                label={item.label}
+                variant={expandItems.includes(item.name) ? 'expand' : undefined}
+              />
+            ),
+          )}
         </div>
       )}
     </div>

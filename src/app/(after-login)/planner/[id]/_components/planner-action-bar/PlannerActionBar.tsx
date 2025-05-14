@@ -7,37 +7,39 @@ import styles from '@components/action-bar/ActionBar.module.scss'
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
 
+import { useProducts } from '@hooks/products/useProductsMutation'
+import { useGetProductDetail } from '@hooks/products/useProductsQueries'
+
+import { formatMillisecondToMinute } from '@utils/formatDate'
+
 import classNames from 'classnames/bind'
 
 const cx = classNames.bind(styles)
 
 interface PlannerActionBarProps {
+  productId: string
   isValidFormValues: boolean
   isSaved: boolean
+  autoSaveTimer: number
   onSubmit: () => void
 }
 
 export default function PlannerActionBar({
+  productId,
   isValidFormValues,
   isSaved,
+  autoSaveTimer,
   onSubmit,
 }: PlannerActionBarProps) {
-  // 액션바 내 좌측 영역
-  const ActionSectionContent = () => {
-    // 저장 여부 판단 state
-    const [hasSaved, setHasSaved] = useState(isSaved)
+  const { data: productDetail } = useGetProductDetail(productId)
+  const { saveProductMutation } = useProducts()
 
-    // 저장 버튼 클릭 트리거 이벤트
+  const ActionSectionContent = () => {
+    const [hasSaved, setHasSaved] = useState(isSaved)
     const handleSave = () => {
       if (!isValidFormValues) return
       onSubmit()
       setHasSaved(true)
-      alert('저장 완료!')
-    }
-
-    // 삭제 버튼 클릭 트리거 이벤트
-    const handleDelete = () => {
-      alert('삭제 완료!')
     }
 
     return (
@@ -51,28 +53,40 @@ export default function PlannerActionBar({
             <TextButton size="large" onClick={() => handleSave()}>
               수정하기
             </TextButton>
-            <TextButton size="large" onClick={() => handleDelete()}>
-              삭제하기
-            </TextButton>
           </>
         )}
       </>
     )
   }
 
-  // 액션바 내 가운데 영역
   const TitleSectionContent = () => {
-    // 타이틀 수정 모드를 구분하는 state
     const [isTitleEditing, setIsTitleEditing] = useState(false)
+    const [title, setTitle] = useState(productDetail?.title || '타이틀')
 
-    // 타이틀명 state
-    const [title, setTitle] = useState('타이틀')
+    // TODO(hajae):
+    // 1. productDetail fetch후 content를 가지고 있음.
+    // 2. 다른 기기 or 다른 브라우저에서 작업 후 타이틀을 저장하면 현재 가지고 있는 content로 덮어씌울 수 있음
+    // Title만 저장하는 API가 필요할 지 추후 논의 필요
+    const updateTitle = () => {
+      saveProductMutation.mutate({
+        productId: productId,
+        product: {
+          content: productDetail?.content,
+          title: title,
+          isAutoSave: false,
+        },
+      })
+      setIsTitleEditing(false)
+    }
 
-    // 엔터키 트리거 이벤트
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
-        setIsTitleEditing(false)
+        updateTitle()
       }
+    }
+
+    const handleBlur = () => {
+      updateTitle()
     }
 
     return (
@@ -82,7 +96,7 @@ export default function PlannerActionBar({
             className={cx('action-bar-input')}
             value={title}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-            onBlur={() => setIsTitleEditing(false)}
+            onBlur={handleBlur}
             onKeyDown={handleKeyDown}
           />
         ) : (
@@ -90,8 +104,12 @@ export default function PlannerActionBar({
             {title}
           </span>
         )}
-        {/* Note: description은 동적 렌더링 필요 */}
-        <span className={cx('description')}>저장 중</span>
+        {/* NOTE(hajae): 현재 테스트 */}
+        <span className={cx('description')}>
+          {autoSaveTimer > 0
+            ? `${formatMillisecondToMinute(autoSaveTimer)}분 뒤에 자동 저장됩니다.`
+            : '저장 중입니다.'}
+        </span>
       </>
     )
   }

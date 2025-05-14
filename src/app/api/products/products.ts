@@ -1,4 +1,7 @@
 import { default as AuthAxios, default as authInstance } from 'api/core/AuthInstance'
+import axios from 'axios'
+import { IdeaNotePresignedUrlRequest } from 'types/planner/ideaNotePresignedUrl'
+import { PlannerSynopsisFormValues } from 'types/planner/plannerSynopsisFormValues'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 import { PlannerTemplatesResponse } from 'types/planner/plannerTemplatesResponse'
 import {
@@ -33,7 +36,7 @@ export const getProductDetail = async (productId: string) => {
 
 export const fetchProductsTemplates = async (productId: string) => {
   const res = await AuthAxios.get<PlannerTemplatesResponse>(`/products/${productId}/templates`)
-  return res.data.result
+  return PlannerSynopsisFormValues.from(res.data.result)
 }
 
 export const createProductsTemplates = async (
@@ -42,4 +45,23 @@ export const createProductsTemplates = async (
 ) => {
   const res = await AuthAxios.post(`/products/${productId}/templates`, { ...request })
   return res.data
+}
+
+export const createFilesPresignedUrl = async (request: IdeaNotePresignedUrlRequest) => {
+  const res = await AuthAxios.post(`/files/presigned-url`, { ...request })
+  return res.data
+}
+
+export const updateIdeaNoteImage = async (putUrl: string, file: File) => {
+  // NOTE(hajae): base url이 필요없기에 아래와 같이 작성
+  const res = await axios
+    .create({
+      timeout: 15000,
+      withCredentials: true,
+    })
+    .put(putUrl, file, {
+      headers: { 'Content-Type': file.type },
+    })
+
+  return res
 }
