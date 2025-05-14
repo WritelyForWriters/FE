@@ -115,10 +115,6 @@ export default function PlannerIdeaNoteEditor({
     }
   }, [editor, contents])
 
-  useImperativeHandle(ref, () => ({
-    getEditor: () => editor,
-  }))
-
   useEffect(() => {
     if (!editor) return
 
@@ -126,11 +122,15 @@ export default function PlannerIdeaNoteEditor({
       const items = event.clipboardData?.items
       if (!items) return
 
+      // NOTE(hajae): 붙여넣기 시 base64 이미지가 포함되어 있는지 확인
       const htmlData = event.clipboardData?.getData('text/html')
+      const tempDiv = document.createElement('div')
+      tempDiv.innerHTML = htmlData ?? ''
+      const hasBase64Image = !!tempDiv.querySelector('img[src^="data:image/"]')
 
-      if (htmlData?.includes('src="data:image')) {
+      // NOTE(hajae): base64 이미지가 포함되어 있으면 기본 붙여넣기 동작을 막음
+      if (hasBase64Image) {
         event.preventDefault()
-        return
       }
 
       for (const item of items) {
@@ -152,12 +152,12 @@ export default function PlannerIdeaNoteEditor({
       }
     }
 
-    editor.view.dom.addEventListener('paste', handlePaste)
+    editor.view.dom.addEventListener('paste', handlePaste, true)
 
     return () => {
-      editor.view.dom.removeEventListener('paste', handlePaste)
+      editor.view.dom.removeEventListener('paste', handlePaste, true)
     }
-  }, [editor])
+  }, [createPresignedUrlMutation, editor])
 
   if (!editor) {
     return null
