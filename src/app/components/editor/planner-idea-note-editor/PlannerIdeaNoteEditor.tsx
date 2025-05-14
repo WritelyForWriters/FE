@@ -126,6 +126,13 @@ export default function PlannerIdeaNoteEditor({
       const items = event.clipboardData?.items
       if (!items) return
 
+      const htmlData = event.clipboardData?.getData('text/html')
+
+      if (htmlData?.includes('src="data:image')) {
+        event.preventDefault()
+        return
+      }
+
       for (const item of items) {
         if (item.type.startsWith('image/')) {
           event.preventDefault()
