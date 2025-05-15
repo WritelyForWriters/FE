@@ -4,8 +4,22 @@ import { ChatbotFormData, ChatbotWebSearchFormData, FeedbackFormData } from 'typ
 // AI 어시스턴트 사용 내역 조회
 // TODO
 // [ ] 무한 스크롤 구현
-export const getAssistantHistory = async (productId: string) => {
-  const res = await authInstance.get(`/assistant/histories?productId=${productId}`)
+export const getAssistantHistory = async (
+  productId: string,
+  assistantId?: string,
+  size?: number,
+) => {
+  let url = `/assistant/histories?productId=${productId}`
+
+  if (assistantId) {
+    url += `&assistantId=${assistantId}`
+  }
+
+  if (size) {
+    url += `&size=${size}`
+  }
+
+  const res = await authInstance.get(url)
 
   return res.data
 }
@@ -80,7 +94,9 @@ export const submitDefaultChatMessage = async (formData: ChatbotFormData) => {
   const { assistantId } = res.data.result
 
   // TODO: sessionId에 대해 논의 필요
-  await authInstance.get(`/assistant/chat/stream?assistantId=${assistantId}&sessionId=1`)
+  await authInstance.get(`/assistant/chat/stream?assistantId=${assistantId}&sessionId=2`)
+
+  return assistantId
 }
 
 // 자유 대화 메시지 전송(웹 검색 모드)

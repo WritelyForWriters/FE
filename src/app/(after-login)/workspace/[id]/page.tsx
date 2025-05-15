@@ -9,6 +9,7 @@ import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
+import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
@@ -20,6 +21,7 @@ import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
+import { useGetAssistantHistory } from '@hooks/chatbot/useGetAssistantHistory'
 import { useGetFixedMessage } from '@hooks/chatbot/useGetFixedMessage'
 import { useGetProductDetail, useProducts } from '@hooks/index'
 
@@ -58,7 +60,9 @@ export default function WorkSpacePage() {
   const setAutoSaveMessage = useSetAtom(autoSaveMessageAtom)
   const [productId, setProductId] = useAtom(productIdAtom)
   const setFixedMessage = useSetAtom(chatbotFixedMessageAtom)
+  const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
 
+  const { data: chatbotHistory } = useGetAssistantHistory(productId)
   const { data: fixedMessage } = useGetFixedMessage(productId)
 
   const [editorIndexToc, setEditorIndexToc] = useState<TocItemType[]>([])
@@ -179,6 +183,10 @@ export default function WorkSpacePage() {
     }
     // MEMO(Sohyun): dependency array에 setEditorContent를 넣게 되면 입력중에 interval 시작, 종료가 반복되므로 제외
   }, [])
+
+  useEffect(() => {
+    setChatbotHistory(chatbotHistory?.result?.contents)
+  }, [productId])
 
   useEffect(() => {
     setFixedMessage(
