@@ -2,8 +2,6 @@ import authInstance from 'api/core/AuthInstance'
 import { ChatbotFormData, ChatbotWebSearchFormData, FeedbackFormData } from 'types/chatbot/chatbot'
 
 // AI 어시스턴트 사용 내역 조회
-// TODO
-// [ ] 무한 스크롤 구현
 export const getAssistantHistory = async (
   productId: string,
   assistantId?: string,
