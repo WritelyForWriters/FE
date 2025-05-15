@@ -23,6 +23,7 @@ export interface ChatItem {
     id: string
     content: string
     isApplied: boolean
+    isGood: boolean
   }
 }
 
