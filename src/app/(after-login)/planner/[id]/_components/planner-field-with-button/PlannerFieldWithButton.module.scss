@@ -11,8 +11,11 @@
   position: relative;
   width: 100%;
 
-  &__delete-button {
+  &__buttons {
+    @include mixin.flex(row, center, null, nowrap);
     position: absolute;
+    gap: 8px;
+
     padding: 1.2rem 0 1.2rem 1.2rem;
     top: 0;
     right: 0;
@@ -21,7 +24,7 @@
     visibility: hidden;
   }
 
-  &:hover .field-with-button__delete-button {
+  &:hover .field-with-button__buttons {
     visibility: visible;
   }
 }

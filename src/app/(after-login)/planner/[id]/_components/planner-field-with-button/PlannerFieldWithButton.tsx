@@ -1,8 +1,12 @@
+import Image from 'next/image'
+
 import { ReactNode, useEffect, useState } from 'react'
 
 import { useFormContext } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
+
+import aiIcon from '/public/icons/ai-option2.svg'
 
 import classNames from 'classnames/bind'
 
@@ -60,7 +64,15 @@ export default function PlannerFieldWithButton({
       {isShow ? (
         <div className={cx('field-with-button')}>
           {children}
-          <div className={cx('field-with-button__delete-button')}>
+          <div className={cx('field-with-button__buttons')}>
+            <FillButton
+              type="button"
+              size="small"
+              variant="secondary"
+              shape="pill"
+              iconPosition="only"
+              iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
+            />
             <FillButton
               type="button"
               size="small"
