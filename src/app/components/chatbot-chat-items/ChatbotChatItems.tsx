@@ -8,15 +8,15 @@ import { ChatItem } from 'types/chatbot/chatbot'
 import ChatbotChatItem from '@components/chatbot-chat-item/ChatbotChatItem'
 
 export default function ChatbotChatItems() {
-  const divRefs = useRef<HTMLLIElement[]>([])
+  const liRefs = useRef<HTMLLIElement[]>([])
 
   const chatbotHistory = useAtomValue(chatbotHistoryAtom)
   const selectedIndex = useAtomValue(chatbotSelectedIndexAtom)
 
   useEffect(() => {
-    const selectedDiv = divRefs.current[selectedIndex]
-    if (selectedDiv) {
-      selectedDiv.scrollIntoView({
+    const selectedLi = liRefs.current[selectedIndex]
+    if (selectedLi) {
+      selectedLi.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       })
@@ -29,7 +29,7 @@ export default function ChatbotChatItems() {
         <ChatbotChatItem
           key={item.id}
           ref={(el) => {
-            if (el) divRefs.current[idx] = el
+            if (el) liRefs.current[idx] = el
           }}
           index={idx}
           {...item}
