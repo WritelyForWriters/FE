@@ -4,21 +4,26 @@
  */
 import Image from 'next/image'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { getAssistantHistory } from 'api/chatbot/chatbot'
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
 import { CHATBOT_URLS } from 'constants/chatbot/urls'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { Direction } from 're-resizable/lib/resizer'
 import { DraggableEvent } from 'react-draggable'
 import { FiInfo } from 'react-icons/fi'
+import { IoIosArrowBack } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
 import { DraggableData, Rnd } from 'react-rnd'
+import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
+import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
+import { productIdAtom } from 'store/productsAtoms'
 
 import ChatbotChatInput from '@components/chatbot-chat-input/ChatbotChatInput'
 import ChatbotMessageList from '@components/chatbot-message-list/ChatbotMessageList'
@@ -27,6 +32,7 @@ import ExpandableContentBox from '@components/expandable-content-box/ExpandableC
 import { computeRelativePosition } from '@utils/computeRelativePosition'
 
 import { chatbotAbsoluteSizeAtom } from './../../store/chatbotAbsoluteSizeAtom'
+import { chatbotHistoryAtom } from './../../store/chatbotHistoryAtom'
 import { chatbotRelativeSizeAtom } from './../../store/chatbotRelativeSizeAtom'
 
 import classNames from 'classnames/bind'
@@ -38,6 +44,8 @@ const cx = classNames.bind(styles)
 type ResizeDirection = Direction
 
 export default function ChatbotWindow() {
+  const containerRef = useRef<HTMLDivElement>(null)
+
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -51,6 +59,13 @@ export default function ChatbotWindow() {
   const [chatbotAbsoluteSize, setChatbotAbsoluteSize] = useAtom(chatbotAbsoluteSizeAtom)
   const [chatbotAbsolutePosition, setChatbotAbsolutePosition] = useAtom(chatbotAbsolutePositionAtom)
 
+  const [inputMode, setInputMode] = useAtom(chatInputModeAtom) // 입력 모드 | 탐색 모드
+
+  const [chatbotHistory, setChatbotHistory] = useAtom(chatbotHistoryAtom)
+
+  const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
+
+  const productId = useAtomValue(productIdAtom)
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
 
   useEffect(() => {
@@ -84,6 +99,24 @@ export default function ChatbotWindow() {
     setChatbotAbsolutePosition,
     setChatbotAbsoluteSize,
   ])
+
+  const handleScroll = useCallback(async () => {
+    const container = containerRef.current
+    if (container && container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+      const latestAssistantId = chatbotHistory[chatbotHistory.length - 1]?.id
+      const olderHistory = await getAssistantHistory(productId, latestAssistantId)
+
+      setChatbotHistory((prev) => [...prev, ...olderHistory?.result?.contents?.slice(1)])
+    }
+  }, [chatbotHistory, productId])
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    container.addEventListener('scroll', handleScroll)
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
 
   const handleResizeStop = (
     _e: MouseEvent | TouchEvent,
@@ -128,6 +161,11 @@ export default function ChatbotWindow() {
 
   const handleCloseClick = () => setIsChatbotOpen(false)
 
+  const handleBackClick = () => {
+    setInputMode('input')
+    setSelectedIndex(-1)
+  }
+
   return (
     <>
       {isChatbotOpen && (
@@ -170,19 +208,30 @@ export default function ChatbotWindow() {
             >
               <div className={cx('chatbot-window__header', { 'drag-handle': true })}>
                 <div className={cx('chatbot-window__header-content')}>
-                  <p>챗봇</p>
-                  <button
-                    type="button"
-                    onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
-                  >
-                    <FiInfo size={20} color="#CCCCCC" />
-                  </button>
+                  {inputMode === 'input' ? (
+                    <>
+                      <p>챗봇</p>
+                      <button
+                        type="button"
+                        onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
+                      >
+                        <FiInfo size={20} color="#CCCCCC" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button type="button" onClick={handleBackClick}>
+                        <IoIosArrowBack size={20} color="#1A1A1A" />
+                      </button>
+                      <p>탐색 모드</p>
+                    </>
+                  )}
                 </div>
                 <button type="button" onClick={handleCloseClick}>
                   <IoClose size={20} color="#1A1A1A" />
                 </button>
               </div>
-              <div className={cx('chatbot-window__body')}>
+              <div ref={containerRef} className={cx('chatbot-window__body')}>
                 {chatbotFixedMessage && (
                   <ExpandableContentBox
                     leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}

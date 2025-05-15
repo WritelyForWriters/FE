@@ -8,8 +8,9 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { BsFillPinFill } from 'react-icons/bs'
 import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
 import ReactMarkdown from 'react-markdown'
+import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
-import { chatbotModeAtom } from 'store/chatbotModeAtom'
+import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { productIdAtom } from 'store/productsAtoms'
 
 import { usePinMessage } from '@hooks/chatbot/usePinMessage'
@@ -23,6 +24,7 @@ import styles from './ChatbotAssistantMessage.module.scss'
 const cx = classNames.bind(styles)
 
 interface ChatbotAssistantMessageProps {
+  index: number
   assistantId: string
   type: string
   quote: string
@@ -34,6 +36,7 @@ interface ChatbotAssistantMessageProps {
 }
 
 export default function ChatbotAssistantMessage({
+  index,
   assistantId,
   type,
   quote,
@@ -43,9 +46,10 @@ export default function ChatbotAssistantMessage({
 
   const [isMouseOver, setIsMouseOver] = useState(false)
 
+  const [selectedIndex, setSelectedIndex] = useAtom(chatbotSelectedIndexAtom)
   const [fixedMessage, setFixedMessage] = useAtom(chatbotFixedMessageAtom)
   const productId = useAtomValue(productIdAtom)
-  const setChatbotMode = useSetAtom(chatbotModeAtom)
+  const setInputMode = useSetAtom(chatInputModeAtom)
 
   const { mutate: submitFeedback } = useSubmitFeedback()
 
@@ -87,16 +91,21 @@ export default function ChatbotAssistantMessage({
     }
   }
 
+  const handleChatMessageSelect = (index: number) => {
+    setInputMode('search')
+    setSelectedIndex(index)
+  }
+
   return (
     <div
       className={cx('assistant-message')}
-      onClick={() => setChatbotMode('search')}
       onMouseOver={() => setIsMouseOver(true)}
       onMouseLeave={() => setIsMouseOver(false)}
     >
       <div
+        onClick={() => handleChatMessageSelect(index)}
         className={cx('assistant-message__body', {
-          'assistant-message__body--hover': isMouseOver,
+          'assistant-message__body--hover': isMouseOver || selectedIndex === index,
         })}
       >
         {quote && (

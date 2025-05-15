@@ -1,17 +1,40 @@
+import { useEffect, useRef } from 'react'
+
 import { useAtomValue } from 'jotai'
-import { productIdAtom } from 'store/productsAtoms'
+import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
+import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { ChatItem } from 'types/chatbot/chatbot'
 
 import ChatbotChatItem from '@components/chatbot-chat-item/ChatbotChatItem'
 
-import { useGetAssistantHistory } from '@hooks/chatbot/useGetAssistantHistory'
-
 export default function ChatbotChatItems() {
-  const productId = useAtomValue(productIdAtom)
+  const divRefs = useRef<HTMLLIElement[]>([])
 
-  const { data } = useGetAssistantHistory(productId)
+  const chatbotHistory = useAtomValue(chatbotHistoryAtom)
+  const selectedIndex = useAtomValue(chatbotSelectedIndexAtom)
 
-  const chatHistory = data?.result.contents
+  useEffect(() => {
+    const selectedDiv = divRefs.current[selectedIndex]
+    if (selectedDiv) {
+      selectedDiv.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      })
+    }
+  }, [selectedIndex])
 
-  return <>{chatHistory?.map((item: ChatItem) => <ChatbotChatItem key={item.id} {...item} />)}</>
+  return (
+    <>
+      {chatbotHistory?.map((item: ChatItem, idx) => (
+        <ChatbotChatItem
+          key={item.id}
+          ref={(el) => {
+            if (el) divRefs.current[idx] = el
+          }}
+          index={idx}
+          {...item}
+        />
+      ))}
+    </>
+  )
 }

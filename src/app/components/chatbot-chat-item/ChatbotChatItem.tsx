@@ -1,3 +1,5 @@
+import { forwardRef } from 'react'
+
 import { ChatItem } from 'types/chatbot/chatbot'
 
 import ChatbotAssistantMessage from '@components/chatbot-assistant-message/ChatbotAssistantMessage'
@@ -9,16 +11,26 @@ import styles from './ChatbotChatItem.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function ChatbotChatItem({ id, type, memberMessage, assistantMessage }: ChatItem) {
-  return (
-    <li className={cx('chat-item')}>
-      <ChatbotMemberMessage assistantId={id} type={type} {...memberMessage} />
-      <ChatbotAssistantMessage
-        assistantId={id}
-        type={type}
-        quote={memberMessage.content}
-        message={assistantMessage}
-      />
-    </li>
-  )
+interface ChatbotItemProps extends ChatItem {
+  index: number
 }
+
+const ChatbotChatItem = forwardRef<HTMLLIElement, ChatbotItemProps>(
+  ({ index, id, type, memberMessage, assistantMessage }, ref) => {
+    return (
+      <li ref={ref} className={cx('chat-item')}>
+        <ChatbotMemberMessage assistantId={id} type={type} {...memberMessage} />
+        <ChatbotAssistantMessage
+          index={index}
+          assistantId={id}
+          type={type}
+          quote={memberMessage.content}
+          message={assistantMessage}
+        />
+      </li>
+    )
+  },
+)
+
+ChatbotChatItem.displayName = 'ChatbotChatItem'
+export default ChatbotChatItem
