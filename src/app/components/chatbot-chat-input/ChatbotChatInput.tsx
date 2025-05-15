@@ -5,17 +5,21 @@ import Image from 'next/image'
 import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useQueryClient } from '@tanstack/react-query'
+import { getAssistantHistory } from 'api/chatbot/chatbot'
 import { CHAT_ERROR_MESSAGE } from 'constants/chatbot/message'
 import { RECOMMEND_PROMPTS } from 'constants/chatbot/recommendPrompts'
 import { QUERY_KEY } from 'constants/common/queryKeys'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FaRegStar } from 'react-icons/fa'
 import { FaCircleArrowUp } from 'react-icons/fa6'
 import { MdLanguage, MdOutlineLightbulb } from 'react-icons/md'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatModeAtom } from 'store/chatModeAtom'
+import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
+import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { clickedButtonAtom } from 'store/clickedButtonAtom'
+import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
 import { productIdAtom } from 'store/productsAtoms'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
@@ -49,7 +53,12 @@ export default function ChatbotChatInput() {
   const [chatMode, setChatMode] = useAtom(chatModeAtom) // 일반 모드 | 웹 검색 모드
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
   const [clickedButton, setClickedButton] = useAtom(clickedButtonAtom)
+  const [chatbotHistory, setChatbotHistory] = useAtom(chatbotHistoryAtom)
+
   const productId = useAtomValue(productIdAtom)
+
+  const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
+  const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
 
   const showToast = useToast()
 
@@ -69,8 +78,11 @@ export default function ChatbotChatInput() {
 
   const { mutate: submitDefaultChatMessage, isPending: isDefaultPending } =
     useSubmitDefaultChatMessage({
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ASSISTANT_HISTORY, productId] })
+      onSuccess: async (data) => {
+        try {
+          const newHistory = await getAssistantHistory(productId, data + '', 1)
+          setChatbotHistory((prev) => [newHistory.result.contents[0], ...prev])
+        } catch {}
       },
     })
 
@@ -95,6 +107,10 @@ export default function ChatbotChatInput() {
     setContent('')
     reset({ productId, content: '', prompt: '' })
   }
+
+  useEffect(() => {
+    setIsAssistantResponding(isDefaultPending || isWebSearchPending)
+  }, [isDefaultPending, isWebSearchPending])
 
   const handleChatInputKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -135,7 +151,13 @@ export default function ChatbotChatInput() {
   }
 
   const handleNavigateMessage = (direction: 'up' | 'down') => {
-    console.log(direction)
+    switch (direction) {
+      case 'up':
+        setSelectedIndex((prev) => Math.max(0, --prev))
+        break
+      case 'down':
+        setSelectedIndex((prev) => Math.min(chatbotHistory.length - 1, ++prev))
+    }
   }
 
   return (
