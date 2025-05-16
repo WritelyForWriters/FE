@@ -31,7 +31,7 @@ function ToolbarButton({ children, isActive, onClick, className }: ToolbarButton
 
 interface ToolbarProps {
   editor: Editor
-  handleActiveMenu: (type: AiassistantOptionType) => void
+  handleActiveMenu: (type: AiassistantOptionType | 'memo') => void
 }
 
 export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
@@ -177,7 +177,7 @@ export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
 
       {/* Memo */}
       <div className={styles['text-mark']}>
-        <ToolbarButton>메모</ToolbarButton>
+        <ToolbarButton onClick={() => handleActiveMenu('memo')}>메모</ToolbarButton>
       </div>
 
       <div className={styles.line} />

@@ -1,6 +1,6 @@
 'use client'
 
-import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
+import { ChangeEvent, Ref, RefObject, useEffect, useImperativeHandle, useState } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
@@ -15,6 +15,8 @@ import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtomValue } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
+
+import FillButton from '@components/buttons/FillButton'
 
 import { useTextEditor } from '@hooks/editor/useTextEditor'
 
@@ -37,6 +39,7 @@ interface DefaultEditorProps {
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
+  const [content, setContent] = useState('')
 
   const editor = useEditor({
     editable,
@@ -90,6 +93,11 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     handleOptionClickFeedback,
   } = useTextEditor(editor)
 
+  // 메모 인풋 변경
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setContent(e.target.value)
+  }
+
   useEffect(() => {
     if (!editor) {
       return undefined
@@ -132,6 +140,31 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
             feedbackText={feedbackInput.current}
             onOptionClick={handleOptionClickFeedback}
           />
+        )}
+
+        {/* 메모 */}
+        {activeMenu === 'memo' && (
+          <div className={styles['prompt-menu']}>
+            <input
+              autoFocus
+              className={styles['prompt-menu__input']}
+              onChange={handleChange}
+              placeholder="메모를 입력해주세요."
+            />
+            <FillButton
+              size="medium"
+              variant="primary"
+              style={{
+                padding: '0.8rem 1.2rem',
+                height: '100%',
+              }}
+              onClick={() => {
+                console.log(content)
+              }}
+            >
+              저장하기
+            </FillButton>
+          </div>
         )}
       </BubbleMenu>
 

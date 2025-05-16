@@ -52,7 +52,7 @@ export function useTextEditor(editor: Editor | null) {
     return null
   }
 
-  const handleActiveMenu = (type: AiassistantOptionType) => {
+  const handleActiveMenu = (type: AiassistantOptionType | 'memo') => {
     if (!editor) return
 
     const selection = handleTextSelection()
@@ -74,6 +74,10 @@ export function useTextEditor(editor: Editor | null) {
     if (type === 'feedback') {
       setActiveMenu('feedback')
       handleAiFeedback(originPhrase)
+    }
+
+    if (type === 'memo') {
+      setActiveMenu('memo')
     }
   }
 
