@@ -12,8 +12,10 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { useAtomValue } from 'jotai'
-import { isEditableAtom } from 'store/editorAtoms'
+import { createMemos } from 'api/memos/memos'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { isEditableAtom, originalPhraseAtom } from 'store/editorAtoms'
+import { productIdAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 
 import FillButton from '@components/buttons/FillButton'
@@ -39,6 +41,9 @@ interface DefaultEditorProps {
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
+  const productId = useAtomValue(productIdAtom)
+  const setSelectedText = useSetAtom(originalPhraseAtom)
+
   const [content, setContent] = useState('')
 
   const editor = useEditor({
@@ -96,6 +101,34 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   // 메모 인풋 변경
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setContent(e.target.value)
+  }
+
+  // 메모
+  const handleSavedMemos = async () => {
+    if (!content) return
+    if (!editor) return null
+
+    const { from, to } = editor.state.selection
+    console.log(from, to)
+
+    // MEMO(Sohyun): textBetween(from, to, separator)은 블록 간 텍스트 추출 시 줄바꿈 대신 지정한 separator를 사용
+    // 기존 원본 데이터 추출시 사용한 getText()가 에디터 전체의 plain text를 줄바꿈 포함 형태로 반환하기 때문에 불필요한 줄바꿈(/n), 공백이 포함되므로!
+    const selectedText = editor.state.doc.textBetween(from, to, ' ').replace(/\s+/g, ' ').trim()
+    setSelectedText(selectedText)
+    console.log(selectedText)
+
+    try {
+      const response = await createMemos(productId, {
+        content,
+        selectedText,
+        startIndex: from,
+        endIndex: to,
+        isCompleted: false,
+      })
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -158,9 +191,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
                 padding: '0.8rem 1.2rem',
                 height: '100%',
               }}
-              onClick={() => {
-                console.log(content)
-              }}
+              onClick={handleSavedMemos}
             >
               저장하기
             </FillButton>
