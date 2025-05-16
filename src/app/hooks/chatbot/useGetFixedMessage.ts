@@ -6,5 +6,6 @@ export const useGetFixedMessage = (productId: string) => {
   return useQuery({
     queryKey: [QUERY_KEY.FIXED_MESSAGE, productId],
     queryFn: () => getFixedMessage(productId),
+    enabled: !!productId,
   })
 }
