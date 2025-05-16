@@ -1,31 +1,32 @@
 import authInstance from 'api/core/AuthInstance'
 import { ChatbotFormData, ChatbotWebSearchFormData, FeedbackFormData } from 'types/chatbot/chatbot'
 
-// AI 어시스턴트 사용 내역 조회
-export const getAssistantHistory = async (
-  productId: string,
-  assistantId?: string,
-  size?: number,
-) => {
-  let url = `/assistant/histories?productId=${productId}`
-
-  if (assistantId) {
-    url += `&assistantId=${assistantId}`
-  }
-
-  if (size) {
-    url += `&size=${size}`
-  }
-
-  const res = await authInstance.get(url)
+// AI 어시스턴트 사용 내역 조회 - 단일
+export const getAssistantHistoryById = async (productId: string, assistantId: string) => {
+  const res = await authInstance.get(
+    `/assistant/histories?productId=${productId}&assistantId=${assistantId}&size=1`,
+  )
 
   return res.data
 }
 
-// 즐겨찾는 프롬프트 조회
-export const getFavoritePrompts = async (productId: string) => {
-  const res = await authInstance.get(`/products/${productId}/favorite-prompts`)
+// AI 어시스턴트 사용 내역 조회 - 무한 스크롤용
+export const getInfiniteAssistantHistory = async ({
+  productId,
+  cursor,
+}: {
+  productId: string
+  cursor?: string
+}) => {
+  const params = new URLSearchParams({ productId })
 
+  if (cursor) {
+    params.append('assistantId', cursor)
+  }
+
+  const url = `/assistant/histories?${params.toString()}`
+
+  const res = await authInstance.get(url)
   return res.data
 }
 

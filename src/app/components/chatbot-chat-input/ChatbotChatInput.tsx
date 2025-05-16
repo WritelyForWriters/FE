@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { KeyboardEvent, useEffect, useState } from 'react'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { getAssistantHistory } from 'api/chatbot/chatbot'
+import { getAssistantHistoryById } from 'api/chatbot/chatbot'
 import { CHAT_ERROR_MESSAGE } from 'constants/chatbot/message'
 import { RECOMMEND_PROMPTS } from 'constants/chatbot/recommendPrompts'
 import { QUERY_KEY } from 'constants/common/queryKeys'
@@ -20,6 +20,7 @@ import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { clickedButtonAtom } from 'store/clickedButtonAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
+import { newChatMessagesAtom } from 'store/newChatMessagesAtom'
 import { productIdAtom } from 'store/productsAtoms'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
@@ -53,12 +54,13 @@ export default function ChatbotChatInput() {
   const [chatMode, setChatMode] = useAtom(chatModeAtom) // 일반 모드 | 웹 검색 모드
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
   const [clickedButton, setClickedButton] = useAtom(clickedButtonAtom)
-  const [chatbotHistory, setChatbotHistory] = useAtom(chatbotHistoryAtom)
+  const chatbotHistory = useAtomValue(chatbotHistoryAtom)
 
   const productId = useAtomValue(productIdAtom)
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
   const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
+  const setNewChatMessages = useSetAtom(newChatMessagesAtom)
 
   const showToast = useToast()
 
@@ -80,8 +82,8 @@ export default function ChatbotChatInput() {
     useSubmitDefaultChatMessage({
       onSuccess: async (data) => {
         try {
-          const newHistory = await getAssistantHistory(productId, data + '', 1)
-          setChatbotHistory((prev) => [newHistory.result.contents[0], ...prev])
+          const newMessage = await getAssistantHistoryById(productId, data as string)
+          setNewChatMessages((prev) => [newMessage.result.contents[0], ...prev])
         } catch {}
       },
     })
@@ -89,7 +91,7 @@ export default function ChatbotChatInput() {
   const { mutate: submitWebSearchChatMessage, isPending: isWebSearchPending } =
     useSubmitWebSearchChatMessage({
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ASSISTANT_HISTORY, productId] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ASSISTANT_HISTORY_LATEST, productId] })
       },
     })
 

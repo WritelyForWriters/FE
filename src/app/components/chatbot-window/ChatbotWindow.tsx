@@ -4,9 +4,8 @@
  */
 import Image from 'next/image'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-import { getAssistantHistory } from 'api/chatbot/chatbot'
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
 import { CHATBOT_URLS } from 'constants/chatbot/urls'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -29,10 +28,11 @@ import ChatbotChatInput from '@components/chatbot-chat-input/ChatbotChatInput'
 import ChatbotMessageList from '@components/chatbot-message-list/ChatbotMessageList'
 import ExpandableContentBox from '@components/expandable-content-box/ExpandableContentBox'
 
+import { useGetInfiniteAssistantHistory } from '@hooks/chatbot/useGetAssistantHistoryInfinite'
+
 import { computeRelativePosition } from '@utils/computeRelativePosition'
 
 import { chatbotAbsoluteSizeAtom } from './../../store/chatbotAbsoluteSizeAtom'
-import { chatbotHistoryAtom } from './../../store/chatbotHistoryAtom'
 import { chatbotRelativeSizeAtom } from './../../store/chatbotRelativeSizeAtom'
 
 import classNames from 'classnames/bind'
@@ -61,12 +61,12 @@ export default function ChatbotWindow() {
 
   const [inputMode, setInputMode] = useAtom(chatInputModeAtom) // 입력 모드 | 탐색 모드
 
-  const [chatbotHistory, setChatbotHistory] = useAtom(chatbotHistoryAtom)
-
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
 
   const productId = useAtomValue(productIdAtom)
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
+
+  const { fetchNextPage } = useGetInfiniteAssistantHistory(productId)
 
   useEffect(() => {
     const handleResize = () => {
@@ -100,21 +100,19 @@ export default function ChatbotWindow() {
     setChatbotAbsoluteSize,
   ])
 
-  const handleScroll = useCallback(async () => {
+  const handleScroll = async () => {
     const container = containerRef.current
     if (container && container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
-      const latestAssistantId = chatbotHistory[chatbotHistory.length - 1]?.id
-      const olderHistory = await getAssistantHistory(productId, latestAssistantId)
-
-      setChatbotHistory((prev) => [...prev, ...olderHistory?.result?.contents?.slice(1)])
+      fetchNextPage()
     }
-  }, [chatbotHistory, productId])
+  }
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
     container.addEventListener('scroll', handleScroll)
+
     return () => container.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
 

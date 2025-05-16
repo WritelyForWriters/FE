@@ -7,10 +7,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Editor } from '@tiptap/react'
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME } from 'constants/workspace/number'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
+import { newChatMessagesAtom } from 'store/newChatMessagesAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
@@ -21,7 +22,7 @@ import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
-import { useGetAssistantHistory } from '@hooks/chatbot/useGetAssistantHistory'
+import { useGetInfiniteAssistantHistory } from '@hooks/chatbot/useGetAssistantHistoryInfinite'
 import { useGetFixedMessage } from '@hooks/chatbot/useGetFixedMessage'
 import { useGetProductDetail, useProducts } from '@hooks/index'
 
@@ -54,6 +55,7 @@ export default function WorkSpacePage() {
   const { data: productDetail } = useGetProductDetail(params.id)
 
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
+  const newChatMessages = useAtomValue(newChatMessagesAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
   const editorContent = editorContentAtom(params.id)
   const setEditorContent = useSetAtom(editorContent)
@@ -62,7 +64,7 @@ export default function WorkSpacePage() {
   const setFixedMessage = useSetAtom(chatbotFixedMessageAtom)
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
 
-  const { data: chatbotHistory } = useGetAssistantHistory(productId)
+  const { data: previousChatbotHistory } = useGetInfiniteAssistantHistory(productId)
   const { data: fixedMessage } = useGetFixedMessage(productId)
 
   const [editorIndexToc, setEditorIndexToc] = useState<TocItemType[]>([])
@@ -185,8 +187,20 @@ export default function WorkSpacePage() {
   }, [])
 
   useEffect(() => {
-    setChatbotHistory(chatbotHistory?.result?.contents)
-  }, [productId])
+    if (!previousChatbotHistory) return
+
+    let allChats = previousChatbotHistory.pages[0].result.contents
+
+    for (let i = 1; i < previousChatbotHistory.pages.length; i++) {
+      const pageContents = previousChatbotHistory.pages[i].result.contents
+
+      if (pageContents.length > 0) {
+        allChats = [...allChats, ...pageContents.slice(1)]
+      }
+    }
+
+    setChatbotHistory([...newChatMessages, ...allChats])
+  }, [previousChatbotHistory, productId, newChatMessages, setChatbotHistory])
 
   useEffect(() => {
     setFixedMessage(
