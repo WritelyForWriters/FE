@@ -15,15 +15,13 @@ export default function ChatbotMessageList() {
   const isAssistantResponding = useAtomValue(isAssistantRespondingAtom)
 
   return (
-    <>
+    <ul className={cx('chatbot-message-list')}>
       {isAssistantResponding && (
         <div>
           <Image alt="loading" src="/images/loading.gif" width={40} height={26} />
         </div>
       )}
-      <ul className={cx('chatbot-message-list')}>
-        <ChatbotChatItems />
-      </ul>
-    </>
+      <ChatbotChatItems />
+    </ul>
   )
 }
