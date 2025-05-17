@@ -14,7 +14,7 @@ import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { createMemos } from 'api/memos/memos'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { isEditableAtom, originalPhraseAtom } from 'store/editorAtoms'
+import { activeMenuAtom, isEditableAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { productIdAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 
@@ -43,6 +43,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const editable = useAtomValue(isEditableAtom)
   const productId = useAtomValue(productIdAtom)
   const setSelectedText = useSetAtom(originalPhraseAtom)
+  const setActiveMenu = useSetAtom(activeMenuAtom)
 
   const [content, setContent] = useState('')
 
@@ -118,14 +119,14 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     console.log(selectedText)
 
     try {
-      const response = await createMemos(productId, {
+      await createMemos(productId, {
         content,
         selectedText,
         startIndex: from,
         endIndex: to,
         isCompleted: false,
       })
-      console.log(response)
+      setActiveMenu('defaultToolbar')
     } catch (error) {
       console.log(error)
     }
