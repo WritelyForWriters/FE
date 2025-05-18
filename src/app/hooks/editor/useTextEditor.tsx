@@ -46,7 +46,7 @@ export function useTextEditor(editor: Editor | null) {
     if (from !== to) {
       selectionRef.current = { from, to }
       originalSelectionRef.current = { from, to }
-      editor.commands.setMark('highlight', { color: '#FFFAE5' })
+      editor.commands.setBackgroundHighlight({ color: '#FFFAE5' })
       return { from, to }
     }
     return null
@@ -149,7 +149,7 @@ export function useTextEditor(editor: Editor | null) {
     const selection = originalSelection ?? selectionRef.current
 
     if (selection && editor) {
-      editor.chain().setTextSelection(selection).unsetMark('highlight').run()
+      editor.chain().setTextSelection(selection).unsetBackgroundHighlight().run()
     }
   }
 
