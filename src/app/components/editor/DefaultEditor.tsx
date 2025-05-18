@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, Ref, RefObject, useEffect, useImperativeHandle, useState } from 'react'
+import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
@@ -11,14 +11,13 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { createMemos } from 'api/memos/memos'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { activeMenuAtom, isEditableAtom, originalPhraseAtom } from 'store/editorAtoms'
-import { productIdAtom } from 'store/productsAtoms'
+import { useAtomValue } from 'jotai'
+import { isEditableAtom } from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
 
 import FillButton from '@components/buttons/FillButton'
 
+import { useMemos } from '@hooks/editor/useMemos'
 import { useTextEditor } from '@hooks/editor/useTextEditor'
 
 import BackgroundHighlight from '@extensions/BackgroundHighlight'
@@ -42,11 +41,6 @@ interface DefaultEditorProps {
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
-  const productId = useAtomValue(productIdAtom)
-  const setSelectedText = useSetAtom(originalPhraseAtom)
-  const setActiveMenu = useSetAtom(activeMenuAtom)
-
-  const [content, setContent] = useState('')
 
   const editor = useEditor({
     editable,
@@ -99,42 +93,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     handleOptionClickFeedback,
   } = useTextEditor(editor)
 
-  // 메모 인풋 변경
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setContent(e.target.value)
-  }
-
-  // 메모
-  const handleSavedMemos = async () => {
-    if (!content) return
-    if (!editor) return null
-
-    const { from, to } = editor.state.selection
-    console.log(from, to)
-
-    // MEMO(Sohyun): textBetween(from, to, separator)은 블록 간 텍스트 추출 시 줄바꿈 대신 지정한 separator를 사용
-    // 기존 원본 데이터 추출시 사용한 getText()가 에디터 전체의 plain text를 줄바꿈 포함 형태로 반환하기 때문에 불필요한 줄바꿈(/n), 공백이 포함되므로!
-    const selectedText = editor.state.doc.textBetween(from, to, ' ').replace(/\s+/g, ' ').trim()
-    setSelectedText(selectedText)
-    console.log(selectedText)
-
-    try {
-      await createMemos(productId, {
-        content,
-        selectedText,
-        startIndex: from,
-        endIndex: to,
-        isCompleted: false,
-      })
-      setActiveMenu('defaultToolbar')
-      editor.commands.unsetBackgroundHighlight()
-      editor.commands.setUnderlineHighlight({ color: '#FFCC00' })
-    } catch (error) {
-      console.log(error)
-      // TODO 하이라이트 제거 및 defaultToolbar로 변경
-      editor.commands.unsetBackgroundHighlight()
-    }
-  }
+  const { handleChange, handleSavedMemos } = useMemos(editor)
 
   useEffect(() => {
     if (!editor) {
