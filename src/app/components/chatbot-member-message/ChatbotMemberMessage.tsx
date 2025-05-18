@@ -4,8 +4,15 @@ import Image from 'next/image'
 
 import { useState } from 'react'
 
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEY } from 'constants/common/queryKeys'
+import { useAtomValue } from 'jotai'
 import { FaStar } from 'react-icons/fa6'
+import { productIdAtom } from 'store/productsAtoms'
 import { MemberMessageType } from 'types/chatbot/chatbot'
+
+import { useAddFavoriteMessage } from '@hooks/chatbot/useAddFavoriteMessage'
+import { useRemoveFavoriteMessage } from '@hooks/chatbot/useRemoveFavoriteMessage'
 
 import classNames from 'classnames/bind'
 
@@ -14,7 +21,9 @@ import styles from './ChatbotMemberMessage.module.scss'
 const cx = classNames.bind(styles)
 
 interface MemberMessageProps {
+  assistantId: string
   type: MemberMessageType
+  id: string
   prompt: string | null
   isFavoritedPrompt: boolean
   content?: string
@@ -34,21 +43,35 @@ const getMessageMeta = (type: MemberMessageType) => {
 }
 
 export default function ChatbotMemberMessage({
+  assistantId,
   type,
+  id,
   prompt,
   isFavoritedPrompt,
   content,
 }: MemberMessageProps) {
+  const queryClient = useQueryClient()
+
   const [mouseOver, setMouseOver] = useState(false)
   const [isFavorite, setIsFavorite] = useState(isFavoritedPrompt)
 
+  const productId = useAtomValue(productIdAtom)
+
   const { strType, imgSrc } = getMessageMeta(type)
+
+  const { mutate: addFavoriteMessage, isSuccess: isAddSuccess } = useAddFavoriteMessage()
+  const { mutate: removeFavoriteMessage, isSuccess: isRemoveSuccess } = useRemoveFavoriteMessage()
+
+  if (isAddSuccess || isRemoveSuccess) {
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ASSISTANT_HISTORY_INFINITE, productId] })
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FAVORITE_PROMPTS, productId] })
+  }
 
   const handleFavorite = () => {
     if (isFavorite) {
-      // 즐겨찾기 삭제
+      removeFavoriteMessage({ productId, messageId: id })
     } else {
-      // 즐겨찾기 추가
+      addFavoriteMessage({ productId, assistantId })
     }
     setIsFavorite(!isFavorite)
   }

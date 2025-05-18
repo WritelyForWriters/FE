@@ -27,23 +27,17 @@
 
     &-content {
       @include mixin.display-flex();
-      align-items: center;
+      flex-direction: column;
       gap: 1.6rem;
 
-      p:nth-of-type(1) {
-        max-width: 24rem;
-      }
-
-      p:nth-of-type(2) {
-        @extend %typo-label-small; // TODO: 수정 예정
-        color: #929292;
-      }
+      max-width: 24rem;
     }
 
     &--hover {
       background-color: color.$alert-secondary-100;
       border-radius: 1.2rem;
       padding: 0.8rem 1.2rem 0.8rem 1.2rem;
+      cursor: pointer;
     }
   }
 

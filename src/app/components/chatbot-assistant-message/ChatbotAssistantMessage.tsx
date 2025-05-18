@@ -2,12 +2,20 @@
 
 import { useState } from 'react'
 
-import { useSetAtom } from 'jotai'
+import { QueryClient } from '@tanstack/react-query'
+import { QUERY_KEY } from 'constants/common/queryKeys'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { BsFillPinFill } from 'react-icons/bs'
-import { BsPin } from 'react-icons/bs'
-import { LuThumbsUp } from 'react-icons/lu'
-import { LuThumbsDown } from 'react-icons/lu'
-import { chatbotModeAtom } from 'store/chatbotModeAtom'
+import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
+import ReactMarkdown from 'react-markdown'
+import { chatInputModeAtom } from 'store/chatInputModeAtom'
+import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
+import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
+import { productIdAtom } from 'store/productsAtoms'
+
+import { usePinMessage } from '@hooks/chatbot/usePinMessage'
+import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
+import { useUnPinMessage } from '@hooks/chatbot/useUnPinMessage'
 
 import classNames from 'classnames/bind'
 
@@ -16,54 +24,88 @@ import styles from './ChatbotAssistantMessage.module.scss'
 const cx = classNames.bind(styles)
 
 interface ChatbotAssistantMessageProps {
-  id: string
+  index: number
+  assistantId: string
   type: string
+  quote: string
   message: {
+    id: string
     content: string
     isApplied: boolean
   }
-  quote: string
 }
 
 export default function ChatbotAssistantMessage({
-  id,
+  index,
+  assistantId,
   type,
-  message,
   quote,
+  message,
 }: ChatbotAssistantMessageProps) {
+  const queryClient = new QueryClient()
+
   const [isMouseOver, setIsMouseOver] = useState(false)
-  const [isPinned, setIsPinned] = useState(false)
-  const setChatbotMode = useSetAtom(chatbotModeAtom)
+
+  const [selectedIndex, setSelectedIndex] = useAtom(chatbotSelectedIndexAtom)
+  const [fixedMessage, setFixedMessage] = useAtom(chatbotFixedMessageAtom)
+  const productId = useAtomValue(productIdAtom)
+  const setInputMode = useSetAtom(chatInputModeAtom)
+
+  const { mutate: submitFeedback } = useSubmitFeedback()
 
   const ellipsisQuote = quote.length > 20 ? quote.slice(0, 20) + '...' : quote
 
-  // TODO: 탐색 모드 전환 시 id 사용 예정
-  console.log(id)
+  const { mutate: pinMessage, isSuccess: isPinSuccess } = usePinMessage()
+  const { mutate: unPinMessage, isSuccess: isUnPinSuccess } = useUnPinMessage()
 
   const handlePin = () => {
-    if (isPinned) {
-      // 메시지 고정 해제
+    if (!fixedMessage) {
+      pinMessage({ productId, assistantId })
+
+      setFixedMessage({ messageId: message.id, content: message.content })
     } else {
-      // 메시지 고정
+      unPinMessage(productId)
+      setFixedMessage(null)
+
+      if (fixedMessage.messageId !== message.id) {
+        pinMessage({ productId, assistantId })
+        setFixedMessage({ messageId: message.id, content: message.content })
+      }
     }
-    setIsPinned(!isPinned)
+
+    if (isPinSuccess || isUnPinSuccess) {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.FIXED_MESSAGE, productId] })
+    }
   }
 
-  const handleFeedback = (direction: 'up' | 'down') => {
-    // TODO: 평가 API 연동
-    console.log(direction)
+  const handleSubmitFeedback = (isGood: boolean) => {
+    if (isGood) {
+      submitFeedback({
+        assistantId,
+        formData: {
+          isGood,
+        },
+      })
+    } else {
+      // TODO: 피드백 입력창 디자인 추가되면 수정
+    }
+  }
+
+  const handleChatMessageSelect = (index: number) => {
+    setInputMode('search')
+    setSelectedIndex(index)
   }
 
   return (
     <div
       className={cx('assistant-message')}
-      onClick={() => setChatbotMode('search')}
       onMouseOver={() => setIsMouseOver(true)}
       onMouseLeave={() => setIsMouseOver(false)}
     >
       <div
+        onClick={() => handleChatMessageSelect(index)}
         className={cx('assistant-message__body', {
-          'assistant-message__body--hover': isMouseOver,
+          'assistant-message__body--hover': isMouseOver || selectedIndex === index,
         })}
       >
         {quote && (
@@ -72,26 +114,25 @@ export default function ChatbotAssistantMessage({
           </div>
         )}
         <div className={cx('assistant-message__body-content')}>
-          <p>{message.content}</p>
-          {type !== 'chat' && <p>{message.isApplied ? '적용됨' : '적용 안 됨'}</p>}
+          <ReactMarkdown>{message.content}</ReactMarkdown>
         </div>
       </div>
       <div className={cx('assistant-message__footer')}>
         {isMouseOver && (
           <>
             <button type="button" onClick={handlePin}>
-              {isPinned ? (
-                <BsFillPinFill color="#CCCCCC" size={20} />
-              ) : (
-                <BsPin color="#CCCCCC" size={20} />
-              )}
+              <BsFillPinFill color="#CCCCCC" size={20} />
             </button>
-            <button type="button" onClick={() => handleFeedback('up')}>
-              <LuThumbsUp color="#CCCCCC" size={20} />
-            </button>
-            <button type="button" onClick={() => handleFeedback('down')}>
-              <LuThumbsDown color="#CCCCCC" size={20} />
-            </button>
+            {type === 'chat' && (
+              <>
+                <button type="button" onClick={() => handleSubmitFeedback(true)}>
+                  <LuThumbsUp color="#CCCCCC" size={20} />
+                </button>
+                <button type="button" onClick={() => handleSubmitFeedback(false)}>
+                  <LuThumbsDown color="#CCCCCC" size={20} />
+                </button>
+              </>
+            )}
           </>
         )}
       </div>
