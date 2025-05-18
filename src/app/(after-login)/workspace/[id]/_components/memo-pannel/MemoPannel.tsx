@@ -9,7 +9,7 @@ import Tab from '@components/tab/Tab'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
-import MemoItem from './MemoItem'
+import MemoList from './MemoList'
 
 import classNames from 'classnames/bind'
 
@@ -29,22 +29,18 @@ export default function MemoPannel({ memoList }: MemoPannelProps) {
     onClose()
   }
 
-  console.log(memoList)
-
   return (
     <>
       {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="메모">
-          <Tab defaultTab="progress">
-            <Tab.Button value="progress">진행중</Tab.Button>
-            <Tab.Button value="all">전체</Tab.Button>
-          </Tab>
+          <Tab defaultTab="progress" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className={cx('button-wrapper')}>
+              <Tab.Button value="progress">진행중</Tab.Button>
+              <Tab.Button value="all">전체</Tab.Button>
+            </div>
 
-          <ul className={cx('memo-list')}>
-            {Array.from({ length: 4 }, (_, index) => (
-              <MemoItem key={index} />
-            ))}
-          </ul>
+            <MemoList memoList={memoList} />
+          </Tab>
         </Pannel>
       ) : (
         <button onClick={onOpen} className={cx('container')}>

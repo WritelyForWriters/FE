@@ -10,6 +10,12 @@
   background-color: color.$alert-secondary-20;
 }
 
+.button-wrapper {
+  display: flex;
+  gap: 1.2rem;
+  align-self: flex-start;
+}
+
 .memo-list {
   width: 100%;
 

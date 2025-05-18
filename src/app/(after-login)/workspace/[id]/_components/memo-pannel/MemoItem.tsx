@@ -7,11 +7,16 @@ import styles from './MemoItem.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function MemoItem() {
+interface MemoItemProps {
+  title: string
+  content?: string
+}
+
+export default function MemoItem({ title, content }: MemoItemProps) {
   return (
     <li className={cx('memo-item')}>
       <h3>
-        타이틀
+        {title ?? '타이틀'}
         <div>
           <button>
             <FaCheck color="#CCCCCC" />
@@ -22,7 +27,8 @@ export default function MemoItem() {
         </div>
       </h3>
 
-      <p>메모 본문입니다.</p>
+      <p>{content}</p>
+      {/* TODO 생성 또는 수정 날짜로 수정 */}
       <span>2024.01.11</span>
     </li>
   )
