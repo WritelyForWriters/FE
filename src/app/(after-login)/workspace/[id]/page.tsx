@@ -19,6 +19,7 @@ import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
 import { useGetProductDetail, useProducts } from '@hooks/index'
+import { useGetMemoList } from '@hooks/memos/useMemosQueries'
 
 import { addHeadingIds, getTocFromEditor } from '@utils/index'
 
@@ -47,6 +48,7 @@ export default function WorkSpacePage() {
 
   const { saveProductMutation } = useProducts()
   const { data: productDetail } = useGetProductDetail(params.id)
+  const { data: memoList } = useGetMemoList(params.id)
 
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
@@ -199,7 +201,7 @@ export default function WorkSpacePage() {
 
         <div>
           <div className={cx('main-section__pannel')}>
-            <MemoPannel />
+            <MemoPannel memoList={memoList} />
             <PlannerPannel />
           </div>
         </div>

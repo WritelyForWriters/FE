@@ -6,4 +6,7 @@ export const QUERY_KEY = Object.freeze({
 
   // 프로필
   ME_PROFILE: 'getMeProfile',
+
+  // 메모
+  MEMO_LIST: 'getMemoList',
 })

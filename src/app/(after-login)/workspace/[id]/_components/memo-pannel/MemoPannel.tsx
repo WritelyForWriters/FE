@@ -2,6 +2,8 @@
 
 import { MouseEvent } from 'react'
 
+import { MemosDto } from 'types/memos/memosResponseType'
+
 import Pannel from '@components/pannel/Pannel'
 import Tab from '@components/tab/Tab'
 
@@ -15,13 +17,19 @@ import styles from './MemoPannel.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function MemoPannel() {
+interface MemoPannelProps {
+  memoList?: MemosDto[]
+}
+
+export default function MemoPannel({ memoList }: MemoPannelProps) {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     onClose()
   }
+
+  console.log(memoList)
 
   return (
     <>
