@@ -5,7 +5,6 @@ import { ChangeEvent, Ref, RefObject, useEffect, useImperativeHandle, useState }
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
-import Highlight from '@tiptap/extension-highlight'
 import Italic from '@tiptap/extension-italic'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -22,9 +21,11 @@ import FillButton from '@components/buttons/FillButton'
 
 import { useTextEditor } from '@hooks/editor/useTextEditor'
 
+import BackgroundHighlight from '@extensions/BackgroundHighlight'
 import BlockquoteExtension from '@extensions/Blockquote'
 import HeadingExtension from '@extensions/Heading'
 import Indent from '@extensions/Indent'
+import UnderlineHighlight from '@extensions/UnderlineHighlight'
 
 import Toolbar from './Toolbar'
 import AutoModifyMenu from './ai-assistant-interface/AutoModifyMenu'
@@ -67,9 +68,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         alignments: ['left', 'center', 'right'],
         defaultAlignment: 'left',
       }),
-      Highlight.configure({
-        multicolor: true,
-      }),
+      BackgroundHighlight,
+      UnderlineHighlight,
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
@@ -127,8 +127,12 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         isCompleted: false,
       })
       setActiveMenu('defaultToolbar')
+      editor.commands.unsetBackgroundHighlight()
+      editor.commands.setUnderlineHighlight({ color: '#FFCC00' })
     } catch (error) {
       console.log(error)
+      // TODO 하이라이트 제거 및 defaultToolbar로 변경
+      editor.commands.unsetBackgroundHighlight()
     }
   }
 
