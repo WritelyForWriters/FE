@@ -30,6 +30,13 @@ export const getInfiniteAssistantHistory = async ({
   return res.data
 }
 
+// 즐겨찾는 프롬프트 조회
+export const getFavoritePrompts = async (productId: string) => {
+  const res = await authInstance.get(`/products/${productId}/favorite-prompts`)
+
+  return res.data
+}
+
 // 프롬프트 즐겨찾기 추가
 export const addFavoriteMessage = async ({
   productId,
