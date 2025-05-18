@@ -1,6 +1,5 @@
 import authInstance from 'api/core/AuthInstance'
-import { SavedMemosRequestType } from 'types/memos'
-import { MemoList } from 'types/memos/memosResponseType'
+import { MemoList, SavedMemosRequestType } from 'types/memos'
 
 // 메모 생성
 export const createMemos = async ({ productId, data }: SavedMemosRequestType) => {

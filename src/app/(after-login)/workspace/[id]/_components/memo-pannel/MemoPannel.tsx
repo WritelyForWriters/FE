@@ -2,7 +2,7 @@
 
 import { MouseEvent } from 'react'
 
-import { MemosDto } from 'types/memos/memosResponseType'
+import { MemosDto } from 'types/memos'
 
 import Pannel from '@components/pannel/Pannel'
 import Tab from '@components/tab/Tab'
