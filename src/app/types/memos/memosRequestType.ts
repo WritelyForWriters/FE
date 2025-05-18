@@ -1,3 +1,8 @@
+export interface SavedMemosRequestType {
+  productId: string
+  data: MemosValues
+}
+
 export interface MemosValues {
   title?: string
   content: string
