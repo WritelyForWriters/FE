@@ -10,4 +10,5 @@ export interface MemosDto {
   startIndex: number
   endIndex: number
   isCompleted: boolean
+  updatedAt: string
 }

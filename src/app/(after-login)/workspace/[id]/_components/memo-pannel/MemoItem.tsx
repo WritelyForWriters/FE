@@ -1,6 +1,8 @@
 import { FaCheck } from 'react-icons/fa6'
 import { TfiMoreAlt } from 'react-icons/tfi'
 
+import { formatDate } from '@utils/formatDate'
+
 import classNames from 'classnames/bind'
 
 import styles from './MemoItem.module.scss'
@@ -10,9 +12,10 @@ const cx = classNames.bind(styles)
 interface MemoItemProps {
   title: string
   content?: string
+  updatedAt: string
 }
 
-export default function MemoItem({ title, content }: MemoItemProps) {
+export default function MemoItem({ title, content, updatedAt }: MemoItemProps) {
   return (
     <li className={cx('memo-item')}>
       <h3>
@@ -28,8 +31,7 @@ export default function MemoItem({ title, content }: MemoItemProps) {
       </h3>
 
       <p>{content}</p>
-      {/* TODO 생성 또는 수정 날짜로 수정 */}
-      <span>2024.01.11</span>
+      <span>{formatDate(updatedAt)}</span>
     </li>
   )
 }

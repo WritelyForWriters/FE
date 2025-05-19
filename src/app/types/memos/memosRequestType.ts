@@ -9,5 +9,4 @@ export interface MemosValues {
   selectedText: string
   startIndex: number
   endIndex: number
-  isCompleted: boolean
 }

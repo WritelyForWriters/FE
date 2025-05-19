@@ -45,7 +45,6 @@ export function useMemos(editor: Editor | null) {
           selectedText,
           startIndex: from,
           endIndex: to,
-          isCompleted: false,
         },
       },
       {

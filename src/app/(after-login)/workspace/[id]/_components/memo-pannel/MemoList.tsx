@@ -22,8 +22,8 @@ export default function MemoList({ memoList }: MemoListProps) {
 
   return (
     <ul className={cx('memo-list')}>
-      {filteredMemos?.map(({ id, title, content }) => (
-        <MemoItem key={id} title={title} content={content} />
+      {filteredMemos?.map(({ id, title, content, updatedAt }) => (
+        <MemoItem key={id} title={title} content={content} updatedAt={updatedAt} />
       ))}
     </ul>
   )
