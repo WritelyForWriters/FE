@@ -1,5 +1,7 @@
 import Image from 'next/image'
 
+import { useState } from 'react'
+
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 
@@ -15,7 +17,14 @@ interface PlannerManualModificationProps {
 }
 
 export default function PlannerManualModification({ promptClose }: PlannerManualModificationProps) {
+  const [inputValue, setInputValue] = useState('')
   const { isOpen, onClose } = useCollapsed(false)
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter') return
+
+    console.log(inputValue)
+  }
 
   return (
     <>
@@ -25,6 +34,9 @@ export default function PlannerManualModification({ promptClose }: PlannerManual
             autoFocus
             className={styles['prompt-menu__input']}
             placeholder="프롬프트를 입력해 주세요."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <FillButton
             size="medium"
@@ -33,6 +45,7 @@ export default function PlannerManualModification({ promptClose }: PlannerManual
               padding: '0.8rem 1.2rem',
               height: '100%',
             }}
+            onClick={() => {}}
           >
             생성하기
           </FillButton>
