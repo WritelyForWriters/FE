@@ -11,9 +11,14 @@
 }
 
 .button-wrapper {
+  width: 100%;
+  padding-bottom: 0.8rem;
+
   display: flex;
   gap: 1.2rem;
   align-self: flex-start;
+
+  border-bottom: 1px solid #f2f2f2;
 }
 
 .memo-list {
