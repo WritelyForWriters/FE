@@ -6,6 +6,9 @@ import { useFormContext } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
 
+import { useCollapsed } from '@hooks/common/useCollapsed'
+
+import PlannerManualModification from '../planner-manual-modification/plannerManualModification'
 import aiIcon from '/public/icons/ai-option2.svg'
 
 import classNames from 'classnames/bind'
@@ -27,6 +30,7 @@ export default function PlannerFieldWithButton({
   onDelete,
 }: PlannerFieldWithButtonProps) {
   const { watch, unregister, register, setValue } = useFormContext()
+  const { isOpen, onClose, onOpen } = useCollapsed(false)
   const [isShow, setIsShow] = useState(true)
   const [isDeleted, setIsDeleted] = useState(false)
   const initialValue = watch(name)
@@ -72,6 +76,7 @@ export default function PlannerFieldWithButton({
               shape="pill"
               iconPosition="only"
               iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
+              onClick={onOpen}
             />
             <FillButton
               type="button"
@@ -93,6 +98,7 @@ export default function PlannerFieldWithButton({
           삭제된 항목 추가
         </FillButton>
       )}
+      {isOpen && <PlannerManualModification promptClose={onClose} />}
     </div>
   )
 }
