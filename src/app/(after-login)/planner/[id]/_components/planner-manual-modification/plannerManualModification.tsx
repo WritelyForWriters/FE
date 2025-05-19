@@ -1,7 +1,9 @@
 import Image from 'next/image'
+import { useParams } from 'next/navigation'
 
 import { useState } from 'react'
 
+import { postUserModify } from 'api/ai-assistant/aiAssistant'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 
@@ -13,17 +15,40 @@ import { useCollapsed } from '@hooks/common/useCollapsed'
 import styles from './plannerManualModification.module.scss'
 
 interface PlannerManualModificationProps {
+  value: string
   promptClose: () => void
 }
 
-export default function PlannerManualModification({ promptClose }: PlannerManualModificationProps) {
-  const [inputValue, setInputValue] = useState('')
+export default function PlannerManualModification({
+  value,
+  promptClose,
+}: PlannerManualModificationProps) {
+  const params = useParams()
+  const productId = params.id as string
+
   const { isOpen, onClose } = useCollapsed(false)
+  const [inputValue, setInputValue] = useState('')
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== 'Enter') return
 
-    console.log(inputValue)
+    fetchUserModify()
+  }
+
+  const fetchUserModify = async () => {
+    try {
+      const response = await postUserModify({
+        productId,
+        content: value,
+        prompt: inputValue,
+      })
+
+      if (response.id) {
+        console.log('response: ', response)
+      }
+    } catch (error) {
+      console.error('fetch use modify error: ', error)
+    }
   }
 
   return (
@@ -45,7 +70,7 @@ export default function PlannerManualModification({ promptClose }: PlannerManual
               padding: '0.8rem 1.2rem',
               height: '100%',
             }}
-            onClick={() => {}}
+            onClick={fetchUserModify}
           >
             생성하기
           </FillButton>

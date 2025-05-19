@@ -100,7 +100,9 @@ export default function PlannerFieldWithButton({
           삭제된 항목 추가
         </FillButton>
       )}
-      {isOpen && manualModifiable && <PlannerManualModification promptClose={onClose} />}
+      {isOpen && manualModifiable && (
+        <PlannerManualModification value={initialValue} promptClose={onClose} />
+      )}
     </div>
   )
 }
