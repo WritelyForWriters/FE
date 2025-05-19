@@ -21,6 +21,7 @@ interface PlannerFieldWithButtonProps {
   name: string
   isDropdown?: boolean
   onDelete?: () => void
+  manualModifiable?: boolean
 }
 
 export default function PlannerFieldWithButton({
@@ -28,6 +29,7 @@ export default function PlannerFieldWithButton({
   name,
   isDropdown = false,
   onDelete,
+  manualModifiable = true,
 }: PlannerFieldWithButtonProps) {
   const { watch, unregister, register, setValue } = useFormContext()
   const { isOpen, onClose, onOpen } = useCollapsed(false)
@@ -98,7 +100,7 @@ export default function PlannerFieldWithButton({
           삭제된 항목 추가
         </FillButton>
       )}
-      {isOpen && <PlannerManualModification promptClose={onClose} />}
+      {isOpen && manualModifiable && <PlannerManualModification promptClose={onClose} />}
     </div>
   )
 }
