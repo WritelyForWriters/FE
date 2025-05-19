@@ -18,13 +18,11 @@ export default function MemoList({ memoList }: MemoListProps) {
   const { activeTab } = useTabContext()
 
   const filteredMemos =
-    activeTab === 'progress' ? memoList?.filter((memo) => !memo.isCompleted) : memoList
+    (activeTab === 'progress' ? memoList?.filter((memo) => !memo.isCompleted) : memoList) ?? []
 
   return (
     <ul className={cx('memo-list')}>
-      {filteredMemos?.map(({ id, title, content, updatedAt }) => (
-        <MemoItem key={id} title={title} content={content} updatedAt={updatedAt} />
-      ))}
+      {filteredMemos?.map((memo) => <MemoItem key={memo.id} memoList={memo} />)}
     </ul>
   )
 }
