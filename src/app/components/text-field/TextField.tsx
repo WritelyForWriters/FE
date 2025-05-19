@@ -30,6 +30,7 @@ type TextFieldProps = {
   options?: RegisterOptions
   labelName?: string
   isLabelEditable?: boolean
+  isAiModified?: boolean
 } & (InputProps | TextareaProps)
 
 export default function TextField({
@@ -40,6 +41,7 @@ export default function TextField({
   options,
   labelName,
   isLabelEditable = false,
+  isAiModified = false,
   ...props
 }: TextFieldProps) {
   const { register } = useFormContext()
@@ -66,6 +68,7 @@ export default function TextField({
           <TextFieldInput
             variant={variant}
             options={options}
+            isAiModified={isAiModified}
             {...(props as InputProps)}
             {...register(name, options)}
           />
@@ -75,6 +78,7 @@ export default function TextField({
         {variant === 'expand' && (
           <TextFieldTextarea
             options={options}
+            isAiModified={isAiModified}
             {...(props as TextareaProps)}
             {...register(name, options)}
           />
