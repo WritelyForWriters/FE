@@ -3,34 +3,37 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 export const useAutoSaveTimer = (initialTime = 300000) => {
   const [autoSaveTimer, setAutoSaveTimer] = useState(initialTime)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const currentTimeRef = useRef(initialTime)
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current)
+      timerRef.current = null
     }
   }, [])
 
-  const decrementTimer = useCallback(
-    (time: number) => {
-      if (time > 1000) {
-        return time - 1000
-      } else {
-        stopTimer()
-        setTimeout(() => {
-          setAutoSaveTimer(initialTime)
-          startTimer()
-        }, 3000)
-        return 0
-      }
-    },
-    [stopTimer, initialTime],
-  )
+  const resetTimer = useCallback(() => {
+    currentTimeRef.current = initialTime
+    setAutoSaveTimer(initialTime)
+  }, [initialTime])
 
   const startTimer = useCallback(() => {
+    stopTimer()
+
     timerRef.current = setInterval(() => {
-      setAutoSaveTimer((prevTime) => decrementTimer(prevTime))
+      if (currentTimeRef.current > 1000) {
+        currentTimeRef.current -= 1000
+        setAutoSaveTimer(currentTimeRef.current)
+      } else {
+        stopTimer()
+        setAutoSaveTimer(0)
+        setTimeout(() => {
+          resetTimer()
+          startTimer()
+        }, 3000)
+      }
     }, 1000)
-  }, [decrementTimer])
+  }, [stopTimer, resetTimer])
 
   useEffect(() => {
     startTimer()
