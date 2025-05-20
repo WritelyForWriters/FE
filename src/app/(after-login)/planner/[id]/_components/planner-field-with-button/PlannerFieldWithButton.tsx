@@ -22,6 +22,7 @@ interface PlannerFieldWithButtonProps {
   isDropdown?: boolean
   onDelete?: () => void
   manualModifiable?: boolean
+  handleManualModification?: (value: string, inputValue: string) => Promise<void>
 }
 
 export default function PlannerFieldWithButton({
@@ -30,6 +31,7 @@ export default function PlannerFieldWithButton({
   isDropdown = false,
   onDelete,
   manualModifiable = true,
+  handleManualModification,
 }: PlannerFieldWithButtonProps) {
   const { watch, unregister, register, setValue } = useFormContext()
   const { isOpen, onClose, onOpen } = useCollapsed(false)
@@ -71,15 +73,18 @@ export default function PlannerFieldWithButton({
         <div className={cx('field-with-button')}>
           {children}
           <div className={cx('field-with-button__buttons')}>
-            <FillButton
-              type="button"
-              size="small"
-              variant="secondary"
-              shape="pill"
-              iconPosition="only"
-              iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
-              onClick={onOpen}
-            />
+            {manualModifiable && (
+              <FillButton
+                type="button"
+                size="small"
+                variant="secondary"
+                shape="pill"
+                iconPosition="only"
+                iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
+                onClick={onOpen}
+              />
+            )}
+
             <FillButton
               type="button"
               size="small"
@@ -101,7 +106,11 @@ export default function PlannerFieldWithButton({
         </FillButton>
       )}
       {isOpen && manualModifiable && (
-        <PlannerManualModification value={initialValue} promptClose={onClose} />
+        <PlannerManualModification
+          value={initialValue}
+          promptClose={onClose}
+          handleManualModification={handleManualModification}
+        />
       )}
     </div>
   )

@@ -1,9 +1,7 @@
 import Image from 'next/image'
-import { useParams } from 'next/navigation'
 
 import { useState } from 'react'
 
-import { postUserModify } from 'api/ai-assistant/aiAssistant'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 
@@ -17,15 +15,14 @@ import styles from './plannerManualModification.module.scss'
 interface PlannerManualModificationProps {
   value: string
   promptClose: () => void
+  handleManualModification?: (value: string, inputValue: string) => Promise<void>
 }
 
 export default function PlannerManualModification({
   value,
   promptClose,
+  handleManualModification,
 }: PlannerManualModificationProps) {
-  const params = useParams()
-  const productId = params.id as string
-
   const { isOpen, onClose } = useCollapsed(false)
   const [inputValue, setInputValue] = useState('')
 
@@ -35,19 +32,9 @@ export default function PlannerManualModification({
     fetchUserModify()
   }
 
-  const fetchUserModify = async () => {
-    try {
-      const response = await postUserModify({
-        productId,
-        content: value,
-        prompt: inputValue,
-      })
-
-      if (response.id) {
-        console.log('response: ', response)
-      }
-    } catch (error) {
-      console.error('fetch use modify error: ', error)
+  const fetchUserModify = () => {
+    if (handleManualModification) {
+      handleManualModification(value, inputValue)
     }
   }
 
