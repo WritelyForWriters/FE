@@ -51,6 +51,7 @@ export default function PlannerManualModification({
             onKeyDown={handleKeyDown}
           />
           <FillButton
+            type="button"
             size="medium"
             variant="primary"
             style={{
