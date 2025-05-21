@@ -91,7 +91,13 @@ export default function PlannerManualModification({
                 <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
                 이대로 수정하기
               </SelectMenu.Option>
-              <SelectMenu.Option option={{ handleAction: () => {} }}>
+              <SelectMenu.Option
+                option={{
+                  handleAction: () => {
+                    onClose()
+                  },
+                }}
+              >
                 <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
                 다시 생성하기
               </SelectMenu.Option>
