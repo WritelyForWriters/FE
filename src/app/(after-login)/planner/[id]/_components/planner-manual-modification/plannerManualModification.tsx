@@ -17,6 +17,7 @@ interface PlannerManualModificationProps {
   value: string
   promptClose: () => void
   handleConfirm: () => void
+  handleCancel: () => void
   handleManualModification?: (value: string, inputValue: string) => Promise<boolean>
 }
 
@@ -24,6 +25,7 @@ export default function PlannerManualModification({
   value,
   promptClose,
   handleConfirm,
+  handleCancel,
   handleManualModification,
 }: PlannerManualModificationProps) {
   const { isOpen, onOpen, onClose } = useCollapsed(false)
@@ -93,7 +95,14 @@ export default function PlannerManualModification({
                 <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
                 다시 생성하기
               </SelectMenu.Option>
-              <SelectMenu.Option option={{ handleAction: () => {} }}>
+              <SelectMenu.Option
+                option={{
+                  handleAction: () => {
+                    handleCancel()
+                    promptClose()
+                  },
+                }}
+              >
                 <IoClose color="#CCCCCC" fontSize={20} />
                 취소하기
               </SelectMenu.Option>
