@@ -4,7 +4,6 @@
   @include mixin.flex(row, center, null, nowrap);
   position: relative;
   min-height: 4.8rem;
-  max-height: 8rem;
 }
 
 .field-with-button {
