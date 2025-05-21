@@ -1,11 +1,7 @@
-import { useParams } from 'next/navigation'
-
-import { postUserModify } from 'api/ai-assistant/aiAssistant'
 import {
   PLANNER_SYNOPSIS_GENRES,
   PLANNER_SYNOPSIS_LENGTH,
 } from 'constants/planner/plannerConstants'
-import { useFormContext } from 'react-hook-form'
 
 import Dropdown from '@components/dropdown/Dropdown'
 import TextField from '@components/text-field/TextField'
@@ -19,34 +15,17 @@ import classNames from 'classnames/bind'
 import styles from './PlannerSynopsisForm.module.scss'
 
 const cx = classNames.bind(styles)
+interface PlannerSynopsisFormProps {
+  handleManualModification: (
+    name: string,
+  ) => (value: string, inputValue: string) => Promise<boolean>
+}
 
-export default function PlannerSynopsisForm() {
-  const params = useParams()
-  const productId = params.id as string
+export default function PlannerSynopsisForm({
+  handleManualModification,
+}: PlannerSynopsisFormProps) {
+  const { get: getAiAssistants } = usePlannerTemplatesAiAssistant()
 
-  const { setValue } = useFormContext()
-  const { get: getAiAssistants, set: setAiAssistants } = usePlannerTemplatesAiAssistant()
-
-  const handleManualModification = (name: string) => async (value: string, inputValue: string) => {
-    try {
-      const response = (await postUserModify({
-        productId,
-        content: value,
-        prompt: inputValue,
-      })) as { id: string; answer: string }
-
-      if (response.id) {
-        setAiAssistants({ name: name, content: value, isAiModified: true })
-        setValue(name, response.answer)
-        return true
-      }
-
-      return false
-    } catch (error) {
-      console.error('fetch use modify error: ', error)
-      return false
-    }
-  }
   const getIsAiModified = (name: string): boolean => {
     return getAiAssistants(name)?.isAiModified ?? false
   }
