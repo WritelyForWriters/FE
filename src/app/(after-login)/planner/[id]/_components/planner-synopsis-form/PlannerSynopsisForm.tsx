@@ -6,8 +6,6 @@ import {
 import Dropdown from '@components/dropdown/Dropdown'
 import TextField from '@components/text-field/TextField'
 
-import { usePlannerTemplatesAiAssistant } from '@hooks/products/usePlannerTemplatesAiAssistant'
-
 import PlannerFieldWithButton from '../planner-field-with-button/PlannerFieldWithButton'
 
 import classNames from 'classnames/bind'
@@ -24,12 +22,6 @@ interface PlannerSynopsisFormProps {
 export default function PlannerSynopsisForm({
   handleManualModification,
 }: PlannerSynopsisFormProps) {
-  const { get: getAiAssistants } = usePlannerTemplatesAiAssistant()
-
-  const getIsAiModified = (name: string): boolean => {
-    return getAiAssistants(name)?.isAiModified ?? false
-  }
-
   return (
     <div className={cx('synopsis-form')} id="heading1">
       <div className={cx('synopsis-form__title')}>시놉시스</div>
@@ -80,12 +72,7 @@ export default function PlannerSynopsisForm({
         name="synopsis.example"
         handleManualModification={handleManualModification('synopsis.example')}
       >
-        <TextField
-          name="synopsis.example"
-          label="예시 문장"
-          variant="expand"
-          isAiModified={getIsAiModified('synopsis.example')}
-        />
+        <TextField name="synopsis.example" label="예시 문장" variant="expand" />
       </PlannerFieldWithButton>
     </div>
   )

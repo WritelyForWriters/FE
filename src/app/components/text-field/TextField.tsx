@@ -4,6 +4,8 @@ import { InputHTMLAttributes, TextareaHTMLAttributes } from 'react'
 
 import { RegisterOptions, useFormContext } from 'react-hook-form'
 
+import { usePlannerTemplatesAiAssistant } from '@hooks/products/usePlannerTemplatesAiAssistant'
+
 import TextFieldInput from './TextFieldInput'
 import TextFieldLabel from './TextFieldLabel'
 import TextFieldTextarea from './TextFieldTextarea'
@@ -30,7 +32,6 @@ type TextFieldProps = {
   options?: RegisterOptions
   labelName?: string
   isLabelEditable?: boolean
-  isAiModified?: boolean
 } & (InputProps | TextareaProps)
 
 export default function TextField({
@@ -41,7 +42,6 @@ export default function TextField({
   options,
   labelName,
   isLabelEditable = false,
-  isAiModified = false,
   ...props
 }: TextFieldProps) {
   const { register } = useFormContext()
@@ -49,6 +49,11 @@ export default function TextField({
   const {
     formState: { errors },
   } = useFormContext()
+  const { get: getAiAssistants } = usePlannerTemplatesAiAssistant()
+
+  const getIsAiModified = (name: string): boolean => {
+    return getAiAssistants(name)?.isAiModified ?? false
+  }
 
   return (
     <div className={cx('text-field')}>
@@ -68,7 +73,7 @@ export default function TextField({
           <TextFieldInput
             variant={variant}
             options={options}
-            isAiModified={isAiModified}
+            isAiModified={getIsAiModified(name)}
             {...(props as InputProps)}
             {...register(name, options)}
           />
@@ -78,7 +83,7 @@ export default function TextField({
         {variant === 'expand' && (
           <TextFieldTextarea
             options={options}
-            isAiModified={isAiModified}
+            isAiModified={getIsAiModified(name)}
             {...(props as TextareaProps)}
             {...register(name, options)}
           />

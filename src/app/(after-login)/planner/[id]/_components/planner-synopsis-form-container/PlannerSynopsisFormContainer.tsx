@@ -81,7 +81,7 @@ export default function PlannerSynopsisFormContainer() {
               <IndexPannel toc={TABLE_OF_CONTENTS} />
             </div>
             <PlannerSynopsisForm handleManualModification={handleManualModification} />
-            <PlannerWorldViewForm />
+            <PlannerWorldViewForm handleManualModification={handleManualModification} />
             <PlannerCharacterForm />
             <PlannerPlotForm />
           </>
