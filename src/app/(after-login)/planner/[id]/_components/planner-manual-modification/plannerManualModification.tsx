@@ -13,14 +13,17 @@ import { useCollapsed } from '@hooks/common/useCollapsed'
 import styles from './plannerManualModification.module.scss'
 
 interface PlannerManualModificationProps {
+  name: string
   value: string
   promptClose: () => void
+  handleConfirm: () => void
   handleManualModification?: (value: string, inputValue: string) => Promise<boolean>
 }
 
 export default function PlannerManualModification({
   value,
   promptClose,
+  handleConfirm,
   handleManualModification,
 }: PlannerManualModificationProps) {
   const { isOpen, onOpen, onClose } = useCollapsed(false)
@@ -75,7 +78,14 @@ export default function PlannerManualModification({
         ) : (
           <div className={styles['select-menu']}>
             <SelectMenu handleClose={onClose} isOpen={isOpen}>
-              <SelectMenu.Option option={{ handleAction: () => {} }}>
+              <SelectMenu.Option
+                option={{
+                  handleAction: () => {
+                    handleConfirm()
+                    promptClose()
+                  },
+                }}
+              >
                 <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
                 이대로 수정하기
               </SelectMenu.Option>

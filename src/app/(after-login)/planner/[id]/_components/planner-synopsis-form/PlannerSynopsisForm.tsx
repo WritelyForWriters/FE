@@ -1,7 +1,5 @@
 import { useParams } from 'next/navigation'
 
-import { useState } from 'react'
-
 import { postUserModify } from 'api/ai-assistant/aiAssistant'
 import {
   PLANNER_SYNOPSIS_GENRES,
@@ -11,6 +9,8 @@ import { useFormContext } from 'react-hook-form'
 
 import Dropdown from '@components/dropdown/Dropdown'
 import TextField from '@components/text-field/TextField'
+
+import { usePlannerTemplatesAiAssistant } from '@hooks/products/usePlannerTemplatesAiAssistant'
 
 import PlannerFieldWithButton from '../planner-field-with-button/PlannerFieldWithButton'
 
@@ -25,11 +25,7 @@ export default function PlannerSynopsisForm() {
   const productId = params.id as string
 
   const { setValue } = useFormContext()
-  const [manualModi, setMenualMode] = useState<{
-    name: string
-    content: string
-    isAiModified: boolean
-  }>()
+  const { get: getAiAssistants, set: setAiAssistants } = usePlannerTemplatesAiAssistant()
 
   const handleManualModification = (name: string) => async (value: string, inputValue: string) => {
     try {
@@ -40,7 +36,7 @@ export default function PlannerSynopsisForm() {
       })) as { id: string; answer: string }
 
       if (response.id) {
-        setMenualMode({ name: name, content: value, isAiModified: true })
+        setAiAssistants({ name: name, content: value, isAiModified: true })
         setValue(name, response.answer)
         return true
       }
@@ -51,13 +47,8 @@ export default function PlannerSynopsisForm() {
       return false
     }
   }
-
   const getIsAiModified = (name: string): boolean => {
-    if (manualModi && manualModi.name === name) {
-      return manualModi.isAiModified
-    }
-
-    return false
+    return getAiAssistants(name)?.isAiModified ?? false
   }
 
   return (
