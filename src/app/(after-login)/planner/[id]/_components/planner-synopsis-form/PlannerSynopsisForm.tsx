@@ -42,9 +42,13 @@ export default function PlannerSynopsisForm() {
       if (response.id) {
         setMenualMode({ name: name, content: value, isAiModified: true })
         setValue(name, response.answer)
+        return true
       }
+
+      return false
     } catch (error) {
       console.error('fetch use modify error: ', error)
+      return false
     }
   }
 

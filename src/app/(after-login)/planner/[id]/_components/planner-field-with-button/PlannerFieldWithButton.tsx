@@ -22,7 +22,7 @@ interface PlannerFieldWithButtonProps {
   isDropdown?: boolean
   onDelete?: () => void
   manualModifiable?: boolean
-  handleManualModification?: (value: string, inputValue: string) => Promise<void>
+  handleManualModification?: (value: string, inputValue: string) => Promise<boolean>
 }
 
 export default function PlannerFieldWithButton({
