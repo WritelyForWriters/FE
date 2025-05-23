@@ -9,7 +9,7 @@ import { MemosDto } from 'types/memos'
 import SelectMenu from '@components/select-menu/SelectMenu'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
-import { useUpdateMemosCompleted } from '@hooks/memos/useMemosMutation'
+import { useDeleteMemosById, useUpdateMemosCompleted } from '@hooks/memos/useMemosMutation'
 
 import { formatDate } from '@utils/formatDate'
 
@@ -35,6 +35,7 @@ export default function MemoItem({ memoList }: MemoItemProps) {
   const queryClient = useQueryClient()
   const productId = useAtomValue(productIdAtom)
   const updateCompletedMutation = useUpdateMemosCompleted()
+  const deleteMemosByIdMutation = useDeleteMemosById()
 
   const toggleCompleted = async (isCompleted: boolean) => {
     updateCompletedMutation.mutate(
@@ -44,6 +45,22 @@ export default function MemoItem({ memoList }: MemoItemProps) {
         data: {
           isCompleted: !isCompleted,
         },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEY.MEMO_LIST],
+          })
+        },
+      },
+    )
+  }
+
+  const deleteMemos = async () => {
+    deleteMemosByIdMutation.mutate(
+      {
+        productId,
+        memoId,
       },
       {
         onSuccess: () => {
@@ -73,7 +90,13 @@ export default function MemoItem({ memoList }: MemoItemProps) {
             style={{ width: '88px', height: 76, top: 20, right: 0, left: 'auto', gap: 0 }}
           >
             <SelectMenu.Option option={{}}>수정</SelectMenu.Option>
-            <SelectMenu.Option option={{}}>삭제</SelectMenu.Option>
+            <SelectMenu.Option
+              option={{
+                handleAction: deleteMemos,
+              }}
+            >
+              삭제
+            </SelectMenu.Option>
           </SelectMenu>
         </div>
       </div>

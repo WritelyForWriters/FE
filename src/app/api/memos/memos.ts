@@ -22,3 +22,8 @@ export const updateMemosCompleted = async ({
   const res = await authInstance.put(`/products/${productId}/memos/${memoId}/completed`, data)
   return res.data.result
 }
+
+// 메모 삭제
+export const deleteMemosById = async ({ productId, memoId }: UpdateMemosCompletedRequestType) => {
+  await authInstance.delete(`/products/${productId}/memos/${memoId}`)
+}

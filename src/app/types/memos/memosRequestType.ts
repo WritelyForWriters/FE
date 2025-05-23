@@ -8,7 +8,7 @@ export interface SavedMemosRequestType {
 export type UpdateMemosCompletedRequestType = {
   productId: string
   memoId: string
-  data: Pick<MemosDto, 'isCompleted'>
+  data?: Pick<MemosDto, 'isCompleted'>
 }
 
 export interface MemosValues {
