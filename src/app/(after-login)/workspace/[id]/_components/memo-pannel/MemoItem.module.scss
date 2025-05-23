@@ -20,24 +20,33 @@
     }
   }
 
-  h3 {
-    @include mixin.flex(row, center, space-between);
+  > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 
+  h3 {
     @extend %typo-label-medium;
     font-weight: 700;
     color: color.$alert-secondary-900;
 
-    div {
-      display: flex;
-      gap: 0.4rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-      button {
-        width: 2rem;
-        height: 2rem;
+  &__button {
+    display: flex;
+    gap: 0.4rem;
 
-        opacity: 0;
-        transition: opacity 0.2s ease-in-out;
-      }
+    button {
+      width: 2rem;
+      height: 2rem;
+
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
     }
   }
 

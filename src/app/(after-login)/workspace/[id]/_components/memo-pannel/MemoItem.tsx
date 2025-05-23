@@ -53,9 +53,9 @@ export default function MemoItem({ memoList }: MemoItemProps) {
 
   return (
     <li className={cx('memo-item')}>
-      <h3>
-        {title ?? '타이틀'}
-        <div>
+      <div>
+        <h3>{title ?? '타이틀'}</h3>
+        <div className={cx('memo-item__button')}>
           <button onClick={() => toggleCompleted(isCompleted)}>
             <FaCheck color="#CCCCCC" />
           </button>
@@ -63,7 +63,7 @@ export default function MemoItem({ memoList }: MemoItemProps) {
             <TfiMoreAlt color="#CCCCCC" />
           </button>
         </div>
-      </h3>
+      </div>
 
       <p>{content}</p>
       <span>{formatDate(updatedAt)}</span>
