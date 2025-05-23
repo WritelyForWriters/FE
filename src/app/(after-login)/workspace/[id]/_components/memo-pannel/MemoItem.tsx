@@ -6,6 +6,9 @@ import { TfiMoreAlt } from 'react-icons/tfi'
 import { productIdAtom } from 'store/productsAtoms'
 import { MemosDto } from 'types/memos'
 
+import SelectMenu from '@components/select-menu/SelectMenu'
+
+import { useCollapsed } from '@hooks/common/useCollapsed'
 import { useUpdateMemosCompleted } from '@hooks/memos/useMemosMutation'
 
 import { formatDate } from '@utils/formatDate'
@@ -28,6 +31,7 @@ interface MemoItemProps {
 export default function MemoItem({ memoList }: MemoItemProps) {
   const { id: memoId, title, content, updatedAt, isCompleted } = memoList
 
+  const { isOpen, onOpen, onClose } = useCollapsed()
   const queryClient = useQueryClient()
   const productId = useAtomValue(productIdAtom)
   const updateCompletedMutation = useUpdateMemosCompleted()
@@ -59,9 +63,18 @@ export default function MemoItem({ memoList }: MemoItemProps) {
           <button onClick={() => toggleCompleted(isCompleted)}>
             <FaCheck color="#CCCCCC" />
           </button>
-          <button>
+          <button onClick={onOpen}>
             <TfiMoreAlt color="#CCCCCC" />
           </button>
+
+          <SelectMenu
+            handleClose={onClose}
+            isOpen={isOpen}
+            style={{ width: '88px', height: 76, top: 20, right: 0, left: 'auto', gap: 0 }}
+          >
+            <SelectMenu.Option option={{}}>수정</SelectMenu.Option>
+            <SelectMenu.Option option={{}}>삭제</SelectMenu.Option>
+          </SelectMenu>
         </div>
       </div>
 

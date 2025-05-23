@@ -38,10 +38,12 @@
   }
 
   &__button {
+    position: relative;
+
     display: flex;
     gap: 0.4rem;
 
-    button {
+    > button {
       width: 2rem;
       height: 2rem;
 
