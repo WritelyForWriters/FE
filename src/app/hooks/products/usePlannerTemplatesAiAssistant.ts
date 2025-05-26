@@ -26,7 +26,7 @@ export function usePlannerTemplatesAiAssistant() {
     setList((prev) => prev.filter((item) => item.name !== name))
   }
 
-  const reset = (name: string): string | undefined => {
+  const getContent = (name: string): string | undefined => {
     const found = list.find((item) => item.name === name)
     return found?.content
   }
@@ -35,7 +35,7 @@ export function usePlannerTemplatesAiAssistant() {
     get,
     set,
     remove,
-    reset,
+    getContent,
     list,
   }
 }
