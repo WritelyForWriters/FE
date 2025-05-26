@@ -1,3 +1,5 @@
+import { ChangeEvent, KeyboardEvent, useState } from 'react'
+
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { useAtomValue } from 'jotai'
@@ -9,7 +11,11 @@ import { MemosDto } from 'types/memos'
 import SelectMenu from '@components/select-menu/SelectMenu'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
-import { useDeleteMemosById, useUpdateMemosCompleted } from '@hooks/memos/useMemosMutation'
+import {
+  useDeleteMemosById,
+  useUpdateMemos,
+  useUpdateMemosCompleted,
+} from '@hooks/memos/useMemosMutation'
 
 import { formatDate } from '@utils/formatDate'
 
@@ -30,12 +36,17 @@ interface MemoItemProps {
  */
 export default function MemoItem({ memoList }: MemoItemProps) {
   const { id: memoId, title, content, updatedAt, isCompleted } = memoList
+  const { selectedText, startIndex, endIndex } = memoList
+
+  const [memoContent, setMemoContent] = useState(content)
+  const [isEdit, setIsEdit] = useState(false)
 
   const { isOpen, onOpen, onClose } = useCollapsed()
   const queryClient = useQueryClient()
   const productId = useAtomValue(productIdAtom)
   const updateCompletedMutation = useUpdateMemosCompleted()
   const deleteMemosByIdMutation = useDeleteMemosById()
+  const updateMemosMutation = useUpdateMemos()
 
   const toggleCompleted = async (isCompleted: boolean) => {
     updateCompletedMutation.mutate(
@@ -72,6 +83,33 @@ export default function MemoItem({ memoList }: MemoItemProps) {
     )
   }
 
+  const updateMemos = async () => {
+    updateMemosMutation.mutate({
+      productId,
+      memoId,
+      data: {
+        title,
+        content: memoContent,
+        selectedText,
+        startIndex,
+        endIndex,
+      },
+    })
+  }
+
+  const handleInputEdit = () => {
+    setIsEdit(true)
+    onClose()
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      updateMemos()
+      setIsEdit(false)
+    }
+  }
+
   return (
     <li className={cx('memo-item')}>
       <div>
@@ -89,19 +127,29 @@ export default function MemoItem({ memoList }: MemoItemProps) {
             isOpen={isOpen}
             style={{ width: '88px', height: 76, top: 20, right: 0, left: 'auto', gap: 0 }}
           >
-            <SelectMenu.Option option={{}}>수정</SelectMenu.Option>
-            <SelectMenu.Option
-              option={{
-                handleAction: deleteMemos,
-              }}
-            >
-              삭제
-            </SelectMenu.Option>
+            <SelectMenu.Option option={{ handleAction: handleInputEdit }}>수정</SelectMenu.Option>
+            <SelectMenu.Option option={{ handleAction: deleteMemos }}>삭제</SelectMenu.Option>
           </SelectMenu>
         </div>
       </div>
 
-      <p>{content}</p>
+      {/* TODO 스타일 수정 */}
+      <textarea
+        readOnly={!isEdit}
+        value={memoContent}
+        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setMemoContent(e.target.value)}
+        onKeyDown={handleKeyDown}
+        // className={cx('memo-item__textarea', { editable: isEdit })}
+        // rows={3}
+        // style={{
+        //   resize: 'none',
+        //   width: '100%',
+        //   border: isEdit ? '1px solid #ccc' : 'none',
+        //   background: isEdit ? '#fff' : 'transparent',
+        //   padding: '4px',
+        //   fontSize: '14px',
+        // }}
+      />
       <span>{formatDate(updatedAt)}</span>
     </li>
   )

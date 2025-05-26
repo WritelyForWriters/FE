@@ -18,3 +18,9 @@ export interface MemosValues {
   startIndex: number
   endIndex: number
 }
+
+export type UpdateMemosRequestType = {
+  productId: string
+  memoId: string
+  data?: Partial<MemosValues>
+}

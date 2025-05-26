@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { createMemos, deleteMemosById, updateMemosCompleted } from 'api/memos/memos'
+import { createMemos, deleteMemosById, updateMemos, updateMemosCompleted } from 'api/memos/memos'
 import { UseMutationCustomOptions } from 'types/common/reactQueryCustomOption'
 
 export const useSavedMemos = (mutationOptions?: UseMutationCustomOptions) => {
@@ -19,6 +19,13 @@ export const useUpdateMemosCompleted = (mutationOptions?: UseMutationCustomOptio
 export const useDeleteMemosById = (mutationOptions?: UseMutationCustomOptions) => {
   return useMutation({
     mutationFn: deleteMemosById,
+    ...mutationOptions,
+  })
+}
+
+export const useUpdateMemos = (mutationOptions?: UseMutationCustomOptions) => {
+  return useMutation({
+    mutationFn: updateMemos,
     ...mutationOptions,
   })
 }

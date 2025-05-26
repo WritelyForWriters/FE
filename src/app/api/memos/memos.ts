@@ -1,5 +1,10 @@
 import authInstance from 'api/core/AuthInstance'
-import { MemoList, SavedMemosRequestType, UpdateMemosCompletedRequestType } from 'types/memos'
+import {
+  MemoList,
+  SavedMemosRequestType,
+  UpdateMemosCompletedRequestType,
+  UpdateMemosRequestType,
+} from 'types/memos'
 
 // 메모 생성
 export const createMemos = async ({ productId, data }: SavedMemosRequestType) => {
@@ -26,4 +31,10 @@ export const updateMemosCompleted = async ({
 // 메모 삭제
 export const deleteMemosById = async ({ productId, memoId }: UpdateMemosCompletedRequestType) => {
   await authInstance.delete(`/products/${productId}/memos/${memoId}`)
+}
+
+// 메모 수정
+export const updateMemos = async ({ productId, memoId, data }: UpdateMemosRequestType) => {
+  const res = await authInstance.put(`/products/${productId}/memos/${memoId}`, data)
+  return res.data.result
 }
