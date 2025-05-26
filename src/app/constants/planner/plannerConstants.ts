@@ -150,13 +150,13 @@ export const PLANNER_WORLD_VIEW_ITEMS = [
 ] as const
 
 export const PLANNER_CHARACTER_ITEMS = [
-  { label: '인물 소개', name: 'intro' },
-  { label: '이름', name: 'name' },
-  { label: '나이', name: 'age' },
-  { label: '성별', name: 'gender' },
-  { label: '직업', name: 'occupation' },
-  { label: '외모', name: 'appearance' },
-  { label: '성격/특징', name: 'personality' },
-  { label: '주요 관계', name: 'relationship' },
-  { label: '커스텀 필드', name: 'customFields' },
+  { label: '인물 소개', name: 'intro', manualModifiable: true },
+  { label: '이름', name: 'name', manualModifiable: false },
+  { label: '나이', name: 'age', manualModifiable: false },
+  { label: '성별', name: 'gender', manualModifiable: false },
+  { label: '직업', name: 'occupation', manualModifiable: false },
+  { label: '외모', name: 'appearance', manualModifiable: false },
+  { label: '성격/특징', name: 'personality', manualModifiable: false },
+  { label: '주요 관계', name: 'relationship', manualModifiable: false },
+  { label: '커스텀 필드', name: 'customFields', manualModifiable: true },
 ] as const

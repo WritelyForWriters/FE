@@ -82,7 +82,7 @@ export default function PlannerSynopsisFormContainer() {
             </div>
             <PlannerSynopsisForm handleManualModification={handleManualModification} />
             <PlannerWorldViewForm handleManualModification={handleManualModification} />
-            <PlannerCharacterForm />
+            <PlannerCharacterForm handleManualModification={handleManualModification} />
             <PlannerPlotForm />
           </>
         ) : (
