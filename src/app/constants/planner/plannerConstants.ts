@@ -1,5 +1,4 @@
 import { CharacterFormValues } from 'types/planner/plannerSynopsisFormValues'
-import { PlannerTabType } from 'types/planner/plannerTab'
 
 export const NEW_PLANNER_CHARACTER: CharacterFormValues = {
   id: '',
@@ -13,17 +12,6 @@ export const NEW_PLANNER_CHARACTER: CharacterFormValues = {
   relationship: '',
   customFields: [],
 }
-
-export const PLANNER_TABS: PlannerTabType[] = [
-  {
-    label: '시놉시스',
-    value: 'synopsis',
-  },
-  {
-    label: '아이디어 노트',
-    value: 'idea',
-  },
-] as const
 
 export const PLANNER_SYNOPSIS_GENRES = [
   {

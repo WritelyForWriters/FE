@@ -91,7 +91,7 @@ export default function TextField({
       </section>
 
       {/* Helper Text */}
-      {(helperText || (errors[name] && errors[name].message)) && (
+      {(helperText || (errors[name] && errors[name]?.message)) && (
         <span
           className={cx('text-field__helper-text', {
             'text-field__helper-text--error': errors[name]?.message,
