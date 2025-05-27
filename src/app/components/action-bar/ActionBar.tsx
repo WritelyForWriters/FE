@@ -4,6 +4,7 @@ import Link from 'next/link'
 
 import { ReactNode } from 'react'
 
+import { amplitude } from 'lib/amplitude'
 import { MdHome } from 'react-icons/md'
 
 import classNames from 'classnames/bind'
@@ -24,8 +25,15 @@ export default function ActionBar({ actionSection, titleSection, extraSection }:
       <div className={cx('action-bar-inner-container')}>
         <section className={cx('action-bar-action-section')}>
           {/* 홈 버튼 */}
-          <Link href="/">
-            <MdHome size={24}></MdHome>
+          <Link
+            href="/"
+            onClick={() => {
+              amplitude.track('home_button_click', {
+                button_name: '홈',
+              })
+            }}
+          >
+            <MdHome size={24} />
           </Link>
           {actionSection}
         </section>

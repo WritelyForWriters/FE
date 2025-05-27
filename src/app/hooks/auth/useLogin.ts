@@ -3,6 +3,7 @@ import { login } from 'api/auth/Auth'
 import { NUMERICS } from 'constants/common/numberValue'
 import { setCookie } from 'cookies-next'
 import { useSetAtom } from 'jotai'
+import { amplitude } from 'lib/amplitude'
 import { accessTokenAtom } from 'store/accessTokenAtom'
 
 import { useToast } from '@components/toast/ToastProvider'
@@ -33,6 +34,9 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
       setCookie('isLoggedIn', true, isRememberMe ? { expires: date, path: '/' } : {})
 
       onSuccessHandler()
+
+      amplitude.setUserId('test_user_id')
+      amplitude.track('login_complete')
     },
     onError: (error) => {
       handleAxiosError(error, showToast)
