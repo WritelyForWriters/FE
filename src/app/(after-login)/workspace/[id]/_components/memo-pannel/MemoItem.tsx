@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, useState } from 'react'
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEY } from 'constants/common/queryKeys'
@@ -40,6 +40,7 @@ export default function MemoItem({ memoList }: MemoItemProps) {
 
   const [memoContent, setMemoContent] = useState(content)
   const [isEdit, setIsEdit] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const { isOpen, onOpen, onClose } = useCollapsed()
   const queryClient = useQueryClient()
@@ -110,6 +111,15 @@ export default function MemoItem({ memoList }: MemoItemProps) {
     }
   }
 
+  // textarea 높이 자동 조절
+  useEffect(() => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto'
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }, [memoContent, isEdit])
+
   return (
     <li className={cx('memo-item')}>
       <div>
@@ -133,22 +143,13 @@ export default function MemoItem({ memoList }: MemoItemProps) {
         </div>
       </div>
 
-      {/* TODO 스타일 수정 */}
       <textarea
+        ref={textareaRef}
         readOnly={!isEdit}
         value={memoContent}
         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setMemoContent(e.target.value)}
         onKeyDown={handleKeyDown}
-        // className={cx('memo-item__textarea', { editable: isEdit })}
-        // rows={3}
-        // style={{
-        //   resize: 'none',
-        //   width: '100%',
-        //   border: isEdit ? '1px solid #ccc' : 'none',
-        //   background: isEdit ? '#fff' : 'transparent',
-        //   padding: '4px',
-        //   fontSize: '14px',
-        // }}
+        className={cx('memo-item__textarea', { editable: isEdit })}
       />
       <span>{formatDate(updatedAt)}</span>
     </li>

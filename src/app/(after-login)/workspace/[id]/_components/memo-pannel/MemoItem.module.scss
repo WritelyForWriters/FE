@@ -58,6 +58,21 @@
     color: color.$alert-secondary-900;
   }
 
+  &__textarea {
+    resize: none;
+    border: none;
+    background: transparent;
+    cursor: default;
+    outline: none;
+
+    &.editable {
+      background: white;
+      border-radius: 4px;
+      padding: 4px;
+      cursor: auto;
+    }
+  }
+
   span {
     @extend %typo-label-medium;
     font-weight: 400;
