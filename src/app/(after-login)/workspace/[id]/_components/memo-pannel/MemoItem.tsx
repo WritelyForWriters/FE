@@ -27,14 +27,14 @@ const cx = classNames.bind(styles)
 
 interface MemoItemProps {
   memoList: MemosDto
+  activeTab: string
 }
 
 /**
  * TODO
- * [ ] 완료/해제에 따른 스타일
  * [ ] 커스텀 훅으로 리팩토링
  */
-export default function MemoItem({ memoList }: MemoItemProps) {
+export default function MemoItem({ memoList, activeTab }: MemoItemProps) {
   const { id: memoId, title, content, updatedAt, isCompleted } = memoList
   const { selectedText, startIndex, endIndex } = memoList
 
@@ -125,12 +125,19 @@ export default function MemoItem({ memoList }: MemoItemProps) {
       <div>
         <h3>{title ?? '타이틀'}</h3>
         <div className={cx('memo-item__button')}>
-          <button onClick={() => toggleCompleted(isCompleted)}>
-            <FaCheck color="#CCCCCC" />
-          </button>
-          <button onClick={onOpen}>
-            <TfiMoreAlt color="#CCCCCC" />
-          </button>
+          {(activeTab === 'progress' || (activeTab === 'all' && isCompleted)) && (
+            <>
+              <button onClick={() => toggleCompleted(isCompleted)}>
+                <FaCheck color={activeTab === 'all' ? '#1a1a1a' : '#CCCCCC'} />
+              </button>
+
+              {activeTab === 'progress' && (
+                <button onClick={onOpen}>
+                  <TfiMoreAlt color="#CCCCCC" />
+                </button>
+              )}
+            </>
+          )}
 
           <SelectMenu
             handleClose={onClose}

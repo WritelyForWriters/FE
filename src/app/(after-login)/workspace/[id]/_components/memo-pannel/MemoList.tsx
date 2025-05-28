@@ -22,7 +22,9 @@ export default function MemoList({ memoList }: MemoListProps) {
 
   return (
     <ul className={cx('memo-list')}>
-      {filteredMemos?.map((memo) => <MemoItem key={memo.id} memoList={memo} />)}
+      {filteredMemos?.map((memo) => (
+        <MemoItem key={memo.id} memoList={memo} activeTab={activeTab} />
+      ))}
     </ul>
   )
 }
