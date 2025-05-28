@@ -48,7 +48,7 @@ export default function WorkSpacePage() {
 
   const { saveProductMutation } = useProducts()
   const { data: productDetail } = useGetProductDetail(params.id)
-  const { data: memoList } = useGetMemoList(params.id)
+  const { data: memoList } = useGetMemoList(params.id) // MEMO(Sohyun): 메모 컴포넌트에서 요청하는것이 좋을까?
 
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
