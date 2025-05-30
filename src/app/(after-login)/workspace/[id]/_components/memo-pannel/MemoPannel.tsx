@@ -2,12 +2,14 @@
 
 import { MouseEvent } from 'react'
 
+import { MemosDto } from 'types/memos'
+
 import Pannel from '@components/pannel/Pannel'
 import Tab from '@components/tab/Tab'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
-import MemoItem from './MemoItem'
+import MemoList from './MemoList'
 
 import classNames from 'classnames/bind'
 
@@ -15,7 +17,11 @@ import styles from './MemoPannel.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function MemoPannel() {
+interface MemoPannelProps {
+  memoList?: MemosDto[]
+}
+
+export default function MemoPannel({ memoList }: MemoPannelProps) {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
@@ -27,16 +33,14 @@ export default function MemoPannel() {
     <>
       {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="메모">
-          <Tab defaultTab="progress">
-            <Tab.Button value="progress">진행중</Tab.Button>
-            <Tab.Button value="all">전체</Tab.Button>
-          </Tab>
+          <Tab defaultTab="progress" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className={cx('button-wrapper')}>
+              <Tab.Button value="progress">진행중</Tab.Button>
+              <Tab.Button value="all">전체</Tab.Button>
+            </div>
 
-          <ul className={cx('memo-list')}>
-            {Array.from({ length: 4 }, (_, index) => (
-              <MemoItem key={index} />
-            ))}
-          </ul>
+            <MemoList memoList={memoList} />
+          </Tab>
         </Pannel>
       ) : (
         <button onClick={onOpen} className={cx('container')}>

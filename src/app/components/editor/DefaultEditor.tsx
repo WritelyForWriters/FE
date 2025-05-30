@@ -5,7 +5,6 @@ import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
-import Highlight from '@tiptap/extension-highlight'
 import Italic from '@tiptap/extension-italic'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -16,11 +15,16 @@ import { useAtomValue } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
 
+import FillButton from '@components/buttons/FillButton'
+
+import { useMemos } from '@hooks/editor/useMemos'
 import { useTextEditor } from '@hooks/editor/useTextEditor'
 
+import BackgroundHighlight from '@extensions/BackgroundHighlight'
 import BlockquoteExtension from '@extensions/Blockquote'
 import HeadingExtension from '@extensions/Heading'
 import Indent from '@extensions/Indent'
+import UnderlineHighlight from '@extensions/UnderlineHighlight'
 
 import Toolbar from './Toolbar'
 import AutoModifyMenu from './ai-assistant-interface/AutoModifyMenu'
@@ -58,9 +62,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         alignments: ['left', 'center', 'right'],
         defaultAlignment: 'left',
       }),
-      Highlight.configure({
-        multicolor: true,
-      }),
+      BackgroundHighlight,
+      UnderlineHighlight,
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
@@ -89,6 +92,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     handleOptionClickUserModify,
     handleOptionClickFeedback,
   } = useTextEditor(editor)
+
+  const { handleChange, handleSavedMemos } = useMemos(editor)
 
   useEffect(() => {
     if (!editor) {
@@ -132,6 +137,29 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
             feedbackText={feedbackInput.current}
             onOptionClick={handleOptionClickFeedback}
           />
+        )}
+
+        {/* 메모 */}
+        {activeMenu === 'memo' && (
+          <div className={styles['prompt-menu']}>
+            <input
+              autoFocus
+              className={styles['prompt-menu__input']}
+              onChange={handleChange}
+              placeholder="메모를 입력해주세요."
+            />
+            <FillButton
+              size="medium"
+              variant="primary"
+              style={{
+                padding: '0.8rem 1.2rem',
+                height: '100%',
+              }}
+              onClick={handleSavedMemos}
+            >
+              저장하기
+            </FillButton>
+          </div>
         )}
       </BubbleMenu>
 

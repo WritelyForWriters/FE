@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, createContext, useContext, useState } from 'react'
+import { HTMLAttributes, ReactNode, createContext, useContext, useState } from 'react'
 
 import TabButton from './TabButton'
 
@@ -25,13 +25,13 @@ export const useTabContext = () => {
   return useContext(TabContext)
 }
 
-interface TabProps {
+interface TabProps extends HTMLAttributes<HTMLDivElement> {
   defaultTab: string
   size?: 'large' | 'medium'
   children: ReactNode
 }
 
-export default function Tab({ defaultTab, children, size = 'medium' }: TabProps) {
+export default function Tab({ defaultTab, children, size = 'medium', ...rest }: TabProps) {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
   const handleChangeTab = (tab: string) => {
@@ -40,7 +40,9 @@ export default function Tab({ defaultTab, children, size = 'medium' }: TabProps)
 
   return (
     <TabContext.Provider value={{ activeTab, handleChangeTab, size }}>
-      <div className={cx`${size}`}>{children}</div>
+      <div className={cx`${size}`} {...rest}>
+        {children}
+      </div>
     </TabContext.Provider>
   )
 }

@@ -25,6 +25,7 @@ import IndexPannel from '@components/pannel/IndexPannel'
 import { useGetInfiniteAssistantHistory } from '@hooks/chatbot/useGetAssistantHistoryInfinite'
 import { useGetFixedMessage } from '@hooks/chatbot/useGetFixedMessage'
 import { useGetProductDetail, useProducts } from '@hooks/index'
+import { useGetMemoList } from '@hooks/memos/useMemosQueries'
 
 import { addHeadingIds, getTocFromEditor } from '@utils/index'
 
@@ -53,6 +54,7 @@ export default function WorkSpacePage() {
 
   const { saveProductMutation } = useProducts()
   const { data: productDetail } = useGetProductDetail(params.id)
+  const { data: memoList } = useGetMemoList(params.id) // MEMO(Sohyun): 메모 컴포넌트에서 요청하는것이 좋을까?
 
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
   const newChatMessages = useAtomValue(newChatMessagesAtom)
@@ -238,7 +240,7 @@ export default function WorkSpacePage() {
 
         <div>
           <div className={cx('main-section__pannel')}>
-            <MemoPannel />
+            <MemoPannel memoList={memoList} />
             <PlannerPannel />
           </div>
         </div>

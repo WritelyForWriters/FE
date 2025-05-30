@@ -7,6 +7,9 @@ export const QUERY_KEY = Object.freeze({
   // 프로필
   ME_PROFILE: 'getMeProfile',
 
+  // 메모
+  MEMO_LIST: 'getMemoList',
+
   // 챗봇
   ASSISTANT_HISTORY_LATEST: 'getAssistantHistoryLatest',
   ASSISTANT_HISTORY_INFINITE: 'getAssistantHistoryInfinite',
