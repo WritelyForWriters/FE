@@ -7,9 +7,12 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import { useEffect } from 'react'
+
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
 import { AUTH_PATTERN } from 'constants/join/pattern'
 import { TERMS_URLS } from 'constants/join/urls'
+import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { JoinFormFieldValues, Terms } from 'types/auth/auth'
 
@@ -18,6 +21,7 @@ import TextButton from '@components/buttons/TextButton'
 import CheckboxGroup from '@components/checkbox-group/CheckboxGroup'
 import TextField from '@components/text-field/TextField'
 
+import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
 import { useJoin } from '@hooks/index'
 
 import { checkValueDuplicate } from './../../api/auth/Auth'
@@ -30,6 +34,14 @@ const cx = classNames.bind(styles)
 
 export default function JoinPage() {
   const router = useRouter()
+
+  useEffect(() => {
+    trackEvent('page_view', {
+      page_name: 'signup',
+    })
+  }, [])
+
+  usePageExitTracking('signup')
 
   const methods = useForm<JoinFormFieldValues>({
     mode: 'onBlur',

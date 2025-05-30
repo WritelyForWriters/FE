@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 
+import AmplitudeInitializer from '@components/amplitude-initializer/AmplitudeInitializer'
 import AuthInterceptor from '@components/auth-interceptor/AuthInterceptor'
 import { Providers } from '@components/providers/Providers'
 
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className={pretendard.className}>
       <body>
+        <AmplitudeInitializer />
         <Providers>
           <AuthInterceptor>
             <div id="modal"></div>
