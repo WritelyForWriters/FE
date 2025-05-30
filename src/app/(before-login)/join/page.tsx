@@ -61,6 +61,9 @@ export default function JoinPage() {
 
   const { mutate, isPending } = useJoin({
     onSuccessHandler: () => {
+      trackEvent('signup_start', {
+        referrer: document.referrer,
+      })
       router.push('/login')
     },
   })

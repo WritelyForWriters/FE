@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 import { useAtom, useSetAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { DraggableEvent } from 'react-draggable'
 import { Rnd } from 'react-rnd'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
@@ -79,6 +80,13 @@ export default function ChatbotFloatingFavicon() {
     setChatbotRelativePosition(computeRelativePosition(chatbotX, chatbotY, width, height))
   }
 
+  const handleChatbotOpen = () => {
+    trackEvent('free_chat_button_click', {
+      button_name: '자유 대화',
+    })
+    setIsChatbotOpen(true)
+  }
+
   return (
     <Rnd
       position={faviconAbsolutePosition}
@@ -88,7 +96,7 @@ export default function ChatbotFloatingFavicon() {
       dragHandleClassName="drag-handle"
     >
       <div className={cx('favicon-wrapper')}>
-        <Favicon onClick={() => setIsChatbotOpen(true)}>
+        <Favicon onClick={handleChatbotOpen}>
           <Image src="/icons/chat.svg" alt="chatbot favicon" width={20} height={18} />
         </Favicon>
         <div className="drag-handle" style={{ width: 20, height: 56, cursor: 'move' }}></div>
