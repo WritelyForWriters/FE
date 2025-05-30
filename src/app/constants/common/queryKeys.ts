@@ -9,4 +9,10 @@ export const QUERY_KEY = Object.freeze({
 
   // 메모
   MEMO_LIST: 'getMemoList',
+
+  // 챗봇
+  ASSISTANT_HISTORY_LATEST: 'getAssistantHistoryLatest',
+  ASSISTANT_HISTORY_INFINITE: 'getAssistantHistoryInfinite',
+  FAVORITE_PROMPTS: 'getFavoritePrompts',
+  FIXED_MESSAGE: 'getFixedMessage',
 })

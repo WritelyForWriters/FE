@@ -1,0 +1,51 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.chatbot-window {
+  @include mixin.display-flex();
+  flex-direction: column;
+  padding: 1.6rem;
+  gap: 1.6rem;
+
+  min-width: 37.5rem;
+  max-height: 69.8rem;
+
+  background-color: color.$alert-secondary-0;
+  border-radius: 1.6rem;
+
+  &__header {
+    @include mixin.display-flex();
+    justify-content: space-between;
+    align-items: center;
+
+    &:global(.drag-handle) {
+      cursor: move;
+    }
+
+    &-content {
+      @include mixin.display-flex();
+      align-items: center;
+      gap: 0.4rem;
+
+      @include typo.typo(14px, 600, 16px, 0);
+      color: color.$core-secondary-100;
+    }
+  }
+
+  &__body {
+    width: 100%;
+    overflow-y: auto;
+
+    > div {
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  &__footer {
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+  }
+}

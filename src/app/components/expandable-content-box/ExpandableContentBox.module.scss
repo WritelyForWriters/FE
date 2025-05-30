@@ -14,10 +14,12 @@
 
   z-index: 999;
 
+  background-color: color.$alert-secondary-0;
+
   &__body {
     @include mixin.display-flex();
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
 
     width: 100%;
   }
@@ -25,9 +27,9 @@
   &__main {
     @include mixin.display-flex();
     gap: 0.4rem;
-    align-items: center;
+    align-items: flex-start;
 
-    width: 95%;
+    width: 90%;
   }
 
   &__icon {

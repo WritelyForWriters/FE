@@ -1,5 +1,3 @@
-'use client'
-
 import Dashboard from '(after-login)/(bookself)/_components/Dashboard'
 import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 
@@ -12,9 +10,9 @@ import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 
 export default function Home() {
   return (
-    <div>
+    <>
       <MainHeader />
       <Dashboard />
-    </div>
+    </>
   )
 }

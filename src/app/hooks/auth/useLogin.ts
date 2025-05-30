@@ -3,6 +3,7 @@ import { login } from 'api/auth/Auth'
 import { NUMERICS } from 'constants/common/numberValue'
 import { setCookie } from 'cookies-next'
 import { useSetAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { accessTokenAtom } from 'store/accessTokenAtom'
 
 import { useToast } from '@components/toast/ToastProvider'
@@ -20,7 +21,7 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
 
   return useMutation({
     mutationFn: login,
-    onSuccess: (data, { isRememberMe }) => {
+    onSuccess: (data, { email, isRememberMe }) => {
       const date = new Date()
       date.setTime(date.getTime() + NUMERICS.COOKIE_EXPIRE)
 
@@ -31,6 +32,10 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
       }
 
       setCookie('isLoggedIn', true, isRememberMe ? { expires: date, path: '/' } : {})
+
+      trackEvent('login_complete', {
+        user_id: email,
+      })
 
       onSuccessHandler()
     },
