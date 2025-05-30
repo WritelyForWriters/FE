@@ -6,6 +6,9 @@
  */
 import { useRouter } from 'next/navigation'
 
+import { useEffect } from 'react'
+
+import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { LoginFormFieldValues } from 'types/auth/auth'
 
@@ -15,6 +18,7 @@ import TextButton from '@components/buttons/TextButton'
 import Checkbox from '@components/checkbox/Checkbox'
 import TextField from '@components/text-field/TextField'
 
+import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
 import { useLogin } from '@hooks/index'
 
 import classNames from 'classnames/bind'
@@ -25,6 +29,14 @@ const cx = classNames.bind(styles)
 
 export default function LoginPage() {
   const router = useRouter()
+
+  useEffect(() => {
+    trackEvent('page_view', {
+      page_name: 'login',
+    })
+  }, [])
+
+  usePageExitTracking('login')
 
   const methods = useForm<LoginFormFieldValues>()
 
@@ -38,11 +50,17 @@ export default function LoginPage() {
 
   // 로그인 하기
   const handleLogin = async (data: LoginFormFieldValues) => {
+    trackEvent('login_attempt', {
+      user_id: data.email,
+    })
+
     login(data)
   }
 
-  const navigateTo = (url: string) => {
-    router.push(url)
+  // 회원가입 하기
+  const handleSignup = () => {
+    trackEvent('signup_start')
+    router.push('/join')
   }
 
   return (
@@ -79,11 +97,11 @@ export default function LoginPage() {
           <FillButton type="submit" size="large" onClick={handleSubmit(handleLogin)}>
             로그인
           </FillButton>
-          <OutLinedButton type="button" size="large" onClick={() => navigateTo('/join')}>
+          <OutLinedButton type="button" size="large" onClick={() => handleSignup()}>
             회원가입
           </OutLinedButton>
           <div className={cx('btn-section__find-password')}>
-            <TextButton type="button" size="small" onClick={() => navigateTo('/find-password')}>
+            <TextButton type="button" size="small" onClick={() => router.push('/find-password')}>
               비밀번호 찾기
             </TextButton>
           </div>
