@@ -10,6 +10,7 @@ import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
 import { CHATBOT_URLS } from 'constants/chatbot/urls'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { Direction } from 're-resizable/lib/resizer'
 import { DraggableEvent } from 'react-draggable'
 import { FiInfo } from 'react-icons/fi'
@@ -115,6 +116,20 @@ export default function ChatbotWindow() {
 
     return () => container.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
+
+  useEffect(() => {
+    const startTime = Date.now()
+
+    return () => {
+      const endTime = Date.now()
+      const durationInSeconds = Math.round((endTime - startTime) / 1000)
+
+      trackEvent('free_chat_usage', {
+        button_name: '자유 대화 창 close 버튼',
+        duration: durationInSeconds,
+      })
+    }
+  }, [])
 
   const handleResizeStop = (
     _e: MouseEvent | TouchEvent,
