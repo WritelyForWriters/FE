@@ -58,9 +58,8 @@ export default function LoginPage() {
   }
 
   // 회원가입 하기
-  const handleSignup = () => {
-    trackEvent('signup_start')
-    router.push('/join')
+  const navigateTo = (url: string) => {
+    router.push(url)
   }
 
   return (
@@ -97,11 +96,11 @@ export default function LoginPage() {
           <FillButton type="submit" size="large" onClick={handleSubmit(handleLogin)}>
             로그인
           </FillButton>
-          <OutLinedButton type="button" size="large" onClick={() => handleSignup()}>
+          <OutLinedButton type="button" size="large" onClick={() => navigateTo('/join')}>
             회원가입
           </OutLinedButton>
           <div className={cx('btn-section__find-password')}>
-            <TextButton type="button" size="small" onClick={() => router.push('/find-password')}>
+            <TextButton type="button" size="small" onClick={() => navigateTo('/find-password')}>
               비밀번호 찾기
             </TextButton>
           </div>
