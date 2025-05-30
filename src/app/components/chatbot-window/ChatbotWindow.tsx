@@ -6,6 +6,7 @@ import Image from 'next/image'
 
 import { useEffect, useRef, useState } from 'react'
 
+import { Identify, identify } from '@amplitude/analytics-browser'
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
 import { CHATBOT_URLS } from 'constants/chatbot/urls'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -128,6 +129,10 @@ export default function ChatbotWindow() {
         button_name: '자유 대화 창 close 버튼',
         duration: durationInSeconds,
       })
+
+      const identifyObj = new Identify()
+      identifyObj.add('total_free_chat_time', durationInSeconds)
+      identify(identifyObj)
     }
   }, [])
 
