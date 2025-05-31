@@ -1,5 +1,9 @@
 'use client'
 
+import { useEffect } from 'react'
+
+import { trackEvent } from 'lib/amplitude'
+
 import { useGetMeProfile, useGetProductList } from '@hooks/index'
 
 import CardList from './CardList'
@@ -13,6 +17,14 @@ const cx = classNames.bind(styles)
 export default function Dashboard() {
   const { data: profile } = useGetMeProfile()
   const { data: productList } = useGetProductList()
+
+  useEffect(() => {
+    if (productList) {
+      trackEvent('library_view', {
+        work_count: productList.length,
+      })
+    }
+  }, [productList])
 
   return (
     <main className={cx('wrapper')}>
