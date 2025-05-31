@@ -1,5 +1,12 @@
+'use client'
+
+import { useEffect } from 'react'
+
 import Dashboard from '(after-login)/(bookself)/_components/Dashboard'
 import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
+import { trackEvent } from 'lib/amplitude'
+
+import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
 
 /**
  * TODO
@@ -9,6 +16,14 @@ import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
  */
 
 export default function Home() {
+  useEffect(() => {
+    trackEvent('page_view', {
+      page_name: 'library',
+    })
+  }, [])
+
+  usePageExitTracking('library')
+
   return (
     <>
       <MainHeader />

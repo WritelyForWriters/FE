@@ -1,5 +1,10 @@
 'use client'
 
+import { useEffect } from 'react'
+
+import { Identify, identify } from '@amplitude/analytics-browser'
+import { trackEvent } from 'lib/amplitude'
+
 import { useGetMeProfile, useGetProductList } from '@hooks/index'
 
 import CardList from './CardList'
@@ -13,6 +18,20 @@ const cx = classNames.bind(styles)
 export default function Dashboard() {
   const { data: profile } = useGetMeProfile()
   const { data: productList } = useGetProductList()
+
+  useEffect(() => {
+    if (productList) {
+      const workCount = productList.length
+
+      trackEvent('library_view', {
+        work_count: workCount,
+      })
+
+      const identifyObj = new Identify()
+      identifyObj.set('work_count', workCount)
+      identify(identifyObj)
+    }
+  }, [productList])
 
   return (
     <main className={cx('wrapper')}>
