@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 
+import { Identify, identify } from '@amplitude/analytics-browser'
 import { trackEvent } from 'lib/amplitude'
 
 import { useGetMeProfile, useGetProductList } from '@hooks/index'
@@ -20,9 +21,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (productList) {
+      const workCount = productList.length
+
       trackEvent('library_view', {
-        work_count: productList.length,
+        work_count: workCount,
       })
+
+      const identifyObj = new Identify()
+      identifyObj.set('work_count', workCount)
+      identify(identifyObj)
     }
   }, [productList])
 
