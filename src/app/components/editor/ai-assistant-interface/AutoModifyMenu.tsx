@@ -114,7 +114,7 @@ export default function AutoModifyMenu({
               취소하기
             </SelectMenuContent.Option>
             <div className={styles['divide-line']}></div>
-            {/* TODO 응답 및 보관 기능 */}
+
             <SelectMenuContent.Option option={{ handleAction: onOptionClick('feedback-good') }}>
               <Image
                 src={
@@ -130,7 +130,16 @@ export default function AutoModifyMenu({
               응답이 마음에 들어요
             </SelectMenuContent.Option>
             <SelectMenuContent.Option option={{ handleAction: () => modalRef.current?.open() }}>
-              <Image src="/icons/feedback-bad-icon.svg" alt="not good" width={20} height={20} />
+              <Image
+                src={
+                  feedback.isBadSelected
+                    ? '/icons/fill-feedback-bad-icon.svg'
+                    : '/icons/feedback-bad-icon.svg'
+                }
+                alt="bad"
+                width={20}
+                height={20}
+              />
               응답이 별로에요
             </SelectMenuContent.Option>
             <SelectMenuContent.Option option={{ handleAction: onOptionClick('archive') }}>

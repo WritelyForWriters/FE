@@ -139,6 +139,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
             feedbackText={feedbackInput.current}
             onOptionClick={handleOptionClickFeedback}
             feedback={feedback}
+            handleSubmitFeedback={handleSubmitFeedback}
           />
         )}
 
@@ -187,6 +188,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           onAiPrompt={handleAiPrompt}
           onOptionClick={handleOptionClickUserModify}
           feedback={feedback}
+          handleSubmitFeedback={handleSubmitFeedback}
         />
       )}
 
