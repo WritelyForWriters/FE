@@ -1,7 +1,8 @@
 'use client'
 
-import { MouseEvent } from 'react'
+import { MouseEvent, useState } from 'react'
 
+import { trackEvent } from 'lib/amplitude'
 import { MemosDto } from 'types/memos'
 
 import Pannel from '@components/pannel/Pannel'
@@ -23,10 +24,23 @@ interface MemoPannelProps {
 
 export default function MemoPannel({ memoList }: MemoPannelProps) {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
+  const [startTime, setStartTime] = useState<number>(0)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
+    trackEvent('panel_close', {
+      panel_name: '메모',
+      open_duration: Date.now() - startTime,
+    })
     e.stopPropagation()
     onClose()
+  }
+
+  const handleButtonClick = () => {
+    setStartTime(Date.now())
+    trackEvent('panel_open', {
+      panel_name: '메모',
+    })
+    onOpen()
   }
 
   return (
@@ -43,7 +57,7 @@ export default function MemoPannel({ memoList }: MemoPannelProps) {
           </Tab>
         </Pannel>
       ) : (
-        <button onClick={onOpen} className={cx('container')}>
+        <button onClick={handleButtonClick} className={cx('container')}>
           메모
         </button>
       )}

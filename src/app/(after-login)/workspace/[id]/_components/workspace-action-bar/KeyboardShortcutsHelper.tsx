@@ -3,6 +3,7 @@
  * @author 선우
  */
 import { KEYBOARD_SHORTCUTS } from 'constants/workspace/keyboardShortcuts'
+import { trackEvent } from 'lib/amplitude'
 import { FiInfo } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
 import { Tooltip } from 'react-tooltip'
@@ -43,12 +44,19 @@ export default function KeyboardShortcutsHelper() {
     )
   }
 
+  const handleTooltipOpen = () => {
+    onOpen()
+    trackEvent('help_button_click', {
+      button_name: '도움말 버튼',
+    })
+  }
+
   return (
     <>
       <button
         data-tooltip-id="shortcut-help-tooltip"
         data-tooltip-place="bottom-end"
-        onClick={onOpen}
+        onClick={handleTooltipOpen}
       >
         <FiInfo size={20} color="#CCCCCC" />
       </button>

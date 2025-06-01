@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { ReactNode, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
+import { trackEvent } from 'lib/amplitude'
 import { IoIosArrowDown } from 'react-icons/io'
 import { AiassistantOptionType } from 'types/common/editor'
 
@@ -54,11 +55,22 @@ export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
     }
   }
 
+  const handleToolbarButtonClick = (buttonName: string) => {
+    trackEvent('toolbar_button_click', {
+      button_name: buttonName,
+    })
+  }
+
   return (
     <div className={styles['bubble-menu']}>
       {/* Text Format */}
       <div>
-        <ToolbarButton onClick={() => setIsTextFormatMenuOpen(true)}>
+        <ToolbarButton
+          onClick={() => {
+            setIsTextFormatMenuOpen(true)
+            handleToolbarButtonClick('본문')
+          }}
+        >
           {getTextFormatOption()}
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </ToolbarButton>
@@ -97,7 +109,12 @@ export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
 
       {/* Align */}
       <div>
-        <ToolbarButton onClick={() => setIsTextAlignMenuOpen(true)}>
+        <ToolbarButton
+          onClick={() => {
+            setIsTextAlignMenuOpen(true)
+            handleToolbarButtonClick('정렬')
+          }}
+        >
           정렬
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </ToolbarButton>
@@ -151,21 +168,30 @@ export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
       {/* Text Mark */}
       <div className={styles['text-mark']}>
         <ToolbarButton
-          onClick={toggleBold}
+          onClick={() => {
+            toggleBold()
+            handleToolbarButtonClick('B')
+          }}
           isActive={editor.isActive('bold')}
           className={styles.bold}
         >
           B
         </ToolbarButton>
         <ToolbarButton
-          onClick={toggleItalic}
+          onClick={() => {
+            toggleItalic()
+            handleToolbarButtonClick('I')
+          }}
           isActive={editor.isActive('italic')}
           className={styles.italic}
         >
           I
         </ToolbarButton>
         <ToolbarButton
-          onClick={toggleUnderline}
+          onClick={() => {
+            toggleUnderline()
+            handleToolbarButtonClick('U')
+          }}
           isActive={editor.isActive('underline')}
           className={styles.underline}
         >
@@ -177,14 +203,26 @@ export default function Toolbar({ editor, handleActiveMenu }: ToolbarProps) {
 
       {/* Memo */}
       <div className={styles['text-mark']}>
-        <ToolbarButton onClick={() => handleActiveMenu('memo')}>메모</ToolbarButton>
+        <ToolbarButton
+          onClick={() => {
+            handleActiveMenu('memo')
+            handleToolbarButtonClick('메모')
+          }}
+        >
+          메모
+        </ToolbarButton>
       </div>
 
       <div className={styles.line} />
 
       {/* AI 어시스턴트 */}
       <div>
-        <ToolbarButton onClick={() => setIsAiOption(true)}>
+        <ToolbarButton
+          onClick={() => {
+            setIsAiOption(true)
+            handleToolbarButtonClick('AI 어시스턴트')
+          }}
+        >
           AI 어시스턴트
           <IoIosArrowDown size={16} fill="#CCCCCC" />
         </ToolbarButton>

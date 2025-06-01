@@ -3,6 +3,7 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 
 import { useAtom, useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { autoSaveMessageAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
@@ -40,6 +41,13 @@ export default function WorkspaceActionBar({
 
   // 읽기/쓰기 모드를 구분하는 state
   const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
+
+  const handleChangeMode = () => {
+    trackEvent(isContentEditing ? 'enter_reading_mode' : 'enter_writing_mode', {
+      button_name: isContentEditing ? '읽기 모드' : '쓰기 모드',
+    })
+    setIsContentEditing((prev) => !prev)
+  }
 
   // 저장 버튼 클릭 트리거 이벤트
   const handleSave = async () => {
@@ -183,12 +191,12 @@ export default function WorkspaceActionBar({
         <menu className={cx('action-bar-tabs')}>
           <EditModeSwitch
             isSelected={!isContentEditing}
-            onClick={() => setIsContentEditing(false)}
+            onClick={handleChangeMode}
             disabled={isInitialAccess}
           >
             읽기 모드
           </EditModeSwitch>
-          <EditModeSwitch isSelected={isContentEditing} onClick={() => setIsContentEditing(true)}>
+          <EditModeSwitch isSelected={isContentEditing} onClick={handleChangeMode}>
             쓰기 모드
           </EditModeSwitch>
         </menu>

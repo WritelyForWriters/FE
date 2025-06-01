@@ -4,6 +4,7 @@ import Link from 'next/link'
 
 import { ReactNode } from 'react'
 
+import { trackEvent } from 'lib/amplitude'
 import { MdHome } from 'react-icons/md'
 
 import classNames from 'classnames/bind'
@@ -19,12 +20,18 @@ interface ActionBarProps {
 }
 
 export default function ActionBar({ actionSection, titleSection, extraSection }: ActionBarProps) {
+  const handleHomeButtonClick = () => {
+    trackEvent('home_button_click', {
+      button_name: '홈',
+    })
+  }
+
   return (
     <div className={cx('action-bar-wrapper')}>
       <div className={cx('action-bar-inner-container')}>
         <section className={cx('action-bar-action-section')}>
           {/* 홈 버튼 */}
-          <Link href="/">
+          <Link href="/" onClick={handleHomeButtonClick}>
             <MdHome size={24}></MdHome>
           </Link>
           {actionSection}

@@ -2,6 +2,7 @@
 
 import { MouseEvent, useEffect, useState } from 'react'
 
+import { trackEvent } from 'lib/amplitude'
 import { TocItemType } from 'types/common/pannel'
 
 import Pannel from '@components/pannel/Pannel'
@@ -21,8 +22,14 @@ interface IndexPannelProps {
 export default function IndexPannel({ toc }: IndexPannelProps) {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [startTime, setStartTime] = useState<number>(0)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
+    trackEvent('panel_close', {
+      panel_name: '목차',
+      open_duration: Date.now() - startTime,
+    })
+
     e.stopPropagation()
     onClose()
   }
@@ -74,6 +81,14 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
     if (element) element.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const handleButtonClick = () => {
+    setStartTime(Date.now())
+    trackEvent('panel_open', {
+      panel_name: '목차',
+    })
+    onOpen()
+  }
+
   return (
     <div className={cx('wrapper')}>
       {isOpen ? (
@@ -93,7 +108,7 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
           </ul>
         </Pannel>
       ) : (
-        <button onClick={onOpen} className={cx('container')}>
+        <button onClick={handleButtonClick} className={cx('container')}>
           목차
         </button>
       )}

@@ -1,7 +1,8 @@
 'use client'
 
-import { MouseEvent } from 'react'
+import { MouseEvent, useState } from 'react'
 
+import { trackEvent } from 'lib/amplitude'
 import { MdArrowOutward } from 'react-icons/md'
 
 import FillButton from '@components/buttons/FillButton'
@@ -22,10 +23,23 @@ const datas = ['시놉시스', '세계관', '등장인물', '줄거리', '아이
 
 export default function PlannerPannel() {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
+  const [startTime, setStartTime] = useState<number>(0)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
+    trackEvent('panel_close', {
+      panel_name: '작품 플래너',
+      open_duration: Date.now() - startTime,
+    })
     e.stopPropagation()
     onClose()
+  }
+
+  const handleButtonClick = () => {
+    setStartTime(Date.now())
+    trackEvent('panel_open', {
+      panel_name: '작품 플래너',
+    })
+    onOpen()
   }
 
   return (
@@ -54,7 +68,7 @@ export default function PlannerPannel() {
           </FillButton>
         </Pannel>
       ) : (
-        <button onClick={onOpen} className={cx('container')}>
+        <button onClick={handleButtonClick} className={cx('container')}>
           작품 플래너
         </button>
       )}
