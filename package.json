@@ -37,6 +37,7 @@
     "classnames": "^2.5.1",
     "cookies-next": "^5.1.0",
     "framer-motion": "^12.7.4",
+    "html2pdf.js": "^0.9.3",
     "jotai": "^2.12.1",
     "next": "15.1.2",
     "react": "^19.0.0",
