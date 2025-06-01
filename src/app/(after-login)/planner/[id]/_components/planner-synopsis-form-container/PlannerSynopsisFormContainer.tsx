@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation'
 
 import { useEffect } from 'react'
 
-import { postUserModify } from 'api/ai-assistant/aiAssistant'
+import { postPlannerUserModify } from 'api/ai-assistant/aiAssistant'
 import { useAtom } from 'jotai'
 import { useFormContext } from 'react-hook-form'
 import { plannerActiveTabAtom } from 'store/plannerAtoms'
@@ -36,7 +36,7 @@ export default function PlannerSynopsisFormContainer() {
   const params = useParams()
   const productId = params.id as string
 
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
   const { set: setAiAssistants } = usePlannerTemplatesAiAssistant()
   const [activeTab, setActiveTab] = useAtom(plannerActiveTabAtom)
 
@@ -48,9 +48,18 @@ export default function PlannerSynopsisFormContainer() {
 
   const handleManualModification = (name: string) => async (value: string, inputValue: string) => {
     try {
-      const response = (await postUserModify({
+      const response = (await postPlannerUserModify({
         productId,
-        content: value,
+        genre: (
+          getValues('synopsis.genre') as {
+            label: string
+            value: string
+          }[]
+        )
+          .map((genre) => genre.value)
+          .join(', '),
+        logline: getValues('synopsis.logline'),
+        section: value,
         prompt: inputValue,
       })) as { id: string; answer: string }
 
@@ -62,7 +71,7 @@ export default function PlannerSynopsisFormContainer() {
 
       return false
     } catch (error) {
-      console.error('fetch use modify error: ', error)
+      console.error('fetch user modify error: ', error)
       return false
     }
   }

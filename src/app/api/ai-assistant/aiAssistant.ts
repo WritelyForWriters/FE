@@ -6,6 +6,14 @@ interface PromptData {
   prompt: string
 }
 
+interface PlannerPromptData {
+  productId: string
+  genre: string
+  logline: string
+  section: string
+  prompt: string
+}
+
 // 자동 수정
 export const postAutoModify = async (promptData: Omit<PromptData, 'prompt'>) => {
   const res = await authInstance.post('/assistant/auto-modify', promptData)
@@ -28,5 +36,11 @@ interface FeedbackResult {
 // 구간 피드백
 export const postFeedback = async (promptData: Omit<PromptData, 'prompt'>) => {
   const res = await authInstance.post<FeedbackResult>('/assistant/feedback', promptData)
+  return res.data.result
+}
+
+// 수동 수정 (작품 플래너)
+export const postPlannerUserModify = async (promptData: PlannerPromptData) => {
+  const res = await authInstance.post('/assistant/planner', promptData)
   return res.data.result
 }
