@@ -14,9 +14,16 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string
   variant?: 'default' | 'password'
   options?: RegisterOptions
+  isAiModified?: boolean
 }
 
-export default function TextFieldInput({ name, variant, options, ...props }: InputProps) {
+export default function TextFieldInput({
+  name,
+  variant,
+  options,
+  isAiModified,
+  ...props
+}: InputProps) {
   const { register, watch, setValue } = useFormContext()
   const { onChange: registerOnChange, ...rest } = register(name, options)
   const value = watch(name)
@@ -37,7 +44,9 @@ export default function TextFieldInput({ name, variant, options, ...props }: Inp
         {...rest}
         {...props}
         type={variant === 'password' ? (showPassword ? 'text' : 'password') : 'text'}
-        className={cx('text-field__fieldset__input')}
+        className={cx('text-field__fieldset__input', {
+          'text-field__fieldset__text-area--is-modified': isAiModified,
+        })}
         autoComplete="new-password"
         data-has-value={value ? 'true' : 'false'}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {

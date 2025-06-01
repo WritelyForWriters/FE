@@ -4,6 +4,8 @@ import { InputHTMLAttributes, TextareaHTMLAttributes } from 'react'
 
 import { RegisterOptions, useFormContext } from 'react-hook-form'
 
+import { usePlannerTemplatesAiAssistant } from '@hooks/products/usePlannerTemplatesAiAssistant'
+
 import TextFieldInput from './TextFieldInput'
 import TextFieldLabel from './TextFieldLabel'
 import TextFieldTextarea from './TextFieldTextarea'
@@ -47,6 +49,11 @@ export default function TextField({
   const {
     formState: { errors },
   } = useFormContext()
+  const { get: getAiAssistants } = usePlannerTemplatesAiAssistant()
+
+  const getIsAiModified = (name: string): boolean => {
+    return getAiAssistants(name)?.isAiModified ?? false
+  }
 
   return (
     <div className={cx('text-field')}>
@@ -66,6 +73,7 @@ export default function TextField({
           <TextFieldInput
             variant={variant}
             options={options}
+            isAiModified={getIsAiModified(name)}
             {...(props as InputProps)}
             {...register(name, options)}
           />
@@ -75,6 +83,7 @@ export default function TextField({
         {variant === 'expand' && (
           <TextFieldTextarea
             options={options}
+            isAiModified={getIsAiModified(name)}
             {...(props as TextareaProps)}
             {...register(name, options)}
           />
@@ -82,7 +91,7 @@ export default function TextField({
       </section>
 
       {/* Helper Text */}
-      {(helperText || (errors[name] && errors[name].message)) && (
+      {(helperText || (errors[name] && errors[name]?.message)) && (
         <span
           className={cx('text-field__helper-text', {
             'text-field__helper-text--error': errors[name]?.message,

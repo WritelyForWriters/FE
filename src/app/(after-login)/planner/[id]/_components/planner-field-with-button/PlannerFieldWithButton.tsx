@@ -1,8 +1,16 @@
+import Image from 'next/image'
+
 import { ReactNode, useEffect, useState } from 'react'
 
 import { useFormContext } from 'react-hook-form'
 
 import FillButton from '@components/buttons/FillButton'
+
+import { useCollapsed } from '@hooks/common/useCollapsed'
+import { usePlannerTemplatesAiAssistant } from '@hooks/products/usePlannerTemplatesAiAssistant'
+
+import PlannerManualModification from '../planner-manual-modification/plannerManualModification'
+import aiIcon from '/public/icons/ai-option2.svg'
 
 import classNames from 'classnames/bind'
 
@@ -14,6 +22,8 @@ interface PlannerFieldWithButtonProps {
   name: string
   isDropdown?: boolean
   onDelete?: () => void
+  manualModifiable?: boolean
+  handleManualModification?: (value: string, inputValue: string) => Promise<boolean>
 }
 
 export default function PlannerFieldWithButton({
@@ -21,11 +31,16 @@ export default function PlannerFieldWithButton({
   name,
   isDropdown = false,
   onDelete,
+  manualModifiable = true,
+  handleManualModification,
 }: PlannerFieldWithButtonProps) {
   const { watch, unregister, register, setValue } = useFormContext()
+  const { isOpen, onClose, onOpen } = useCollapsed(false)
   const [isShow, setIsShow] = useState(true)
   const [isDeleted, setIsDeleted] = useState(false)
   const initialValue = watch(name)
+
+  const { remove, getContent } = usePlannerTemplatesAiAssistant()
 
   // NOTE(hajae): 삭제된 항목은 null로 반환되어 초기 렌더링 시 화면에 표시하지 않는다
   useEffect(() => {
@@ -55,12 +70,36 @@ export default function PlannerFieldWithButton({
     setter(true)
   }
 
+  const handleConfirm = () => {
+    remove(name)
+  }
+
+  const handleCancel = () => {
+    const originalContent = getContent(name)
+    if (originalContent !== undefined) {
+      setValue(name, originalContent)
+      remove(name)
+    }
+  }
+
   return (
     <div className={cx('wrapper')}>
       {isShow ? (
         <div className={cx('field-with-button')}>
           {children}
-          <div className={cx('field-with-button__delete-button')}>
+          <div className={cx('field-with-button__buttons')}>
+            {manualModifiable && (
+              <FillButton
+                type="button"
+                size="small"
+                variant="secondary"
+                shape="pill"
+                iconPosition="only"
+                iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
+                onClick={onOpen}
+              />
+            )}
+
             <FillButton
               type="button"
               size="small"
@@ -80,6 +119,16 @@ export default function PlannerFieldWithButton({
         >
           삭제된 항목 추가
         </FillButton>
+      )}
+      {isOpen && manualModifiable && (
+        <PlannerManualModification
+          name={name}
+          value={initialValue}
+          promptClose={onClose}
+          handleManualModification={handleManualModification}
+          handleConfirm={handleConfirm}
+          handleCancel={handleCancel}
+        />
       )}
     </div>
   )

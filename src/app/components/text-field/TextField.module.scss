@@ -105,6 +105,12 @@
         color: color.$alert-secondary-300;
         cursor: pointer;
       }
+
+      &--is-modified {
+        // NOTE(hajae): 현재 input 내에 있는 글자에만 배경색상을 넣는 것은 css만으로 불가.
+        // 글자에만 배경 색상을 넣기위해서는 구조적으로 수정을 해야함. 스코프가 너무 커서 일단 임시로 글자그림자로 작업
+        text-shadow: 0 0 7px #ffe47a;
+      }
     }
 
     &__text-area {

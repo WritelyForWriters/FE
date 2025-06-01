@@ -19,7 +19,15 @@ import styles from './PlannerCharacterForm.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function PlannerCharacterForm() {
+interface PlannerCharacterFormProps {
+  handleManualModification: (
+    name: string,
+  ) => (value: string, inputValue: string) => Promise<boolean>
+}
+
+export default function PlannerCharacterForm({
+  handleManualModification,
+}: PlannerCharacterFormProps) {
   const params = useParams<{ id: string }>()
   const { setValue } = useFormContext()
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(params.id))
@@ -54,6 +62,7 @@ export default function PlannerCharacterForm() {
             paramsId={params.id}
             arrayIndex={index}
             handleRemoveCharacter={handleRemoveCharacter}
+            handleManualModification={handleManualModification}
           />
         ))}
     </div>

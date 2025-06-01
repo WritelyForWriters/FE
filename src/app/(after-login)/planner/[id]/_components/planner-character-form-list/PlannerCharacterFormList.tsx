@@ -26,12 +26,16 @@ interface PlannerCharacterFormListProps {
   paramsId: string
   arrayIndex: number
   handleRemoveCharacter: (index: number) => void
+  handleManualModification: (
+    name: string,
+  ) => (value: string, inputValue: string) => Promise<boolean>
 }
 
 export default function PlannerCharacterFormList({
   paramsId,
   arrayIndex,
   handleRemoveCharacter,
+  handleManualModification,
 }: PlannerCharacterFormListProps) {
   const { isOpen, onToggle } = useCollapsed(true)
   const { control } = useFormContext()
@@ -94,6 +98,8 @@ export default function PlannerCharacterFormList({
               <PlannerFieldWithButton
                 key={`planner-character-item-${index}`}
                 name={getTextFieldName(item.name)}
+                handleManualModification={handleManualModification(getTextFieldName(item.name))}
+                manualModifiable={item.manualModifiable}
               >
                 <TextField
                   name={getTextFieldName(item.name)}

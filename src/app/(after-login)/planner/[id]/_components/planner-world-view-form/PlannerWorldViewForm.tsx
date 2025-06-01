@@ -18,7 +18,15 @@ type CustomField = {
   content: string
 }
 
-export default function PlannerWorldViewForm() {
+interface PlannerSynopsisFormProps {
+  handleManualModification: (
+    name: string,
+  ) => (value: string, inputValue: string) => Promise<boolean>
+}
+
+export default function PlannerWorldViewForm({
+  handleManualModification,
+}: PlannerSynopsisFormProps) {
   const { watch, setValue } = useFormContext()
   const customFields: CustomField[] = watch('worldview.customFields') || []
 
@@ -36,7 +44,11 @@ export default function PlannerWorldViewForm() {
     <div className={cx('world-view-form')} id="heading2">
       <div className={cx('world-view-form__title')}>세계관</div>
       {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
-        <PlannerFieldWithButton key={item.name} name={`worldview.${item.name}`}>
+        <PlannerFieldWithButton
+          key={item.name}
+          name={`worldview.${item.name}`}
+          handleManualModification={handleManualModification(`worldview.${item.name}`)}
+        >
           <TextField
             key={`planner-world-view-item-${index}`}
             name={`worldview.${item.name}`}

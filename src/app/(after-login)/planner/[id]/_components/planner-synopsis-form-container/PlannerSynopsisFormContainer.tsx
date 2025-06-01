@@ -1,11 +1,17 @@
 'use client'
 
+import { useParams } from 'next/navigation'
+
 import { useEffect } from 'react'
 
+import { postUserModify } from 'api/ai-assistant/aiAssistant'
 import { useAtom } from 'jotai'
+import { useFormContext } from 'react-hook-form'
 import { plannerActiveTabAtom } from 'store/plannerAtoms'
 
 import IndexPannel from '@components/pannel/IndexPannel'
+
+import { usePlannerTemplatesAiAssistant } from '@hooks/products/usePlannerTemplatesAiAssistant'
 
 import PlannerCharacterForm from '../planner-character-form/PlannerCharacterForm'
 import PlannerIdeaNote from '../planner-idea-note/PlannerIdeaNote'
@@ -27,6 +33,11 @@ const TABLE_OF_CONTENTS = [
 ]
 
 export default function PlannerSynopsisFormContainer() {
+  const params = useParams()
+  const productId = params.id as string
+
+  const { setValue } = useFormContext()
+  const { set: setAiAssistants } = usePlannerTemplatesAiAssistant()
   const [activeTab, setActiveTab] = useAtom(plannerActiveTabAtom)
 
   // NOTE(hajae): jotai는 전역상태이기 때문에 메모리에 상태가 살아있어서 아이디어 탭에서 페이지 이동후 다시 돌아올 경우
@@ -34,6 +45,27 @@ export default function PlannerSynopsisFormContainer() {
   useEffect(() => {
     setActiveTab('synopsis')
   }, [])
+
+  const handleManualModification = (name: string) => async (value: string, inputValue: string) => {
+    try {
+      const response = (await postUserModify({
+        productId,
+        content: value,
+        prompt: inputValue,
+      })) as { id: string; answer: string }
+
+      if (response.id) {
+        setAiAssistants({ name: name, content: value, isAiModified: true })
+        setValue(name, response.answer)
+        return true
+      }
+
+      return false
+    } catch (error) {
+      console.error('fetch use modify error: ', error)
+      return false
+    }
+  }
 
   return (
     <form
@@ -48,10 +80,10 @@ export default function PlannerSynopsisFormContainer() {
             <div className={cx('index')}>
               <IndexPannel toc={TABLE_OF_CONTENTS} />
             </div>
-            <PlannerSynopsisForm />
-            <PlannerWorldViewForm />
-            <PlannerCharacterForm />
-            <PlannerPlotForm />
+            <PlannerSynopsisForm handleManualModification={handleManualModification} />
+            <PlannerWorldViewForm handleManualModification={handleManualModification} />
+            <PlannerCharacterForm handleManualModification={handleManualModification} />
+            <PlannerPlotForm handleManualModification={handleManualModification} />
           </>
         ) : (
           <PlannerIdeaNote />
