@@ -2,6 +2,7 @@ import Image from 'next/image'
 
 import { ChangeEvent, useRef, useState } from 'react'
 
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 import { ActionOptionType } from 'types/common/editor'
@@ -10,6 +11,7 @@ import { ModalHandler } from 'types/common/modalRef'
 import FillButton from '@components/buttons/FillButton'
 import Modal from '@components/modal/Modal'
 import SelectMenu from '@components/select-menu/SelectMenu'
+import { useToast } from '@components/toast/ToastProvider'
 
 import { EvaluateStateType } from '@hooks/editor/useTextEditor'
 
@@ -35,6 +37,7 @@ export default function ManualModification({
   onOptionClick,
   handleSubmitFeedback,
 }: ManualModificationProps) {
+  const showToast = useToast()
   const [feedbackInput, setFeedbackInput] = useState('')
   const modalRef = useRef<ModalHandler | null>(null)
 
@@ -112,7 +115,7 @@ export default function ManualModification({
               option={{
                 handleAction: () => {
                   if (feedback.isGoodSelected || feedback.isBadSelected) {
-                    alert('이미 평가되었습니다.')
+                    showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
                     return
                   }
                   modalRef.current?.open()

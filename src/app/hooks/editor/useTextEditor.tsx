@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Editor } from '@tiptap/react'
 import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
 import { AxiosError } from 'axios'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { useAtom, useAtomValue } from 'jotai'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { productIdAtom } from 'store/productsAtoms'
@@ -12,6 +13,8 @@ import {
   AiassistantOptionType,
   TextSelectionRangeType,
 } from 'types/common/editor'
+
+import { useToast } from '@components/toast/ToastProvider'
 
 import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
 import { useCollapsed } from '@hooks/common/useCollapsed'
@@ -46,6 +49,7 @@ export function useTextEditor(editor: Editor | null) {
   const promptValueRef = useRef('')
   const feedbackInput = useRef<string | null>(null)
 
+  const showToast = useToast()
   const { isOpen, onOpen, onClose } = useCollapsed()
   const {
     isOpen: isFeedbackOpen,
@@ -71,11 +75,10 @@ export function useTextEditor(editor: Editor | null) {
         isGoodSelected: isGood,
         isBadSelected: !isGood,
       }))
-      // TODO 응답이 제출되었다는 토스트
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
-        console.log(error.response?.data.message)
+        showToast('warning', error.response?.data.message)
       }
     },
   })
@@ -85,7 +88,7 @@ export function useTextEditor(editor: Editor | null) {
     if (!aiassistantId) return
 
     if (feedback.isGoodSelected || feedback.isBadSelected) {
-      alert('이미 평가되었습니다.') // TODO 토스트
+      showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
       return
     }
 

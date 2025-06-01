@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 import { ActionOptionType, TextSelectionRangeType } from 'types/common/editor'
@@ -11,6 +12,7 @@ import { ModalHandler } from 'types/common/modalRef'
 import Modal from '@components/modal/Modal'
 import Portal from '@components/modal/Portal'
 import SelectMenuContent from '@components/select-menu/SelectMenuContent'
+import { useToast } from '@components/toast/ToastProvider'
 
 import { EvaluateStateType } from '@hooks/editor/useTextEditor'
 
@@ -34,6 +36,7 @@ export default function AutoModifyMenu({
   onOptionClick,
   handleSubmitFeedback,
 }: AutoModifyMenuProps) {
+  const showToast = useToast()
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [feedbackInput, setFeedbackInput] = useState('')
 
@@ -133,7 +136,7 @@ export default function AutoModifyMenu({
               option={{
                 handleAction: () => {
                   if (feedback.isGoodSelected || feedback.isBadSelected) {
-                    alert('이미 평가되었습니다.')
+                    showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
                     return
                   }
                   modalRef.current?.open()
