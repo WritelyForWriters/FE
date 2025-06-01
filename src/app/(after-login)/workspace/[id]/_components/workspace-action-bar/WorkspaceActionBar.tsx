@@ -1,11 +1,13 @@
 'use client'
 
-import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, KeyboardEvent, RefObject, useEffect, useRef, useState } from 'react'
 
+import { Editor } from '@tiptap/react'
 import { useAtom, useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { autoSaveMessageAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
+import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 
 import ActionBar from '@components/action-bar/ActionBar'
@@ -13,6 +15,7 @@ import styles from '@components/action-bar/ActionBar.module.scss'
 import TextButton from '@components/buttons/TextButton'
 import Dropdown from '@components/dropdown/Dropdown'
 import Modal from '@components/modal/Modal'
+import PdfExportPreview from '@components/pdfExportPreview/PdfExportPreview'
 import SelectMenu from '@components/select-menu/SelectMenu'
 import EditModeSwitch from '@components/switch/EditModeSwitch'
 
@@ -28,15 +31,20 @@ interface WorkspaceActionBarProps {
   onClickSave: () => Promise<void>
   initialTitle?: string | null
   isInitialAccess: boolean
+  editorRef: RefObject<HandleEditor | null>
 }
 
 export default function WorkspaceActionBar({
   onClickSave,
   initialTitle,
   isInitialAccess,
+  editorRef,
 }: WorkspaceActionBarProps) {
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
+
+  const pdfPreviewModalRef = useRef<ModalHandler | null>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
 
   // 읽기/쓰기 모드를 구분하는 state
   const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
@@ -52,7 +60,15 @@ export default function WorkspaceActionBar({
 
   // 내보내기 버튼 클릭 트리거 이벤트
   const handleExport = () => {
-    // TODO:: API 연동
+    if (editorRef.current) {
+      const editor = editorRef.current.getEditor() as Editor
+      const html = editor.getHTML()
+
+      if (previewRef.current) {
+        previewRef.current.innerHTML = html
+        pdfPreviewModalRef.current?.open()
+      }
+    }
   }
 
   const handleModalOpen = () => {
@@ -110,14 +126,14 @@ export default function WorkspaceActionBar({
                 >
                   작품 전체 내보내기
                 </SelectMenu.Option>
-                <SelectMenu.Option
+                {/* <SelectMenu.Option
                   option={{
                     handleAction: () => handleExportSelection('toc'),
                     className: styles['select-option'],
                   }}
                 >
                   목차 내보내기
-                </SelectMenu.Option>
+                </SelectMenu.Option> */}
               </SelectMenu>
             </div>
           </>
@@ -212,17 +228,18 @@ export default function WorkspaceActionBar({
               <Dropdown
                 name="exportType"
                 type="outlined"
-                placeholder="파일 형태(단일 파일, 여러 파일)"
+                // placeholder="파일 형태(단일 파일, 여러 파일)"
+                placeholder="파일 형태(단일 파일)"
                 label="파일 형태"
                 options={[
                   {
                     label: '하나의 파일',
                     value: '하나의 파일',
                   },
-                  {
-                    label: '여러 개의 파일',
-                    value: '여러 개의 파일',
-                  },
+                  // {
+                  //   label: '여러 개의 파일',
+                  //   value: '여러 개의 파일',
+                  // },
                 ]}
                 rules={{
                   required: {
@@ -234,25 +251,26 @@ export default function WorkspaceActionBar({
               <Dropdown
                 name="fileFormat"
                 type="outlined"
-                placeholder="파일 포맷(pdf, docx, hwpx, epub) "
+                // placeholder="파일 포맷(pdf, docx, hwpx, epub) "
+                placeholder="파일 포맷"
                 label="파일 포맷"
                 options={[
                   {
                     label: 'PDF 문서(.pdf)',
                     value: 'PDF 문서(.pdf)',
                   },
-                  {
-                    label: 'Microsoft Word(.docx)',
-                    value: 'Microsoft Word(.docx)',
-                  },
-                  {
-                    label: '한글 파일(.hwpx)',
-                    value: '한글 파일(.hwpx)',
-                  },
-                  {
-                    label: 'EPUB 출판물(.epub)',
-                    value: 'EPUB 출판물(.epub)',
-                  },
+                  // {
+                  //   label: 'Microsoft Word(.docx)',
+                  //   value: 'Microsoft Word(.docx)',
+                  // },
+                  // {
+                  //   label: '한글 파일(.hwpx)',
+                  //   value: '한글 파일(.hwpx)',
+                  // },
+                  // {
+                  //   label: 'EPUB 출판물(.epub)',
+                  //   value: 'EPUB 출판물(.epub)',
+                  // },
                 ]}
                 rules={{
                   required: {
@@ -265,6 +283,11 @@ export default function WorkspaceActionBar({
           </FormProvider>
         }
       />
+
+      <PdfExportPreview ref={pdfPreviewModalRef}>
+        <div ref={previewRef}></div>
+      </PdfExportPreview>
+
       <ActionBar
         actionSection={<ActionSectionContent />}
         titleSection={<TitleSectionContent />}
