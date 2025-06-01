@@ -6,15 +6,18 @@ import { ActionOptionType } from 'types/common/editor'
 
 import SelectMenuContent from '@components/select-menu/SelectMenuContent'
 
+import { EvaluateStateType } from '@hooks/editor/useTextEditor'
+
 import styles from '../DefaultEditor.module.scss'
 
 interface FeedbackMenuProps {
   feedbackText: string | null
   onOptionClick: (option: ActionOptionType) => () => void
+  feedback: EvaluateStateType
 }
 
 // MEMO(Sohyun): ai-assistant 인터페이스 구간 피드백 UI
-export default function FeedbackMenu({ feedbackText, onOptionClick }: FeedbackMenuProps) {
+export default function FeedbackMenu({ feedback, feedbackText, onOptionClick }: FeedbackMenuProps) {
   return (
     <div>
       <div className={styles['prompt-menu']}>
@@ -41,7 +44,16 @@ export default function FeedbackMenu({ feedbackText, onOptionClick }: FeedbackMe
           </SelectMenuContent.Option>
           <div className={styles['divide-line']}></div>
           <SelectMenuContent.Option option={{ handleAction: onOptionClick('feedback-good') }}>
-            <Image src="/icons/feedback-good-icon.svg" alt="good" width={20} height={20} />
+            <Image
+              src={
+                feedback.isGoodSelected
+                  ? '/icons/fill-feedback-good-icon.svg'
+                  : '/icons/feedback-good-icon.svg'
+              }
+              alt="good"
+              width={20}
+              height={20}
+            />
             응답이 마음에 들어요
           </SelectMenuContent.Option>
           <SelectMenuContent.Option option={{ handleAction: onOptionClick('feedback-bad') }}>

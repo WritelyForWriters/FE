@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
+import { AxiosError } from 'axios'
 import { useAtom, useAtomValue } from 'jotai'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { productIdAtom } from 'store/productsAtoms'
+import { FeedbackFormData } from 'types/chatbot/chatbot'
 import {
   ActionOptionType,
   AiassistantOptionType,
@@ -14,9 +16,26 @@ import {
 import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
+export interface EvaluateStateType {
+  assistantId: string | null
+  isGoodSelected: boolean
+  isBadSelected: boolean
+  isArchived: boolean
+}
+
+const INITIAL_EVALUATE_STATE = {
+  assistantId: null,
+  isGoodSelected: false,
+  isBadSelected: false,
+  isArchived: false,
+}
+
 // MEMO(Sohyun): 텍스트 에디터와 관련된 모든 로직을 담당하는 커스텀 hook
 export function useTextEditor(editor: Editor | null) {
   const [aiassistantId, setAiassistantId] = useState('') // TODO (리팩토링) 응답(id, result)을 객체로 관리
+
+  const [feedback, setFeedback] = useState<EvaluateStateType>(INITIAL_EVALUATE_STATE)
+
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const [originalText, setOriginalText] = useAtom(originalPhraseAtom)
   const [aiResult, setAiResult] = useAtom(aiResultAtom)
@@ -39,13 +58,33 @@ export function useTextEditor(editor: Editor | null) {
     onClose: onCloseAutoModifyVisible,
   } = useCollapsed()
 
-  const { mutate: submitFeedback } = useSubmitFeedback()
+  const { mutate: submitFeedback } = useSubmitFeedback({
+    onSuccess: (_, variables) => {
+      const isGood = (
+        variables as {
+          assistantId: string
+          formData: FeedbackFormData
+        }
+      ).formData.isGood
+      setFeedback((prev) => ({
+        ...prev,
+        isGoodSelected: isGood ? true : prev.isGoodSelected,
+        isBadSelected: isGood ? true : prev.isBadSelected,
+      }))
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        console.log(error.response?.data.message)
+      }
+    },
+  })
 
   // 어시스턴트 응답 피드백
   const handleSubmitFeedback = (isGood: boolean) => {
     if (!aiassistantId) return
 
     if (isGood) {
+      if (feedback.isBadSelected) return // TODO 토스트 등 처리 필요
       submitFeedback({
         assistantId: aiassistantId,
         formData: {
@@ -117,6 +156,7 @@ export function useTextEditor(editor: Editor | null) {
 
       if (response.id) {
         setAiassistantId(response.id)
+        setFeedback(INITIAL_EVALUATE_STATE)
         // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
         setAiResult(response.answer)
         onOpenAutoModifyVisible()
@@ -139,6 +179,7 @@ export function useTextEditor(editor: Editor | null) {
 
       if (response.id) {
         setAiassistantId(response.id)
+        setFeedback(INITIAL_EVALUATE_STATE)
         // (방법 1) selection을 받아와서 대체 텍스트 삽입
         // editor.commands.insertContentAt(selection, response.answer)
 
@@ -161,6 +202,7 @@ export function useTextEditor(editor: Editor | null) {
 
       if (response.id) {
         setAiassistantId(response.id)
+        setFeedback(INITIAL_EVALUATE_STATE)
         // TODO 로딩중일때
         feedbackInput.current = response.answer
         onOpenFeedback()
@@ -304,6 +346,7 @@ export function useTextEditor(editor: Editor | null) {
   }, [aiResult, editor, setAiResult])
 
   return {
+    feedback,
     activeMenu,
     isOpen,
     onClose,

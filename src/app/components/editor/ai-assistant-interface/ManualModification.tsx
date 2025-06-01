@@ -9,6 +9,8 @@ import { ActionOptionType } from 'types/common/editor'
 import FillButton from '@components/buttons/FillButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
 
+import { EvaluateStateType } from '@hooks/editor/useTextEditor'
+
 import styles from '../DefaultEditor.module.scss'
 
 interface ManualModificationProps {
@@ -17,10 +19,12 @@ interface ManualModificationProps {
   onPromptChange: (value: string) => void
   onAiPrompt: () => void
   onOptionClick: (option: ActionOptionType) => () => void
+  feedback: EvaluateStateType
 }
 
 // MEMO(Sohyun): ai-assistant 인터페이스 수동 수정 UI
 export default function ManualModification({
+  feedback,
   isOpen,
   onClose,
   onPromptChange,
@@ -69,7 +73,16 @@ export default function ManualModification({
           </SelectMenu.Option>
           <div className={styles['divide-line']}></div>
           <SelectMenu.Option option={{ handleAction: onOptionClick('feedback-good') }}>
-            <Image src="/icons/feedback-good-icon.svg" alt="good" width={20} height={20} />
+            <Image
+              src={
+                feedback.isGoodSelected
+                  ? '/icons/fill-feedback-good-icon.svg'
+                  : '/icons/feedback-good-icon.svg'
+              }
+              alt="good"
+              width={20}
+              height={20}
+            />
             응답이 마음에 들어요
           </SelectMenu.Option>
           <SelectMenu.Option option={{ handleAction: onOptionClick('feedback-bad') }}>

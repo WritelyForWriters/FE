@@ -10,6 +10,8 @@ import { ActionOptionType, TextSelectionRangeType } from 'types/common/editor'
 import Portal from '@components/modal/Portal'
 import SelectMenuContent from '@components/select-menu/SelectMenuContent'
 
+import { EvaluateStateType } from '@hooks/editor/useTextEditor'
+
 import styles from '../DefaultEditor.module.scss'
 
 interface AutoModifyMenuProps {
@@ -17,10 +19,12 @@ interface AutoModifyMenuProps {
   selectionRef: RefObject<TextSelectionRangeType | null>
   isVisible: boolean
   onOptionClick: (option: ActionOptionType) => () => void
+  feedback: EvaluateStateType
 }
 
 // MEMO(Sohyun): ai-assistant 인터페이스 자동 수정 UI
 export default function AutoModifyMenu({
+  feedback,
   editor,
   selectionRef,
   isVisible,
@@ -89,7 +93,17 @@ export default function AutoModifyMenu({
           <div className={styles['divide-line']}></div>
           {/* TODO 응답 및 보관 기능 */}
           <SelectMenuContent.Option option={{ handleAction: onOptionClick('feedback-good') }}>
-            <Image src="/icons/feedback-good-icon.svg" alt="good" width={20} height={20} />
+            <Image
+              src={
+                feedback.isGoodSelected
+                  ? '/icons/fill-feedback-good-icon.svg'
+                  : '/icons/feedback-good-icon.svg'
+              }
+              alt="good"
+              width={20}
+              height={20}
+              color="black"
+            />
             응답이 마음에 들어요
           </SelectMenuContent.Option>
           <SelectMenuContent.Option option={{ handleAction: onOptionClick('feedback-bad') }}>
