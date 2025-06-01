@@ -283,7 +283,7 @@ export default function WorkspaceActionBar({
       />
 
       <PdfExportPreview ref={pdfPreviewModalRef}>
-        <div ref={previewRef}> </div>
+        <div ref={previewRef}></div>
       </PdfExportPreview>
 
       <ActionBar

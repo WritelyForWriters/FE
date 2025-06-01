@@ -7,6 +7,12 @@ import { ModalHandler } from 'types/common/modalRef'
 
 import Modal from '@components/modal/Modal'
 
+import classNames from 'classnames/bind'
+
+import styles from './PdfExportPreview.module.scss'
+
+const cx = classNames.bind(styles)
+
 interface PdfExportPreviewProps {
   ref: RefObject<ModalHandler | null>
   children: ReactNode
@@ -17,7 +23,6 @@ interface PdfExportPreviewProps {
  * prop으로 전달받은 ReactNode를 html to pdf로 변환
  */
 
-// TODO 에디터 스타일을 미리보기에도 적용
 export default function PdfExportPreview({ ref, children }: PdfExportPreviewProps) {
   const previewRef = useRef<HTMLDivElement>(null)
   const productTitle = useAtomValue(productTitleAtom)
@@ -48,19 +53,19 @@ export default function PdfExportPreview({ ref, children }: PdfExportPreviewProp
   }
 
   return (
-    <>
-      <Modal
-        ref={ref}
-        title="미리보기"
-        cancelText="취소"
-        confirmText="내보내기"
-        onCancel={handleModalClose}
-        onConfirm={handleExport}
-        content={
-          /* 실제 PDF로 변환될 영역 */
-          <div ref={previewRef}>{children}</div>
-        }
-      />
-    </>
+    <Modal
+      ref={ref}
+      title="미리보기"
+      cancelText="취소"
+      confirmText="내보내기"
+      onCancel={handleModalClose}
+      onConfirm={handleExport}
+      content={
+        /* 실제 PDF로 변환될 영역 */
+        <div ref={previewRef} className={cx('preview-content')}>
+          {children}
+        </div>
+      }
+    />
   )
 }
