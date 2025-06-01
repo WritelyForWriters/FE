@@ -3,8 +3,11 @@ import { useEffect, useRef } from 'react'
 import { Editor } from '@tiptap/react'
 import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
 import { useAtom, useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
+import { feedbackIdAtom } from 'store/feedbackIdAtom'
 import { productIdAtom } from 'store/productsAtoms'
+import { MemberMessageType } from 'types/chatbot/chatbot'
 import {
   ActionOptionType,
   AiassistantOptionType,
@@ -24,6 +27,8 @@ export function useTextEditor(editor: Editor | null) {
   const originalSelectionRef = useRef<TextSelectionRangeType | null>(null)
   const promptValueRef = useRef('')
   const feedbackInput = useRef<string | null>(null)
+
+  const [feedbackId, setFeedbackId] = useAtom(feedbackIdAtom)
 
   const { isOpen, onOpen, onClose } = useCollapsed()
   const {
@@ -98,6 +103,7 @@ export function useTextEditor(editor: Editor | null) {
         // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
         setAiResult(response.answer)
         onOpenAutoModifyVisible()
+        handleEventTracking('auto modify', response.id, '자동 수정')
       }
     } catch (error) {
       console.log(error)
@@ -121,6 +127,7 @@ export function useTextEditor(editor: Editor | null) {
         // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
         setAiResult(response.answer)
         onOpen()
+        handleEventTracking('user modify', response.id, '수동 수정')
       }
     } catch (error) {
       console.log(error)
@@ -138,6 +145,7 @@ export function useTextEditor(editor: Editor | null) {
         // TODO 로딩중일때
         feedbackInput.current = response.answer
         onOpenFeedback()
+        handleEventTracking('feedback', response.id, '구간 피드백')
       }
     } catch (error) {
       console.log(error)
@@ -159,6 +167,9 @@ export function useTextEditor(editor: Editor | null) {
         setActiveMenu('defaultToolbar')
         clearHighlight()
         onCloseAutoModifyVisible()
+        trackEvent('ai_feedback_accepted', {
+          feedback_id: feedbackId,
+        })
         break
 
       case 'recreate':
@@ -189,6 +200,9 @@ export function useTextEditor(editor: Editor | null) {
         setActiveMenu('defaultToolbar')
         clearHighlight()
         onClose()
+        trackEvent('ai_feedback_accepted', {
+          feedback_id: feedbackId,
+        })
         break
 
       case 'recreate':
@@ -228,6 +242,9 @@ export function useTextEditor(editor: Editor | null) {
         }
         feedbackInput.current = null
         onCloseFeedback()
+        trackEvent('ai_feedback_accepted', {
+          feedback_id: feedbackId,
+        })
         break
 
       case 'recreate':
@@ -250,6 +267,19 @@ export function useTextEditor(editor: Editor | null) {
       default:
         break
     }
+  }
+
+  const handleEventTracking = (
+    feedbackType: MemberMessageType,
+    feedbackId: string,
+    buttonName: string,
+  ) => {
+    setFeedbackId(feedbackId)
+    trackEvent('ai_feedback_given', {
+      feeback_type: feedbackType,
+      feedback_id: feedbackId,
+      button_name: buttonName,
+    })
   }
 
   // aiResult 변경 시 에디터에 내용 삽입
