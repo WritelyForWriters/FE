@@ -88,6 +88,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     isAutoModifyVisible,
     handleActiveMenu,
     handlePromptChange,
+    handleSubmitFeedback,
     handleAiPrompt,
     handleOptionClickAutoModify,
     handleOptionClickUserModify,
@@ -173,6 +174,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           isVisible={isAutoModifyVisible}
           onOptionClick={handleOptionClickAutoModify}
           feedback={feedback}
+          handleSubmitFeedback={handleSubmitFeedback}
         />
       )}
 

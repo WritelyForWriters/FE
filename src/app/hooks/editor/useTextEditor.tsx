@@ -66,11 +66,13 @@ export function useTextEditor(editor: Editor | null) {
           formData: FeedbackFormData
         }
       ).formData.isGood
+      // TODO 응답이 별로일때 아이콘 변화
       setFeedback((prev) => ({
         ...prev,
         isGoodSelected: isGood ? true : prev.isGoodSelected,
-        isBadSelected: isGood ? true : prev.isBadSelected,
+        isBadSelected: isGood ? prev.isBadSelected : true,
       }))
+      // TODO 응답이 제출되었다는 토스트
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
@@ -80,11 +82,12 @@ export function useTextEditor(editor: Editor | null) {
   })
 
   // 어시스턴트 응답 피드백
-  const handleSubmitFeedback = (isGood: boolean) => {
+  const handleSubmitFeedback = (isGood: boolean, value?: string) => {
     if (!aiassistantId) return
 
+    // TODO 제출한 피드백 응답이 있다면 return
     if (isGood) {
-      if (feedback.isBadSelected) return // TODO 토스트 등 처리 필요
+      if (feedback.isGoodSelected) return // TODO 토스트 등 처리 필요
       submitFeedback({
         assistantId: aiassistantId,
         formData: {
@@ -92,7 +95,14 @@ export function useTextEditor(editor: Editor | null) {
         },
       })
     } else {
-      // TODO: 피드백 입력창 디자인 추가되면 수정
+      if (feedback.isBadSelected) return // TODO 토스트 등 처리 필요
+      submitFeedback({
+        assistantId: aiassistantId,
+        formData: {
+          isGood,
+          feedback: value,
+        },
+      })
     }
   }
 
@@ -246,7 +256,7 @@ export function useTextEditor(editor: Editor | null) {
         feedbackInput.current = null
         break
 
-      // TODO 응답 피드백 나머지 옵션 기능 구현
+      // TODO 응답 피드백 나머지 옵션 기능 구현 > 분리
       case 'feedback-good':
         handleSubmitFeedback(true)
         break
@@ -356,6 +366,7 @@ export function useTextEditor(editor: Editor | null) {
     feedbackInput,
     handleActiveMenu,
     handlePromptChange,
+    handleSubmitFeedback,
     handleAiPrompt,
     handleOptionClickAutoModify,
     handleOptionClickUserModify,
