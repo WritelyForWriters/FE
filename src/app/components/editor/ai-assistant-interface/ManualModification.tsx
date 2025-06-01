@@ -68,15 +68,15 @@ export default function ManualModification({
             취소하기
           </SelectMenu.Option>
           <div className={styles['divide-line']}></div>
-          <SelectMenu.Option option={{ handleAction: onOptionClick('apply') }}>
+          <SelectMenu.Option option={{ handleAction: onOptionClick('feedback-good') }}>
             <Image src="/icons/feedback-good-icon.svg" alt="good" width={20} height={20} />
             응답이 마음에 들어요
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ handleAction: onOptionClick('recreate') }}>
+          <SelectMenu.Option option={{ handleAction: onOptionClick('feedback-bad') }}>
             <Image src="/icons/feedback-bad-icon.svg" alt="not good" width={20} height={20} />
             응답이 별로에요
           </SelectMenu.Option>
-          <SelectMenu.Option option={{ handleAction: onOptionClick('cancel') }}>
+          <SelectMenu.Option option={{ handleAction: onOptionClick('archive') }}>
             <Image
               src="/icons/permanent-saved-icon.svg"
               alt="답변 영구 보관하기"

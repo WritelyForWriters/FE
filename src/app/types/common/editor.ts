@@ -13,4 +13,10 @@ export interface TextSelectionRangeType {
 
 export type ToolbarType = 'defaultToolbar' | 'auto-modify' | 'user-modify' | 'feedback' | 'memo'
 export type AiassistantOptionType = 'auto-modify' | 'user-modify' | 'feedback' | 'free-chat'
-export type ActionOptionType = 'apply' | 'recreate' | 'cancel'
+export type ActionOptionType =
+  | 'apply'
+  | 'recreate'
+  | 'cancel'
+  | 'feedback-good'
+  | 'feedback-bad'
+  | 'archive'

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
@@ -11,10 +11,12 @@ import {
   TextSelectionRangeType,
 } from 'types/common/editor'
 
+import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
 // MEMO(Sohyun): 텍스트 에디터와 관련된 모든 로직을 담당하는 커스텀 hook
 export function useTextEditor(editor: Editor | null) {
+  const [aiassistantId, setAiassistantId] = useState('') // TODO (리팩토링) 응답(id, result)을 객체로 관리
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const [originalText, setOriginalText] = useAtom(originalPhraseAtom)
   const [aiResult, setAiResult] = useAtom(aiResultAtom)
@@ -36,6 +38,24 @@ export function useTextEditor(editor: Editor | null) {
     onOpen: onOpenAutoModifyVisible,
     onClose: onCloseAutoModifyVisible,
   } = useCollapsed()
+
+  const { mutate: submitFeedback } = useSubmitFeedback()
+
+  // 어시스턴트 응답 피드백
+  const handleSubmitFeedback = (isGood: boolean) => {
+    if (!aiassistantId) return
+
+    if (isGood) {
+      submitFeedback({
+        assistantId: aiassistantId,
+        formData: {
+          isGood,
+        },
+      })
+    } else {
+      // TODO: 피드백 입력창 디자인 추가되면 수정
+    }
+  }
 
   // 드래그한 영역 저장 및 하이라이트
   const handleTextSelection = () => {
@@ -85,6 +105,7 @@ export function useTextEditor(editor: Editor | null) {
     promptValueRef.current = value
   }
 
+  // 1. 자동 수정
   const handleAiAutoModify = async (originPhrase: string) => {
     if (!selectionRef.current || !editor) return
 
@@ -95,6 +116,7 @@ export function useTextEditor(editor: Editor | null) {
       })
 
       if (response.id) {
+        setAiassistantId(response.id)
         // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
         setAiResult(response.answer)
         onOpenAutoModifyVisible()
@@ -104,6 +126,7 @@ export function useTextEditor(editor: Editor | null) {
     }
   }
 
+  // 2. 수동 수정
   const handleAiPrompt = async () => {
     if (!promptValueRef.current || !selectionRef.current) return
 
@@ -115,6 +138,7 @@ export function useTextEditor(editor: Editor | null) {
       })
 
       if (response.id) {
+        setAiassistantId(response.id)
         // (방법 1) selection을 받아와서 대체 텍스트 삽입
         // editor.commands.insertContentAt(selection, response.answer)
 
@@ -127,6 +151,7 @@ export function useTextEditor(editor: Editor | null) {
     }
   }
 
+  // 3. 구간 피드백
   const handleAiFeedback = async (originPhrase: string) => {
     try {
       const response = await postFeedback({
@@ -135,6 +160,7 @@ export function useTextEditor(editor: Editor | null) {
       })
 
       if (response.id) {
+        setAiassistantId(response.id)
         // TODO 로딩중일때
         feedbackInput.current = response.answer
         onOpenFeedback()
@@ -178,6 +204,11 @@ export function useTextEditor(editor: Editor | null) {
         feedbackInput.current = null
         break
 
+      // TODO 응답 피드백 나머지 옵션 기능 구현
+      case 'feedback-good':
+        handleSubmitFeedback(true)
+        break
+
       default:
         break
     }
@@ -208,6 +239,10 @@ export function useTextEditor(editor: Editor | null) {
         onClose()
         feedbackInput.current = null
         onCloseFeedback()
+        break
+
+      case 'feedback-good':
+        handleSubmitFeedback(true)
         break
 
       default:
@@ -245,6 +280,10 @@ export function useTextEditor(editor: Editor | null) {
         }
         feedbackInput.current = null
         onCloseFeedback()
+        break
+
+      case 'feedback-good':
+        handleSubmitFeedback(true)
         break
 
       default:
