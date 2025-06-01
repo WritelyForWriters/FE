@@ -68,8 +68,8 @@ export function useTextEditor(editor: Editor | null) {
       ).formData.isGood
       setFeedback((prev) => ({
         ...prev,
-        isGoodSelected: isGood ? true : prev.isGoodSelected,
-        isBadSelected: isGood ? prev.isBadSelected : true,
+        isGoodSelected: isGood,
+        isBadSelected: !isGood,
       }))
       // TODO 응답이 제출되었다는 토스트
     },
