@@ -132,9 +132,18 @@ export default function ManualModification({
               />
               응답이 별로에요
             </SelectMenu.Option>
-            <SelectMenu.Option option={{ handleAction: onOptionClick('archive') }}>
+            <SelectMenu.Option
+              option={{
+                handleAction: onOptionClick('archive'),
+                className: feedback.isArchived ? styles['selected-archived'] : '',
+              }}
+            >
               <Image
-                src="/icons/permanent-saved-icon.svg"
+                src={
+                  feedback.isArchived
+                    ? '/icons/fill-permanent-saved-icon.svg'
+                    : '/icons/permanent-saved-icon.svg'
+                }
                 alt="답변 영구 보관하기"
                 width={20}
                 height={20}

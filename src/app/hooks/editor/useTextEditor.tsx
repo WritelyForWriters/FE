@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { useMutation } from '@tanstack/react-query'
 import { Editor } from '@tiptap/react'
-import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
+import {
+  archivedAnswer,
+  postAutoModify,
+  postFeedback,
+  postUserModify,
+} from 'api/ai-assistant/aiAssistant'
 import { AxiosError } from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
@@ -62,6 +68,21 @@ export function useTextEditor(editor: Editor | null) {
         ...prev,
         isGoodSelected: isGood,
         isBadSelected: !isGood,
+      }))
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        showToast('warning', error.response?.data.message)
+      }
+    },
+  })
+
+  const archivedAnswerMutation = useMutation({
+    mutationFn: archivedAnswer,
+    onSuccess: () => {
+      setFeedback((prev) => ({
+        ...prev,
+        isArchived: true,
       }))
     },
     onError: (error) => {
@@ -248,6 +269,11 @@ export function useTextEditor(editor: Editor | null) {
         feedbackInput.current = null
         break
 
+      case 'archive':
+        if (feedback.isArchived) return
+        archivedAnswerMutation.mutate(aiassistantId)
+        break
+
       default:
         break
     }
@@ -278,6 +304,11 @@ export function useTextEditor(editor: Editor | null) {
         onClose()
         feedbackInput.current = null
         onCloseFeedback()
+        break
+
+      case 'archive':
+        if (feedback.isArchived) return
+        archivedAnswerMutation.mutate(aiassistantId)
         break
 
       default:
@@ -315,6 +346,11 @@ export function useTextEditor(editor: Editor | null) {
         }
         feedbackInput.current = null
         onCloseFeedback()
+        break
+
+      case 'archive':
+        if (feedback.isArchived) return
+        archivedAnswerMutation.mutate(aiassistantId)
         break
 
       default:
