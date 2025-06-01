@@ -115,7 +115,7 @@ export default function AutoModifyMenu({
             </SelectMenuContent.Option>
             <div className={styles['divide-line']}></div>
 
-            <SelectMenuContent.Option option={{ handleAction: onOptionClick('feedback-good') }}>
+            <SelectMenuContent.Option option={{ handleAction: () => handleSubmitFeedback(true) }}>
               <Image
                 src={
                   feedback.isGoodSelected
@@ -129,7 +129,17 @@ export default function AutoModifyMenu({
               />
               응답이 마음에 들어요
             </SelectMenuContent.Option>
-            <SelectMenuContent.Option option={{ handleAction: () => modalRef.current?.open() }}>
+            <SelectMenuContent.Option
+              option={{
+                handleAction: () => {
+                  if (feedback.isGoodSelected || feedback.isBadSelected) {
+                    alert('이미 평가되었습니다.')
+                    return
+                  }
+                  modalRef.current?.open()
+                },
+              }}
+            >
               <Image
                 src={
                   feedback.isBadSelected

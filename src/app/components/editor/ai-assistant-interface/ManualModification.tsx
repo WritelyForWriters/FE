@@ -95,7 +95,7 @@ export default function ManualModification({
               취소하기
             </SelectMenu.Option>
             <div className={styles['divide-line']}></div>
-            <SelectMenu.Option option={{ handleAction: onOptionClick('feedback-good') }}>
+            <SelectMenu.Option option={{ handleAction: () => handleSubmitFeedback(true) }}>
               <Image
                 src={
                   feedback.isGoodSelected
@@ -108,7 +108,17 @@ export default function ManualModification({
               />
               응답이 마음에 들어요
             </SelectMenu.Option>
-            <SelectMenu.Option option={{ handleAction: () => modalRef.current?.open() }}>
+            <SelectMenu.Option
+              option={{
+                handleAction: () => {
+                  if (feedback.isGoodSelected || feedback.isBadSelected) {
+                    alert('이미 평가되었습니다.')
+                    return
+                  }
+                  modalRef.current?.open()
+                },
+              }}
+            >
               <Image
                 src={
                   feedback.isBadSelected

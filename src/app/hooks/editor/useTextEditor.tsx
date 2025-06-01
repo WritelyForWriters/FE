@@ -66,7 +66,6 @@ export function useTextEditor(editor: Editor | null) {
           formData: FeedbackFormData
         }
       ).formData.isGood
-      // TODO 응답이 별로일때 아이콘 변화
       setFeedback((prev) => ({
         ...prev,
         isGoodSelected: isGood ? true : prev.isGoodSelected,
@@ -85,9 +84,12 @@ export function useTextEditor(editor: Editor | null) {
   const handleSubmitFeedback = (isGood: boolean, value?: string) => {
     if (!aiassistantId) return
 
-    // TODO 제출한 피드백 응답이 있다면 return
+    if (feedback.isGoodSelected || feedback.isBadSelected) {
+      alert('이미 평가되었습니다.') // TODO 토스트
+      return
+    }
+
     if (isGood) {
-      if (feedback.isGoodSelected) return // TODO 토스트 등 처리 필요
       submitFeedback({
         assistantId: aiassistantId,
         formData: {
@@ -95,7 +97,6 @@ export function useTextEditor(editor: Editor | null) {
         },
       })
     } else {
-      if (feedback.isBadSelected) return // TODO 토스트 등 처리 필요
       submitFeedback({
         assistantId: aiassistantId,
         formData: {
@@ -256,11 +257,6 @@ export function useTextEditor(editor: Editor | null) {
         feedbackInput.current = null
         break
 
-      // TODO 응답 피드백 나머지 옵션 기능 구현 > 분리
-      case 'feedback-good':
-        handleSubmitFeedback(true)
-        break
-
       default:
         break
     }
@@ -291,10 +287,6 @@ export function useTextEditor(editor: Editor | null) {
         onClose()
         feedbackInput.current = null
         onCloseFeedback()
-        break
-
-      case 'feedback-good':
-        handleSubmitFeedback(true)
         break
 
       default:
@@ -332,10 +324,6 @@ export function useTextEditor(editor: Editor | null) {
         }
         feedbackInput.current = null
         onCloseFeedback()
-        break
-
-      case 'feedback-good':
-        handleSubmitFeedback(true)
         break
 
       default:
