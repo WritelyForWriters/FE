@@ -126,14 +126,14 @@ export default function WorkspaceActionBar({
                 >
                   작품 전체 내보내기
                 </SelectMenu.Option>
-                <SelectMenu.Option
+                {/* <SelectMenu.Option
                   option={{
                     handleAction: () => handleExportSelection('toc'),
                     className: styles['select-option'],
                   }}
                 >
                   목차 내보내기
-                </SelectMenu.Option>
+                </SelectMenu.Option> */}
               </SelectMenu>
             </div>
           </>
@@ -228,17 +228,18 @@ export default function WorkspaceActionBar({
               <Dropdown
                 name="exportType"
                 type="outlined"
-                placeholder="파일 형태(단일 파일, 여러 파일)"
+                // placeholder="파일 형태(단일 파일, 여러 파일)"
+                placeholder="파일 형태(단일 파일)"
                 label="파일 형태"
                 options={[
                   {
                     label: '하나의 파일',
                     value: '하나의 파일',
                   },
-                  {
-                    label: '여러 개의 파일',
-                    value: '여러 개의 파일',
-                  },
+                  // {
+                  //   label: '여러 개의 파일',
+                  //   value: '여러 개의 파일',
+                  // },
                 ]}
                 rules={{
                   required: {
@@ -250,25 +251,26 @@ export default function WorkspaceActionBar({
               <Dropdown
                 name="fileFormat"
                 type="outlined"
-                placeholder="파일 포맷(pdf, docx, hwpx, epub) "
+                // placeholder="파일 포맷(pdf, docx, hwpx, epub) "
+                placeholder="파일 포맷"
                 label="파일 포맷"
                 options={[
                   {
                     label: 'PDF 문서(.pdf)',
                     value: 'PDF 문서(.pdf)',
                   },
-                  {
-                    label: 'Microsoft Word(.docx)',
-                    value: 'Microsoft Word(.docx)',
-                  },
-                  {
-                    label: '한글 파일(.hwpx)',
-                    value: '한글 파일(.hwpx)',
-                  },
-                  {
-                    label: 'EPUB 출판물(.epub)',
-                    value: 'EPUB 출판물(.epub)',
-                  },
+                  // {
+                  //   label: 'Microsoft Word(.docx)',
+                  //   value: 'Microsoft Word(.docx)',
+                  // },
+                  // {
+                  //   label: '한글 파일(.hwpx)',
+                  //   value: '한글 파일(.hwpx)',
+                  // },
+                  // {
+                  //   label: 'EPUB 출판물(.epub)',
+                  //   value: 'EPUB 출판물(.epub)',
+                  // },
                 ]}
                 rules={{
                   required: {
