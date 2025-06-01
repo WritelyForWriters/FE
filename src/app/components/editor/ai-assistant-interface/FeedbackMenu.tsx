@@ -5,14 +5,12 @@ import { ChangeEvent, useRef, useState } from 'react'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
-import { ActionOptionType } from 'types/common/editor'
+import { ActionOptionType, EvaluateStateType } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 
 import Modal from '@components/modal/Modal'
 import SelectMenuContent from '@components/select-menu/SelectMenuContent'
 import { useToast } from '@components/toast/ToastProvider'
-
-import { EvaluateStateType } from '@hooks/editor/useTextEditor'
 
 import styles from '../DefaultEditor.module.scss'
 

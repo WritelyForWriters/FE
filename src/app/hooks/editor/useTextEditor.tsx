@@ -4,6 +4,7 @@ import { Editor } from '@tiptap/react'
 import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
 import { AxiosError } from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
+import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
 import { useAtom, useAtomValue } from 'jotai'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { productIdAtom } from 'store/productsAtoms'
@@ -11,6 +12,7 @@ import { FeedbackFormData } from 'types/chatbot/chatbot'
 import {
   ActionOptionType,
   AiassistantOptionType,
+  EvaluateStateType,
   TextSelectionRangeType,
 } from 'types/common/editor'
 
@@ -18,20 +20,6 @@ import { useToast } from '@components/toast/ToastProvider'
 
 import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
 import { useCollapsed } from '@hooks/common/useCollapsed'
-
-export interface EvaluateStateType {
-  assistantId: string | null
-  isGoodSelected: boolean
-  isBadSelected: boolean
-  isArchived: boolean
-}
-
-const INITIAL_EVALUATE_STATE = {
-  assistantId: null,
-  isGoodSelected: false,
-  isBadSelected: false,
-  isArchived: false,
-}
 
 // MEMO(Sohyun): 텍스트 에디터와 관련된 모든 로직을 담당하는 커스텀 hook
 export function useTextEditor(editor: Editor | null) {

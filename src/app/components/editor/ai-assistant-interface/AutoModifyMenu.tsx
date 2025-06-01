@@ -6,15 +6,13 @@ import { Editor } from '@tiptap/react'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
-import { ActionOptionType, TextSelectionRangeType } from 'types/common/editor'
+import { ActionOptionType, EvaluateStateType, TextSelectionRangeType } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 
 import Modal from '@components/modal/Modal'
 import Portal from '@components/modal/Portal'
 import SelectMenuContent from '@components/select-menu/SelectMenuContent'
 import { useToast } from '@components/toast/ToastProvider'
-
-import { EvaluateStateType } from '@hooks/editor/useTextEditor'
 
 import styles from '../DefaultEditor.module.scss'
 
