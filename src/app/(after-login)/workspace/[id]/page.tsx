@@ -7,11 +7,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Editor } from '@tiptap/react'
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME } from 'constants/workspace/number'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
-import { newChatMessagesAtom } from 'store/newChatMessagesAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
@@ -57,7 +56,6 @@ export default function WorkSpacePage() {
   const { data: memoList } = useGetMemoList(params.id) // MEMO(Sohyun): 메모 컴포넌트에서 요청하는것이 좋을까?
 
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
-  const newChatMessages = useAtomValue(newChatMessagesAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
   const editorContent = editorContentAtom(params.id)
   const setEditorContent = useSetAtom(editorContent)
@@ -201,8 +199,8 @@ export default function WorkSpacePage() {
       }
     }
 
-    setChatbotHistory([...newChatMessages, ...allChats])
-  }, [previousChatbotHistory, productId, newChatMessages, setChatbotHistory])
+    setChatbotHistory(allChats)
+  }, [previousChatbotHistory, productId])
 
   useEffect(() => {
     setFixedMessage(
@@ -245,11 +243,9 @@ export default function WorkSpacePage() {
             <PlannerPannel />
           </div>
         </div>
-      </main>
 
-      <div>
         <ChatbotLauncher />
-      </div>
+      </main>
 
       <Modal
         ref={modalRef}
