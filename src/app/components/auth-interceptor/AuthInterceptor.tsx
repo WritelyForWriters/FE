@@ -50,14 +50,13 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
   const responseInterceptor = AuthAxios.interceptors.response.use(
     (res) => res,
     async (error) => {
-      const {
-        code,
-        config,
-        response: { status },
-      } = error
+      const { code, config } = error
+      const status = error.response?.status
 
       if (code === 'ERR_NETWORK') {
         showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
+      } else if (code === 'ECONNABORTED') {
+        showToast('warning', TOAST_MESSAGE.AI_ASSISTANT_TIMEOUT)
       }
 
       if (status === 401) {
