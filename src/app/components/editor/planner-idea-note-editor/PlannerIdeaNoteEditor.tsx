@@ -6,6 +6,7 @@ import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
 import Highlight from '@tiptap/extension-highlight'
+import History from '@tiptap/extension-history'
 import Italic from '@tiptap/extension-italic'
 import Paragraph from '@tiptap/extension-paragraph'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -91,6 +92,7 @@ export default function PlannerIdeaNoteEditor({
         inline: true,
         allowBase64: true,
       }),
+      History,
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '',
