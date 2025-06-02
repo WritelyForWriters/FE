@@ -92,7 +92,10 @@ export default function PlannerIdeaNoteEditor({
         inline: true,
         allowBase64: true,
       }),
-      History,
+      History.configure({
+        depth: 100, // NOTE(hajae): undo, redo stack 100
+        newGroupDelay: 400, // NOTE(hajae): undo, redo의 Grouping 딜레이 시간
+      }),
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '',
