@@ -6,7 +6,7 @@
  */
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
 
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
 import { AUTH_PATTERN } from 'constants/join/pattern'
@@ -24,7 +24,7 @@ import styles from './page.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function ResetPassword() {
+function ResetPassword() {
   const router = useRouter()
   const params = useSearchParams()
 
@@ -102,5 +102,13 @@ export default function ResetPassword() {
         </form>
       </FormProvider>
     </main>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense>
+      <ResetPassword />
+    </Suspense>
   )
 }
