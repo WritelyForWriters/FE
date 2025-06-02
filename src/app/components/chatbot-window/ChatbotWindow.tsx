@@ -4,7 +4,7 @@
  */
 import Image from 'next/image'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Identify, identify } from '@amplitude/analytics-browser'
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
@@ -102,12 +102,12 @@ export default function ChatbotWindow() {
     setChatbotAbsoluteSize,
   ])
 
-  const handleScroll = async () => {
+  const handleScroll = useCallback(() => {
     const container = containerRef.current
     if (container && container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
       fetchNextPage()
     }
-  }
+  }, [fetchNextPage])
 
   useEffect(() => {
     const container = containerRef.current

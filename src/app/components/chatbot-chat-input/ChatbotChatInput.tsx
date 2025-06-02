@@ -20,7 +20,6 @@ import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { clickedButtonAtom } from 'store/clickedButtonAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
-import { newChatMessagesAtom } from 'store/newChatMessagesAtom'
 import { productIdAtom } from 'store/productsAtoms'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
@@ -60,7 +59,7 @@ export default function ChatbotChatInput() {
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
   const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
-  const setNewChatMessages = useSetAtom(newChatMessagesAtom)
+  const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
 
   const showToast = useToast()
 
@@ -83,7 +82,7 @@ export default function ChatbotChatInput() {
       onSuccess: async (data) => {
         try {
           const newMessage = await getAssistantHistoryById(productId, data as string)
-          setNewChatMessages((prev) => [newMessage.result.contents[0], ...prev])
+          setChatbotHistory((prev) => [newMessage.result.contents[0], ...prev])
         } catch {}
       },
     })
