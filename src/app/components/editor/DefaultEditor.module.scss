@@ -94,3 +94,31 @@
 .selected-archived {
   color: color.$alert-secondary-500;
 }
+
+// 부정 피드백 > 주관식 input 스타일
+.feedback-wrapper {
+  width: 245px;
+  height: 52px;
+
+  padding: 0.8rem;
+  padding-left: 1.6rem;
+
+  @include mixin.flex(row, center, space-between);
+  gap: 0.4rem;
+
+  border-radius: 1.2rem;
+  background: color.$alert-secondary-20;
+
+  &__input {
+    flex: 1;
+    height: 100%;
+
+    @extend %typo-body-medium;
+    line-height: 16px;
+    background: color.$alert-secondary-20;
+    color: color.$alert-secondary-500;
+
+    border: none;
+    outline: none;
+  }
+}

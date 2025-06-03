@@ -56,6 +56,7 @@ export default function AutoModifyMenu({
         feedbackType: option,
         feedback: feedbackInput, // TODO feedbackInput이 있을때 객체에 추가
       })
+      setIsShowFeedbackInput(false)
       setIsShowFeedbackMenu(false)
     } catch (error) {
       console.log(error)
@@ -130,14 +131,19 @@ export default function AutoModifyMenu({
             {/* 기타를 누르면 피드백을 입력할 수 있는 input */}
             {/* TODO 공통 컴포넌트로 리팩토링 */}
             {isShowFeedbackInput && (
-              <div>
-                <input onChange={handleChange} placeholder="피드백을 입력해 주세요" />
+              <div className={styles['feedback-wrapper']}>
+                <input
+                  className={styles['feedback-wrapper__input']}
+                  onChange={handleChange}
+                  placeholder="피드백을 입력해 주세요"
+                />
                 <FillButton
                   size="medium"
                   variant="primary"
                   style={{
                     padding: '0.8rem 1.2rem',
                     height: '100%',
+                    width: 50,
                   }}
                   onClick={onSubmitFeedback('ETC')}
                 >
