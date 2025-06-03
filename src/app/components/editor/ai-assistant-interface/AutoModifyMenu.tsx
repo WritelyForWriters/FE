@@ -1,20 +1,13 @@
-import Image from 'next/image'
-
 import { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
-import { TOAST_MESSAGE } from 'constants/common/toastMessage'
-import { FaCheck } from 'react-icons/fa6'
-import { IoClose } from 'react-icons/io5'
 import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
 import { ActionOptionType, EvaluateStateType, TextSelectionRangeType } from 'types/common/editor'
 
-import FillButton from '@components/buttons/FillButton'
 import Portal from '@components/modal/Portal'
-import SelectMenuContent from '@components/select-menu/SelectMenuContent'
-import { useToast } from '@components/toast/ToastProvider'
 
-import styles from '../DefaultEditor.module.scss'
+import FeedbackOptionMenu from './menu/FeedbackOptionMenu'
+import PrimaryActionMenu from './menu/PrimaryActionMenu'
 
 interface AutoModifyMenuProps {
   editor: Editor
@@ -34,7 +27,6 @@ export default function AutoModifyMenu({
   onOptionClick,
   handleSubmitFeedback,
 }: AutoModifyMenuProps) {
-  const showToast = useToast()
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [feedbackInput, setFeedbackInput] = useState('')
   const [isShowFeedbackMenu, setIsShowFeedbackMenu] = useState(false)
@@ -50,17 +42,25 @@ export default function AutoModifyMenu({
     if (option === 'ETC' && feedbackInput.trim() === '') return
 
     try {
-      // TODO 리팩토링 isGood이 true일때와 함께 사용할 수 있도록
       handleSubmitFeedback({
         isGood: false,
         feedbackType: option,
-        feedback: feedbackInput, // TODO feedbackInput이 있을때 객체에 추가
+        feedback: option === 'ETC' ? feedbackInput : undefined,
       })
       setIsShowFeedbackInput(false)
       setIsShowFeedbackMenu(false)
+      setFeedbackInput('')
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const handleFeedbackClick = () => {
+    handleSubmitFeedback({ isGood: true })
+  }
+
+  const handleBadFeedbackClick = () => {
+    setIsShowFeedbackMenu(true)
   }
 
   // MEMO(Sohyun): 텍스트 에디터에서 특정 영역을 선택했을 때, 그 선택 영역 기준으로 메뉴 UI를 띄우기 위한 좌표 계산
@@ -108,125 +108,20 @@ export default function AutoModifyMenu({
         }}
       >
         {isShowFeedbackMenu ? (
-          // TODO 응답 메뉴2 공통 컴포넌트로 리팩토링 > FeedbackMenu, ManualModification 컴포넌트에서도 사용하도록
-          <SelectMenuContent>
-            <SelectMenuContent.Option
-              option={{ handleAction: onSubmitFeedback('AWKWARD_SENTENCE') }}
-            >
-              어색한 문장
-            </SelectMenuContent.Option>
-            <SelectMenuContent.Option
-              option={{ handleAction: onSubmitFeedback('INACCURATE_INFO') }}
-            >
-              부정확한 정보
-            </SelectMenuContent.Option>
-            <SelectMenuContent.Option
-              option={{ handleAction: onSubmitFeedback('UNAPPLIED_SETTING') }}
-            >
-              설정 미반영
-            </SelectMenuContent.Option>
-            <SelectMenuContent.Option option={{ handleAction: () => setIsShowFeedbackInput(true) }}>
-              기타(직접 입력)
-            </SelectMenuContent.Option>
-            {/* 기타를 누르면 피드백을 입력할 수 있는 input */}
-            {/* TODO 공통 컴포넌트로 리팩토링 */}
-            {isShowFeedbackInput && (
-              <div className={styles['feedback-wrapper']}>
-                <input
-                  className={styles['feedback-wrapper__input']}
-                  onChange={handleChange}
-                  placeholder="피드백을 입력해 주세요"
-                />
-                <FillButton
-                  size="medium"
-                  variant="primary"
-                  style={{
-                    padding: '0.8rem 1.2rem',
-                    height: '100%',
-                    width: 50,
-                  }}
-                  onClick={onSubmitFeedback('ETC')}
-                >
-                  제출
-                </FillButton>
-              </div>
-            )}
-          </SelectMenuContent>
+          <FeedbackOptionMenu
+            onSubmitFeedback={onSubmitFeedback}
+            isShowFeedbackInput={isShowFeedbackInput}
+            setIsShowFeedbackInput={setIsShowFeedbackInput}
+            feedbackInput={feedbackInput}
+            onFeedbackInputChange={handleChange}
+          />
         ) : (
-          // TODO 응답 메뉴1 공통 컴포넌트로 리팩토링 > FeedbackMenu, ManualModification 컴포넌트에서도 사용하도록
-          <SelectMenuContent>
-            <SelectMenuContent.Option option={{ handleAction: onOptionClick('apply') }}>
-              <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
-              이대로 수정하기
-            </SelectMenuContent.Option>
-            <SelectMenuContent.Option option={{ handleAction: onOptionClick('recreate') }}>
-              <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
-              다시 생성하기
-            </SelectMenuContent.Option>
-            <SelectMenuContent.Option option={{ handleAction: onOptionClick('cancel') }}>
-              <IoClose color="#CCCCCC" fontSize={20} />
-              취소하기
-            </SelectMenuContent.Option>
-            <div className={styles['divide-line']}></div>
-
-            <SelectMenuContent.Option
-              option={{ handleAction: () => handleSubmitFeedback({ isGood: true }) }}
-            >
-              <Image
-                src={
-                  feedback.isGoodSelected
-                    ? '/icons/fill-feedback-good-icon.svg'
-                    : '/icons/feedback-good-icon.svg'
-                }
-                alt="good"
-                width={20}
-                height={20}
-                color="black"
-              />
-              응답이 마음에 들어요
-            </SelectMenuContent.Option>
-            <SelectMenuContent.Option
-              option={{
-                handleAction: () => {
-                  if (feedback.isGoodSelected || feedback.isBadSelected) {
-                    showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
-                    return
-                  }
-                  setIsShowFeedbackMenu(true)
-                },
-              }}
-            >
-              <Image
-                src={
-                  feedback.isBadSelected
-                    ? '/icons/fill-feedback-bad-icon.svg'
-                    : '/icons/feedback-bad-icon.svg'
-                }
-                alt="bad"
-                width={20}
-                height={20}
-              />
-              응답이 별로에요
-            </SelectMenuContent.Option>
-            <SelectMenuContent.Option
-              option={{
-                handleAction: onOptionClick('archive'),
-                className: feedback.isArchived ? styles['selected-archived'] : '',
-              }}
-            >
-              <Image
-                src={
-                  feedback.isArchived
-                    ? '/icons/fill-permanent-saved-icon.svg'
-                    : '/icons/permanent-saved-icon.svg'
-                }
-                alt="답변 영구 보관하기"
-                width={20}
-                height={20}
-              />
-              답변 영구 보관하기
-            </SelectMenuContent.Option>
-          </SelectMenuContent>
+          <PrimaryActionMenu
+            onOptionClick={onOptionClick}
+            feedback={feedback}
+            onFeedbackClick={handleFeedbackClick}
+            onBadFeedbackClick={handleBadFeedbackClick}
+          />
         )}
       </div>
     </Portal>

@@ -28,9 +28,8 @@ import UnderlineHighlight from '@extensions/UnderlineHighlight'
 
 import Toolbar from './Toolbar'
 import AutoModifyMenu from './ai-assistant-interface/AutoModifyMenu'
-
-// import FeedbackMenu from './ai-assistant-interface/FeedbackMenu'
-// import ManualModification from './ai-assistant-interface/ManualModification'
+import FeedbackMenu from './ai-assistant-interface/FeedbackMenu'
+import ManualModification from './ai-assistant-interface/ManualModification'
 
 import styles from './DefaultEditor.module.scss'
 
@@ -82,18 +81,18 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const {
     feedback,
     activeMenu,
-    // isOpen,
-    // onClose,
-    // feedbackInput,
+    isOpen,
+    onClose,
+    feedbackInput,
     selectionRef,
     isAutoModifyVisible,
     handleActiveMenu,
-    // handlePromptChange,
+    handlePromptChange,
     handleSubmitFeedback,
-    // handleAiPrompt,
+    handleAiPrompt,
     handleOptionClickAutoModify,
-    // handleOptionClickUserModify,
-    // handleOptionClickFeedback,
+    handleOptionClickUserModify,
+    handleOptionClickFeedback,
   } = useTextEditor(editor)
 
   const { handleChange, handleSavedMemos } = useMemos(editor)
@@ -135,14 +134,14 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         )}
 
         {/* 구간 피드백 */}
-        {/* {activeMenu === 'feedback' && (
+        {activeMenu === 'feedback' && (
           <FeedbackMenu
             feedbackText={feedbackInput.current}
             onOptionClick={handleOptionClickFeedback}
             feedback={feedback}
             handleSubmitFeedback={handleSubmitFeedback}
           />
-        )} */}
+        )}
 
         {/* 메모 */}
         {activeMenu === 'memo' && (
@@ -181,7 +180,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       )}
 
       {/* 수동 수정 */}
-      {/* {activeMenu === 'user-modify' && (
+      {activeMenu === 'user-modify' && (
         <ManualModification
           isOpen={isOpen}
           onClose={onClose}
@@ -191,7 +190,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           feedback={feedback}
           handleSubmitFeedback={handleSubmitFeedback}
         />
-      )} */}
+      )}
 
       <EditorContent editor={editor} className={styles.tiptap} />
     </section>
