@@ -6,10 +6,10 @@ import { Editor } from '@tiptap/react'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
+import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
 import { ActionOptionType, EvaluateStateType, TextSelectionRangeType } from 'types/common/editor'
-import { ModalHandler } from 'types/common/modalRef'
 
-import Modal from '@components/modal/Modal'
+import FillButton from '@components/buttons/FillButton'
 import Portal from '@components/modal/Portal'
 import SelectMenuContent from '@components/select-menu/SelectMenuContent'
 import { useToast } from '@components/toast/ToastProvider'
@@ -22,7 +22,7 @@ interface AutoModifyMenuProps {
   isVisible: boolean
   onOptionClick: (option: ActionOptionType) => () => void
   feedback: EvaluateStateType
-  handleSubmitFeedback: (isGood: boolean, value?: string) => void
+  handleSubmitFeedback: ({ isGood, feedback, feedbackType }: FeedbackFormData) => void
 }
 
 // MEMO(Sohyun): ai-assistant 인터페이스 자동 수정 UI
@@ -37,20 +37,26 @@ export default function AutoModifyMenu({
   const showToast = useToast()
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [feedbackInput, setFeedbackInput] = useState('')
+  const [isShowFeedbackMenu, setIsShowFeedbackMenu] = useState(false)
+  const [isShowFeedbackInput, setIsShowFeedbackInput] = useState(false)
 
   const menuRef = useRef<HTMLDivElement>(null)
-  const modalRef = useRef<ModalHandler | null>(null)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFeedbackInput(e.target.value)
   }
 
-  const onSubmitFeedback = () => {
-    if (feedbackInput.trim() === '') return
+  const onSubmitFeedback = (option?: FeedbackOptionType) => () => {
+    if (option === 'ETC' && feedbackInput.trim() === '') return
 
     try {
-      handleSubmitFeedback(false, feedbackInput)
-      modalRef.current?.close()
+      // TODO 리팩토링 isGood이 true일때와 함께 사용할 수 있도록
+      handleSubmitFeedback({
+        isGood: false,
+        feedbackType: option,
+        feedback: feedbackInput, // TODO feedbackInput이 있을때 객체에 추가
+      })
+      setIsShowFeedbackMenu(false)
     } catch (error) {
       console.log(error)
     }
@@ -87,20 +93,61 @@ export default function AutoModifyMenu({
   if (!isVisible) return null
 
   return (
-    <>
-      <Portal>
-        <div
-          ref={menuRef}
-          // 스타일 위치를 동적으로 계산해야 하므로 인라인 스타일 적용
-          style={{
-            width: 200,
-            position: 'absolute',
-            top: `${position.top}px`,
-            left: `${position.left}px`,
-            transform: 'translateX(-50%)',
-            zIndex: 100,
-          }}
-        >
+    <Portal>
+      <div
+        ref={menuRef}
+        // 스타일 위치를 동적으로 계산해야 하므로 인라인 스타일 적용
+        style={{
+          width: 200,
+          position: 'absolute',
+          top: `${position.top}px`,
+          left: `${position.left}px`,
+          transform: 'translateX(-50%)',
+          zIndex: 100,
+        }}
+      >
+        {isShowFeedbackMenu ? (
+          // TODO 응답 메뉴2 공통 컴포넌트로 리팩토링 > FeedbackMenu, ManualModification 컴포넌트에서도 사용하도록
+          <SelectMenuContent>
+            <SelectMenuContent.Option
+              option={{ handleAction: onSubmitFeedback('AWKWARD_SENTENCE') }}
+            >
+              어색한 문장
+            </SelectMenuContent.Option>
+            <SelectMenuContent.Option
+              option={{ handleAction: onSubmitFeedback('INACCURATE_INFO') }}
+            >
+              부정확한 정보
+            </SelectMenuContent.Option>
+            <SelectMenuContent.Option
+              option={{ handleAction: onSubmitFeedback('UNAPPLIED_SETTING') }}
+            >
+              설정 미반영
+            </SelectMenuContent.Option>
+            <SelectMenuContent.Option option={{ handleAction: () => setIsShowFeedbackInput(true) }}>
+              기타(직접 입력)
+            </SelectMenuContent.Option>
+            {/* 기타를 누르면 피드백을 입력할 수 있는 input */}
+            {/* TODO 공통 컴포넌트로 리팩토링 */}
+            {isShowFeedbackInput && (
+              <div>
+                <input onChange={handleChange} placeholder="피드백을 입력해 주세요" />
+                <FillButton
+                  size="medium"
+                  variant="primary"
+                  style={{
+                    padding: '0.8rem 1.2rem',
+                    height: '100%',
+                  }}
+                  onClick={onSubmitFeedback('ETC')}
+                >
+                  제출
+                </FillButton>
+              </div>
+            )}
+          </SelectMenuContent>
+        ) : (
+          // TODO 응답 메뉴1 공통 컴포넌트로 리팩토링 > FeedbackMenu, ManualModification 컴포넌트에서도 사용하도록
           <SelectMenuContent>
             <SelectMenuContent.Option option={{ handleAction: onOptionClick('apply') }}>
               <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
@@ -116,7 +163,9 @@ export default function AutoModifyMenu({
             </SelectMenuContent.Option>
             <div className={styles['divide-line']}></div>
 
-            <SelectMenuContent.Option option={{ handleAction: () => handleSubmitFeedback(true) }}>
+            <SelectMenuContent.Option
+              option={{ handleAction: () => handleSubmitFeedback({ isGood: true }) }}
+            >
               <Image
                 src={
                   feedback.isGoodSelected
@@ -137,7 +186,7 @@ export default function AutoModifyMenu({
                     showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
                     return
                   }
-                  modalRef.current?.open()
+                  setIsShowFeedbackMenu(true)
                 },
               }}
             >
@@ -172,21 +221,8 @@ export default function AutoModifyMenu({
               답변 영구 보관하기
             </SelectMenuContent.Option>
           </SelectMenuContent>
-        </div>
-      </Portal>
-
-      <Modal
-        ref={modalRef}
-        title="어떤 점이 아쉬웠는지 알려주세요."
-        cancelText="취소"
-        confirmText="제출하기"
-        onCancel={() => modalRef.current?.close()}
-        onConfirm={onSubmitFeedback}
-        content={
-          // TODO 스타일 수정
-          <input onChange={handleChange} placeholder="피드백을 입력해 주세요" />
-        }
-      />
-    </>
+        )}
+      </div>
+    </Portal>
   )
 }

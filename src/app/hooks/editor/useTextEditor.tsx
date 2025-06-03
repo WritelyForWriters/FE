@@ -93,7 +93,7 @@ export function useTextEditor(editor: Editor | null) {
   })
 
   // 어시스턴트 응답 피드백
-  const handleSubmitFeedback = (isGood: boolean, value?: string) => {
+  const handleSubmitFeedback = ({ isGood, feedback: value, feedbackType }: FeedbackFormData) => {
     if (!aiassistantId) return
 
     if (feedback.isGoodSelected || feedback.isBadSelected) {
@@ -113,6 +113,7 @@ export function useTextEditor(editor: Editor | null) {
         assistantId: aiassistantId,
         formData: {
           isGood,
+          feedbackType,
           feedback: value,
         },
       })
