@@ -46,35 +46,36 @@ export default function PlannerSynopsisFormContainer() {
     setActiveTab('synopsis')
   }, [])
 
-  const handleManualModification = (name: string) => async (value: string, inputValue: string) => {
-    try {
-      const response = (await postPlannerUserModify({
-        productId,
-        genre: (
-          getValues('synopsis.genre') as {
-            label: string
-            value: string
-          }[]
-        )
-          .map((genre) => genre.value)
-          .join(', '),
-        logline: getValues('synopsis.logline'),
-        section: value,
-        prompt: inputValue,
-      })) as { id: string; answer: string }
+  const handleManualModification =
+    (name: string, section: string) => async (value: string, inputValue: string) => {
+      try {
+        const response = (await postPlannerUserModify({
+          productId,
+          genre: (
+            getValues('synopsis.genre') as {
+              label: string
+              value: string
+            }[]
+          )
+            .map((genre) => genre.value)
+            .join(', '),
+          logline: getValues('synopsis.logline'),
+          section: section,
+          prompt: inputValue,
+        })) as { id: string; answer: string }
 
-      if (response.id) {
-        setAiAssistants({ name: name, content: value, isAiModified: true })
-        setValue(name, response.answer)
-        return true
+        if (response.id) {
+          setAiAssistants({ name: name, content: value, isAiModified: true })
+          setValue(name, response.answer)
+          return true
+        }
+
+        return false
+      } catch (error) {
+        console.error('fetch user modify error: ', error)
+        return false
       }
-
-      return false
-    } catch (error) {
-      console.error('fetch user modify error: ', error)
-      return false
     }
-  }
 
   return (
     <form

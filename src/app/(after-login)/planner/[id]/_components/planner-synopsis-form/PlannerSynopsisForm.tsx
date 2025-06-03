@@ -16,6 +16,7 @@ const cx = classNames.bind(styles)
 interface PlannerSynopsisFormProps {
   handleManualModification: (
     name: string,
+    section: string,
   ) => (value: string, inputValue: string) => Promise<boolean>
 }
 
@@ -70,7 +71,7 @@ export default function PlannerSynopsisForm({
       />
       <PlannerFieldWithButton
         name="synopsis.example"
-        handleManualModification={handleManualModification('synopsis.example')}
+        handleManualModification={handleManualModification('synopsis.example', 'example')}
       >
         <TextField name="synopsis.example" label="예시 문장" variant="expand" />
       </PlannerFieldWithButton>

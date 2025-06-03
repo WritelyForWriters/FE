@@ -21,6 +21,7 @@ type CustomField = {
 interface PlannerSynopsisFormProps {
   handleManualModification: (
     name: string,
+    section: string,
   ) => (value: string, inputValue: string) => Promise<boolean>
 }
 
@@ -47,7 +48,7 @@ export default function PlannerWorldViewForm({
         <PlannerFieldWithButton
           key={item.name}
           name={`worldview.${item.name}`}
-          handleManualModification={handleManualModification(`worldview.${item.name}`)}
+          handleManualModification={handleManualModification(`worldview.${item.name}`, item.name)}
         >
           <TextField
             key={`planner-world-view-item-${index}`}
