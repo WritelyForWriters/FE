@@ -1,0 +1,13 @@
+@use '@styles/typography';
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+.divide-line {
+  width: 100%;
+  height: 1px;
+  background-color: color.$alert-secondary-50;
+}
+
+.selected-archived {
+  color: color.$alert-secondary-500;
+}
