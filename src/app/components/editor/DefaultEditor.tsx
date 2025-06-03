@@ -5,6 +5,7 @@ import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
+import History from '@tiptap/extension-history'
 import Italic from '@tiptap/extension-italic'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -64,6 +65,10 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       }),
       BackgroundHighlight,
       UnderlineHighlight,
+      History.configure({
+        depth: 100, // NOTE(hajae): undo, redo stack 100
+        newGroupDelay: 400, // NOTE(hajae): undo, redo의 Grouping 딜레이 시간
+      }),
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
