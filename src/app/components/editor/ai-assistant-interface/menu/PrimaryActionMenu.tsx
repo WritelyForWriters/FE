@@ -15,8 +15,6 @@ interface PrimaryActionMenuProps {
   feedback: EvaluateStateType
   onFeedbackClick: (data: { isGood: boolean }) => void
   onBadFeedbackClick: () => void
-  showToast?: (type: string, message: string) => void
-  toastMessage?: string
 }
 
 export default function PrimaryActionMenu({
