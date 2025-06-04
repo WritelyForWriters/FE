@@ -11,8 +11,9 @@ import {
 import { AxiosError } from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
+import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
 import { FeedbackFormData } from 'types/chatbot/chatbot'
 import {
@@ -29,6 +30,7 @@ import { useCollapsed } from '@hooks/common/useCollapsed'
 
 // MEMO(Sohyun): 텍스트 에디터와 관련된 모든 로직을 담당하는 커스텀 hook
 export function useTextEditor(editor: Editor | null) {
+  const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
   const [aiassistantId, setAiassistantId] = useState('') // TODO (리팩토링) 응답(id, result)을 객체로 관리
 
   const [feedback, setFeedback] = useState<EvaluateStateType>(INITIAL_EVALUATE_STATE)
@@ -157,6 +159,10 @@ export function useTextEditor(editor: Editor | null) {
     if (type === 'feedback') {
       setActiveMenu('feedback')
       handleAiFeedback(originPhrase)
+    }
+
+    if (type === 'free-chat') {
+      setIsChatbotOpen(true)
     }
 
     if (type === 'memo') {
@@ -370,6 +376,15 @@ export function useTextEditor(editor: Editor | null) {
       setAiResult('')
     }
   }, [aiResult, editor, setAiResult])
+
+  useEffect(() => {
+    setFeedback({
+      assistantId: null,
+      isGoodSelected: false,
+      isBadSelected: false,
+      isArchived: false,
+    })
+  }, [editor?.state.selection.empty])
 
   return {
     feedback,
