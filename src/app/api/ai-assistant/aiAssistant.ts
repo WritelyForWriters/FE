@@ -30,3 +30,9 @@ export const postFeedback = async (promptData: Omit<PromptData, 'prompt'>) => {
   const res = await authInstance.post<FeedbackResult>('/assistant/feedback', promptData)
   return res.data.result
 }
+
+// 어시스턴트 답변 영구 보관
+export const archivedAnswer = async (assistantId: string) => {
+  const res = await authInstance.put(`/assistant/${assistantId}/archive`)
+  return res.data.result
+}

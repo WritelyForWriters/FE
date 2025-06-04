@@ -1,20 +1,60 @@
-import Image from 'next/image'
+import { ChangeEvent, useState } from 'react'
 
-import { FaCheck } from 'react-icons/fa6'
-import { IoClose } from 'react-icons/io5'
-import { ActionOptionType } from 'types/common/editor'
+import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
+import { ActionOptionType, EvaluateStateType } from 'types/common/editor'
 
-import SelectMenuContent from '@components/select-menu/SelectMenuContent'
+import FeedbackOptionMenu from './menu/FeedbackOptionMenu'
+import PrimaryActionMenu from './menu/PrimaryActionMenu'
 
 import styles from '../DefaultEditor.module.scss'
 
 interface FeedbackMenuProps {
   feedbackText: string | null
   onOptionClick: (option: ActionOptionType) => () => void
+  feedback: EvaluateStateType
+  handleSubmitFeedback: ({ isGood, feedback, feedbackType }: FeedbackFormData) => void
 }
 
 // MEMO(Sohyun): ai-assistant 인터페이스 구간 피드백 UI
-export default function FeedbackMenu({ feedbackText, onOptionClick }: FeedbackMenuProps) {
+export default function FeedbackMenu({
+  feedback,
+  feedbackText,
+  onOptionClick,
+  handleSubmitFeedback,
+}: FeedbackMenuProps) {
+  const [feedbackInput, setFeedbackInput] = useState('')
+  const [isShowFeedbackMenu, setIsShowFeedbackMenu] = useState(false)
+  const [isShowFeedbackInput, setIsShowFeedbackInput] = useState(false)
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFeedbackInput(e.target.value)
+  }
+
+  const onSubmitFeedback = (option?: FeedbackOptionType) => () => {
+    if (option === 'ETC' && feedbackInput.trim() === '') return
+
+    try {
+      handleSubmitFeedback({
+        isGood: false,
+        feedbackType: option,
+        feedback: option === 'ETC' ? feedbackInput : undefined,
+      })
+      setIsShowFeedbackInput(false)
+      setIsShowFeedbackMenu(false)
+      setFeedbackInput('')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleFeedbackClick = () => {
+    handleSubmitFeedback({ isGood: true })
+  }
+
+  const handleBadFeedbackClick = () => {
+    setIsShowFeedbackMenu(true)
+  }
+
   return (
     <div>
       <div className={styles['prompt-menu']}>
@@ -26,38 +66,22 @@ export default function FeedbackMenu({ feedbackText, onOptionClick }: FeedbackMe
       </div>
 
       <div className={styles['select-menu']}>
-        <SelectMenuContent>
-          <SelectMenuContent.Option option={{ handleAction: onOptionClick('apply') }}>
-            <FaCheck color="#CCCCCC" fontSize={20} style={{ padding: '2px' }} />
-            이대로 수정하기
-          </SelectMenuContent.Option>
-          <SelectMenuContent.Option option={{ handleAction: onOptionClick('recreate') }}>
-            <Image src="/icons/refresh.svg" alt="다시 생성하기" width={20} height={20} />
-            다시 생성하기
-          </SelectMenuContent.Option>
-          <SelectMenuContent.Option option={{ handleAction: onOptionClick('cancel') }}>
-            <IoClose color="#CCCCCC" fontSize={20} />
-            취소하기
-          </SelectMenuContent.Option>
-          <div className={styles['divide-line']}></div>
-          <SelectMenuContent.Option option={{ handleAction: onOptionClick('apply') }}>
-            <Image src="/icons/feedback-good-icon.svg" alt="good" width={20} height={20} />
-            응답이 마음에 들어요
-          </SelectMenuContent.Option>
-          <SelectMenuContent.Option option={{ handleAction: onOptionClick('recreate') }}>
-            <Image src="/icons/feedback-bad-icon.svg" alt="not good" width={20} height={20} />
-            응답이 별로에요
-          </SelectMenuContent.Option>
-          <SelectMenuContent.Option option={{ handleAction: onOptionClick('cancel') }}>
-            <Image
-              src="/icons/permanent-saved-icon.svg"
-              alt="답변 영구 보관하기"
-              width={20}
-              height={20}
-            />
-            답변 영구 보관하기
-          </SelectMenuContent.Option>
-        </SelectMenuContent>
+        {isShowFeedbackMenu ? (
+          <FeedbackOptionMenu
+            onSubmitFeedback={onSubmitFeedback}
+            isShowFeedbackInput={isShowFeedbackInput}
+            setIsShowFeedbackInput={setIsShowFeedbackInput}
+            feedbackInput={feedbackInput}
+            onFeedbackInputChange={handleChange}
+          />
+        ) : (
+          <PrimaryActionMenu
+            onOptionClick={onOptionClick}
+            feedback={feedback}
+            onFeedbackClick={handleFeedbackClick}
+            onBadFeedbackClick={handleBadFeedbackClick}
+          />
+        )}
       </div>
     </div>
   )

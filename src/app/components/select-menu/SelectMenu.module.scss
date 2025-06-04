@@ -6,7 +6,7 @@
   position: absolute;
   left: 0;
 
-  width: 100%;
+  min-width: 100%;
   padding: 1.2rem 0.8rem;
 
   @include mixin.flex(column, flex-start, center);

@@ -84,6 +84,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }))
 
   const {
+    feedback,
     activeMenu,
     isOpen,
     onClose,
@@ -92,6 +93,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     isAutoModifyVisible,
     handleActiveMenu,
     handlePromptChange,
+    handleSubmitFeedback,
     handleAiPrompt,
     handleOptionClickAutoModify,
     handleOptionClickUserModify,
@@ -138,6 +140,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           <FeedbackMenu
             feedbackText={feedbackInput.current}
             onOptionClick={handleOptionClickFeedback}
+            feedback={feedback}
+            handleSubmitFeedback={handleSubmitFeedback}
           />
         )}
 
@@ -172,6 +176,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           selectionRef={selectionRef}
           isVisible={isAutoModifyVisible}
           onOptionClick={handleOptionClickAutoModify}
+          feedback={feedback}
+          handleSubmitFeedback={handleSubmitFeedback}
         />
       )}
 
@@ -183,6 +189,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           onPromptChange={handlePromptChange}
           onAiPrompt={handleAiPrompt}
           onOptionClick={handleOptionClickUserModify}
+          feedback={feedback}
+          handleSubmitFeedback={handleSubmitFeedback}
         />
       )}
 
