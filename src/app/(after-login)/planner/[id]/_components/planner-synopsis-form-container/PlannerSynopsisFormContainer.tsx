@@ -66,7 +66,7 @@ export default function PlannerSynopsisFormContainer() {
 
         if (response.id) {
           setAiAssistants({ name: name, content: value, isAiModified: true })
-          setValue(name, response.answer)
+          setValue(name, [value, response.answer].filter(Boolean).join('\n'))
           return true
         }
 
