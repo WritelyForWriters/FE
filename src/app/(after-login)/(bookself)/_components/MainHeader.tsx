@@ -4,11 +4,15 @@ import { useRouter } from 'next/navigation'
 
 import { MAX_PRODUCT_COUNT } from 'constants/bookself/number'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
+import { useAtomValue } from 'jotai'
+import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
 import FillButton from '@components/buttons/FillButton'
+import TextButton from '@components/buttons/TextButton'
 import SelectMenu from '@components/select-menu/SelectMenu'
 import { useToast } from '@components/toast/ToastProvider'
 
+import { useLogout } from '@hooks/auth/useLogout'
 import { useCollapsed } from '@hooks/common/useCollapsed'
 import { useProducts } from '@hooks/products/useProductsMutation'
 import { useGetProductList } from '@hooks/products/useProductsQueries'
@@ -24,14 +28,21 @@ export default function MainHeader() {
   const { isOpen, onToggle, onClose } = useCollapsed()
   const showToast = useToast()
 
+  const isLoggedIn = useAtomValue(isLoggedInAtom)
+
   const { data } = useGetProductList()
   const { createProductIdMutation } = useProducts()
+  const { mutate: logout } = useLogout()
 
   const onClickOpenDropdown = () => {
-    if (data?.length && data?.length >= MAX_PRODUCT_COUNT) {
-      return showToast('warning', TOAST_MESSAGE.LIMIT_PRODUCT_COUNT)
+    if (!isLoggedIn) {
+      router.push(`/login`)
+    } else {
+      if (data?.length && data?.length >= MAX_PRODUCT_COUNT) {
+        return showToast('warning', TOAST_MESSAGE.LIMIT_PRODUCT_COUNT)
+      }
+      onToggle()
     }
-    onToggle()
   }
 
   const onClickWriting = async (route: 'workspace' | 'planner') => {
@@ -45,24 +56,40 @@ export default function MainHeader() {
     )
   }
 
+  const handleAuthButtonClick = (type: 'logout' | 'login') => {
+    if (type === 'logout') {
+      logout()
+    } else {
+      router.push('/login')
+    }
+  }
+
   return (
     <header className={cx('header')}>
-      {/* TODO 로고로 대체 예정 */}
-      <div>로고</div>
-
-      <div className={cx('button-wrapper')}>
-        <FillButton size="medium" onClick={onClickOpenDropdown}>
-          글쓰기
-        </FillButton>
-
-        <SelectMenu handleClose={onClose} isOpen={isOpen} style={{ width: '109px' }}>
-          <SelectMenu.Option option={{ handleAction: () => onClickWriting('workspace') }}>
-            바로 집필하기
-          </SelectMenu.Option>
-          <SelectMenu.Option option={{ handleAction: () => onClickWriting('planner') }}>
-            작품 기획하기
-          </SelectMenu.Option>
-        </SelectMenu>
+      <div className={cx('inner-container')}>
+        <section className={cx('inner-container__logo')}>
+          {/* TODO: 로고 배치 */}
+          <div>로고</div>
+        </section>
+        <section className={cx('inner-container__buttons')}>
+          <TextButton
+            size="large"
+            onClick={() => handleAuthButtonClick(isLoggedIn ? 'logout' : 'login')}
+          >
+            {isLoggedIn ? '로그아웃' : '로그인'}
+          </TextButton>
+          <FillButton size="medium" onClick={onClickOpenDropdown}>
+            글쓰기
+          </FillButton>
+          <SelectMenu handleClose={onClose} isOpen={isOpen} style={{ width: '109px' }}>
+            <SelectMenu.Option option={{ handleAction: () => onClickWriting('workspace') }}>
+              바로 집필하기
+            </SelectMenu.Option>
+            <SelectMenu.Option option={{ handleAction: () => onClickWriting('planner') }}>
+              작품 기획하기
+            </SelectMenu.Option>
+          </SelectMenu>
+        </section>
       </div>
     </header>
   )
