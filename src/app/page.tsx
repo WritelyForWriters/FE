@@ -4,7 +4,10 @@ import { useEffect } from 'react'
 
 import Dashboard from '(after-login)/(bookself)/_components/Dashboard'
 import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
+import { getCookie } from 'cookies-next/client'
+import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
+import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
 import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
 
@@ -16,6 +19,12 @@ import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
  */
 
 export default function Home() {
+  const setIsLoggedIn = useSetAtom(isLoggedInAtom)
+
+  useEffect(() => {
+    setIsLoggedIn(!!getCookie('isLoggedIn'))
+  }, [])
+
   useEffect(() => {
     trackEvent('page_view', {
       page_name: 'library',
