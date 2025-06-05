@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 import { useAtomValue } from 'jotai'
 import { accessTokenAtom } from 'store/accessTokenAtom'
@@ -19,20 +19,36 @@ export default function TokenRefresher({ children }: TokenRefresherProps) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const accessToken = useAtomValue(accessTokenAtom)
 
-  const needsRefresh = !isLoggedIn || !accessToken
+  const [isLoading, setIsLoading] = useState(false)
 
-  const { mutate: tokenRefresh } = useRefresh({
+  const { mutateAsync: tokenRefresh } = useRefresh({
     onErrorHandler: () => router.replace('/login'),
   })
 
   useEffect(() => {
-    if (needsRefresh) {
-      tokenRefresh()
+    if (isLoggedIn && !accessToken) {
+      setIsLoading(true)
     }
-  }, [needsRefresh, tokenRefresh])
+  }, [isLoggedIn, accessToken])
 
-  if (needsRefresh) {
-    return null
+  useEffect(() => {
+    if (!isLoading) return
+
+    const refresh = async () => {
+      try {
+        await tokenRefresh()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    refresh()
+  }, [isLoading, tokenRefresh])
+
+  if (isLoading) {
+    return <>로딩중</>
   }
 
   return <>{children}</>
