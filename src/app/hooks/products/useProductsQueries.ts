@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchProductsTemplates, getProductDetail, getProductList } from 'api/products/products'
 import { QUERY_KEY } from 'constants/common/queryKeys'
+import { getCookie } from 'cookies-next/client'
 import { UseQueryCustomOptions } from 'types/common/reactQueryCustomOption'
 import { PlannerSynopsisFormValues } from 'types/planner/plannerSynopsisFormValues'
 import { ProductDetailDto, ProductDto } from 'types/products'
@@ -10,6 +11,7 @@ export const useGetProductList = (queryOptions?: UseQueryCustomOptions<ProductDt
     queryKey: [QUERY_KEY.PRODUCT_LIST],
     queryFn: getProductList,
     staleTime: 1000 * 60 * 5, // 5분
+    enabled: !!getCookie('isLoggedIn'),
     ...queryOptions,
   })
 }
