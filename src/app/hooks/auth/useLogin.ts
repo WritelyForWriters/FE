@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { login } from 'api/auth/Auth'
 import { NUMERICS } from 'constants/common/numberValue'
-import { setCookie } from 'cookies-next'
+import { setCookie } from 'cookies-next/client'
 import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { accessTokenAtom } from 'store/accessTokenAtom'
@@ -32,7 +32,6 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
       }
 
       setCookie('isLoggedIn', true, isRememberMe ? { expires: date, path: '/' } : {})
-
       trackEvent('login_complete', {
         user_id: email,
       })
