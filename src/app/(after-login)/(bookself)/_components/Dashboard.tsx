@@ -21,7 +21,7 @@ const cx = classNames.bind(styles)
 
 export default function Dashboard() {
   const { data: profile } = useGetMeProfile()
-  const { data: productList, isError: errorFetchProductList } = useGetProductList()
+  const { data: productList, isError: isErrorFetchProductList } = useGetProductList()
 
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
@@ -39,7 +39,7 @@ export default function Dashboard() {
     }
   }, [productList])
 
-  if (errorFetchProductList) {
+  if (isErrorFetchProductList) {
     return notFound()
   }
 
