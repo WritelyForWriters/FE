@@ -1,4 +1,4 @@
-import { default as AuthAxio } from 'api/core/AuthInstance'
+import { default as AuthAxios } from 'api/core/AuthInstance'
 import Axios from 'api/core/Instance'
 import {
   AuthResponse,
@@ -28,7 +28,7 @@ export const login = async (formData: LoginFormFieldValues) => {
 
 // 로그아웃
 export const logout = async (accessToken: string) => {
-  await AuthAxio.post<AuthResponse>('/auth/logout', {
+  await AuthAxios.post<AuthResponse>('/auth/logout', {
     accessToken,
   })
 }
