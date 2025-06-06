@@ -188,7 +188,7 @@ export default function ChatbotWindow() {
     <>
       {isChatbotOpen && (
         <Rnd
-          bounds="window"
+          bounds="parent"
           dragAxis="both"
           dragHandleClassName="drag-handle"
           enableResizing
