@@ -5,6 +5,7 @@ import { ChangeEvent, KeyboardEvent, RefObject, useEffect, useRef, useState } fr
 import { Editor } from '@tiptap/react'
 import { useAtom, useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
+import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { autoSaveMessageAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
@@ -48,6 +49,8 @@ export default function WorkspaceActionBar({
 
   // 읽기/쓰기 모드를 구분하는 state
   const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
+
+  const [applyProductSettings, setApplyProductSettings] = useAtom(applyProductSettingsAtom)
 
   // 저장 버튼 클릭 트리거 이벤트
   const handleSave = async () => {
@@ -177,7 +180,9 @@ export default function WorkspaceActionBar({
             {title}
           </span>
         )}
-        {isContentEditing && <span className={cx('description')}>{autoSave.message}</span>}
+        {isContentEditing && !isTitleEditing && (
+          <span className={cx('description')}>{autoSave.message}</span>
+        )}
       </>
     )
   }
@@ -186,6 +191,20 @@ export default function WorkspaceActionBar({
   const ExtraSectionContent = () => {
     return (
       <>
+        <menu className={cx('action-bar-tabs')}>
+          <EditModeSwitch
+            isSelected={!applyProductSettings}
+            onClick={() => setApplyProductSettings(false)}
+          >
+            AI에 설정 미반영
+          </EditModeSwitch>
+          <EditModeSwitch
+            isSelected={applyProductSettings}
+            onClick={() => setApplyProductSettings(true)}
+          >
+            AI에 설정 반영
+          </EditModeSwitch>
+        </menu>
         <menu className={cx('action-bar-tabs')}>
           <EditModeSwitch
             isSelected={!isContentEditing}
