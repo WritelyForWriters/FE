@@ -174,6 +174,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       {/* 수동 수정 */}
       {activeMenu === 'user-modify' && (
         <ManualModification
+          editor={editor}
+          selectionRef={selectionRef}
           isOpen={isOpen}
           onClose={onClose}
           onPromptChange={handlePromptChange}
