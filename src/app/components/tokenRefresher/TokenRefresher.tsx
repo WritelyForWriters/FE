@@ -13,43 +13,35 @@ import { useRefresh } from '@hooks/index'
 interface TokenRefresherProps {
   children: ReactNode
 }
-
 export default function TokenRefresher({ children }: TokenRefresherProps) {
   const router = useRouter()
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const accessToken = useAtomValue(accessTokenAtom)
 
-  const [isLoading, setIsLoading] = useState(false)
-
+  const [isLoading, setIsLoading] = useState(true)
   const { mutateAsync: tokenRefresh } = useRefresh({
     onErrorHandler: () => router.replace('/login'),
   })
 
   useEffect(() => {
     if (isLoggedIn && !accessToken) {
-      setIsLoading(true)
-    }
-  }, [isLoggedIn, accessToken])
-
-  useEffect(() => {
-    if (!isLoading) return
-
-    const refresh = async () => {
-      try {
-        await tokenRefresh()
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setIsLoading(false)
+      const refresh = async () => {
+        try {
+          await tokenRefresh()
+        } catch (error) {
+          console.error(error)
+        } finally {
+          setIsLoading(false)
+        }
       }
+      refresh()
+    } else {
+      setIsLoading(false)
     }
-
-    refresh()
-  }, [isLoading, tokenRefresh])
+  }, [isLoggedIn, accessToken, tokenRefresh])
 
   if (isLoading) {
     return <>로딩중</>
   }
-
   return <>{children}</>
 }
