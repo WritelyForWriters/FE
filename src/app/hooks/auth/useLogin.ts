@@ -1,10 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
 import { login } from 'api/auth/Auth'
 import { NUMERICS } from 'constants/common/numberValue'
-import { setCookie } from 'cookies-next'
+import { setCookie } from 'cookies-next/client'
 import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { accessTokenAtom } from 'store/accessTokenAtom'
+import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
 import { useToast } from '@components/toast/ToastProvider'
 
@@ -18,6 +19,7 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
   const showToast = useToast()
 
   const setAccessToken = useSetAtom(accessTokenAtom)
+  const setIsLoggedIn = useSetAtom(isLoggedInAtom)
 
   return useMutation({
     mutationFn: login,
@@ -25,6 +27,7 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
       const date = new Date()
       date.setTime(date.getTime() + NUMERICS.COOKIE_EXPIRE)
 
+      setIsLoggedIn(true)
       setAccessToken(data.result.accessToken! as string)
 
       if (isRememberMe) {
@@ -32,7 +35,6 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
       }
 
       setCookie('isLoggedIn', true, isRememberMe ? { expires: date, path: '/' } : {})
-
       trackEvent('login_complete', {
         user_id: email,
       })
