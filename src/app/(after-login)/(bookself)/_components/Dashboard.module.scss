@@ -4,11 +4,8 @@
 
 // TODO 전체적인 크기(넓이, 높이), 패딩값, 폰트 크기 수정 필요
 .dashboard {
-  padding-top: 8rem;
-  flex-grow: 1;
-
   &__content {
-    padding: 3.8rem 7.6rem;
+    padding: 2.4rem 8.8rem;
 
     @include mixin.flex(column, null, null);
     gap: 3.2rem;
