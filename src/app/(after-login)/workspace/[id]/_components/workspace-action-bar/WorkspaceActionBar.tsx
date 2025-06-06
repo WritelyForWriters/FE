@@ -81,14 +81,6 @@ export default function WorkspaceActionBar({
 
   // 액션바 내 좌측 영역
   const ActionSectionContent = () => {
-    // 삭제 버튼 클릭 트리거 이벤트
-    const handleDelete = () => {
-      if (confirm('정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-        // 내용 삭제 및 페이지 이동
-        alert('내 서재로 이동합니다.')
-      }
-    }
-
     // 내보내기 버튼 클릭 여부 구분하는 state
     const [isExportMenuOpen, setIsExportMenuOpen] = useState(false)
 
@@ -138,9 +130,7 @@ export default function WorkspaceActionBar({
             </div>
           </>
         ) : (
-          <TextButton size="large" onClick={() => handleDelete()}>
-            삭제하기
-          </TextButton>
+          <></>
         )}
       </>
     )
