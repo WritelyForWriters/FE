@@ -12,6 +12,7 @@ import { AxiosError } from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
@@ -39,6 +40,7 @@ export function useTextEditor(editor: Editor | null) {
   const [originalText, setOriginalText] = useAtom(originalPhraseAtom)
   const [aiResult, setAiResult] = useAtom(aiResultAtom)
   const productId = useAtomValue(productIdAtom)
+  const shouldApplySetting = useAtomValue(applyProductSettingsAtom)
 
   const selectionRef = useRef<TextSelectionRangeType | null>(null)
   const originalSelectionRef = useRef<TextSelectionRangeType | null>(null)
@@ -182,6 +184,7 @@ export function useTextEditor(editor: Editor | null) {
       const response = await postAutoModify({
         productId,
         content: originPhrase ?? originalText,
+        shouldApplySetting,
       })
 
       if (response.id) {
@@ -205,6 +208,7 @@ export function useTextEditor(editor: Editor | null) {
         productId,
         content: originalText,
         prompt: promptValueRef.current,
+        shouldApplySetting,
       })
 
       if (response.id) {
@@ -228,6 +232,7 @@ export function useTextEditor(editor: Editor | null) {
       const response = await postFeedback({
         productId,
         content: originPhrase,
+        shouldApplySetting,
       })
 
       if (response.id) {

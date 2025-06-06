@@ -4,6 +4,7 @@ interface PromptData {
   productId: string
   content: string
   prompt: string
+  shouldApplySetting: boolean
 }
 
 // 자동 수정

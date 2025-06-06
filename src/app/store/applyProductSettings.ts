@@ -1,3 +1,3 @@
 import { atom } from 'jotai'
 
-export const applyProductSettingsAtom = atom(false)
+export const applyProductSettingsAtom = atom(true)
