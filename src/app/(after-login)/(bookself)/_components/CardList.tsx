@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { MouseEvent } from 'react'
+import { MouseEvent, useMemo } from 'react'
 
 import { ProductDto } from 'types/products'
 
@@ -18,13 +18,12 @@ import styles from './CardList.module.scss'
 const cx = classNames.bind(styles)
 
 interface CardItemProps {
-  item: ProductDto
-  index?: number
+  item: ProductDto & { index?: number }
 }
 
-function CardItem({ item, index }: CardItemProps) {
+function CardItem({ item }: CardItemProps) {
   const router = useRouter()
-  const { id, title, genre, updatedAt } = item
+  const { id, title, genre, updatedAt, index } = item
 
   const onClickMoveToPlanner = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -51,30 +50,29 @@ interface CardListProps {
   productList: ProductDto[]
 }
 
-interface Products extends ProductDto {
-  index?: number
-}
-
 export default function CardList({ productList }: CardListProps) {
   const { data } = useGetProductList({
     initialData: productList,
   })
 
-  const untitledProducts = data
-    ?.filter((item) => !item.title)
-    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-    .map((item, idx) => ({ ...item, index: idx + 1 }))
+  const allProductsData = useMemo(() => {
+    if (!data) return
 
-  const allProducts = data?.map((item) => {
-    const match = untitledProducts?.find((untitleProduct) => item.id === untitleProduct.id)
-    return match ? { ...item, index: match.index } : item
-  })
+    const untitledProducts = data
+      ?.filter((item) => !item.title)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      .map((item, idx) => ({ ...item, index: idx + 1 }))
+
+    const allProducts = data.map((item) => {
+      const match = untitledProducts.find((untitleProduct) => item.id === untitleProduct.id)
+      return match ? { ...item, index: match.index } : item
+    })
+    return allProducts
+  }, [data])
 
   return (
     <ul className={cx('dashboard__contents')}>
-      {allProducts?.map((item: Products) => (
-        <CardItem key={item.id} item={item} index={item.index} />
-      ))}
+      {allProductsData?.map((item) => <CardItem key={item.id} item={item} />)}
     </ul>
   )
 }

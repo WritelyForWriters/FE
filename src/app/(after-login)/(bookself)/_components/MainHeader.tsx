@@ -74,11 +74,21 @@ export default function MainHeader() {
         <section className={cx('inner-container__buttons')}>
           <TextButton
             size="large"
+            style={{
+              display: 'inline',
+              marginRight: '1.6rem',
+            }}
             onClick={() => handleAuthButtonClick(isLoggedIn ? 'logout' : 'login')}
           >
             {isLoggedIn ? '로그아웃' : '로그인'}
           </TextButton>
-          <FillButton size="medium" onClick={onClickOpenDropdown}>
+          <FillButton
+            size="medium"
+            style={{
+              display: 'inline',
+            }}
+            onClick={onClickOpenDropdown}
+          >
             글쓰기
           </FillButton>
           <SelectMenu handleClose={onClose} isOpen={isOpen} style={{ width: '109px' }}>

@@ -5,6 +5,7 @@ import { setCookie } from 'cookies-next/client'
 import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { accessTokenAtom } from 'store/accessTokenAtom'
+import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
 import { useToast } from '@components/toast/ToastProvider'
 
@@ -18,6 +19,7 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
   const showToast = useToast()
 
   const setAccessToken = useSetAtom(accessTokenAtom)
+  const setIsLoggedIn = useSetAtom(isLoggedInAtom)
 
   return useMutation({
     mutationFn: login,
@@ -25,6 +27,7 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
       const date = new Date()
       date.setTime(date.getTime() + NUMERICS.COOKIE_EXPIRE)
 
+      setIsLoggedIn(true)
       setAccessToken(data.result.accessToken! as string)
 
       if (isRememberMe) {
