@@ -135,16 +135,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
         )}
 
-        {/* 구간 피드백 */}
-        {activeMenu === 'feedback' && (
-          <FeedbackMenu
-            feedbackText={feedbackInput.current}
-            onOptionClick={handleOptionClickFeedback}
-            feedback={feedback}
-            handleSubmitFeedback={handleSubmitFeedback}
-          />
-        )}
-
         {/* 메모 */}
         {activeMenu === 'memo' && (
           <div className={styles['prompt-menu']}>
@@ -189,6 +179,18 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           onPromptChange={handlePromptChange}
           onAiPrompt={handleAiPrompt}
           onOptionClick={handleOptionClickUserModify}
+          feedback={feedback}
+          handleSubmitFeedback={handleSubmitFeedback}
+        />
+      )}
+
+      {/* 구간 피드백 */}
+      {activeMenu === 'feedback' && (
+        <FeedbackMenu
+          editor={editor}
+          selectionRef={selectionRef}
+          feedbackText={feedbackInput.current}
+          onOptionClick={handleOptionClickFeedback}
           feedback={feedback}
           handleSubmitFeedback={handleSubmitFeedback}
         />
