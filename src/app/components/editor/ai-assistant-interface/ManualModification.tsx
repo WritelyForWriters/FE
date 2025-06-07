@@ -15,8 +15,6 @@ import styles from '../DefaultEditor.module.scss'
 interface ManualModificationProps {
   editor: Editor
   selectionRef: RefObject<TextSelectionRangeType | null>
-  isOpen: boolean
-  onClose: () => void
   onPromptChange: (value: string) => void
   onAiPrompt: () => void
   onOptionClick: (option: ActionOptionType) => () => void

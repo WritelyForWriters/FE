@@ -46,12 +46,10 @@ export function useTextEditor(editor: Editor | null) {
   const feedbackInput = useRef<string | null>(null)
 
   const showToast = useToast()
-  const { isOpen, onOpen, onClose } = useCollapsed()
-  const {
-    isOpen: isFeedbackOpen,
-    onOpen: onOpenFeedback,
-    onClose: onCloseFeedback,
-  } = useCollapsed()
+
+  // TODO PrimaryActionMenu이 setAiResult 후 나타나야함
+  const { onOpen, onClose } = useCollapsed()
+  const { onOpen: onOpenFeedback, onClose: onCloseFeedback } = useCollapsed()
   const {
     isOpen: isAutoModifyVisible,
     onOpen: onOpenAutoModifyVisible,
@@ -389,12 +387,9 @@ export function useTextEditor(editor: Editor | null) {
   return {
     feedback,
     activeMenu,
-    isOpen,
-    onClose,
-    isFeedbackOpen,
+    feedbackInput,
     selectionRef,
     isAutoModifyVisible,
-    feedbackInput,
     handleActiveMenu,
     handlePromptChange,
     handleSubmitFeedback,

@@ -86,8 +86,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const {
     feedback,
     activeMenu,
-    isOpen,
-    onClose,
     feedbackInput,
     selectionRef,
     isAutoModifyVisible,
@@ -176,8 +174,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         <ManualModification
           editor={editor}
           selectionRef={selectionRef}
-          isOpen={isOpen}
-          onClose={onClose}
           onPromptChange={handlePromptChange}
           onAiPrompt={handleAiPrompt}
           onOptionClick={handleOptionClickUserModify}
