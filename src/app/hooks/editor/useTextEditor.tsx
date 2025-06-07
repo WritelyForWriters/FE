@@ -47,8 +47,7 @@ export function useTextEditor(editor: Editor | null) {
 
   const showToast = useToast()
 
-  // TODO PrimaryActionMenu이 setAiResult 후 나타나야함
-  const { onOpen, onClose } = useCollapsed()
+  const { isOpen, onOpen, onClose } = useCollapsed()
   const { onOpen: onOpenFeedback, onClose: onCloseFeedback } = useCollapsed()
   const {
     isOpen: isAutoModifyVisible,
@@ -385,6 +384,7 @@ export function useTextEditor(editor: Editor | null) {
   }, [editor?.state.selection.empty])
 
   return {
+    isOpen,
     feedback,
     activeMenu,
     feedbackInput,

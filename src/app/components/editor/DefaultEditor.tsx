@@ -84,6 +84,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }))
 
   const {
+    isOpen,
     feedback,
     activeMenu,
     feedbackInput,
@@ -172,6 +173,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       {/* 수동 수정 */}
       {activeMenu === 'user-modify' && (
         <ManualModification
+          isPrimaryActionMenuOpen={isOpen}
           editor={editor}
           selectionRef={selectionRef}
           onPromptChange={handlePromptChange}

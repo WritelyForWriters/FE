@@ -15,6 +15,7 @@ import PrimaryActionMenu from './menu/PrimaryActionMenu'
 import styles from '../DefaultEditor.module.scss'
 
 interface ManualModificationProps {
+  isPrimaryActionMenuOpen: boolean
   editor: Editor
   selectionRef: RefObject<TextSelectionRangeType | null>
   onPromptChange: (value: string) => void
@@ -26,6 +27,7 @@ interface ManualModificationProps {
 
 // MEMO(Sohyun): ai-assistant 인터페이스 수동 수정 UI
 export default function ManualModification({
+  isPrimaryActionMenuOpen,
   feedback,
   editor,
   selectionRef,
@@ -103,24 +105,26 @@ export default function ManualModification({
           </FillButton>
         </div>
 
-        <div className={styles['select-menu']}>
-          {isShowFeedbackMenu ? (
-            <FeedbackOptionMenu
-              onSubmitFeedback={onSubmitFeedback}
-              isShowFeedbackInput={isShowFeedbackInput}
-              setIsShowFeedbackInput={setIsShowFeedbackInput}
-              feedbackInput={feedbackInput}
-              onFeedbackInputChange={handleChangeFeedbackInput}
-            />
-          ) : (
-            <PrimaryActionMenu
-              onOptionClick={onOptionClick}
-              feedback={feedback}
-              onFeedbackClick={handleFeedbackClick}
-              onBadFeedbackClick={handleBadFeedbackClick}
-            />
-          )}
-        </div>
+        {isPrimaryActionMenuOpen && (
+          <div className={styles['select-menu']}>
+            {isShowFeedbackMenu ? (
+              <FeedbackOptionMenu
+                onSubmitFeedback={onSubmitFeedback}
+                isShowFeedbackInput={isShowFeedbackInput}
+                setIsShowFeedbackInput={setIsShowFeedbackInput}
+                feedbackInput={feedbackInput}
+                onFeedbackInputChange={handleChangeFeedbackInput}
+              />
+            ) : (
+              <PrimaryActionMenu
+                onOptionClick={onOptionClick}
+                feedback={feedback}
+                onFeedbackClick={handleFeedbackClick}
+                onBadFeedbackClick={handleBadFeedbackClick}
+              />
+            )}
+          </div>
+        )}
       </div>
     </Portal>
   )
