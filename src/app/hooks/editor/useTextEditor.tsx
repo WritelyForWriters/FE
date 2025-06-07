@@ -48,7 +48,6 @@ export function useTextEditor(editor: Editor | null) {
   const showToast = useToast()
 
   const { isOpen, onOpen, onClose } = useCollapsed()
-  const { onOpen: onOpenFeedback, onClose: onCloseFeedback } = useCollapsed()
   const {
     isOpen: isAutoModifyVisible,
     onOpen: onOpenAutoModifyVisible,
@@ -232,7 +231,6 @@ export function useTextEditor(editor: Editor | null) {
         setFeedback(INITIAL_EVALUATE_STATE)
         // TODO 로딩중일때
         feedbackInput.current = response.answer
-        onOpenFeedback()
       }
     } catch (error) {
       console.log(error)
@@ -307,7 +305,6 @@ export function useTextEditor(editor: Editor | null) {
         }
         onClose()
         feedbackInput.current = null
-        onCloseFeedback()
         break
 
       case 'archive':
@@ -332,7 +329,6 @@ export function useTextEditor(editor: Editor | null) {
           setAiResult(feedbackInput.current)
         }
         feedbackInput.current = null
-        onCloseFeedback()
         break
 
       case 'recreate':
@@ -349,7 +345,6 @@ export function useTextEditor(editor: Editor | null) {
           originalSelectionRef.current = null
         }
         feedbackInput.current = null
-        onCloseFeedback()
         break
 
       case 'archive':
