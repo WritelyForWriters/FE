@@ -143,9 +143,8 @@ export default function ChatbotChatInput() {
   }
 
   const handleRecommendPromptSelect = (item: RecommendPrompt) => {
-    if (item.requiresSection) {
+    if (item.requiresSection && !content) {
       showToast('warning', CHAT_ERROR_MESSAGE.SELECTED_REQUIRED)
-      // TODO: 선택 구간 없으면 토스트 노출
     } else {
       setPrompt(item.prompt)
       setIsRecommendMenuOpen(false)
