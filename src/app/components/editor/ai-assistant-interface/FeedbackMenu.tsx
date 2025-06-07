@@ -63,27 +63,40 @@ export default function FeedbackMenu({
     setIsShowFeedbackMenu(true)
   }
 
-  useEffect(() => {
+  const updatePosition = () => {
     if (!editor || !selectionRef?.current) return
 
-    // 선택 범위의 좌표 계산
-    const { from, to } = selectionRef?.current
+    const { to } = selectionRef.current
     const view = editor.view
 
     try {
-      const startCoords = view.coordsAtPos(from)
       const endCoords = view.coordsAtPos(to)
-
-      // 선택된 영역의 가로 중앙 위치 계산
-      const centerX = (startCoords.left + endCoords.left) / 2
-
-      // 텍스트 아래 여백(8px)을 두고, 가운데 정렬로 배치
+      const editorRect = editor.view.dom.getBoundingClientRect()
       setPosition({
-        top: endCoords.bottom + 8,
-        left: centerX,
+        top: endCoords.bottom,
+        left: Math.max(editorRect.left + 20, endCoords.left),
       })
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    updatePosition()
+  }, [editor, selectionRef])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      updatePosition()
+    }
+    const editorDOM = editor?.view.dom
+    const editorContainer = editorDOM?.closest('.tiptap') || window
+    editorContainer.addEventListener('scroll', handleScroll)
+    // window.addEventListener('scroll', handleScroll) // 전체 페이지 스크롤도 감지
+
+    return () => {
+      editorContainer.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [editor, selectionRef])
 
@@ -92,7 +105,7 @@ export default function FeedbackMenu({
       <div
         style={{
           width: 200,
-          position: 'absolute',
+          position: 'fixed',
           top: `${position.top}px`,
           left: `${position.left}px`,
           transform: 'translateX(-50%)',
