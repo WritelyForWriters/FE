@@ -1,4 +1,4 @@
-import { ChangeEvent, RefObject, useState } from 'react'
+import { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
@@ -32,7 +32,7 @@ export default function FeedbackMenu({
   handleSubmitFeedback,
 }: FeedbackMenuProps) {
   const position = useUpdatePosition(editor, selectionRef)
-
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [feedbackInput, setFeedbackInput] = useState('')
   const [isShowFeedbackMenu, setIsShowFeedbackMenu] = useState(false)
   const [isShowFeedbackInput, setIsShowFeedbackInput] = useState(false)
@@ -66,6 +66,15 @@ export default function FeedbackMenu({
     setIsShowFeedbackMenu(true)
   }
 
+  // textarea 높이 자동 조절
+  useEffect(() => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto'
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }, [feedbackText])
+
   return (
     <Portal>
       <div
@@ -78,13 +87,15 @@ export default function FeedbackMenu({
         }}
       >
         <div className={styles['prompt-menu']}>
-          <input
+          <textarea
+            ref={textareaRef}
             readOnly
-            className={styles['prompt-menu__input']}
             value={feedbackText ? feedbackText : '선택한 구간에 대한 피드백을 생성하고 있어요.'}
+            className={styles['prompt-menu__input']}
           />
         </div>
 
+        {/* TODO 구간피드백 생성후에 메뉴 노출 */}
         <div className={styles['select-menu']}>
           {isShowFeedbackMenu ? (
             <FeedbackOptionMenu
