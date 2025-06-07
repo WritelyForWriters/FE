@@ -80,10 +80,14 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       isSavedRef.current = false
     },
     onSelectionUpdate: ({ editor }) => {
+      if (editor.state.selection.empty) {
+        setSelectedRangeAtom('')
+      }
+
       const { from, to } = editor.state.selection
 
       if (from !== to) {
-        const selectedText = editor.getText().slice(from - 1, to)
+        const selectedText = editor.getText().slice(from - 1, to - 1)
         setSelectedRangeAtom(selectedText)
       }
     },
