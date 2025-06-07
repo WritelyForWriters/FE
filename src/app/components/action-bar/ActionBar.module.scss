@@ -63,7 +63,6 @@
     .action-bar-span {
       @extend %typo-title-medium;
       color: color.$alert-secondary-900;
-      cursor: pointer;
     }
   }
 
@@ -100,7 +99,6 @@
       span {
         @extend %typo-label-large;
         color: color.$alert-secondary-900;
-        cursor: pointer;
       }
     }
 
