@@ -85,6 +85,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
   const {
     isOpen,
+    feedbackPrompt,
     feedback,
     activeMenu,
     feedbackInput,
@@ -187,6 +188,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       {/* 구간 피드백 */}
       {activeMenu === 'feedback' && (
         <FeedbackMenu
+          isFeedbackPromptMenuOpen={feedbackPrompt}
           editor={editor}
           selectionRef={selectionRef}
           feedbackText={feedbackInput.current}

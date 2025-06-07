@@ -19,6 +19,7 @@ interface FeedbackMenuProps {
   feedbackText: string | null
   onOptionClick: (option: ActionOptionType) => () => void
   feedback: EvaluateStateType
+  isFeedbackPromptMenuOpen: boolean
   handleSubmitFeedback: ({ isGood, feedback, feedbackType }: FeedbackFormData) => void
 }
 
@@ -29,6 +30,7 @@ export default function FeedbackMenu({
   selectionRef,
   feedbackText,
   onOptionClick,
+  isFeedbackPromptMenuOpen,
   handleSubmitFeedback,
 }: FeedbackMenuProps) {
   const position = useUpdatePosition(editor, selectionRef)
@@ -95,25 +97,26 @@ export default function FeedbackMenu({
           />
         </div>
 
-        {/* TODO 구간피드백 생성후에 메뉴 노출 */}
-        <div className={styles['select-menu']}>
-          {isShowFeedbackMenu ? (
-            <FeedbackOptionMenu
-              onSubmitFeedback={onSubmitFeedback}
-              isShowFeedbackInput={isShowFeedbackInput}
-              setIsShowFeedbackInput={setIsShowFeedbackInput}
-              feedbackInput={feedbackInput}
-              onFeedbackInputChange={handleChange}
-            />
-          ) : (
-            <PrimaryActionMenu
-              onOptionClick={onOptionClick}
-              feedback={feedback}
-              onFeedbackClick={handleFeedbackClick}
-              onBadFeedbackClick={handleBadFeedbackClick}
-            />
-          )}
-        </div>
+        {isFeedbackPromptMenuOpen && (
+          <div className={styles['select-menu']}>
+            {isShowFeedbackMenu ? (
+              <FeedbackOptionMenu
+                onSubmitFeedback={onSubmitFeedback}
+                isShowFeedbackInput={isShowFeedbackInput}
+                setIsShowFeedbackInput={setIsShowFeedbackInput}
+                feedbackInput={feedbackInput}
+                onFeedbackInputChange={handleChange}
+              />
+            ) : (
+              <PrimaryActionMenu
+                onOptionClick={onOptionClick}
+                feedback={feedback}
+                onFeedbackClick={handleFeedbackClick}
+                onBadFeedbackClick={handleBadFeedbackClick}
+              />
+            )}
+          </div>
+        )}
       </div>
     </Portal>
   )

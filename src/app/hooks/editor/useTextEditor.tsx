@@ -49,6 +49,11 @@ export function useTextEditor(editor: Editor | null) {
 
   const { isOpen, onOpen, onClose } = useCollapsed()
   const {
+    isOpen: feedbackPrompt,
+    onOpen: onOpenFeedbackPrompt,
+    onClose: onCloseFeedbackPrompt,
+  } = useCollapsed()
+  const {
     isOpen: isAutoModifyVisible,
     onOpen: onOpenAutoModifyVisible,
     onClose: onCloseAutoModifyVisible,
@@ -188,6 +193,7 @@ export function useTextEditor(editor: Editor | null) {
         onOpenAutoModifyVisible()
       }
     } catch (error) {
+      // TODO 어시스턴트 에러처리 및 로딩처리
       console.log(error)
     }
   }
@@ -231,6 +237,7 @@ export function useTextEditor(editor: Editor | null) {
         setFeedback(INITIAL_EVALUATE_STATE)
         // TODO 로딩중일때
         feedbackInput.current = response.answer
+        onOpenFeedbackPrompt()
       }
     } catch (error) {
       console.log(error)
@@ -322,6 +329,7 @@ export function useTextEditor(editor: Editor | null) {
       case 'apply':
         setActiveMenu('defaultToolbar')
         clearHighlight()
+        onCloseFeedbackPrompt()
 
         // TODO 에디터에 피드백 문구 추출해서 삽입 => 피드백 받은 문구만 api 응답으로 받을 수 있는지 확인하기
         // TODO 구간 피드백 응답이 길어지기 때문에 UI 수정이 필요
@@ -333,6 +341,7 @@ export function useTextEditor(editor: Editor | null) {
 
       case 'recreate':
         handleAiFeedback(originalText)
+        onCloseFeedbackPrompt()
         break
 
       case 'cancel':
@@ -344,6 +353,7 @@ export function useTextEditor(editor: Editor | null) {
           clearHighlight(originalSelectionRef.current)
           originalSelectionRef.current = null
         }
+        onCloseFeedbackPrompt()
         feedbackInput.current = null
         break
 
@@ -380,6 +390,7 @@ export function useTextEditor(editor: Editor | null) {
 
   return {
     isOpen,
+    feedbackPrompt,
     feedback,
     activeMenu,
     feedbackInput,
