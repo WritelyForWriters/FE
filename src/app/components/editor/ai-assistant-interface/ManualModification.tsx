@@ -1,4 +1,4 @@
-import { ChangeEvent, RefObject, useState } from 'react'
+import { ChangeEvent, RefObject, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
@@ -37,13 +37,23 @@ export default function ManualModification({
   handleSubmitFeedback,
 }: ManualModificationProps) {
   const position = useUpdatePosition(editor, selectionRef)
-
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [feedbackInput, setFeedbackInput] = useState('')
   const [isShowFeedbackMenu, setIsShowFeedbackMenu] = useState(false)
   const [isShowFeedbackInput, setIsShowFeedbackInput] = useState(false)
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // TODO 공통 함수로 분리
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto'
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     onPromptChange(e.target.value)
+    adjustTextareaHeight()
   }
 
   const handleChangeFeedbackInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -86,11 +96,14 @@ export default function ManualModification({
         }}
       >
         <div className={styles['prompt-menu']}>
-          <input
+          <textarea
             autoFocus
             className={styles['prompt-menu__input']}
-            onChange={handleChange}
             placeholder="프롬프트를 입력해 주세요."
+            ref={textareaRef}
+            onChange={handleChange}
+            rows={1}
+            style={{ overflow: 'hidden' }}
           />
           <FillButton
             size="medium"
