@@ -1,10 +1,12 @@
-import { ChangeEvent, RefObject, useEffect, useState } from 'react'
+import { ChangeEvent, RefObject, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
 import { ActionOptionType, EvaluateStateType, TextSelectionRangeType } from 'types/common/editor'
 
 import Portal from '@components/modal/Portal'
+
+import useUpdatePosition from '@hooks/editor/useUpdatePosition'
 
 import FeedbackOptionMenu from './menu/FeedbackOptionMenu'
 import PrimaryActionMenu from './menu/PrimaryActionMenu'
@@ -29,7 +31,8 @@ export default function FeedbackMenu({
   onOptionClick,
   handleSubmitFeedback,
 }: FeedbackMenuProps) {
-  const [position, setPosition] = useState({ top: 0, left: 0 })
+  const position = useUpdatePosition(editor, selectionRef)
+
   const [feedbackInput, setFeedbackInput] = useState('')
   const [isShowFeedbackMenu, setIsShowFeedbackMenu] = useState(false)
   const [isShowFeedbackInput, setIsShowFeedbackInput] = useState(false)
@@ -63,43 +66,6 @@ export default function FeedbackMenu({
     setIsShowFeedbackMenu(true)
   }
 
-  const updatePosition = () => {
-    if (!editor || !selectionRef?.current) return
-
-    const { to } = selectionRef.current
-    const view = editor.view
-
-    try {
-      const endCoords = view.coordsAtPos(to)
-      const editorRect = editor.view.dom.getBoundingClientRect()
-      setPosition({
-        top: endCoords.bottom,
-        left: Math.max(editorRect.left + 20, endCoords.left),
-      })
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  useEffect(() => {
-    updatePosition()
-  }, [editor, selectionRef])
-
-  useEffect(() => {
-    const handleScroll = () => {
-      updatePosition()
-    }
-    const editorDOM = editor?.view.dom
-    const editorContainer = editorDOM?.closest('.tiptap') || window
-    editorContainer.addEventListener('scroll', handleScroll)
-    // window.addEventListener('scroll', handleScroll) // 전체 페이지 스크롤도 감지
-
-    return () => {
-      editorContainer.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [editor, selectionRef])
-
   return (
     <Portal>
       <div
@@ -108,7 +74,6 @@ export default function FeedbackMenu({
           position: 'fixed',
           top: `${position.top}px`,
           left: `${position.left}px`,
-          transform: 'translateX(-50%)',
           zIndex: 100,
         }}
       >
