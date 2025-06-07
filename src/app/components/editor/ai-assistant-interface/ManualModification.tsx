@@ -1,14 +1,14 @@
-import { ChangeEvent, RefObject, useRef, useState } from 'react'
+import { ChangeEvent, RefObject, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
 import { ActionOptionType, EvaluateStateType, TextSelectionRangeType } from 'types/common/editor'
 
-import FillButton from '@components/buttons/FillButton'
 import Portal from '@components/modal/Portal'
 
 import useUpdatePosition from '@hooks/editor/useUpdatePosition'
 
+import PromptInput from '../common/PromptInput'
 import FeedbackOptionMenu from './menu/FeedbackOptionMenu'
 import PrimaryActionMenu from './menu/PrimaryActionMenu'
 
@@ -37,23 +37,12 @@ export default function ManualModification({
   handleSubmitFeedback,
 }: ManualModificationProps) {
   const position = useUpdatePosition(editor, selectionRef)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [feedbackInput, setFeedbackInput] = useState('')
   const [isShowFeedbackMenu, setIsShowFeedbackMenu] = useState(false)
   const [isShowFeedbackInput, setIsShowFeedbackInput] = useState(false)
 
-  // TODO 공통 함수로 분리
-  const adjustTextareaHeight = () => {
-    const textarea = textareaRef.current
-    if (textarea) {
-      textarea.style.height = 'auto'
-      textarea.style.height = `${textarea.scrollHeight}px`
-    }
-  }
-
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     onPromptChange(e.target.value)
-    adjustTextareaHeight()
   }
 
   const handleChangeFeedbackInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -95,28 +84,12 @@ export default function ManualModification({
           zIndex: 100,
         }}
       >
-        <div className={styles['prompt-menu']}>
-          <textarea
-            autoFocus
-            className={styles['prompt-menu__input']}
-            placeholder="프롬프트를 입력해 주세요."
-            ref={textareaRef}
-            onChange={handleChange}
-            rows={1}
-            style={{ overflow: 'hidden' }}
-          />
-          <FillButton
-            size="medium"
-            variant="primary"
-            style={{
-              padding: '0.8rem 1.2rem',
-              height: '100%',
-            }}
-            onClick={onAiPrompt}
-          >
-            생성하기
-          </FillButton>
-        </div>
+        <PromptInput
+          onPromptInputChange={handleChange}
+          onSubmit={onAiPrompt}
+          placeholder="프롬프트를 입력해 주세요."
+          buttonText="생성하기"
+        />
 
         {isPrimaryActionMenuOpen && (
           <div className={styles['select-menu']}>

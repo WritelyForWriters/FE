@@ -16,8 +16,6 @@ import { useAtomValue } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
 import { HandleEditor } from 'types/common/editor'
 
-import FillButton from '@components/buttons/FillButton'
-
 import { useMemos } from '@hooks/editor/useMemos'
 import { useTextEditor } from '@hooks/editor/useTextEditor'
 
@@ -31,6 +29,7 @@ import Toolbar from './Toolbar'
 import AutoModifyMenu from './ai-assistant-interface/AutoModifyMenu'
 import FeedbackMenu from './ai-assistant-interface/FeedbackMenu'
 import ManualModification from './ai-assistant-interface/ManualModification'
+import PromptInput from './common/PromptInput'
 
 import styles from './DefaultEditor.module.scss'
 
@@ -136,26 +135,14 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         )}
 
         {/* 메모 */}
+        {/* TODO 메모도 focusout or blur 시 하이라이트 사라지거나 or Portal로 UI 고정되도롣 */}
         {activeMenu === 'memo' && (
-          <div className={styles['prompt-menu']}>
-            <input
-              autoFocus
-              className={styles['prompt-menu__input']}
-              onChange={handleChange}
-              placeholder="메모를 입력해주세요."
-            />
-            <FillButton
-              size="medium"
-              variant="primary"
-              style={{
-                padding: '0.8rem 1.2rem',
-                height: '100%',
-              }}
-              onClick={handleSavedMemos}
-            >
-              저장하기
-            </FillButton>
-          </div>
+          <PromptInput
+            onPromptInputChange={handleChange}
+            onSubmit={handleSavedMemos}
+            placeholder="메모를 입력해주세요."
+            buttonText="저장하기"
+          />
         )}
       </BubbleMenu>
 

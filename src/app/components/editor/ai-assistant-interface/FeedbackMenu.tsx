@@ -12,6 +12,7 @@ import FeedbackOptionMenu from './menu/FeedbackOptionMenu'
 import PrimaryActionMenu from './menu/PrimaryActionMenu'
 
 import styles from '../DefaultEditor.module.scss'
+import promptStyles from '../common/PromptInput.module.scss'
 
 interface FeedbackMenuProps {
   editor: Editor
@@ -88,12 +89,13 @@ export default function FeedbackMenu({
           zIndex: 100,
         }}
       >
-        <div className={styles['prompt-menu']}>
+        {/* TODO 공통 컴포넌트 PromptInput을 사용하기 */}
+        <div className={promptStyles['prompt-menu']}>
           <textarea
             ref={textareaRef}
             readOnly
             value={feedbackText ? feedbackText : '선택한 구간에 대한 피드백을 생성하고 있어요.'}
-            className={styles['prompt-menu__input']}
+            className={promptStyles['prompt-menu__input']}
           />
         </div>
 
