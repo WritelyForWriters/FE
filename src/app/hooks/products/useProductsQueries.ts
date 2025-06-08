@@ -10,7 +10,6 @@ export const useGetProductList = (queryOptions?: UseQueryCustomOptions<ProductDt
   return useQuery({
     queryKey: [QUERY_KEY.PRODUCT_LIST],
     queryFn: getProductList,
-    staleTime: 1000 * 60 * 5, // 5분
     enabled: !!getCookie('isLoggedIn'),
     ...queryOptions,
   })

@@ -9,7 +9,6 @@ export const useGetMeProfile = (queryOptions?: UseQueryCustomOptions<ProfileDto>
   return useQuery({
     queryKey: [QUERY_KEY.ME_PROFILE],
     queryFn: getMeProfile,
-    staleTime: 1000 * 60 * 5, // 5분
     enabled: !!getCookie('isLoggedIn'),
     ...queryOptions,
   })
