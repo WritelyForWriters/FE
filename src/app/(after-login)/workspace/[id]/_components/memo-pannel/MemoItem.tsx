@@ -123,7 +123,7 @@ export default function MemoItem({ memoList, activeTab }: MemoItemProps) {
   return (
     <li className={cx('memo-item')}>
       <div>
-        <h3>{title ?? '타이틀'}</h3>
+        <h3>{selectedText}</h3>
         <div className={cx('memo-item__button')}>
           {(activeTab === 'progress' || (activeTab === 'all' && isCompleted)) && (
             <>

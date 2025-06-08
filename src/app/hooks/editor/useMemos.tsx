@@ -21,7 +21,7 @@ export function useMemos(editor: Editor | null) {
 
   const savedMemosMutation = useSavedMemos()
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value)
   }
 
@@ -40,7 +40,7 @@ export function useMemos(editor: Editor | null) {
       {
         productId,
         data: {
-          title: selectedText,
+          title: '',
           content,
           selectedText,
           startIndex: from,

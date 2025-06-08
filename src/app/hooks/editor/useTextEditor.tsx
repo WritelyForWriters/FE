@@ -48,11 +48,12 @@ export function useTextEditor(editor: Editor | null) {
   const feedbackInput = useRef<string | null>(null)
 
   const showToast = useToast()
+
   const { isOpen, onOpen, onClose } = useCollapsed()
   const {
-    isOpen: isFeedbackOpen,
-    onOpen: onOpenFeedback,
-    onClose: onCloseFeedback,
+    isOpen: feedbackPrompt,
+    onOpen: onOpenFeedbackPrompt,
+    onClose: onCloseFeedbackPrompt,
   } = useCollapsed()
   const {
     isOpen: isAutoModifyVisible,
@@ -176,6 +177,7 @@ export function useTextEditor(editor: Editor | null) {
     promptValueRef.current = value
   }
 
+  // TODO(Sohyun) 어시스턴트 에러처리 및 로딩처리 > react-query로 변경
   // 1. 자동 수정
   const handleAiAutoModify = async (originPhrase: string) => {
     if (!selectionRef.current || !editor) return
@@ -196,6 +198,17 @@ export function useTextEditor(editor: Editor | null) {
       }
     } catch (error) {
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onCloseAutoModifyVisible()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
@@ -223,6 +236,17 @@ export function useTextEditor(editor: Editor | null) {
       }
     } catch (error) {
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onClose()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
@@ -240,10 +264,21 @@ export function useTextEditor(editor: Editor | null) {
         setFeedback(INITIAL_EVALUATE_STATE)
         // TODO 로딩중일때
         feedbackInput.current = response.answer
-        onOpenFeedback()
+        onOpenFeedbackPrompt()
       }
     } catch (error) {
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onCloseFeedbackPrompt()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
@@ -315,7 +350,6 @@ export function useTextEditor(editor: Editor | null) {
         }
         onClose()
         feedbackInput.current = null
-        onCloseFeedback()
         break
 
       case 'archive':
@@ -333,6 +367,7 @@ export function useTextEditor(editor: Editor | null) {
       case 'apply':
         setActiveMenu('defaultToolbar')
         clearHighlight()
+        onCloseFeedbackPrompt()
 
         // TODO 에디터에 피드백 문구 추출해서 삽입 => 피드백 받은 문구만 api 응답으로 받을 수 있는지 확인하기
         // TODO 구간 피드백 응답이 길어지기 때문에 UI 수정이 필요
@@ -340,11 +375,11 @@ export function useTextEditor(editor: Editor | null) {
           setAiResult(feedbackInput.current)
         }
         feedbackInput.current = null
-        onCloseFeedback()
         break
 
       case 'recreate':
         handleAiFeedback(originalText)
+        onCloseFeedbackPrompt()
         break
 
       case 'cancel':
@@ -356,8 +391,8 @@ export function useTextEditor(editor: Editor | null) {
           clearHighlight(originalSelectionRef.current)
           originalSelectionRef.current = null
         }
+        onCloseFeedbackPrompt()
         feedbackInput.current = null
-        onCloseFeedback()
         break
 
       case 'archive':
@@ -392,14 +427,13 @@ export function useTextEditor(editor: Editor | null) {
   }, [editor?.state.selection.empty])
 
   return {
+    isOpen,
+    feedbackPrompt,
     feedback,
     activeMenu,
-    isOpen,
-    onClose,
-    isFeedbackOpen,
+    feedbackInput,
     selectionRef,
     isAutoModifyVisible,
-    feedbackInput,
     handleActiveMenu,
     handlePromptChange,
     handleSubmitFeedback,
