@@ -5,11 +5,10 @@ import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect } from 'react'
 
 import AuthAxios from 'api/core/AuthInstance'
-import axios from 'axios'
 import { NUMERICS } from 'constants/common/numberValue'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { setCookie } from 'cookies-next/client'
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { accessTokenAtom } from 'store/accessTokenAtom'
 import { isRemberMeAtom } from 'store/isRemberMeAtom'
 
@@ -25,7 +24,7 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
   const router = useRouter()
   const showToast = useToast()
 
-  const accessToken = useAtomValue(accessTokenAtom)
+  const [accessToken, setAccessToken] = useAtom(accessTokenAtom)
   const isRememberMe = useAtomValue(isRemberMeAtom)
 
   const { mutateAsync: refresh } = useRefresh({
@@ -35,47 +34,68 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
       setCookie('isLoggedIn', true, isRememberMe ? { expires: date, path: '/' } : {})
     },
     onErrorHandler: () => {
+      showToast('warning', TOAST_MESSAGE.SESSION_DONE)
       router.replace('/login')
     },
   })
 
-  const requestInterceptor = AuthAxios.interceptors.request.use((config) => {
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`
+  useEffect(() => {
+    const requestInterceptorId = AuthAxios.interceptors.request.use(
+      (config) => {
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`
+        }
+        return config
+      },
+      (error) => {
+        return Promise.reject(error)
+      },
+    )
+
+    return () => {
+      AuthAxios.interceptors.request.eject(requestInterceptorId)
     }
-
-    return config
-  })
-
-  const responseInterceptor = AuthAxios.interceptors.response.use(
-    (res) => res,
-    async (error) => {
-      const {
-        code,
-        config,
-        response: { status },
-      } = error
-
-      if (code === 'ERR_NETWORK') {
-        showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
-      }
-
-      if (status === 401) {
-        await refresh()
-        config.headers.Authorization = `Bearer ${accessToken}`
-        return axios(config)
-      }
-
-      return Promise.reject(error)
-    },
-  )
+  }, [accessToken])
 
   useEffect(() => {
+    const responseInterceptorId = AuthAxios.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const {
+          code,
+          config,
+          response: { status },
+        } = error
+
+        if (code === 'ERR_NETWORK') {
+          showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
+          return Promise.reject(error)
+        }
+
+        if (status === 401) {
+          try {
+            const newAccessToken = await refresh()
+
+            if (newAccessToken) {
+              setAccessToken(newAccessToken)
+
+              config.headers.Authorization = `Bearer ${newAccessToken}`
+
+              return AuthAxios(config)
+            }
+          } catch (refreshError) {
+            return Promise.reject(refreshError)
+          }
+        }
+
+        return Promise.reject(error)
+      },
+    )
+
     return () => {
-      AuthAxios.interceptors.request.eject(requestInterceptor)
-      AuthAxios.interceptors.response.eject(responseInterceptor)
+      AuthAxios.interceptors.response.eject(responseInterceptorId)
     }
-  }, [responseInterceptor, requestInterceptor])
+  }, [refresh, router, showToast, setAccessToken, accessToken])
 
   return <>{children}</>
 }

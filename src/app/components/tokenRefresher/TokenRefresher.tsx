@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 
 import { ReactNode, useEffect, useState } from 'react'
 
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { accessTokenAtom } from 'store/accessTokenAtom'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
@@ -16,7 +16,7 @@ interface TokenRefresherProps {
 export default function TokenRefresher({ children }: TokenRefresherProps) {
   const router = useRouter()
   const isLoggedIn = useAtomValue(isLoggedInAtom)
-  const accessToken = useAtomValue(accessTokenAtom)
+  const [accessToken, setAccessToken] = useAtom(accessTokenAtom)
 
   const [isLoading, setIsLoading] = useState(true)
   const { mutateAsync: tokenRefresh } = useRefresh({
@@ -27,7 +27,8 @@ export default function TokenRefresher({ children }: TokenRefresherProps) {
     if (isLoggedIn && !accessToken) {
       const refresh = async () => {
         try {
-          await tokenRefresh()
+          const newAccessToken = await tokenRefresh()
+          setAccessToken(newAccessToken)
         } catch (error) {
           console.error(error)
         } finally {
