@@ -127,6 +127,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           duration: 100,
           maxWidth: 'none',
           interactive: true,
+          zIndex: 100,
         }}
         shouldShow={({ editor, state }) => editor.isEditable && !state.selection.empty}
       >
