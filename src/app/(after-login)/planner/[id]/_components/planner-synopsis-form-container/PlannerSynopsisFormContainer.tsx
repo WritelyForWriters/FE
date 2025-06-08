@@ -37,7 +37,7 @@ export default function PlannerSynopsisFormContainer() {
   const productId = params.id as string
 
   const { setValue, getValues } = useFormContext()
-  const { set: setAiAssistants } = usePlannerTemplatesAiAssistant()
+  const { set: setAiAssistants, getType } = usePlannerTemplatesAiAssistant()
   const [activeTab, setActiveTab] = useAtom(plannerActiveTabAtom)
 
   // NOTE(hajae): jotai는 전역상태이기 때문에 메모리에 상태가 살아있어서 아이디어 탭에서 페이지 이동후 다시 돌아올 경우
@@ -65,8 +65,16 @@ export default function PlannerSynopsisFormContainer() {
         })) as { id: string; answer: string }
 
         if (response.id) {
-          setAiAssistants({ name: name, content: value, isAiModified: true })
-          setValue(name, [value, response.answer].filter(Boolean).join('\n'))
+          const aiType = getType(name)
+          setAiAssistants({ name: name, content: value, isAiModified: true, type: 'wait' })
+
+          // NOTE(hajae): 다시 생성하기의 경우 기존 텍스트를 덮어씌운다.
+          if (aiType === 'retry') {
+            setValue(name, response.answer)
+          } else {
+            setValue(name, [value, response.answer].filter(Boolean).join('\n'))
+          }
+
           return true
         }
 

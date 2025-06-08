@@ -46,7 +46,7 @@ export default function PlannerFieldWithButton({
   const [isDeleted, setIsDeleted] = useState(false)
   const initialValue = watch(name)
 
-  const { remove, getContent } = usePlannerTemplatesAiAssistant()
+  const { remove, getContent, setType } = usePlannerTemplatesAiAssistant()
 
   // NOTE(hajae): 삭제된 항목은 null로 반환되어 초기 렌더링 시 화면에 표시하지 않는다
   useEffect(() => {
@@ -78,6 +78,10 @@ export default function PlannerFieldWithButton({
 
   const handleConfirm = () => {
     remove(name)
+  }
+
+  const handleRetry = () => {
+    setType(name, 'retry')
   }
 
   const handleCancel = () => {
@@ -133,6 +137,7 @@ export default function PlannerFieldWithButton({
           promptClose={onClose}
           handleManualModification={handleManualModification}
           handleConfirm={handleConfirm}
+          handleRetry={handleRetry}
           handleCancel={handleCancel}
         />
       )}
