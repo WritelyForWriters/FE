@@ -12,8 +12,9 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
+import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
 
 import FillButton from '@components/buttons/FillButton'
@@ -42,6 +43,8 @@ interface DefaultEditorProps {
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
+
+  const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
 
   const editor = useEditor({
     editable,
@@ -75,6 +78,18 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     onUpdate: () => {
       // 에디터에 변경사항이 생기면 저장 상태 false로 변경
       isSavedRef.current = false
+    },
+    onSelectionUpdate: ({ editor }) => {
+      if (editor.state.selection.empty) {
+        setSelectedRangeAtom('')
+      }
+
+      const { from, to } = editor.state.selection
+
+      if (from !== to) {
+        const selectedText = editor.getText().slice(from - 1, to - 1)
+        setSelectedRangeAtom(selectedText)
+      }
     },
   })
 

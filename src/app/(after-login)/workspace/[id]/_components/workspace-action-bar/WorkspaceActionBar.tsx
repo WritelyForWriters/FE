@@ -5,6 +5,7 @@ import { ChangeEvent, KeyboardEvent, RefObject, useEffect, useRef, useState } fr
 import { Editor } from '@tiptap/react'
 import { useAtom, useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
+import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { autoSaveMessageAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
@@ -32,6 +33,7 @@ interface WorkspaceActionBarProps {
   initialTitle?: string | null
   isInitialAccess: boolean
   editorRef: RefObject<HandleEditor | null>
+  isSavedRef: RefObject<boolean>
 }
 
 export default function WorkspaceActionBar({
@@ -39,6 +41,7 @@ export default function WorkspaceActionBar({
   initialTitle,
   isInitialAccess,
   editorRef,
+  isSavedRef,
 }: WorkspaceActionBarProps) {
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
@@ -46,8 +49,12 @@ export default function WorkspaceActionBar({
   const pdfPreviewModalRef = useRef<ModalHandler | null>(null)
   const previewRef = useRef<HTMLDivElement>(null)
 
+  const saveWarningModalRef = useRef<ModalHandler | null>(null)
+
   // 읽기/쓰기 모드를 구분하는 state
   const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
+
+  const [applyProductSettings, setApplyProductSettings] = useAtom(applyProductSettingsAtom)
 
   // 저장 버튼 클릭 트리거 이벤트
   const handleSave = async () => {
@@ -81,14 +88,6 @@ export default function WorkspaceActionBar({
 
   // 액션바 내 좌측 영역
   const ActionSectionContent = () => {
-    // 삭제 버튼 클릭 트리거 이벤트
-    const handleDelete = () => {
-      if (confirm('정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-        // 내용 삭제 및 페이지 이동
-        alert('내 서재로 이동합니다.')
-      }
-    }
-
     // 내보내기 버튼 클릭 여부 구분하는 state
     const [isExportMenuOpen, setIsExportMenuOpen] = useState(false)
 
@@ -138,9 +137,7 @@ export default function WorkspaceActionBar({
             </div>
           </>
         ) : (
-          <TextButton size="large" onClick={() => handleDelete()}>
-            삭제하기
-          </TextButton>
+          <></>
         )}
       </>
     )
@@ -187,21 +184,41 @@ export default function WorkspaceActionBar({
             {title}
           </span>
         )}
-        {isContentEditing && <span className={cx('description')}>{autoSave.message}</span>}
+        {isContentEditing && !isTitleEditing && (
+          <span className={cx('description')}>{autoSave.message}</span>
+        )}
       </>
     )
   }
 
   // 액션바 내 우측 영역
   const ExtraSectionContent = () => {
+    const handleSwitchReadMode = () => {
+      if (isInitialAccess && !isSavedRef.current) {
+        saveWarningModalRef.current?.open()
+      } else {
+        setIsContentEditing(false)
+      }
+    }
+
     return (
       <>
         <menu className={cx('action-bar-tabs')}>
           <EditModeSwitch
-            isSelected={!isContentEditing}
-            onClick={() => setIsContentEditing(false)}
-            disabled={isInitialAccess}
+            isSelected={!applyProductSettings}
+            onClick={() => setApplyProductSettings(false)}
           >
+            AI에 설정 미반영
+          </EditModeSwitch>
+          <EditModeSwitch
+            isSelected={applyProductSettings}
+            onClick={() => setApplyProductSettings(true)}
+          >
+            AI에 설정 반영
+          </EditModeSwitch>
+        </menu>
+        <menu className={cx('action-bar-tabs')}>
+          <EditModeSwitch isSelected={!isContentEditing} onClick={handleSwitchReadMode}>
             읽기 모드
           </EditModeSwitch>
           <EditModeSwitch isSelected={isContentEditing} onClick={() => setIsContentEditing(true)}>
@@ -287,6 +304,22 @@ export default function WorkspaceActionBar({
       <PdfExportPreview ref={pdfPreviewModalRef}>
         <div ref={previewRef}></div>
       </PdfExportPreview>
+
+      <Modal
+        ref={saveWarningModalRef}
+        title="읽기 모드로 전환하기 전 작성한 내용을 저장해주세요."
+        cancelText="취소"
+        confirmText="저장하기"
+        onCancel={() => {
+          saveWarningModalRef.current?.close()
+        }}
+        onConfirm={async () => {
+          await handleSave()
+          isSavedRef.current = true
+          saveWarningModalRef.current?.close()
+          setIsContentEditing(false)
+        }}
+      />
 
       <ActionBar
         actionSection={<ActionSectionContent />}

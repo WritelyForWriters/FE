@@ -2,6 +2,7 @@ export interface ChatbotFormData {
   productId: string
   content: string
   prompt: string
+  shouldApplySetting: boolean
 }
 
 export interface ChatbotWebSearchFormData extends ChatbotFormData {

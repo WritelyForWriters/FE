@@ -221,6 +221,7 @@ export default function WorkSpacePage() {
         // 처음 작업공간에 진입했을때 읽기 모드, 그 이후에는 쓰기 모드로 진입
         isInitialAccess={!productDetail?.title && !productDetail?.content}
         editorRef={editorRef}
+        isSavedRef={isSavedRef}
       />
       <div className={cx('header-space')}></div>
 
