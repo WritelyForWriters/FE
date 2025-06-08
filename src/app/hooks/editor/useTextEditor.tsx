@@ -255,6 +255,9 @@ export function useTextEditor(editor: Editor | null) {
   const initActiveMenu = () => {
     setActiveMenu('defaultToolbar')
   }
+  const initSelection = () => {
+    clearHighlight()
+  }
 
   // aiResult 변경 시 에디터에 내용 삽입
   useEffect(() => {
@@ -277,6 +280,7 @@ export function useTextEditor(editor: Editor | null) {
     isAutoModifyVisible,
     feedbackInput,
     initActiveMenu,
+    initSelection,
     handleActiveMenu,
     handlePromptChange,
     handleAiPrompt,
