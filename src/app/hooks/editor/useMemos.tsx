@@ -40,7 +40,7 @@ export function useMemos(editor: Editor | null) {
       {
         productId,
         data: {
-          title: selectedText,
+          title: '',
           content,
           selectedText,
           startIndex: from,
