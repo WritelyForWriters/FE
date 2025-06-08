@@ -175,6 +175,7 @@ export function useTextEditor(editor: Editor | null) {
     promptValueRef.current = value
   }
 
+  // TODO(Sohyun) 어시스턴트 에러처리 및 로딩처리 > react-query로 변경
   // 1. 자동 수정
   const handleAiAutoModify = async (originPhrase: string) => {
     if (!selectionRef.current || !editor) return
@@ -193,8 +194,18 @@ export function useTextEditor(editor: Editor | null) {
         onOpenAutoModifyVisible()
       }
     } catch (error) {
-      // TODO 어시스턴트 에러처리 및 로딩처리
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onCloseAutoModifyVisible()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
@@ -221,6 +232,17 @@ export function useTextEditor(editor: Editor | null) {
       }
     } catch (error) {
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onClose()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
@@ -241,6 +263,17 @@ export function useTextEditor(editor: Editor | null) {
       }
     } catch (error) {
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onCloseFeedbackPrompt()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
