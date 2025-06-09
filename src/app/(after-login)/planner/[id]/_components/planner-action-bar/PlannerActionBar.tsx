@@ -6,6 +6,7 @@ import ActionBar from '@components/action-bar/ActionBar'
 import styles from '@components/action-bar/ActionBar.module.scss'
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
+import { useToast } from '@components/toast/ToastProvider'
 
 import { useProducts } from '@hooks/products/useProductsMutation'
 import { useGetProductDetail } from '@hooks/products/useProductsQueries'
@@ -33,11 +34,16 @@ export default function PlannerActionBar({
 }: PlannerActionBarProps) {
   const { data: productDetail } = useGetProductDetail(productId)
   const { saveProductMutation } = useProducts()
+  const showToast = useToast()
 
   const ActionSectionContent = () => {
     const [hasSaved, setHasSaved] = useState(isSaved)
     const handleSave = () => {
-      if (!isValidFormValues) return
+      if (!isValidFormValues) {
+        showToast('warning', '필수 항목(장르, 로그라인)을 먼저 작성해주세요')
+        return
+      }
+
       onSubmit()
       setHasSaved(true)
     }
@@ -45,7 +51,7 @@ export default function PlannerActionBar({
     return (
       <>
         {!hasSaved ? (
-          <TextButton size="large" onClick={() => handleSave()} disabled={!isValidFormValues}>
+          <TextButton size="large" onClick={() => handleSave()}>
             저장하기
           </TextButton>
         ) : (
