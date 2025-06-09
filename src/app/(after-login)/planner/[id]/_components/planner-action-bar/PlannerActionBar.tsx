@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { ChangeEvent, KeyboardEvent, useState } from 'react'
 
@@ -22,17 +22,21 @@ const cx = classNames.bind(styles)
 interface PlannerActionBarProps {
   productId: string
   isValidFormValues: boolean
+  isFormDirty: boolean
   isSaved: boolean
   autoSaveTimer: number
   onSubmit: () => void
+  onResetForm: () => void
 }
 
 export default function PlannerActionBar({
   productId,
   isValidFormValues,
+  isFormDirty,
   isSaved,
   autoSaveTimer,
   onSubmit,
+  onResetForm,
 }: PlannerActionBarProps) {
   const { data: productDetail } = useGetProductDetail(productId)
   const { saveProductMutation } = useProducts()
@@ -47,6 +51,7 @@ export default function PlannerActionBar({
       }
 
       onSubmit()
+      onResetForm()
       setHasSaved(true)
     }
 
@@ -118,10 +123,20 @@ export default function PlannerActionBar({
   }
 
   const ExtraSectionContent = () => {
+    const router = useRouter()
+
+    const handleClick = () => {
+      if (isFormDirty) {
+        showToast('warning', '수정된 내용이 있습니다. 저장 후 이동해주세요.')
+        return
+      }
+      router.push(`/workspace/${productId}`)
+    }
+
     return (
-      <Link href={`/workspace/${productId}`}>
-        <FillButton size="large">집필하러 가기</FillButton>
-      </Link>
+      <FillButton size="large" onClick={handleClick}>
+        집필하러 가기
+      </FillButton>
     )
   }
 
