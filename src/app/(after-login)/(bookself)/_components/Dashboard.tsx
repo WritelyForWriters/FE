@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { useEffect } from 'react'
@@ -12,6 +13,8 @@ import { isLoggedInAtom } from 'store/isLoggedInAtom'
 import { useGetMeProfile, useGetProductList } from '@hooks/index'
 
 import CardList from './CardList'
+import books from '/public/images/books.png'
+import pen from '/public/images/pen.png'
 
 import classNames from 'classnames/bind'
 
@@ -46,7 +49,6 @@ export default function Dashboard() {
   return (
     <main className={cx('dashboard')}>
       {isLoggedIn ? (
-        // 로그인 && 작품이 있는 경우
         productList && productList.length > 0 ? (
           <div className={cx('dashboard__content')}>
             <h1 className={cx('dashboard__title')}>
@@ -55,17 +57,14 @@ export default function Dashboard() {
             <CardList productList={productList} />
           </div>
         ) : (
-          // 로그인 && 작품이 없는 경우
           <div className={cx('dashboard__empty')}>
-            {/* // TODO: 이미지 추가 */}
-            <div className={cx('dashboard__temporary-box')}></div>
+            <Image src={books} alt="pen" width={300} height={300} />
             <p className={cx('dashboard__message')}>아직 작품이 없어요</p>
           </div>
         )
       ) : (
-        // 로그인 하지 않은 경우
         <div className={cx('dashboard__guest')}>
-          <div className={cx('dashboard__temporary-box')}></div>
+          <Image src={pen} alt="pen" width={300} height={300} />
           <p className={cx('dashboard__message')}>로그인하고 집필을 시작해보세요!</p>
         </div>
       )}

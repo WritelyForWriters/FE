@@ -22,14 +22,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 50vh;
+    min-height: 60vh;
     gap: 2rem;
-  }
-
-  &__temporary-box {
-    width: 252px;
-    height: 251px;
-    background-color: #d9d9d9;
   }
 
   &__message {
