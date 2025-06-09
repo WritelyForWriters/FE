@@ -43,6 +43,8 @@ export const postFeedback = async (promptData: Omit<PromptData, 'prompt'>) => {
 // 수동 수정 (작품 플래너)
 export const postPlannerUserModify = async (promptData: PlannerPromptData) => {
   const res = await authInstance.post('/assistant/planner', promptData)
+  return res.data.result
+}
 
 // 어시스턴트 답변 영구 보관
 export const archivedAnswer = async (assistantId: string) => {
