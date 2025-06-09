@@ -11,6 +11,8 @@ import { useAtom, useSetAtom } from 'jotai'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
+import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
+import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
@@ -63,6 +65,8 @@ export default function WorkSpacePage() {
   const [productId, setProductId] = useAtom(productIdAtom)
   const setFixedMessage = useSetAtom(chatbotFixedMessageAtom)
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
+  const setFaviconRelativePosition = useSetAtom(faviconRelativePositionAtom)
+  const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
 
   const { data: previousChatbotHistory } = useGetInfiniteAssistantHistory(productId)
   const { data: fixedMessage } = useGetFixedMessage(productId)
@@ -213,6 +217,11 @@ export default function WorkSpacePage() {
     )
   }, [fixedMessage, setFixedMessage, productId])
 
+  useEffect(() => {
+    setIsChatbotOpen(false)
+    setFaviconRelativePosition({ xRatio: 0.9, yRatio: 0.7 })
+  }, [productId])
+
   return (
     <div className={cx('container')}>
       <WorkspaceActionBar
@@ -244,8 +253,9 @@ export default function WorkSpacePage() {
             <PlannerPannel />
           </div>
         </div>
-
-        <ChatbotLauncher />
+        <div className={cx('main-section__chatbot')}>
+          <ChatbotLauncher />
+        </div>
       </main>
 
       <Modal

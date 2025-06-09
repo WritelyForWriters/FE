@@ -13,11 +13,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { Direction } from 're-resizable/lib/resizer'
-import { DraggableEvent } from 'react-draggable'
 import { FiInfo } from 'react-icons/fi'
 import { IoIosArrowBack } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
-import { DraggableData, Rnd } from 'react-rnd'
+import { Position, Rnd } from 'react-rnd'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
@@ -33,9 +32,6 @@ import ExpandableContentBox from '@components/expandable-content-box/ExpandableC
 import { useGetInfiniteAssistantHistory } from '@hooks/chatbot/useGetAssistantHistoryInfinite'
 
 import { computeRelativePosition } from '@utils/computeRelativePosition'
-
-import { chatbotAbsoluteSizeAtom } from './../../store/chatbotAbsoluteSizeAtom'
-import { chatbotRelativeSizeAtom } from './../../store/chatbotRelativeSizeAtom'
 
 import classNames from 'classnames/bind'
 
@@ -53,14 +49,12 @@ export default function ChatbotWindow() {
     height: window.innerHeight,
   })
 
+  const [chatbotRelativeSize, setChatbotRelativeSize] = useState({ widthRatio: 0, heightRatio: 0 })
+  const [chatbotAbsoluteSize, setChatbotAbsoluteSize] = useState({ width: 0, height: 0 })
+
   const [isChatbotOpen, setIsChatbotOpen] = useAtom(isChatbotOpenAtom)
-
-  const [chatbotRelativeSize, setChatbotRelativeSize] = useAtom(chatbotRelativeSizeAtom)
   const [chatbotRelativePosition, setChatbotRelativePosition] = useAtom(chatbotRelativePositionAtom)
-
-  const [chatbotAbsoluteSize, setChatbotAbsoluteSize] = useAtom(chatbotAbsoluteSizeAtom)
   const [chatbotAbsolutePosition, setChatbotAbsolutePosition] = useAtom(chatbotAbsolutePositionAtom)
-
   const [inputMode, setInputMode] = useAtom(chatInputModeAtom) // 입력 모드 | 탐색 모드
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
@@ -141,6 +135,7 @@ export default function ChatbotWindow() {
     direction: ResizeDirection,
     ref: HTMLElement,
     delta: { width: number; height: number },
+    position: Position,
   ) => {
     const { width, height } = windowSize
 
@@ -154,27 +149,8 @@ export default function ChatbotWindow() {
       heightRatio: newHeight / height,
     })
 
-    if (direction.includes('left') || direction.includes('top')) {
-      setChatbotAbsolutePosition((prev) => {
-        const newX = direction.includes('left') ? prev.x - delta.width : prev.x
-        const newY = direction.includes('top') ? prev.y - delta.height : prev.y
-
-        setChatbotRelativePosition(computeRelativePosition(newX, newY, width, height))
-
-        return { x: newX, y: newY }
-      })
-    }
-  }
-
-  const handleDragStop = (_: DraggableEvent, data: DraggableData) => {
-    const { width, height } = windowSize
-
-    setChatbotAbsolutePosition({
-      x: data.x,
-      y: data.y,
-    })
-
-    setChatbotRelativePosition(computeRelativePosition(data.x, data.y, width, height))
+    setChatbotAbsolutePosition(position)
+    setChatbotRelativePosition(computeRelativePosition(position.x, position.y, width, height))
   }
 
   const handleCloseClick = () => setIsChatbotOpen(false)
@@ -189,9 +165,9 @@ export default function ChatbotWindow() {
       {isChatbotOpen && (
         <Rnd
           bounds="parent"
-          dragAxis="both"
-          dragHandleClassName="drag-handle"
+          dragAxis="none"
           enableResizing
+          disableDragging={true}
           position={chatbotAbsolutePosition}
           size={{
             width: chatbotAbsoluteSize.width,
@@ -206,10 +182,8 @@ export default function ChatbotWindow() {
           minWidth={CHATBOT_DEFAULT_SIZE.width}
           minHeight={CHATBOT_DEFAULT_SIZE.height}
           onResizeStop={handleResizeStop}
-          onDragStop={handleDragStop}
           style={{
-            position: 'fixed',
-            zIndex: 1000,
+            pointerEvents: 'auto',
           }}
         >
           <AnimatePresence>
@@ -224,7 +198,7 @@ export default function ChatbotWindow() {
                 height: '100%',
               }}
             >
-              <div className={cx('chatbot-window__header', { 'drag-handle': true })}>
+              <div className={cx('chatbot-window__header')}>
                 <div className={cx('chatbot-window__header-content')}>
                   {inputMode === 'input' ? (
                     <>
