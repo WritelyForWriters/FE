@@ -22,6 +22,7 @@ const cx = classNames.bind(styles)
 interface PlannerCharacterFormProps {
   handleManualModification: (
     name: string,
+    section: string,
   ) => (value: string, inputValue: string) => Promise<boolean>
 }
 

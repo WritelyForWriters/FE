@@ -1,5 +1,6 @@
 import { useAtom } from 'jotai'
 import {
+  AiAssistantType,
   PlannerTemplatesAiAssistant,
   PlannerTemplatesAiAssistantListAtom,
 } from 'store/plannerAiAtoms'
@@ -22,6 +23,14 @@ export function usePlannerTemplatesAiAssistant() {
     })
   }
 
+  const setType = (name: string, type: AiAssistantType) => {
+    setList((prev) => prev.map((item) => (item.name === name ? { ...item, type } : item)))
+  }
+
+  const getType = (name: string): AiAssistantType | undefined => {
+    return list.find((item) => item.name === name)?.type
+  }
+
   const remove = (name: string) => {
     setList((prev) => prev.filter((item) => item.name !== name))
   }
@@ -34,6 +43,8 @@ export function usePlannerTemplatesAiAssistant() {
   return {
     get,
     set,
+    getType,
+    setType,
     remove,
     getContent,
     list,
