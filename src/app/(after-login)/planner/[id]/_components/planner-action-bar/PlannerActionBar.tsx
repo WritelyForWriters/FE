@@ -69,10 +69,6 @@ export default function PlannerActionBar({
     const [isTitleEditing, setIsTitleEditing] = useState(false)
     const [title, setTitle] = useState(productDetail?.title || '타이틀')
 
-    // TODO(hajae):
-    // 1. productDetail fetch후 content를 가지고 있음.
-    // 2. 다른 기기 or 다른 브라우저에서 작업 후 타이틀을 저장하면 현재 가지고 있는 content로 덮어씌울 수 있음
-    // Title만 저장하는 API가 필요할 지 추후 논의 필요
     const updateTitle = () => {
       saveProductMutation.mutate({
         productId: productId,
@@ -110,7 +106,6 @@ export default function PlannerActionBar({
             {title}
           </span>
         )}
-        {/* NOTE(hajae): 현재 테스트 */}
         <span className={cx('description')}>
           {autoSaveTimer > 0
             ? `${formatMillisecondToMinute(autoSaveTimer)}분 뒤에 자동 저장됩니다.`
@@ -120,16 +115,17 @@ export default function PlannerActionBar({
     )
   }
 
-  // 액션바 내 우측 영역
   const ExtraSectionContent = () => {
     return <FillButton size="large">집필하러 가기</FillButton>
   }
 
+  // NOTE(hajae): 기존에 JSX 컴포넌트를 넘기던 방식(<Component />)에서
+  // 함수 실행 결과를 넘기는 방식(Component())으로 변경하여 Hook 오류 방지
   return (
     <ActionBar
-      actionSection={<ActionSectionContent />}
-      titleSection={<TitleSectionContent />}
-      extraSection={<ExtraSectionContent />}
+      actionSection={ActionSectionContent()}
+      titleSection={TitleSectionContent()}
+      extraSection={ExtraSectionContent()}
     />
   )
 }
