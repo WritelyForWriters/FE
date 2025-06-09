@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { ChangeEvent, KeyboardEvent, useState } from 'react'
 
 import ActionBar from '@components/action-bar/ActionBar'
@@ -116,7 +118,11 @@ export default function PlannerActionBar({
   }
 
   const ExtraSectionContent = () => {
-    return <FillButton size="large">집필하러 가기</FillButton>
+    return (
+      <Link href={`/workspace/${productId}`}>
+        <FillButton size="large">집필하러 가기</FillButton>
+      </Link>
+    )
   }
 
   // NOTE(hajae): 기존에 JSX 컴포넌트를 넘기던 방식(<Component />)에서
