@@ -20,6 +20,7 @@ import { Position, Rnd } from 'react-rnd'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
+import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
@@ -51,6 +52,7 @@ export default function ChatbotWindow() {
 
   const [chatbotRelativeSize, setChatbotRelativeSize] = useState({ widthRatio: 0, heightRatio: 0 })
   const [chatbotAbsoluteSize, setChatbotAbsoluteSize] = useState({ width: 0, height: 0 })
+  const [hasScrolledUp, setHasScrolledUp] = useState(false)
 
   const [isChatbotOpen, setIsChatbotOpen] = useAtom(isChatbotOpenAtom)
   const [chatbotRelativePosition, setChatbotRelativePosition] = useAtom(chatbotRelativePositionAtom)
@@ -61,6 +63,7 @@ export default function ChatbotWindow() {
 
   const productId = useAtomValue(productIdAtom)
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
+  const chatbotHistory = useAtomValue(chatbotHistoryAtom)
 
   const { fetchNextPage } = useGetInfiniteAssistantHistory(productId)
 
@@ -96,10 +99,28 @@ export default function ChatbotWindow() {
     setChatbotAbsoluteSize,
   ])
 
+  useEffect(() => {
+    const container = containerRef.current
+    if (container && !hasScrolledUp) {
+      container.scrollTop = container.scrollHeight
+    }
+  }, [chatbotHistory, hasScrolledUp])
+
   const handleScroll = useCallback(() => {
     const container = containerRef.current
-    if (container && container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
-      fetchNextPage()
+    if (container) {
+      if (container.scrollTop <= 10) {
+        const prevScrollHeight = container.scrollHeight
+        fetchNextPage().then(() => {
+          const newScrollHeight = container.scrollHeight
+          container.scrollTop = newScrollHeight - prevScrollHeight
+        })
+      }
+      if (container.scrollTop < container.scrollHeight - container.clientHeight - 20) {
+        setHasScrolledUp(true)
+      } else {
+        setHasScrolledUp(false)
+      }
     }
   }, [fetchNextPage])
 

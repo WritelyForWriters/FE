@@ -14,6 +14,7 @@ import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/ed
 import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
+import { ChatItem } from 'types/chatbot/chatbot'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 import { TocItemType } from 'types/common/pannel'
@@ -193,13 +194,16 @@ export default function WorkSpacePage() {
   useEffect(() => {
     if (!previousChatbotHistory) return
 
-    let allChats = previousChatbotHistory.pages[0].result.contents
+    let allChats = previousChatbotHistory.pages[0].result.contents.toSorted(
+      (a: ChatItem, b: ChatItem) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    )
 
-    for (let i = 1; i < previousChatbotHistory.pages.length; i++) {
+    for (let i = previousChatbotHistory.pages.length - 1; i >= 1; i--) {
       const pageContents = previousChatbotHistory.pages[i].result.contents
 
       if (pageContents.length > 0) {
-        allChats = [...allChats, ...pageContents.slice(1)]
+        allChats = [...pageContents.slice(1), ...allChats]
       }
     }
 

@@ -16,12 +16,12 @@ export default function ChatbotMessageList() {
 
   return (
     <ul className={cx('chatbot-message-list')}>
+      <ChatbotChatItems />
       {isAssistantResponding && (
         <div>
           <Image alt="loading" src="/images/loading.gif" width={40} height={26} />
         </div>
       )}
-      <ChatbotChatItems />
     </ul>
   )
 }

@@ -9,6 +9,7 @@ import { getAssistantHistoryById } from 'api/chatbot/chatbot'
 import { CHAT_ERROR_MESSAGE } from 'constants/chatbot/message'
 import { RECOMMEND_PROMPTS } from 'constants/chatbot/recommendPrompts'
 import { QUERY_KEY } from 'constants/common/queryKeys'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FaRegStar } from 'react-icons/fa'
@@ -83,8 +84,12 @@ export default function ChatbotChatInput() {
       onSuccess: async (data) => {
         try {
           const newMessage = await getAssistantHistoryById(productId, data as string)
-          setChatbotHistory((prev) => [newMessage.result.contents[0], ...prev])
+          setChatbotHistory((prev) => [...prev, newMessage.result.contents[0]])
         } catch {}
+      },
+      onError: () => {
+        setIsAssistantResponding(false)
+        showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
       },
     })
 
