@@ -2,6 +2,7 @@ export interface ChatbotFormData {
   productId: string
   content: string
   prompt: string
+  shouldApplySetting: boolean
 }
 
 export interface ChatbotWebSearchFormData extends ChatbotFormData {
@@ -32,8 +33,14 @@ export interface RecommendPrompt {
   requiresSection: boolean
 }
 
+export type FeedbackOptionType =
+  | 'AWKWARD_SENTENCE'
+  | 'INACCURATE_INFO'
+  | 'UNAPPLIED_SETTING'
+  | 'ETC'
+
 export interface FeedbackFormData {
   isGood: boolean
-  feedbackType?: 'AWKWARD_SENTENCE' | 'INACCURATE_INFO' | 'UNAPPLIED_SETTING' | 'ETC'
+  feedbackType?: FeedbackOptionType
   feedback?: string
 }

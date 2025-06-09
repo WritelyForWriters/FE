@@ -1,8 +1,12 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 import { MouseEvent } from 'react'
 
+import { useAtomValue } from 'jotai'
 import { MdArrowOutward } from 'react-icons/md'
+import { productIdAtom } from 'store/productsAtoms'
 
 import FillButton from '@components/buttons/FillButton'
 import Pannel from '@components/pannel/Pannel'
@@ -21,11 +25,18 @@ const cx = classNames.bind(styles)
 const datas = ['시놉시스', '세계관', '등장인물', '줄거리', '아이디어 노트']
 
 export default function PlannerPannel() {
+  const productId = useAtomValue(productIdAtom)
+  const router = useRouter()
+
   const { isOpen, onClose, onOpen } = useCollapsed(false)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     onClose()
+  }
+
+  const handleRedirectPlanner = () => {
+    router.push(`/planner/${productId}`)
   }
 
   return (
@@ -39,6 +50,7 @@ export default function PlannerPannel() {
           </ul>
 
           <FillButton
+            type="button"
             size="large"
             variant="secondary"
             iconType={<MdArrowOutward size={20} />}
@@ -49,6 +61,7 @@ export default function PlannerPannel() {
               backgroundColor: '#666666',
               justifyContent: 'space-between',
             }}
+            onClick={handleRedirectPlanner}
           >
             작품 플래너 바로가기
           </FillButton>

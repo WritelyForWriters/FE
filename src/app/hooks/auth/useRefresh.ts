@@ -2,8 +2,6 @@ import { useMutation } from '@tanstack/react-query'
 import { refreshAccessToken } from 'api/auth/Auth'
 import axios from 'axios'
 import { deleteCookie } from 'cookies-next'
-import { useSetAtom } from 'jotai'
-import { accessTokenAtom } from 'store/accessTokenAtom'
 
 interface UseRefreshProps {
   onSuccessHandler?: () => void
@@ -11,12 +9,9 @@ interface UseRefreshProps {
 }
 
 export const useRefresh = ({ onSuccessHandler, onErrorHandler }: UseRefreshProps) => {
-  const setAccessToken = useSetAtom(accessTokenAtom)
-
   return useMutation({
     mutationFn: refreshAccessToken,
-    onSuccess: (accessToken) => {
-      setAccessToken(accessToken)
+    onSuccess: () => {
       if (onSuccessHandler) {
         onSuccessHandler()
       }

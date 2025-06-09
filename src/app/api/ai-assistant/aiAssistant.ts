@@ -4,6 +4,7 @@ interface PromptData {
   productId: string
   content: string
   prompt: string
+  shouldApplySetting?: boolean
 }
 
 interface PlannerPromptData {
@@ -42,5 +43,9 @@ export const postFeedback = async (promptData: Omit<PromptData, 'prompt'>) => {
 // 수동 수정 (작품 플래너)
 export const postPlannerUserModify = async (promptData: PlannerPromptData) => {
   const res = await authInstance.post('/assistant/planner', promptData)
+
+// 어시스턴트 답변 영구 보관
+export const archivedAnswer = async (assistantId: string) => {
+  const res = await authInstance.put(`/assistant/${assistantId}/archive`)
   return res.data.result
 }

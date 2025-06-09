@@ -17,7 +17,7 @@
   gap: 1rem;
 
   background-color: color.$alert-secondary-0;
-  z-index: 1;
+  z-index: 200;
 }
 
 // 액션바 내부 컨테이너
@@ -63,7 +63,6 @@
     .action-bar-span {
       @extend %typo-title-medium;
       color: color.$alert-secondary-900;
-      cursor: pointer;
     }
   }
 

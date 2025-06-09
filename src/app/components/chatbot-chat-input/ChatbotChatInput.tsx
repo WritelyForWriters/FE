@@ -14,13 +14,13 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { FaRegStar } from 'react-icons/fa'
 import { FaCircleArrowUp } from 'react-icons/fa6'
 import { MdLanguage, MdOutlineLightbulb } from 'react-icons/md'
+import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatModeAtom } from 'store/chatModeAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { clickedButtonAtom } from 'store/clickedButtonAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
-import { newChatMessagesAtom } from 'store/newChatMessagesAtom'
 import { productIdAtom } from 'store/productsAtoms'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
@@ -48,19 +48,19 @@ export default function ChatbotChatInput() {
   const [isFavoriteMenuOpen, setIsFavoriteMenuOpen] = useState(false)
   const [isRecommendMenuOpen, setIsRecommendMenuOpen] = useState(false)
 
-  const inputMode = useAtomValue(chatInputModeAtom) // 입력 모드 | 탐색 모드
-
   const [content, setContent] = useAtom(selectedRangeAtom)
   const [chatMode, setChatMode] = useAtom(chatModeAtom) // 일반 모드 | 웹 검색 모드
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
   const [clickedButton, setClickedButton] = useAtom(clickedButtonAtom)
-  const chatbotHistory = useAtomValue(chatbotHistoryAtom)
 
+  const inputMode = useAtomValue(chatInputModeAtom) // 입력 모드 | 탐색 모드
+  const chatbotHistory = useAtomValue(chatbotHistoryAtom)
   const productId = useAtomValue(productIdAtom)
+  const shouldApplySetting = useAtomValue(applyProductSettingsAtom)
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
   const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
-  const setNewChatMessages = useSetAtom(newChatMessagesAtom)
+  const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
 
   const showToast = useToast()
 
@@ -83,7 +83,7 @@ export default function ChatbotChatInput() {
       onSuccess: async (data) => {
         try {
           const newMessage = await getAssistantHistoryById(productId, data as string)
-          setNewChatMessages((prev) => [newMessage.result.contents[0], ...prev])
+          setChatbotHistory((prev) => [newMessage.result.contents[0], ...prev])
         } catch {}
       },
     })
@@ -101,9 +101,9 @@ export default function ChatbotChatInput() {
 
   const handleSubmitChatMessage = (data: ChatbotFormData) => {
     if (chatMode === 'web') {
-      submitWebSearchChatMessage({ ...data, sessionId: productId })
+      submitWebSearchChatMessage({ ...data, sessionId: productId, shouldApplySetting })
     } else {
-      submitDefaultChatMessage(data)
+      submitDefaultChatMessage({ ...data, shouldApplySetting })
     }
 
     setContent('')
@@ -143,9 +143,8 @@ export default function ChatbotChatInput() {
   }
 
   const handleRecommendPromptSelect = (item: RecommendPrompt) => {
-    if (item.requiresSection) {
+    if (item.requiresSection && !content) {
       showToast('warning', CHAT_ERROR_MESSAGE.SELECTED_REQUIRED)
-      // TODO: 선택 구간 없으면 토스트 노출
     } else {
       setPrompt(item.prompt)
       setIsRecommendMenuOpen(false)

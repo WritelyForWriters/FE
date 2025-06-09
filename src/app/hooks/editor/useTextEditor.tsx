@@ -1,41 +1,129 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
+import { useMutation } from '@tanstack/react-query'
 import { Editor } from '@tiptap/react'
-import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
-import { useAtom, useAtomValue } from 'jotai'
+import {
+  archivedAnswer,
+  postAutoModify,
+  postFeedback,
+  postUserModify,
+} from 'api/ai-assistant/aiAssistant'
+import { AxiosError } from 'axios'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
+import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
+import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
+import { FeedbackFormData } from 'types/chatbot/chatbot'
 import {
   ActionOptionType,
   AiassistantOptionType,
+  EvaluateStateType,
   TextSelectionRangeType,
 } from 'types/common/editor'
 
+import { useToast } from '@components/toast/ToastProvider'
+
+import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
 // MEMO(Sohyun): 텍스트 에디터와 관련된 모든 로직을 담당하는 커스텀 hook
 export function useTextEditor(editor: Editor | null) {
+  const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
+  const [aiassistantId, setAiassistantId] = useState('') // TODO (리팩토링) 응답(id, result)을 객체로 관리
+
+  const [feedback, setFeedback] = useState<EvaluateStateType>(INITIAL_EVALUATE_STATE)
+
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const [originalText, setOriginalText] = useAtom(originalPhraseAtom)
   const [aiResult, setAiResult] = useAtom(aiResultAtom)
   const productId = useAtomValue(productIdAtom)
+  const shouldApplySetting = useAtomValue(applyProductSettingsAtom)
 
   const selectionRef = useRef<TextSelectionRangeType | null>(null)
   const originalSelectionRef = useRef<TextSelectionRangeType | null>(null)
   const promptValueRef = useRef('')
   const feedbackInput = useRef<string | null>(null)
 
+  const showToast = useToast()
+
   const { isOpen, onOpen, onClose } = useCollapsed()
   const {
-    isOpen: isFeedbackOpen,
-    onOpen: onOpenFeedback,
-    onClose: onCloseFeedback,
+    isOpen: feedbackPrompt,
+    onOpen: onOpenFeedbackPrompt,
+    onClose: onCloseFeedbackPrompt,
   } = useCollapsed()
   const {
     isOpen: isAutoModifyVisible,
     onOpen: onOpenAutoModifyVisible,
     onClose: onCloseAutoModifyVisible,
   } = useCollapsed()
+
+  const { mutate: submitFeedback } = useSubmitFeedback({
+    onSuccess: (_, variables) => {
+      const isGood = (
+        variables as {
+          assistantId: string
+          formData: FeedbackFormData
+        }
+      ).formData.isGood
+      setFeedback((prev) => ({
+        ...prev,
+        isGoodSelected: isGood,
+        isBadSelected: !isGood,
+      }))
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        showToast('warning', error.response?.data.message)
+      }
+    },
+  })
+
+  const archivedAnswerMutation = useMutation({
+    mutationFn: archivedAnswer,
+    onSuccess: () => {
+      setFeedback((prev) => ({
+        ...prev,
+        isArchived: true,
+      }))
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        showToast('warning', error.response?.data.message)
+      }
+    },
+  })
+
+  // 어시스턴트 응답 피드백
+  const handleSubmitFeedback = ({ isGood, feedback: value, feedbackType }: FeedbackFormData) => {
+    if (!aiassistantId) return
+
+    if (feedback.isGoodSelected || feedback.isBadSelected) {
+      showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
+      return
+    }
+
+    if (isGood) {
+      submitFeedback({
+        assistantId: aiassistantId,
+        formData: {
+          isGood,
+        },
+      })
+    } else {
+      submitFeedback({
+        assistantId: aiassistantId,
+        formData: {
+          isGood,
+          feedbackType,
+          feedback: value,
+        },
+      })
+    }
+  }
 
   // 드래그한 영역 저장 및 하이라이트
   const handleTextSelection = () => {
@@ -76,6 +164,10 @@ export function useTextEditor(editor: Editor | null) {
       handleAiFeedback(originPhrase)
     }
 
+    if (type === 'free-chat') {
+      setIsChatbotOpen(true)
+    }
+
     if (type === 'memo') {
       setActiveMenu('memo')
     }
@@ -85,6 +177,8 @@ export function useTextEditor(editor: Editor | null) {
     promptValueRef.current = value
   }
 
+  // TODO(Sohyun) 어시스턴트 에러처리 및 로딩처리 > react-query로 변경
+  // 1. 자동 수정
   const handleAiAutoModify = async (originPhrase: string) => {
     if (!selectionRef.current || !editor) return
 
@@ -92,18 +186,33 @@ export function useTextEditor(editor: Editor | null) {
       const response = await postAutoModify({
         productId,
         content: originPhrase ?? originalText,
+        shouldApplySetting,
       })
 
       if (response.id) {
+        setAiassistantId(response.id)
+        setFeedback(INITIAL_EVALUATE_STATE)
         // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
         setAiResult(response.answer)
         onOpenAutoModifyVisible()
       }
     } catch (error) {
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onCloseAutoModifyVisible()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
+  // 2. 수동 수정
   const handleAiPrompt = async () => {
     if (!promptValueRef.current || !selectionRef.current) return
 
@@ -112,9 +221,12 @@ export function useTextEditor(editor: Editor | null) {
         productId,
         content: originalText,
         prompt: promptValueRef.current,
+        shouldApplySetting,
       })
 
       if (response.id) {
+        setAiassistantId(response.id)
+        setFeedback(INITIAL_EVALUATE_STATE)
         // (방법 1) selection을 받아와서 대체 텍스트 삽입
         // editor.commands.insertContentAt(selection, response.answer)
 
@@ -124,23 +236,49 @@ export function useTextEditor(editor: Editor | null) {
       }
     } catch (error) {
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onClose()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
+  // 3. 구간 피드백
   const handleAiFeedback = async (originPhrase: string) => {
     try {
       const response = await postFeedback({
         productId,
         content: originPhrase,
+        shouldApplySetting,
       })
 
       if (response.id) {
+        setAiassistantId(response.id)
+        setFeedback(INITIAL_EVALUATE_STATE)
         // TODO 로딩중일때
         feedbackInput.current = response.answer
-        onOpenFeedback()
+        onOpenFeedbackPrompt()
       }
     } catch (error) {
       console.log(error)
+      if (selectionRef.current && editor) {
+        editor.commands.insertContentAt(selectionRef.current, originalText)
+      }
+      setActiveMenu('defaultToolbar')
+      if (originalSelectionRef.current) {
+        clearHighlight(originalSelectionRef.current)
+        originalSelectionRef.current = null
+      }
+      onCloseFeedbackPrompt()
+      feedbackInput.current = null
+      showToast('warning', '다시 시도해 주세요')
     }
   }
 
@@ -178,6 +316,11 @@ export function useTextEditor(editor: Editor | null) {
         feedbackInput.current = null
         break
 
+      case 'archive':
+        if (feedback.isArchived) return
+        archivedAnswerMutation.mutate(aiassistantId)
+        break
+
       default:
         break
     }
@@ -207,7 +350,11 @@ export function useTextEditor(editor: Editor | null) {
         }
         onClose()
         feedbackInput.current = null
-        onCloseFeedback()
+        break
+
+      case 'archive':
+        if (feedback.isArchived) return
+        archivedAnswerMutation.mutate(aiassistantId)
         break
 
       default:
@@ -220,6 +367,7 @@ export function useTextEditor(editor: Editor | null) {
       case 'apply':
         setActiveMenu('defaultToolbar')
         clearHighlight()
+        onCloseFeedbackPrompt()
 
         // TODO 에디터에 피드백 문구 추출해서 삽입 => 피드백 받은 문구만 api 응답으로 받을 수 있는지 확인하기
         // TODO 구간 피드백 응답이 길어지기 때문에 UI 수정이 필요
@@ -227,11 +375,11 @@ export function useTextEditor(editor: Editor | null) {
           setAiResult(feedbackInput.current)
         }
         feedbackInput.current = null
-        onCloseFeedback()
         break
 
       case 'recreate':
         handleAiFeedback(originalText)
+        onCloseFeedbackPrompt()
         break
 
       case 'cancel':
@@ -243,8 +391,13 @@ export function useTextEditor(editor: Editor | null) {
           clearHighlight(originalSelectionRef.current)
           originalSelectionRef.current = null
         }
+        onCloseFeedbackPrompt()
         feedbackInput.current = null
-        onCloseFeedback()
+        break
+
+      case 'archive':
+        if (feedback.isArchived) return
+        archivedAnswerMutation.mutate(aiassistantId)
         break
 
       default:
@@ -264,16 +417,26 @@ export function useTextEditor(editor: Editor | null) {
     }
   }, [aiResult, editor, setAiResult])
 
+  useEffect(() => {
+    setFeedback({
+      assistantId: null,
+      isGoodSelected: false,
+      isBadSelected: false,
+      isArchived: false,
+    })
+  }, [editor?.state.selection.empty])
+
   return {
-    activeMenu,
     isOpen,
-    onClose,
-    isFeedbackOpen,
+    feedbackPrompt,
+    feedback,
+    activeMenu,
+    feedbackInput,
     selectionRef,
     isAutoModifyVisible,
-    feedbackInput,
     handleActiveMenu,
     handlePromptChange,
+    handleSubmitFeedback,
     handleAiPrompt,
     handleOptionClickAutoModify,
     handleOptionClickUserModify,

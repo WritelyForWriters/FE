@@ -5,17 +5,17 @@ import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
+import History from '@tiptap/extension-history'
 import Italic from '@tiptap/extension-italic'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
+import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
-
-import FillButton from '@components/buttons/FillButton'
 
 import { useMemos } from '@hooks/editor/useMemos'
 import { useTextEditor } from '@hooks/editor/useTextEditor'
@@ -30,6 +30,7 @@ import Toolbar from './Toolbar'
 import AutoModifyMenu from './ai-assistant-interface/AutoModifyMenu'
 import FeedbackMenu from './ai-assistant-interface/FeedbackMenu'
 import ManualModification from './ai-assistant-interface/ManualModification'
+import PromptInput from './common/PromptInput'
 
 import styles from './DefaultEditor.module.scss'
 
@@ -41,6 +42,8 @@ interface DefaultEditorProps {
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
+
+  const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
 
   const editor = useEditor({
     editable,
@@ -64,12 +67,28 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       }),
       BackgroundHighlight,
       UnderlineHighlight,
+      History.configure({
+        depth: 100, // NOTE(hajae): undo, redo stack 100
+        newGroupDelay: 400, // NOTE(hajae): undo, redo의 Grouping 딜레이 시간
+      }),
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
     onUpdate: () => {
       // 에디터에 변경사항이 생기면 저장 상태 false로 변경
       isSavedRef.current = false
+    },
+    onSelectionUpdate: ({ editor }) => {
+      if (editor.state.selection.empty) {
+        setSelectedRangeAtom('')
+      }
+
+      const { from, to } = editor.state.selection
+
+      if (from !== to) {
+        const selectedText = editor.getText().slice(from - 1, to - 1)
+        setSelectedRangeAtom(selectedText)
+      }
     },
   })
 
@@ -79,14 +98,16 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }))
 
   const {
-    activeMenu,
     isOpen,
-    onClose,
+    feedbackPrompt,
+    feedback,
+    activeMenu,
     feedbackInput,
     selectionRef,
     isAutoModifyVisible,
     handleActiveMenu,
     handlePromptChange,
+    handleSubmitFeedback,
     handleAiPrompt,
     handleOptionClickAutoModify,
     handleOptionClickUserModify,
@@ -121,45 +142,23 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           duration: 100,
           maxWidth: 'none',
           interactive: true,
+          zIndex: 100,
         }}
-        // --shouldShow: 버블 메뉴 표시를 제어하는 콜백
-        /* MEMO(Sohyun): DefaultEditor내부에서 editable 상태에따른 화면을 구현하고 싶었으나, 버블메뉴 shouldShow 상태 제어가 안되는 문제가 있음
-          editable상태가 shouldShow에 즉각반영이 안됨, (참고) https://tiptap.dev/docs/guides/output-json-html#render */
-        shouldShow={({ state }) => editable && !state.selection.empty}
+        shouldShow={({ editor, state }) => editor.isEditable && !state.selection.empty}
       >
         {activeMenu === 'defaultToolbar' && (
           <Toolbar editor={editor} handleActiveMenu={handleActiveMenu} />
         )}
 
-        {/* 구간 피드백 */}
-        {activeMenu === 'feedback' && (
-          <FeedbackMenu
-            feedbackText={feedbackInput.current}
-            onOptionClick={handleOptionClickFeedback}
-          />
-        )}
-
         {/* 메모 */}
+        {/* TODO 메모도 focusout or blur 시 하이라이트 사라지거나 or Portal로 UI 고정되도롣 */}
         {activeMenu === 'memo' && (
-          <div className={styles['prompt-menu']}>
-            <input
-              autoFocus
-              className={styles['prompt-menu__input']}
-              onChange={handleChange}
-              placeholder="메모를 입력해주세요."
-            />
-            <FillButton
-              size="medium"
-              variant="primary"
-              style={{
-                padding: '0.8rem 1.2rem',
-                height: '100%',
-              }}
-              onClick={handleSavedMemos}
-            >
-              저장하기
-            </FillButton>
-          </div>
+          <PromptInput
+            onPromptInputChange={handleChange}
+            onSubmit={handleSavedMemos}
+            placeholder="메모를 입력해주세요."
+            buttonText="저장하기"
+          />
         )}
       </BubbleMenu>
 
@@ -170,17 +169,35 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           selectionRef={selectionRef}
           isVisible={isAutoModifyVisible}
           onOptionClick={handleOptionClickAutoModify}
+          feedback={feedback}
+          handleSubmitFeedback={handleSubmitFeedback}
         />
       )}
 
       {/* 수동 수정 */}
       {activeMenu === 'user-modify' && (
         <ManualModification
-          isOpen={isOpen}
-          onClose={onClose}
+          isPrimaryActionMenuOpen={isOpen}
+          editor={editor}
+          selectionRef={selectionRef}
           onPromptChange={handlePromptChange}
           onAiPrompt={handleAiPrompt}
           onOptionClick={handleOptionClickUserModify}
+          feedback={feedback}
+          handleSubmitFeedback={handleSubmitFeedback}
+        />
+      )}
+
+      {/* 구간 피드백 */}
+      {activeMenu === 'feedback' && (
+        <FeedbackMenu
+          isFeedbackPromptMenuOpen={feedbackPrompt}
+          editor={editor}
+          selectionRef={selectionRef}
+          feedbackText={feedbackInput.current}
+          onOptionClick={handleOptionClickFeedback}
+          feedback={feedback}
+          handleSubmitFeedback={handleSubmitFeedback}
         />
       )}
 
