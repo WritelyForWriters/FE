@@ -16,6 +16,7 @@ import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
+import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { FeedbackFormData } from 'types/chatbot/chatbot'
 import {
   ActionOptionType,
@@ -41,6 +42,8 @@ export function useTextEditor(editor: Editor | null) {
   const [aiResult, setAiResult] = useAtom(aiResultAtom)
   const productId = useAtomValue(productIdAtom)
   const shouldApplySetting = useAtomValue(applyProductSettingsAtom)
+
+  const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
 
   const selectionRef = useRef<TextSelectionRangeType | null>(null)
   const originalSelectionRef = useRef<TextSelectionRangeType | null>(null)
@@ -165,6 +168,7 @@ export function useTextEditor(editor: Editor | null) {
     }
 
     if (type === 'free-chat') {
+      setSelectedRangeAtom(originPhrase)
       setIsChatbotOpen(true)
     }
 
