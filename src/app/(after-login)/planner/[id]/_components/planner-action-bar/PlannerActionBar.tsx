@@ -127,7 +127,7 @@ export default function PlannerActionBar({
 
     const handleClick = () => {
       if (isFormDirty) {
-        showToast('warning', '수정된 내용이 있습니다. 저장 후 이동해주세요.')
+        showToast('warning', '집필하러가기 전에 먼저 저장해주세요')
         return
       }
       router.push(`/workspace/${productId}`)
