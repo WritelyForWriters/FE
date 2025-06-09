@@ -18,8 +18,6 @@ import { useCollapsed } from '@hooks/common/useCollapsed'
 import { useProducts } from '@hooks/products/useProductsMutation'
 import { useGetProductList } from '@hooks/products/useProductsQueries'
 
-import logo from '/public/images/logo.png'
-
 import classNames from 'classnames/bind'
 
 import styles from './MainHeader.module.scss'
@@ -70,7 +68,7 @@ export default function MainHeader() {
   return (
     <header className={cx('header')}>
       <div className={cx('inner-container')}>
-        <Image src={logo} width={89} height={16} alt="로고" />
+        <Image src="/images/logo.png" width={89} height={16} alt="로고" />
         <section className={cx('inner-container__buttons')}>
           <TextButton
             size="large"

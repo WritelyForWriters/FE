@@ -13,8 +13,6 @@ import { isLoggedInAtom } from 'store/isLoggedInAtom'
 import { useGetMeProfile, useGetProductList } from '@hooks/index'
 
 import CardList from './CardList'
-import books from '/public/images/books.png'
-import pen from '/public/images/pen.png'
 
 import classNames from 'classnames/bind'
 
@@ -58,13 +56,13 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className={cx('dashboard__empty')}>
-            <Image src={books} alt="pen" width={300} height={300} />
+            <Image src="/images/books.png" alt="books" width={300} height={300} />
             <p className={cx('dashboard__message')}>아직 작품이 없어요</p>
           </div>
         )
       ) : (
         <div className={cx('dashboard__guest')}>
-          <Image src={pen} alt="pen" width={300} height={300} />
+          <Image src="/images/pen.png" alt="pen" width={300} height={300} />
           <p className={cx('dashboard__message')}>로그인하고 집필을 시작해보세요!</p>
         </div>
       )}
