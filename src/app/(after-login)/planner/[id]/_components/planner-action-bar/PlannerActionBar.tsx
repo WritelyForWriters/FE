@@ -4,6 +4,9 @@ import { useRouter } from 'next/navigation'
 
 import { ChangeEvent, KeyboardEvent, useState } from 'react'
 
+import { useAtom } from 'jotai'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
+
 import ActionBar from '@components/action-bar/ActionBar'
 import styles from '@components/action-bar/ActionBar.module.scss'
 import FillButton from '@components/buttons/FillButton'
@@ -40,6 +43,7 @@ export default function PlannerActionBar({
 }: PlannerActionBarProps) {
   const { data: productDetail } = useGetProductDetail(productId)
   const { saveProductMutation } = useProducts()
+  const [mode, setMode] = useAtom(PlannerTemplatesModeAtom)
   const showToast = useToast()
 
   const ActionSectionContent = () => {
@@ -55,15 +59,27 @@ export default function PlannerActionBar({
       setHasSaved(true)
     }
 
+    /* NOTE(hajae): 저장 사양
+     * 저장 전
+     * - 작품플래너 진입 시 저장하기 버튼 표시
+     *
+     * 저장 후
+     * - 작품플래너 진입 시 and 저장 직후 수정하기 버튼 표시,
+     * - 수정하기 버튼 클릭하기 전까지 입력필드 수정 불가,
+     *
+     * 수정하기 클릭 후
+     * - 저장하기 버튼 표시
+     * - 입력필드 수정 가능
+     */
     return (
       <>
-        {!hasSaved ? (
+        {!hasSaved && mode === 'edit' ? (
           <TextButton size="large" onClick={() => handleSave()}>
             저장하기
           </TextButton>
         ) : (
           <>
-            <TextButton size="large" onClick={() => handleSave()}>
+            <TextButton size="large" onClick={() => setMode('edit')}>
               수정하기
             </TextButton>
           </>
