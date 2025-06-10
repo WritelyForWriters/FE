@@ -37,12 +37,11 @@
     gap: 0.8rem;
   }
 
-  &__chatbot {
+  &__chatbot-wrapper {
     position: fixed;
-    top: 100;
     left: 0;
-    width: 100%;
-    height: 80%;
+    width: 100dvw;
+    height: 80dvh;
     pointer-events: none;
     z-index: 1000;
   }

@@ -257,7 +257,7 @@ export default function WorkSpacePage() {
             <PlannerPannel />
           </div>
         </div>
-        <div className={cx('main-section__chatbot')}>
+        <div className={cx('main-section__chatbot-wrapper')}>
           <ChatbotLauncher />
         </div>
       </main>
