@@ -26,7 +26,6 @@ interface PlannerActionBarProps {
   productId: string
   isValidFormValues: boolean
   isFormDirty: boolean
-  isSaved: boolean
   autoSaveTimer: number
   onSubmit: () => void
   onResetForm: () => void
@@ -36,7 +35,6 @@ export default function PlannerActionBar({
   productId,
   isValidFormValues,
   isFormDirty,
-  isSaved,
   autoSaveTimer,
   onSubmit,
   onResetForm,
@@ -47,7 +45,6 @@ export default function PlannerActionBar({
   const showToast = useToast()
 
   const ActionSectionContent = () => {
-    const [hasSaved, setHasSaved] = useState(isSaved)
     const handleSave = () => {
       if (!isValidFormValues) {
         showToast('warning', '필수 항목(장르, 로그라인)을 먼저 작성해주세요')
@@ -56,7 +53,6 @@ export default function PlannerActionBar({
 
       onSubmit()
       onResetForm()
-      setHasSaved(true)
     }
 
     /* NOTE(hajae): 저장 사양
@@ -73,7 +69,7 @@ export default function PlannerActionBar({
      */
     return (
       <>
-        {!hasSaved && mode === 'edit' ? (
+        {mode === 'edit' ? (
           <TextButton size="large" onClick={() => handleSave()}>
             저장하기
           </TextButton>

@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { use, useEffect } from 'react'
 
 import { useAtom, useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -48,7 +48,6 @@ export default function PlannerPage({ params }: { params: Params }) {
   const { id, templates, formValues, setFormValues, showToast, autoSaveTimer } =
     usePlannerData(params)
   const setMode = useSetAtom(PlannerTemplatesModeAtom)
-  const [isSaved, setIsSaved] = useState(false)
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
@@ -77,7 +76,7 @@ export default function PlannerPage({ params }: { params: Params }) {
   useEffect(() => {
     if (templates) {
       // NOTE(hajae): fetch된 데이터가 하나라도 있으면 이미 저장된 상태로 간주
-      setIsSaved(templates.isSaved)
+      setMode(templates.isSaved ? 'view' : 'edit')
 
       // NOTE(hajae): 서버에 저장된 ID가 존재하고, Local Storage에 저장된 ID가 없을 경우 ID를 SET
       // 현재 사양은 클라이언트에 저장된 데이터를 우선으로 Character를 SET
@@ -132,7 +131,6 @@ export default function PlannerPage({ params }: { params: Params }) {
         productId={id}
         isValidFormValues={isValid}
         isFormDirty={isDirty}
-        isSaved={isSaved}
         onSubmit={handleFormSubmit}
         autoSaveTimer={autoSaveTimer}
         onResetForm={() => reset(getValues())}

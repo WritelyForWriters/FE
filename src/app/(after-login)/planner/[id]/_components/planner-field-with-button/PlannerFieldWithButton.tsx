@@ -2,7 +2,9 @@ import Image from 'next/image'
 
 import { ReactNode, useEffect, useState } from 'react'
 
+import { useAtomValue } from 'jotai'
 import { useFormContext } from 'react-hook-form'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 
 import FillButton from '@components/buttons/FillButton'
 
@@ -44,6 +46,7 @@ export default function PlannerFieldWithButton({
   const { isOpen, onClose, onOpen } = useCollapsed(false)
   const [isShow, setIsShow] = useState(true)
   const [isDeleted, setIsDeleted] = useState(false)
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
   const initialValue = watch(name)
 
   const { remove, getContent, setType } = usePlannerTemplatesAiAssistant()
@@ -97,28 +100,30 @@ export default function PlannerFieldWithButton({
       {isShow ? (
         <div className={cx('field-with-button')}>
           {children}
-          <div className={cx('field-with-button__buttons')}>
-            {isValid && manualModifiable && (
+          {mode === 'edit' && (
+            <div className={cx('field-with-button__buttons')}>
+              {isValid && manualModifiable && (
+                <FillButton
+                  type="button"
+                  size="small"
+                  variant="secondary"
+                  shape="pill"
+                  iconPosition="only"
+                  iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
+                  onClick={onOpen}
+                />
+              )}
+
               <FillButton
                 type="button"
                 size="small"
                 variant="secondary"
-                shape="pill"
-                iconPosition="only"
-                iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
-                onClick={onOpen}
-              />
-            )}
-
-            <FillButton
-              type="button"
-              size="small"
-              variant="secondary"
-              onClick={() => removeField(setIsShow)}
-            >
-              삭제하기
-            </FillButton>
-          </div>
+                onClick={() => removeField(setIsShow)}
+              >
+                삭제하기
+              </FillButton>
+            </div>
+          )}
         </div>
       ) : (
         <FillButton

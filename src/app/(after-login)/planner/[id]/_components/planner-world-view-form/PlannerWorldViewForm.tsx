@@ -35,7 +35,9 @@ export default function PlannerWorldViewForm({
   const customFields: CustomField[] = watch('worldview.customFields') || []
 
   const handleAddCustomField = () => {
-    setValue('worldview.customFields', [...customFields, { id: '', name: '', content: '' }])
+    if (mode === 'edit') {
+      setValue('worldview.customFields', [...customFields, { id: '', name: '', content: '' }])
+    }
   }
 
   const handleDeleteCustomField = (index: number) => {
