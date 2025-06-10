@@ -2,8 +2,6 @@
  *  버튼 공통 컴포넌트 - OutLined Button
  * @author 선우
  */
-import { useAtomValue } from 'jotai'
-import { clickedButtonAtom } from 'store/clickedButtonAtom'
 import { ButtonPropsBase } from 'types/common/button'
 
 import classNames from 'classnames/bind'
@@ -21,23 +19,8 @@ export default function OutLinedButton({
   children,
   ...rest
 }: ButtonPropsBase) {
-  const clickedButton = useAtomValue(clickedButtonAtom)
-
-  const { name } = rest
-
-  const isActive = clickedButton === name
-
   return (
-    <button
-      className={cx(
-        'outlined-button',
-        { 'outlined-button--active': isActive },
-        size,
-        shape,
-        variant,
-      )}
-      {...rest}
-    >
+    <button className={cx('outlined-button', size, shape, variant)} {...rest}>
       {iconType && iconPosition === 'leading' && iconType}
       {iconType && iconPosition === 'only' ? iconType : children}
       {iconType && iconPosition === 'trailing' && iconType}
