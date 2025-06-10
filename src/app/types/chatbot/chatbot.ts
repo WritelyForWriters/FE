@@ -26,6 +26,7 @@ export interface ChatItem {
     isApplied: boolean
     isGood: boolean
   }
+  createdAt: string
 }
 
 export interface RecommendPrompt {

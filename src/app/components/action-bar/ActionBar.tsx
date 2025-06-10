@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import { ReactNode } from 'react'
 
@@ -19,14 +20,17 @@ interface ActionBarProps {
 }
 
 export default function ActionBar({ actionSection, titleSection, extraSection }: ActionBarProps) {
+  const isPlanner = usePathname().includes('planner')
+
   return (
     <div className={cx('action-bar-wrapper')}>
       <div className={cx('action-bar-inner-container')}>
         <section className={cx('action-bar-action-section')}>
-          {/* 홈 버튼 */}
-          <Link href="/">
-            <MdHome size={24}></MdHome>
-          </Link>
+          {isPlanner && (
+            <Link href="/">
+              <MdHome size={24}></MdHome>
+            </Link>
+          )}
           {actionSection}
         </section>
         <section className={cx('action-bar-info-section')}>

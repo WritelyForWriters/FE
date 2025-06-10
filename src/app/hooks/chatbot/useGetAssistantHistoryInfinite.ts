@@ -11,7 +11,7 @@ export const useGetInfiniteAssistantHistory = (productId: string) => {
         cursor: pageParam as string | undefined,
       }),
     getNextPageParam: (lastPage) => {
-      if (!lastPage.result.contents.length) {
+      if (lastPage.result.contents.length === 1) {
         return undefined
       }
       return lastPage.result.contents.at(-1)?.id

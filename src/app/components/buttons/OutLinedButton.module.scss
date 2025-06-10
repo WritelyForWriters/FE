@@ -49,11 +49,6 @@
     }
   }
 
-  &--active {
-    border: none;
-    background-color: color.$alert-secondary-200;
-  }
-
   &:disabled {
     cursor: not-allowed;
   }

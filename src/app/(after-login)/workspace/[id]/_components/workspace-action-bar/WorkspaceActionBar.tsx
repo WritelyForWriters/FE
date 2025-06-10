@@ -1,10 +1,13 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 import { ChangeEvent, KeyboardEvent, RefObject, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
 import { useAtom, useAtomValue } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
+import { MdHome } from 'react-icons/md'
 import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { autoSaveMessageAtom, isEditableAtom } from 'store/editorAtoms'
 import { productTitleAtom } from 'store/productsAtoms'
@@ -43,8 +46,11 @@ export default function WorkspaceActionBar({
   editorRef,
   isSavedRef,
 }: WorkspaceActionBarProps) {
+  const router = useRouter()
+
   const methods = useForm()
   const ref = useRef<ModalHandler | null>(null)
+  const modalRef = useRef<ModalHandler | null>(null)
 
   const pdfPreviewModalRef = useRef<ModalHandler | null>(null)
   const previewRef = useRef<HTMLDivElement>(null)
@@ -104,8 +110,35 @@ export default function WorkspaceActionBar({
       handleModalOpen()
     }
 
+    const handleHomeButtonClick = () => {
+      if (isSavedRef.current) {
+        router.push('/')
+      } else {
+        modalRef.current?.open()
+        history.pushState(null, '', '')
+      }
+    }
+
     return (
       <>
+        <Modal
+          ref={modalRef}
+          title="나가기 전 작성한 내용을 저장해 주세요."
+          cancelText="취소"
+          confirmText="저장하기"
+          onCancel={() => {
+            modalRef.current?.close()
+          }}
+          onConfirm={async () => {
+            await handleSave()
+            isSavedRef.current = true
+            modalRef.current?.close()
+            history.pushState(null, '', '') // 뒤로가기 무효화 (다시 머무르게)
+          }}
+        />
+        <button onClick={handleHomeButtonClick}>
+          <MdHome size={24}></MdHome>
+        </button>
         {isContentEditing ? (
           <>
             <TextButton size="large" onClick={handleSave}>

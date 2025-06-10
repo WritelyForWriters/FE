@@ -36,4 +36,13 @@
     flex-wrap: wrap;
     gap: 0.8rem;
   }
+
+  &__chatbot-wrapper {
+    position: fixed;
+    left: 0;
+    width: 100dvw;
+    height: 80dvh;
+    pointer-events: none;
+    z-index: 1000;
+  }
 }

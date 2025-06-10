@@ -1,5 +1,7 @@
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
 
+const MAX_VIEWPORT_HEIGHT_RATIO = 0.8
+
 export const computeChatbotAbsolutePosition = (
   faviconX: number,
   faviconY: number,
@@ -8,16 +10,25 @@ export const computeChatbotAbsolutePosition = (
 ) => {
   let computedX, computedY
 
-  if (faviconX + CHATBOT_DEFAULT_SIZE.width >= innerWidth) {
-    computedX = faviconX - CHATBOT_DEFAULT_SIZE.width
+  const chatbotWidth = CHATBOT_DEFAULT_SIZE.width
+  const chatbotHeight = CHATBOT_DEFAULT_SIZE.height
+
+  const maxChatbotViewportHeight = innerHeight * MAX_VIEWPORT_HEIGHT_RATIO
+
+  if (faviconX + chatbotWidth > innerWidth) {
+    computedX = faviconX - chatbotWidth
   } else {
     computedX = faviconX
   }
 
-  if (faviconY + CHATBOT_DEFAULT_SIZE.height >= innerHeight) {
-    computedY = faviconY - CHATBOT_DEFAULT_SIZE.height
-  } else {
-    computedY = faviconY
+  computedY = faviconY
+
+  if (computedY + chatbotHeight > maxChatbotViewportHeight) {
+    computedY = maxChatbotViewportHeight - chatbotHeight
+  }
+
+  if (computedY < 0) {
+    computedY = 0
   }
 
   return { x: computedX, y: computedY }

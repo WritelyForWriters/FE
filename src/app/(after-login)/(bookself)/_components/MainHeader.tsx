@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { MAX_PRODUCT_COUNT } from 'constants/bookself/number'
@@ -67,10 +68,7 @@ export default function MainHeader() {
   return (
     <header className={cx('header')}>
       <div className={cx('inner-container')}>
-        <section className={cx('inner-container__logo')}>
-          {/* TODO: 로고 배치 */}
-          <div>로고</div>
-        </section>
+        <Image src="/images/logo.png" width={89} height={16} alt="로고" />
         <section className={cx('inner-container__buttons')}>
           <TextButton
             size="large"

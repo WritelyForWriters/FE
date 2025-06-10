@@ -11,7 +11,10 @@ import { useAtom, useSetAtom } from 'jotai'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
+import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
+import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
+import { ChatItem } from 'types/chatbot/chatbot'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 import { TocItemType } from 'types/common/pannel'
@@ -63,6 +66,8 @@ export default function WorkSpacePage() {
   const [productId, setProductId] = useAtom(productIdAtom)
   const setFixedMessage = useSetAtom(chatbotFixedMessageAtom)
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
+  const setFaviconRelativePosition = useSetAtom(faviconRelativePositionAtom)
+  const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
 
   const { data: previousChatbotHistory } = useGetInfiniteAssistantHistory(productId)
   const { data: fixedMessage } = useGetFixedMessage(productId)
@@ -189,16 +194,23 @@ export default function WorkSpacePage() {
   useEffect(() => {
     if (!previousChatbotHistory) return
 
-    let allChats = previousChatbotHistory.pages[0].result.contents
+    let allChats = previousChatbotHistory.pages[0].result.contents.toSorted(
+      (a: ChatItem, b: ChatItem) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    )
 
     for (let i = 1; i < previousChatbotHistory.pages.length; i++) {
-      const pageContents = previousChatbotHistory.pages[i].result.contents
+      const sortedPageContents = previousChatbotHistory.pages[i].result.contents
+        .slice(1)
+        .toSorted(
+          (a: ChatItem, b: ChatItem) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        )
 
-      if (pageContents.length > 0) {
-        allChats = [...allChats, ...pageContents.slice(1)]
+      if (sortedPageContents.length > 0) {
+        allChats = [...sortedPageContents, ...allChats]
       }
     }
-
     setChatbotHistory(allChats)
   }, [previousChatbotHistory, productId])
 
@@ -212,6 +224,11 @@ export default function WorkSpacePage() {
         : null,
     )
   }, [fixedMessage, setFixedMessage, productId])
+
+  useEffect(() => {
+    setIsChatbotOpen(false)
+    setFaviconRelativePosition({ xRatio: 0.9, yRatio: 0.7 })
+  }, [productId])
 
   return (
     <div className={cx('container')}>
@@ -244,8 +261,9 @@ export default function WorkSpacePage() {
             <PlannerPannel />
           </div>
         </div>
-
-        <ChatbotLauncher />
+        <div className={cx('main-section__chatbot-wrapper')}>
+          <ChatbotLauncher />
+        </div>
       </main>
 
       <Modal

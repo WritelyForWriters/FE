@@ -14,6 +14,7 @@ import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
+import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
 
@@ -42,6 +43,7 @@ interface DefaultEditorProps {
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
+  const isChatbotOpen = useAtomValue(isChatbotOpenAtom)
 
   const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
 
@@ -87,7 +89,9 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
       if (from !== to) {
         const selectedText = editor.getText().slice(from - 1, to - 1)
-        setSelectedRangeAtom(selectedText)
+        if (isChatbotOpen) {
+          setSelectedRangeAtom(selectedText)
+        }
       }
     },
   })

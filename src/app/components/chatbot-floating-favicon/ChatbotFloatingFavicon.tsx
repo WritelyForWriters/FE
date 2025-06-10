@@ -95,7 +95,7 @@ export default function ChatbotFloatingFavicon() {
       bounds="parent"
       dragHandleClassName="drag-handle"
       style={{
-        position: 'fixed',
+        pointerEvents: 'auto',
       }}
     >
       <div className={cx('favicon-wrapper')}>

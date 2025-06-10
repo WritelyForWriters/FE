@@ -13,8 +13,6 @@ import Pannel from '@components/pannel/Pannel'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
-import PlannerItem from './PlannerItem'
-
 import classNames from 'classnames/bind'
 
 import styles from './PlannerPannel.module.scss'
@@ -22,7 +20,7 @@ import styles from './PlannerPannel.module.scss'
 const cx = classNames.bind(styles)
 
 // mock data
-const datas = ['시놉시스', '세계관', '등장인물', '줄거리', '아이디어 노트']
+// const datas = ['시놉시스', '세계관', '등장인물', '줄거리', '아이디어 노트']
 
 export default function PlannerPannel() {
   const productId = useAtomValue(productIdAtom)
@@ -43,12 +41,12 @@ export default function PlannerPannel() {
     <>
       {isOpen ? (
         <Pannel onClick={handleCollapsedPannel} title="작품 플래너">
-          <ul className={cx('planner-list')}>
+          {/* <ul className={cx('planner-list')}>
             {datas.map((data) => (
               <PlannerItem key={data} title={data} content={`${data} 내용`} />
             ))}
-          </ul>
-
+          </ul> */}
+          <h4>정식 버전에서는 작품 플래너의 내용을 이 메뉴에서 볼 수 있습니다.</h4>
           <FillButton
             type="button"
             size="large"
