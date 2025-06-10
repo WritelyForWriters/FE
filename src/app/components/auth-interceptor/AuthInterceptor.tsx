@@ -72,7 +72,7 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
           return Promise.reject(error)
         }
 
-        if (status === 401) {
+        if (status === 401 || status === 404) {
           try {
             const newAccessToken = await refresh()
 
