@@ -2,9 +2,10 @@
 
 import { use, useEffect, useState } from 'react'
 
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
 import { useToast } from '@components/toast/ToastProvider'
@@ -46,6 +47,7 @@ function usePlannerData(params: Params) {
 export default function PlannerPage({ params }: { params: Params }) {
   const { id, templates, formValues, setFormValues, showToast, autoSaveTimer } =
     usePlannerData(params)
+  const setMode = useSetAtom(PlannerTemplatesModeAtom)
   const [isSaved, setIsSaved] = useState(false)
 
   const methods = useForm<PlannerSynopsisFormValues>()
@@ -61,10 +63,15 @@ export default function PlannerPage({ params }: { params: Params }) {
   const handleFormSubmit = handleSubmit((formValues) => {
     const request = PlannerTemplatesRequest.from(formValues, formValues.characters)
 
-    createTemplate({
-      productId: id,
-      request,
-    })
+    createTemplate(
+      {
+        productId: id,
+        request,
+      },
+      {
+        onSuccess: () => setMode('view'),
+      },
+    )
   })
 
   useEffect(() => {
