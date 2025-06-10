@@ -44,6 +44,7 @@ export default function PlannerSynopsisForm({
         }}
         isMulti={true}
         isRequired={true}
+        readOnly={mode === 'view'}
       />
       <PlannerFieldWithButton name="synopsis.length" isDropdown={true} manualModifiable={false}>
         <Dropdown
@@ -53,6 +54,7 @@ export default function PlannerSynopsisForm({
           label="분량"
           options={PLANNER_SYNOPSIS_LENGTH}
           isRequired={false}
+          readOnly={mode === 'view'}
         />
       </PlannerFieldWithButton>
 
