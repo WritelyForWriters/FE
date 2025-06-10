@@ -199,14 +199,18 @@ export default function WorkSpacePage() {
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     )
 
-    for (let i = previousChatbotHistory.pages.length - 1; i >= 1; i--) {
-      const pageContents = previousChatbotHistory.pages[i].result.contents
+    for (let i = 1; i < previousChatbotHistory.pages.length; i++) {
+      const sortedPageContents = previousChatbotHistory.pages[i].result.contents
+        .slice(1)
+        .toSorted(
+          (a: ChatItem, b: ChatItem) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        )
 
-      if (pageContents.length > 0) {
-        allChats = [...pageContents.slice(1), ...allChats]
+      if (sortedPageContents.length > 0) {
+        allChats = [...sortedPageContents, ...allChats]
       }
     }
-
     setChatbotHistory(allChats)
   }, [previousChatbotHistory, productId])
 
