@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 
 import { PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import { CharacterFormValues } from 'types/planner/plannerSynopsisFormValues'
 
 import FillButton from '@components/buttons/FillButton'
@@ -41,6 +42,7 @@ export default function PlannerCharacterFormList({
   const { isOpen, onToggle } = useCollapsed(true)
   const { control } = useFormContext()
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(paramsId))
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
 
   const getTextFieldName = (name: string) => {
     // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
@@ -114,7 +116,8 @@ export default function PlannerCharacterFormList({
                       ? `characters[${arrayIndex}].customFields[0].name`
                       : ''
                   }
-                  isLabelEditable={item.name === 'customFields'}
+                  isLabelEditable={item.name === 'customFields' && mode === 'edit'}
+                  readOnly={mode === 'view'}
                 />
               </PlannerFieldWithButton>
             ) : (
@@ -123,6 +126,7 @@ export default function PlannerCharacterFormList({
                 name={getTextFieldName(item.name)}
                 label={item.label}
                 variant={expandItems.includes(item.name) ? 'expand' : undefined}
+                readOnly={mode === 'view'}
               />
             ),
           )}

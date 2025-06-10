@@ -2,6 +2,8 @@ import {
   PLANNER_SYNOPSIS_GENRES,
   PLANNER_SYNOPSIS_LENGTH,
 } from 'constants/planner/plannerConstants'
+import { useAtomValue } from 'jotai'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 
 import Dropdown from '@components/dropdown/Dropdown'
 import TextField from '@components/text-field/TextField'
@@ -23,6 +25,8 @@ interface PlannerSynopsisFormProps {
 export default function PlannerSynopsisForm({
   handleManualModification,
 }: PlannerSynopsisFormProps) {
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
+
   return (
     <div className={cx('synopsis-form')} id="heading1">
       <div className={cx('synopsis-form__title')}>시놉시스</div>
@@ -53,7 +57,12 @@ export default function PlannerSynopsisForm({
       </PlannerFieldWithButton>
 
       <PlannerFieldWithButton name="synopsis.purpose" manualModifiable={false}>
-        <TextField name="synopsis.purpose" label="기획 의도" variant="expand" />
+        <TextField
+          name="synopsis.purpose"
+          label="기획 의도"
+          variant="expand"
+          readOnly={mode === 'view'}
+        />
       </PlannerFieldWithButton>
 
       <TextField
@@ -68,12 +77,18 @@ export default function PlannerSynopsisForm({
             }
           },
         }}
+        readOnly={mode === 'view'}
       />
       <PlannerFieldWithButton
         name="synopsis.example"
         handleManualModification={handleManualModification('synopsis.example', 'example')}
       >
-        <TextField name="synopsis.example" label="예시 문장" variant="expand" />
+        <TextField
+          name="synopsis.example"
+          label="예시 문장"
+          variant="expand"
+          readOnly={mode === 'view'}
+        />
       </PlannerFieldWithButton>
     </div>
   )

@@ -1,5 +1,7 @@
 import { PLANNER_WORLD_VIEW_ITEMS } from 'constants/planner/plannerConstants'
+import { useAtomValue } from 'jotai'
 import { useFormContext } from 'react-hook-form'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 
 import TextButton from '@components/buttons/TextButton'
 import TextField from '@components/text-field/TextField'
@@ -28,6 +30,7 @@ interface PlannerSynopsisFormProps {
 export default function PlannerWorldViewForm({
   handleManualModification,
 }: PlannerSynopsisFormProps) {
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
   const { watch, setValue } = useFormContext()
   const customFields: CustomField[] = watch('worldview.customFields') || []
 
@@ -56,6 +59,7 @@ export default function PlannerWorldViewForm({
             label={item.label}
             variant="expand"
             helperText={item.helperText}
+            readOnly={mode === 'view'}
           />
         </PlannerFieldWithButton>
       ))}
@@ -70,7 +74,8 @@ export default function PlannerWorldViewForm({
             label="커스텀 항목"
             variant="expand"
             labelName={`worldview.customFields[${index}].name`}
-            isLabelEditable={true}
+            isLabelEditable={mode === 'edit'}
+            readOnly={mode === 'view'}
           />
         </PlannerFieldWithButton>
       ))}
