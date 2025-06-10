@@ -20,9 +20,9 @@ import { Position, Rnd } from 'react-rnd'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
-import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
+import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
 
@@ -52,7 +52,6 @@ export default function ChatbotWindow() {
 
   const [chatbotRelativeSize, setChatbotRelativeSize] = useState({ widthRatio: 0, heightRatio: 0 })
   const [chatbotAbsoluteSize, setChatbotAbsoluteSize] = useState({ width: 0, height: 0 })
-  const [hasScrolledUp, setHasScrolledUp] = useState(false)
 
   const [isChatbotOpen, setIsChatbotOpen] = useAtom(isChatbotOpenAtom)
   const [chatbotRelativePosition, setChatbotRelativePosition] = useAtom(chatbotRelativePositionAtom)
@@ -63,9 +62,9 @@ export default function ChatbotWindow() {
 
   const productId = useAtomValue(productIdAtom)
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
-  const chatbotHistory = useAtomValue(chatbotHistoryAtom)
+  const isAssistantResponding = useAtomValue(isAssistantRespondingAtom)
 
-  const { fetchNextPage } = useGetInfiniteAssistantHistory(productId)
+  const { fetchNextPage, hasNextPage } = useGetInfiniteAssistantHistory(productId)
 
   useEffect(() => {
     const handleResize = () => {
@@ -101,28 +100,33 @@ export default function ChatbotWindow() {
 
   useEffect(() => {
     const container = containerRef.current
-    if (container && !hasScrolledUp) {
+
+    if (container) {
       container.scrollTop = container.scrollHeight
     }
-  }, [chatbotHistory, hasScrolledUp])
+  }, [isAssistantResponding])
 
   const handleScroll = useCallback(() => {
     const container = containerRef.current
-    if (container) {
-      if (container.scrollTop <= 10) {
-        const prevScrollHeight = container.scrollHeight
-        fetchNextPage().then(() => {
-          const newScrollHeight = container.scrollHeight
-          container.scrollTop = newScrollHeight - prevScrollHeight
-        })
-      }
-      if (container.scrollTop < container.scrollHeight - container.clientHeight - 20) {
-        setHasScrolledUp(true)
-      } else {
-        setHasScrolledUp(false)
-      }
+    if (!container || !hasNextPage) return
+
+    if (container.scrollTop <= 100) {
+      const prevScrollHeight = container.scrollHeight
+
+      const observer = new MutationObserver(() => {
+        const newScrollHeight = container.scrollHeight
+        container.scrollTop = newScrollHeight - prevScrollHeight
+        observer.disconnect()
+      })
+
+      observer.observe(container, {
+        childList: true,
+        subtree: true,
+      })
+
+      fetchNextPage()
     }
-  }, [fetchNextPage])
+  }, [fetchNextPage, hasNextPage])
 
   useEffect(() => {
     const container = containerRef.current
