@@ -68,7 +68,10 @@ export default function PlannerPage({ params }: { params: Params }) {
         request,
       },
       {
-        onSuccess: () => setMode('view'),
+        onSuccess: () => {
+          setMode('view')
+          setFormValues(formValues)
+        },
       },
     )
   })
