@@ -74,16 +74,18 @@ export default function PlannerCharacterFormList({
       <div className={cx('list__title')}>
         <span>등장인물 {arrayIndex + 1}</span>
         <div className={cx('list__title__buttons')}>
-          <div className={cx('list__title__buttons__delete')}>
-            <FillButton
-              size="small"
-              variant="secondary"
-              type="button"
-              onClick={() => handleRemoveCharacter(arrayIndex)}
-            >
-              삭제하기
-            </FillButton>
-          </div>
+          {mode === 'edit' && (
+            <div className={cx('list__title__buttons__delete')}>
+              <FillButton
+                size="small"
+                variant="secondary"
+                type="button"
+                onClick={() => handleRemoveCharacter(arrayIndex)}
+              >
+                삭제하기
+              </FillButton>
+            </div>
+          )}
 
           {isOpen ? (
             <IoIosArrowUp onClick={onToggle} className={cx('list__title__buttons__closed-icon')} />
