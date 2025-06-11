@@ -6,7 +6,7 @@ import { useAtomValue } from 'jotai'
 import { FaCheck } from 'react-icons/fa6'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { productIdAtom } from 'store/productsAtoms'
-import { MemosDto } from 'types/memos'
+import { MemosDto } from 'types/memos/memosResponseType'
 
 import SelectMenu from '@components/select-menu/SelectMenu'
 
@@ -123,7 +123,13 @@ export default function MemoItem({ memoList, activeTab }: MemoItemProps) {
   return (
     <li className={cx('memo-item')}>
       <div>
-        <h3>{selectedText}</h3>
+        <h3>
+          {!selectedText ? (
+            <span className={cx('memo-deleted-badge')}>삭제된 구간입니다</span>
+          ) : (
+            title
+          )}
+        </h3>
         <div className={cx('memo-item__button')}>
           {(activeTab === 'progress' || (activeTab === 'all' && isCompleted)) && (
             <>

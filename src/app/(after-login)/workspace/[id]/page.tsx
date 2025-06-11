@@ -257,7 +257,7 @@ export default function WorkSpacePage() {
 
         <div>
           <div className={cx('main-section__pannel')}>
-            <MemoPannel memoList={memoList} />
+            <MemoPannel memoList={memoList} editor={editorRef.current?.getEditor() as Editor} />
             <PlannerPannel />
           </div>
         </div>

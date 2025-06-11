@@ -7,7 +7,7 @@ export interface UnderlineHighlightOptions {
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     underlineHighlight: {
-      setUnderlineHighlight: (attributes?: { color?: string }) => ReturnType
+      setUnderlineHighlight: (attributes?: { color?: string; memoId?: string }) => ReturnType
       unsetUnderlineHighlight: () => ReturnType
     }
   }
@@ -28,6 +28,9 @@ export const UnderlineHighlight = Mark.create<UnderlineHighlightOptions>({
       color: {
         default: '#FFC6C6',
       },
+      memoId: {
+        default: null,
+      },
     }
   },
 
@@ -40,11 +43,12 @@ export const UnderlineHighlight = Mark.create<UnderlineHighlightOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
-    const { color } = HTMLAttributes
+    const { color, memoId } = HTMLAttributes
     return [
       'mark',
       mergeAttributes(this.options.HTMLAttributes, {
         'data-type': 'underline',
+        'data-memo-id': memoId, // 메모 저장 후 생성된 메모ID를 mark태그 속성으로 저장
         class: 'underline-highlight',
         style: `border-bottom: 2px solid ${color}; background-color: transparent; padding-bottom: 5px;`,
       }),

@@ -1,5 +1,6 @@
 import authInstance from 'api/core/AuthInstance'
 import {
+  CreateMemosResponse,
   MemoList,
   SavedMemosRequestType,
   UpdateMemosCompletedRequestType,
@@ -8,7 +9,7 @@ import {
 
 // 메모 생성
 export const createMemos = async ({ productId, data }: SavedMemosRequestType) => {
-  const res = await authInstance.post(`/products/${productId}/memos`, data)
+  const res = await authInstance.post<CreateMemosResponse>(`/products/${productId}/memos`, data)
   return res.data.result
 }
 
