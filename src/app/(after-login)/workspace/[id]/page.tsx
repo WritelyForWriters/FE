@@ -10,6 +10,7 @@ import { DELAY_TIME } from 'constants/workspace/number'
 import { useAtom, useSetAtom } from 'jotai'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
+import { chatbotSessionIdAtom } from 'store/chatbotSessionIdAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
@@ -68,6 +69,7 @@ export default function WorkSpacePage() {
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
   const setFaviconRelativePosition = useSetAtom(faviconRelativePositionAtom)
   const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
+  const setSessionId = useSetAtom(chatbotSessionIdAtom)
 
   const { data: previousChatbotHistory } = useGetInfiniteAssistantHistory(productId)
   const { data: fixedMessage } = useGetFixedMessage(productId)
@@ -228,6 +230,10 @@ export default function WorkSpacePage() {
   useEffect(() => {
     setIsChatbotOpen(false)
     setFaviconRelativePosition({ xRatio: 0.9, yRatio: 0.7 })
+  }, [productId])
+
+  useEffect(() => {
+    setSessionId(new Date().getTime().toString())
   }, [productId])
 
   return (

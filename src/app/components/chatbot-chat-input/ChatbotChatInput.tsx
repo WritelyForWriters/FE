@@ -17,6 +17,7 @@ import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
+import { chatbotSessionIdAtom } from 'store/chatbotSessionIdAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
 import { productIdAtom } from 'store/productsAtoms'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
@@ -50,6 +51,7 @@ export default function ChatbotChatInput() {
   const chatbotHistory = useAtomValue(chatbotHistoryAtom)
   const productId = useAtomValue(productIdAtom)
   const shouldApplySetting = useAtomValue(applyProductSettingsAtom)
+  const sessionId = useAtomValue(chatbotSessionIdAtom)
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
   const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
@@ -112,9 +114,9 @@ export default function ChatbotChatInput() {
 
   const handleSubmitChatMessage = (data: ChatbotFormData) => {
     if (isWebSearchMode) {
-      submitWebSearchChatMessage({ ...data, sessionId: '1', shouldApplySetting })
+      submitWebSearchChatMessage({ ...data, sessionId, shouldApplySetting })
     } else {
-      submitDefaultChatMessage({ ...data, shouldApplySetting })
+      submitDefaultChatMessage({ ...data, sessionId, shouldApplySetting })
     }
 
     setContent('')
@@ -164,11 +166,6 @@ export default function ChatbotChatInput() {
         setSelectedIndex((prev) => Math.min(chatbotHistory.length - 1, ++prev))
     }
   }
-
-  // const scrollToBottom = () => {
-  //   const chatWindow = document.getElementById('chatbot-window__body') as HTMLDivElement
-  //   chatWindow.scrollTop = chatWindow.scrollHeight
-  // }
 
   return (
     <FormProvider {...method}>
