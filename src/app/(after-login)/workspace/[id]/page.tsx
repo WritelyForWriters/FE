@@ -248,29 +248,32 @@ export default function WorkSpacePage() {
       />
       <div className={cx('header-space')}></div>
 
-      <main className={cx('main-section')}>
-        <IndexPannel toc={editorIndexToc} />
-
-        <div className={cx('index-space')}></div>
-
-        <div className={cx('main-section__contents')}>
-          <DefaultEditor
-            editorRef={editorRef}
-            contents={productDetail?.content}
-            isSavedRef={isSavedRef}
-          />
-        </div>
-
-        <div>
-          <div className={cx('main-section__pannel')}>
+      <main className={cx('main-canvas')}>
+        <section className={cx('main-canvas__left-section')}>
+          <div className={cx('main-canvas__left-section__wrapper')}>
+            <IndexPannel toc={editorIndexToc} />
+          </div>
+        </section>
+        <section className={cx('main-canvas__center-section')}>
+          <div className={cx('main-canvas__center-section__wrapper')}>
+            <DefaultEditor
+              editorRef={editorRef}
+              contents={productDetail?.content}
+              isSavedRef={isSavedRef}
+            />
+          </div>
+        </section>
+        <section className={cx('main-canvas__right-section')}>
+          <div className={cx('main-canvas__right-section__wrapper')}>
             <MemoPannel memoList={memoList} />
             <PlannerPannel />
           </div>
-        </div>
-        <div className={cx('main-section__chatbot-wrapper')}>
-          <ChatbotLauncher />
-        </div>
+        </section>
       </main>
+
+      <div className={cx('chatbot-canvas')}>
+        <ChatbotLauncher />
+      </div>
 
       <Modal
         ref={modalRef}

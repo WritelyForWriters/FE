@@ -2,6 +2,8 @@
 
 import { MouseEvent, useEffect, useState } from 'react'
 
+import { AnimatePresence, motion } from 'framer-motion'
+import { Rnd } from 'react-rnd'
 import { TocItemType } from 'types/common/pannel'
 
 import Pannel from '@components/pannel/Pannel'
@@ -75,28 +77,50 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
   }
 
   return (
-    <div className={cx('wrapper')}>
+    <>
       {isOpen ? (
-        <Pannel onClick={handleCollapsedPannel} title="목차" variant>
-          <ul className={cx('index-list')}>
-            {toc.map(({ id, title }) => (
-              <li
-                key={id}
-                className={cx('index-list__item', {
-                  'index-list__item--active': activeId === id,
-                })}
-                onClick={() => scrollToSection(id)}
-              >
-                {title}
-              </li>
-            ))}
-          </ul>
-        </Pannel>
+        <Rnd
+          disableDragging
+          bounds="parent"
+          enableResizing={{ right: true }}
+          minWidth={244}
+          default={{
+            x: 0,
+            y: 0,
+            width: 244,
+            height: '100%',
+          }}
+        >
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.25 }}
+            >
+              <Pannel onClick={handleCollapsedPannel} title="목차" variant>
+                <ul className={cx('index-list')}>
+                  {toc.map(({ id, title }) => (
+                    <li
+                      key={id}
+                      className={cx('index-list__item', {
+                        'index-list__item--active': activeId === id,
+                      })}
+                      onClick={() => scrollToSection(id)}
+                    >
+                      {title}
+                    </li>
+                  ))}
+                </ul>
+              </Pannel>
+            </motion.div>
+          </AnimatePresence>
+        </Rnd>
       ) : (
         <button onClick={onOpen} className={cx('container')}>
           목차
         </button>
       )}
-    </div>
+    </>
   )
 }

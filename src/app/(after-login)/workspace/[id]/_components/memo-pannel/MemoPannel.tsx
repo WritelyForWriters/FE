@@ -2,6 +2,8 @@
 
 import { MouseEvent } from 'react'
 
+import { AnimatePresence, motion } from 'framer-motion'
+import { Rnd } from 'react-rnd'
 import { MemosDto } from 'types/memos'
 
 import Pannel from '@components/pannel/Pannel'
@@ -32,16 +34,54 @@ export default function MemoPannel({ memoList }: MemoPannelProps) {
   return (
     <>
       {isOpen ? (
-        <Pannel onClick={handleCollapsedPannel} title="메모">
-          <Tab defaultTab="progress" style={{ display: 'flex', flexDirection: 'column' }}>
-            <div className={cx('button-wrapper')}>
-              <Tab.Button value="progress">진행중</Tab.Button>
-              <Tab.Button value="all">전체</Tab.Button>
-            </div>
+        <div style={{ width: '100%', position: 'relative' }}>
+          <Rnd
+            disableDragging
+            bounds="parent"
+            enableResizing={{ left: true }}
+            minWidth={244}
+            style={{
+              minWidth: 244,
+              right: 0,
+              left: 'none',
+            }}
+            default={{
+              width: 244,
+              height: '100%',
+            }}
+          >
+            <AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.25 }}
+                style={{
+                  width: '100%',
+                  height: 480,
+                }}
+              >
+                <Pannel
+                  onClick={handleCollapsedPannel}
+                  title="메모"
+                  style={{
+                    height: '100%',
+                  }}
+                >
+                  <Tab defaultTab="progress" style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className={cx('button-wrapper')}>
+                      <Tab.Button value="progress">진행중</Tab.Button>
+                      <Tab.Button value="all">전체</Tab.Button>
+                    </div>
 
-            <MemoList memoList={memoList} />
-          </Tab>
-        </Pannel>
+                    <MemoList memoList={memoList} />
+                  </Tab>
+                </Pannel>
+              </motion.div>
+            </AnimatePresence>
+          </Rnd>
+          <div className={cx('placeholder')}></div>
+        </div>
       ) : (
         <button onClick={onOpen} className={cx('container')}>
           메모
