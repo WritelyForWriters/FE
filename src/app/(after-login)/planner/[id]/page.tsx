@@ -30,23 +30,20 @@ type Params = Promise<{ id: string }>
 function usePlannerData(params: Params) {
   const { id } = use(params)
   const { data: templates } = useFetchProductTemplates(id)
-  const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
   const showToast = useToast()
   const { autoSaveTimer } = useAutoSaveTimer(300000)
 
   return {
     id,
     templates,
-    formValues,
-    setFormValues,
     showToast,
     autoSaveTimer,
   }
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
-  const { id, templates, formValues, setFormValues, showToast, autoSaveTimer } =
-    usePlannerData(params)
+  const { id, templates, showToast, autoSaveTimer } = usePlannerData(params)
+  const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
   const setMode = useSetAtom(PlannerTemplatesModeAtom)
 
   const methods = useForm<PlannerSynopsisFormValues>()
@@ -70,61 +67,48 @@ export default function PlannerPage({ params }: { params: Params }) {
       {
         onSuccess: () => {
           setMode('view')
-          setFormValues(formValues)
+          setFormValues(formValues, 'form')
         },
       },
     )
   })
 
   useEffect(() => {
-    if (templates) {
-      // NOTE(hajae): fetch된 데이터가 하나라도 있으면 이미 저장된 상태로 간주
-      setMode(templates.isSaved ? 'view' : 'edit')
+    if (templates && formValues) {
+      const inInitalized = formValues.isInitialized
 
-      // NOTE(hajae): 서버에 저장된 ID가 존재하고, Local Storage에 저장된 ID가 없을 경우 ID를 SET
-      // 현재 사양은 클라이언트에 저장된 데이터를 우선으로 Character를 SET
-      if (
-        templates.characters.length > 0 &&
-        formValues.characters.length > 0 &&
-        formValues.characters.some((c) => !c.id)
-      ) {
-        const updatedCharacters = formValues.characters.map((character, index) => ({
-          ...character,
-          id: templates.characters[index]?.id ?? '',
-        }))
-
-        setFormValues(updatedCharacters)
-
+      if (!inInitalized) {
+        setFormValues(templates, 'form')
         reset({
-          synopsis: formValues.synopsis ?? templates.synopsis,
-          worldview: formValues.worldview ?? templates.worldview,
-          characters: updatedCharacters,
-          plot: formValues.plot ?? templates.plot,
-          ideaNote: formValues.ideaNote ?? templates.ideaNote,
+          synopsis: templates.synopsis,
+          worldview: templates.worldview,
+          characters: templates.characters,
+          plot: templates.plot,
+          ideaNote: templates.ideaNote,
         })
-
-        return
+      } else {
+        // NOTE(hajae): fetch된 데이터가 하나라도 있으면 이미 저장된 상태로 간주
+        setMode(templates.isSaved ? 'view' : 'edit')
+        reset({
+          synopsis: formValues.synopsis,
+          worldview: formValues.worldview,
+          characters: formValues.characters,
+          plot: formValues.plot,
+          ideaNote: formValues.ideaNote,
+        })
       }
-
-      reset({
-        synopsis: formValues.synopsis ?? templates.synopsis,
-        worldview: formValues.worldview ?? templates.worldview,
-        characters: formValues.characters ?? templates.characters,
-        plot: formValues.plot ?? templates.plot,
-        ideaNote: formValues.ideaNote ?? templates.ideaNote,
-      })
     }
-  }, [reset, templates])
+  }, [templates])
 
   useEffect(() => {
     if (isSuccess) {
       showToast('success', '저장이 완료되었습니다.')
     }
-  }, [isSuccess])
+  }, [isSuccess, showToast])
 
   useEffect(() => {
     if (autoSaveTimer === 0) {
-      setFormValues(getValues())
+      setFormValues(getValues(), 'form')
     }
   }, [autoSaveTimer])
 

@@ -34,12 +34,12 @@ export default function PlannerCharacterForm({
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(params.id))
 
   const handleAddCharacter = () => {
-    setFormValues([...formValues.characters, NEW_PLANNER_CHARACTER])
+    setFormValues([...formValues.characters, NEW_PLANNER_CHARACTER], 'character')
   }
 
   const handleRemoveCharacter = (index: number) => {
     const newCharacters = formValues.characters.filter((_, i) => i !== index)
-    setFormValues(newCharacters)
+    setFormValues(newCharacters, 'character')
   }
 
   // NOTE(hajae): 캐릭터 추가 삭제 후, local storage만 갱신하고 있기때문에 character 수가 달라지면 set 해준다.

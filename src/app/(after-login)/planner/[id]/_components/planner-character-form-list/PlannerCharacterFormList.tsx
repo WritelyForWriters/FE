@@ -61,13 +61,13 @@ export default function PlannerCharacterFormList({
   // NOTE(hajae): local storage 저장
   useEffect(() => {
     if (!watchedValues) return
-
     setFormValues(
       formValues.characters.map((character, index) =>
         index === arrayIndex ? watchedValues : character,
       ),
+      'character',
     )
-  }, [watchedValues, arrayIndex, setFormValues])
+  }, [watchedValues])
 
   return (
     <div className={cx('list')}>
