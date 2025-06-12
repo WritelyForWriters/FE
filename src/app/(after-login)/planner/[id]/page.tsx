@@ -96,11 +96,11 @@ export default function PlannerPage({ params }: { params: Params }) {
         setFormValues(updatedCharacters)
 
         reset({
-          synopsis: templates.synopsis,
-          worldview: templates.worldview,
+          synopsis: formValues.synopsis ?? templates.synopsis,
+          worldview: formValues.worldview ?? templates.worldview,
           characters: updatedCharacters,
-          plot: templates.plot,
-          ideaNote: templates.ideaNote,
+          plot: formValues.plot ?? templates.plot,
+          ideaNote: formValues.ideaNote ?? templates.ideaNote,
         })
 
         return
