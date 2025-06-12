@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Editor } from '@tiptap/react'
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME } from 'constants/workspace/number'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotSessionIdAtom } from 'store/chatbotSessionIdAtom'
@@ -60,6 +60,7 @@ export default function WorkSpacePage() {
   const { data: memoList } = useGetMemoList(params.id) // MEMO(Sohyun): 메모 컴포넌트에서 요청하는것이 좋을까?
 
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
+  const isEditable = useAtomValue(isEditableAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
   const editorContent = editorContentAtom(params.id)
   const setEditorContent = useSetAtom(editorContent)
@@ -263,17 +264,21 @@ export default function WorkSpacePage() {
             />
           </div>
         </section>
-        <section className={cx('main-canvas__right-section')}>
-          <div className={cx('main-canvas__right-section__wrapper')}>
-            <MemoPannel memoList={memoList} />
-            <PlannerPannel />
-          </div>
-        </section>
+        {isEditable && (
+          <section className={cx('main-canvas__right-section')}>
+            <div className={cx('main-canvas__right-section__wrapper')}>
+              <MemoPannel memoList={memoList} />
+              <PlannerPannel />
+            </div>
+          </section>
+        )}
       </main>
 
-      <div className={cx('chatbot-canvas')}>
-        <ChatbotLauncher />
-      </div>
+      {isEditable && (
+        <div className={cx('chatbot-canvas')}>
+          <ChatbotLauncher />
+        </div>
+      )}
 
       <Modal
         ref={modalRef}
