@@ -13,10 +13,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { Direction } from 're-resizable/lib/resizer'
+import { DraggableEvent } from 'react-draggable'
 import { FiInfo } from 'react-icons/fi'
 import { IoIosArrowBack } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
-import { Position, Rnd } from 'react-rnd'
+import { DraggableData, Position, Rnd } from 'react-rnd'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
@@ -178,6 +179,17 @@ export default function ChatbotWindow() {
     setChatbotRelativePosition(computeRelativePosition(position.x, position.y, width, height))
   }
 
+  const handleDragStop = (_: DraggableEvent, data: DraggableData) => {
+    const { width, height } = windowSize
+
+    setChatbotAbsolutePosition({
+      x: data.x,
+      y: data.y,
+    })
+
+    setChatbotRelativePosition(computeRelativePosition(data.x, data.y, width, height))
+  }
+
   const handleCloseClick = () => setIsChatbotOpen(false)
 
   const handleBackClick = () => {
@@ -188,82 +200,87 @@ export default function ChatbotWindow() {
   return (
     <>
       {isChatbotOpen && (
-        <Rnd
-          bounds="parent"
-          dragAxis="none"
-          enableResizing
-          disableDragging={true}
-          position={chatbotAbsolutePosition}
-          size={{
-            width: chatbotAbsoluteSize.width,
-            height: chatbotAbsoluteSize.height,
-          }}
-          default={{
-            x: chatbotAbsolutePosition.x,
-            y: chatbotAbsolutePosition.y,
-            width: chatbotAbsoluteSize.width,
-            height: chatbotAbsoluteSize.height,
-          }}
-          minWidth={CHATBOT_DEFAULT_SIZE.width}
-          minHeight={CHATBOT_DEFAULT_SIZE.height}
-          onResizeStop={handleResizeStop}
+        <div
           style={{
-            pointerEvents: 'auto',
+            width: '100%',
+            height: '100%',
+            position: 'relative',
           }}
         >
-          <AnimatePresence>
-            <motion.div
-              className={cx('chatbot-window')}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.25 }}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <div className={cx('chatbot-window__header')}>
-                <div className={cx('chatbot-window__header-content')}>
-                  {inputMode === 'input' ? (
-                    <>
-                      <p>챗봇</p>
-                      <button
-                        type="button"
-                        onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
-                      >
-                        <FiInfo size={20} color="#CCCCCC" />
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button type="button" onClick={handleBackClick}>
-                        <IoIosArrowBack size={20} color="#1A1A1A" />
-                      </button>
-                      <p>탐색 모드</p>
-                    </>
-                  )}
+          <Rnd
+            bounds="parent"
+            dragAxis="both"
+            dragHandleClassName="drag-handle"
+            enableResizing
+            position={chatbotAbsolutePosition}
+            size={{
+              width: chatbotAbsoluteSize.width,
+              height: chatbotAbsoluteSize.height,
+            }}
+            default={{
+              x: chatbotAbsolutePosition.x,
+              y: chatbotAbsolutePosition.y,
+              width: chatbotAbsoluteSize.width,
+              height: chatbotAbsoluteSize.height,
+            }}
+            minWidth={CHATBOT_DEFAULT_SIZE.width}
+            minHeight={CHATBOT_DEFAULT_SIZE.height}
+            onResizeStop={handleResizeStop}
+            onDragStop={handleDragStop}
+            style={{
+              pointerEvents: 'auto',
+            }}
+          >
+            <AnimatePresence>
+              <motion.div
+                className={cx('chatbot-window')}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.25 }}
+              >
+                <div className={cx('chatbot-window__header', { 'drag-handle': true })}>
+                  <div className={cx('chatbot-window__header-content')}>
+                    {inputMode === 'input' ? (
+                      <>
+                        <p>챗봇</p>
+                        <button
+                          type="button"
+                          onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
+                        >
+                          <FiInfo size={20} color="#CCCCCC" />
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button type="button" onClick={handleBackClick}>
+                          <IoIosArrowBack size={20} color="#1A1A1A" />
+                        </button>
+                        <p>탐색 모드</p>
+                      </>
+                    )}
+                  </div>
+                  <button type="button" onClick={handleCloseClick}>
+                    <IoClose size={20} color="#1A1A1A" />
+                  </button>
                 </div>
-                <button type="button" onClick={handleCloseClick}>
-                  <IoClose size={20} color="#1A1A1A" />
-                </button>
-              </div>
-              <div ref={containerRef} className={cx('chatbot-window__body')}>
-                {chatbotFixedMessage && (
-                  <ExpandableContentBox
-                    leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}
-                  >
-                    <p>{chatbotFixedMessage.content}</p>
-                  </ExpandableContentBox>
-                )}
-                <ChatbotMessageList />
-              </div>
-              <div className={cx('chatbot-window__footer')}>
-                <ChatbotChatInput />
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </Rnd>
+                <div ref={containerRef} className={cx('chatbot-window__body')}>
+                  {chatbotFixedMessage && (
+                    <ExpandableContentBox
+                      leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}
+                    >
+                      <p>{chatbotFixedMessage.content}</p>
+                    </ExpandableContentBox>
+                  )}
+                  <ChatbotMessageList />
+                </div>
+                <div className={cx('chatbot-window__footer')}>
+                  <ChatbotChatInput />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </Rnd>
+        </div>
       )}
     </>
   )

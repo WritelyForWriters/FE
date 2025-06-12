@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 
-import { KeyboardEvent, useEffect, useState } from 'react'
+import { KeyboardEvent, useEffect, useRef, useState } from 'react'
 
 import { getAssistantHistoryById } from 'api/chatbot/chatbot'
 import { CHAT_ERROR_MESSAGE } from 'constants/chatbot/message'
@@ -65,7 +65,7 @@ export default function ChatbotChatInput() {
 
   const favoritePrompts = data?.result ?? []
 
-  let timerId: ReturnType<typeof setTimeout>
+  const timerIdRef = useRef<NodeJS.Timeout>(undefined)
 
   const method = useForm<ChatbotFormData>({
     defaultValues: {
@@ -80,7 +80,7 @@ export default function ChatbotChatInput() {
   const { mutate: submitDefaultChatMessage, isPending: isDefaultPending } =
     useSubmitDefaultChatMessage({
       onMutate: () => {
-        timerId = setTimeout(() => {
+        timerIdRef.current = setTimeout(() => {
           setIsDelay(true)
         }, 10000)
       },
@@ -98,7 +98,10 @@ export default function ChatbotChatInput() {
         showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
       },
       onSettled: () => {
-        clearTimeout(timerId)
+        if (timerIdRef.current) {
+          clearTimeout(timerIdRef.current)
+          timerIdRef.current = undefined
+        }
         setIsDelay(false)
       },
     })
@@ -106,7 +109,7 @@ export default function ChatbotChatInput() {
   const { mutate: submitWebSearchChatMessage, isPending: isWebSearchPending } =
     useSubmitWebSearchChatMessage({
       onMutate: () => {
-        timerId = setTimeout(() => {
+        timerIdRef.current = setTimeout(() => {
           setIsDelay(true)
         }, 10000)
       },
@@ -123,7 +126,10 @@ export default function ChatbotChatInput() {
         showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
       },
       onSettled: () => {
-        clearTimeout(timerId)
+        if (timerIdRef.current) {
+          clearTimeout(timerIdRef.current)
+          timerIdRef.current = undefined
+        }
         setIsDelay(false)
       },
     })
