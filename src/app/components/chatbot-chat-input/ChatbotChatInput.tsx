@@ -16,6 +16,7 @@ import { MdLanguage, MdOutlineLightbulb } from 'react-icons/md'
 import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
+import { chatbotIsDelayAtom } from 'store/chatbotIsDelayAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { chatbotSessionIdAtom } from 'store/chatbotSessionIdAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
@@ -56,12 +57,15 @@ export default function ChatbotChatInput() {
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
   const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
+  const setIsDelay = useSetAtom(chatbotIsDelayAtom)
 
   const showToast = useToast()
 
   const { data } = useGetFavoritePrompts(productId)
 
   const favoritePrompts = data?.result ?? []
+
+  let timerId: ReturnType<typeof setTimeout>
 
   const method = useForm<ChatbotFormData>({
     defaultValues: {
@@ -75,6 +79,11 @@ export default function ChatbotChatInput() {
 
   const { mutate: submitDefaultChatMessage, isPending: isDefaultPending } =
     useSubmitDefaultChatMessage({
+      onMutate: () => {
+        timerId = setTimeout(() => {
+          setIsDelay(true)
+        }, 10000)
+      },
       onSuccess: async (data) => {
         try {
           const newMessage = await getAssistantHistoryById(productId, data as string)
@@ -88,11 +97,19 @@ export default function ChatbotChatInput() {
         setIsAssistantResponding(false)
         showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
       },
-      onSettled: () => {},
+      onSettled: () => {
+        clearTimeout(timerId)
+        setIsDelay(false)
+      },
     })
 
   const { mutate: submitWebSearchChatMessage, isPending: isWebSearchPending } =
     useSubmitWebSearchChatMessage({
+      onMutate: () => {
+        timerId = setTimeout(() => {
+          setIsDelay(true)
+        }, 10000)
+      },
       onSuccess: async (data) => {
         try {
           const newMessage = await getAssistantHistoryById(productId, data as string)
@@ -105,7 +122,10 @@ export default function ChatbotChatInput() {
         setIsAssistantResponding(false)
         showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
       },
-      onSettled: () => {},
+      onSettled: () => {
+        clearTimeout(timerId)
+        setIsDelay(false)
+      },
     })
 
   useEffect(() => {

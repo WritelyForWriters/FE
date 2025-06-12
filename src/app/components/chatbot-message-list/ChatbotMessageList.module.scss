@@ -1,3 +1,14 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
 .chatbot-message-list {
   min-width: 32.4rem;
+
+  .loading-indicator {
+    display: inline-block;
+    vertical-align: middle;
+
+    @extend %typo-title-medium;
+  }
 }
