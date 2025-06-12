@@ -2,6 +2,7 @@
 
 import { use, useEffect } from 'react'
 
+import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
 import { useAtom, useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
@@ -78,11 +79,14 @@ export default function PlannerPage({ params }: { params: Params }) {
       const inInitalized = formValues.isInitialized
 
       if (!inInitalized) {
-        setFormValues(templates, 'form')
+        const newCharacters =
+          templates.characters.length === 0 ? [NEW_PLANNER_CHARACTER] : templates.characters
+
+        setFormValues({ ...templates, characters: newCharacters }, 'form')
         reset({
           synopsis: templates.synopsis,
           worldview: templates.worldview,
-          characters: templates.characters,
+          characters: newCharacters,
           plot: templates.plot,
           ideaNote: templates.ideaNote,
         })
