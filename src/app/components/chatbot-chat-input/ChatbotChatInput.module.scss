@@ -46,6 +46,10 @@
       @include mixin.display-flex();
       align-items: center;
       gap: 0.4rem;
+
+      .tooltip {
+        font-size: 1.2rem;
+      }
     }
 
     &-right {

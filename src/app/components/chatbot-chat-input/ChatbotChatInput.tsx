@@ -13,6 +13,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { FaRegStar } from 'react-icons/fa'
 import { FaCircleArrowUp } from 'react-icons/fa6'
 import { MdLanguage, MdOutlineLightbulb } from 'react-icons/md'
+import { Tooltip } from 'react-tooltip'
 import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
@@ -64,6 +65,7 @@ export default function ChatbotChatInput() {
   const { data } = useGetFavoritePrompts(productId)
 
   const favoritePrompts = data?.result ?? []
+  const hasFavoritePrompt = favoritePrompts.length > 0
 
   const timerIdRef = useRef<NodeJS.Timeout>(undefined)
 
@@ -166,6 +168,7 @@ export default function ChatbotChatInput() {
         setIsWebSearchMode((prev) => !prev)
         break
       case 'favorite':
+        if (!hasFavoritePrompt) return
         setClickedButton('favorite')
         break
       case 'recommend':
@@ -244,28 +247,46 @@ export default function ChatbotChatInput() {
                   style={{
                     backgroundColor: clickedButton === 'favorite' ? '#cccccc' : '',
                   }}
+                  data-tooltip-id="favorite-prompt-tooltip"
                 >
                   즐겨찾기
                 </OutLinedButton>
-                <SelectMenu
-                  handleClose={() => setClickedButton(null)}
-                  isOpen={clickedButton === 'favorite'}
-                  style={{ width: 'auto', left: 70, bottom: 35 }}
-                >
-                  {favoritePrompts.map((item: { messageId: string; prompt: string }) => (
-                    <SelectMenu.Option
-                      key={item.messageId}
-                      option={{
-                        handleAction: () => {
-                          setPrompt(item.prompt)
-                          setClickedButton(null)
-                        },
-                      }}
-                    >
-                      {item.prompt}
-                    </SelectMenu.Option>
-                  ))}
-                </SelectMenu>
+                {hasFavoritePrompt ? (
+                  <SelectMenu
+                    handleClose={() => setClickedButton(null)}
+                    isOpen={clickedButton === 'favorite'}
+                    style={{
+                      height: 'auto',
+                      left: 90,
+                      bottom: 35,
+                      position: 'fixed',
+                      zIndex: 1000,
+                      minWidth: 300,
+                      maxHeight: 292,
+                      overflowY: 'auto',
+                    }}
+                  >
+                    {favoritePrompts.map((item: { messageId: string; prompt: string }) => (
+                      <SelectMenu.Option
+                        key={item.messageId}
+                        option={{
+                          handleAction: () => {
+                            setPrompt(item.prompt)
+                            setClickedButton(null)
+                          },
+                        }}
+                      >
+                        {item.prompt}
+                      </SelectMenu.Option>
+                    ))}
+                  </SelectMenu>
+                ) : (
+                  <Tooltip id="favorite-prompt-tooltip" className={cx('tooltip')}>
+                    아직 즐겨찾기한 메시지가 없습니다. <br />
+                    보낸 메시지 아래 별표 모양 버튼으로 <br />
+                    메시지를 즐겨찾기 해보세요.
+                  </Tooltip>
+                )}
                 <OutLinedButton
                   type="button"
                   name="recommend"
@@ -284,7 +305,14 @@ export default function ChatbotChatInput() {
                 <SelectMenu
                   handleClose={() => setClickedButton(null)}
                   isOpen={clickedButton === 'recommend'}
-                  style={{ width: 'auto', left: 150, bottom: 35, position: 'fixed', zIndex: 1000 }}
+                  style={{
+                    height: 292,
+                    left: 170,
+                    bottom: 35,
+                    position: 'fixed',
+                    zIndex: 1000,
+                    minWidth: 300,
+                  }}
                 >
                   {RECOMMEND_PROMPTS.map((item: RecommendPrompt, idx) => (
                     <SelectMenu.Option
