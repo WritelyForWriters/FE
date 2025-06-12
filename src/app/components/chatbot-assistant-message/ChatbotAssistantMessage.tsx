@@ -4,10 +4,13 @@ import { useState } from 'react'
 
 import { QueryClient } from '@tanstack/react-query'
 import { QUERY_KEY } from 'constants/common/queryKeys'
+import 'highlight.js/styles/github.css'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { BsFillPinFill } from 'react-icons/bs'
 import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
 import ReactMarkdown from 'react-markdown'
+import rehypeHighlight from 'rehype-highlight'
+import rehypeSanitize from 'rehype-sanitize'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
@@ -114,7 +117,9 @@ export default function ChatbotAssistantMessage({
           </div>
         )}
         <div className={cx('assistant-message__body-content')}>
-          <ReactMarkdown>{message.content}</ReactMarkdown>
+          <ReactMarkdown rehypePlugins={[rehypeSanitize, rehypeHighlight]}>
+            {message.content}
+          </ReactMarkdown>
         </div>
       </div>
       <div className={cx('assistant-message__footer')}>
