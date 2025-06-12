@@ -2,6 +2,7 @@
 
 import { MouseEvent } from 'react'
 
+import { Editor } from '@tiptap/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Rnd } from 'react-rnd'
 import { MemosDto } from 'types/memos'
@@ -10,6 +11,7 @@ import Pannel from '@components/pannel/Pannel'
 import Tab from '@components/tab/Tab'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
+import { useMemoTracking } from '@hooks/editor/useMemosTracking'
 
 import MemoList from './MemoList'
 
@@ -21,10 +23,13 @@ const cx = classNames.bind(styles)
 
 interface MemoPannelProps {
   memoList?: MemosDto[]
+  editor: Editor
 }
 
-export default function MemoPannel({ memoList }: MemoPannelProps) {
+export default function MemoPannel({ memoList, editor }: MemoPannelProps) {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
+
+  useMemoTracking(editor, memoList)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()

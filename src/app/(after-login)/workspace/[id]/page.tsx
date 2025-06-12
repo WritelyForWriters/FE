@@ -267,7 +267,7 @@ export default function WorkSpacePage() {
         {isEditable && (
           <section className={cx('main-canvas__right-section')}>
             <div className={cx('main-canvas__right-section__wrapper')}>
-              <MemoPannel memoList={memoList} />
+              <MemoPannel memoList={memoList} editor={editorRef.current?.getEditor() as Editor} />
               <PlannerPannel />
             </div>
           </section>
