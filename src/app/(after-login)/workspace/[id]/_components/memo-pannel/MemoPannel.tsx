@@ -40,14 +40,11 @@ export default function MemoPannel({ memoList }: MemoPannelProps) {
             bounds="parent"
             enableResizing={{ left: true }}
             minWidth={244}
-            style={{
-              minWidth: 244,
-              right: 0,
-              left: 'none',
-            }}
             default={{
-              width: 244,
-              height: '100%',
+              x: 0,
+              y: 0,
+              width: '100%',
+              height: 416,
             }}
           >
             <AnimatePresence>
@@ -58,7 +55,7 @@ export default function MemoPannel({ memoList }: MemoPannelProps) {
                 transition={{ duration: 0.25 }}
                 style={{
                   width: '100%',
-                  height: 480,
+                  height: 416,
                 }}
               >
                 <Pannel

@@ -130,6 +130,8 @@
       align-items: flex-end;
       gap: 1rem;
 
+      width: 100%;
+
       .memo-pannel-wrapper {
         position: relative;
       }
@@ -148,41 +150,7 @@
   z-index: 1000;
 
   width: 100dvw;
-  height: 80dvh;
+  height: calc(100dvh - 124px);
 
   pointer-events: none;
 }
-
-// /* main */
-// .main-section {
-//   padding: 0 1.6rem;
-//   min-height: 80vh;
-
-//   display: grid;
-//   grid-template-columns: 244px minmax(568px, 1fr) 244px;
-//   gap: 1.6rem;
-
-//   &__contents {
-//     padding-bottom: 1.6rem;
-//     min-width: 568px;
-//   }
-
-//   &__pannel {
-//     position: fixed;
-//     max-width: 244px;
-//     height: fit-content;
-
-//     display: flex;
-//     flex-wrap: wrap;
-//     gap: 0.8rem;
-//   }
-
-//   &__chatbot-wrapper {
-//     position: fixed;
-//     left: 0;
-//     width: 100dvw;
-//     height: 80dvh;
-//     pointer-events: none;
-//     z-index: 1000;
-//   }
-// }

@@ -48,13 +48,10 @@ export default function PlannerPannel() {
             bounds="parent"
             enableResizing={{ left: true }}
             minWidth={244}
-            style={{
-              minWidth: 244,
-              right: 0,
-              left: 'none',
-            }}
             default={{
-              width: 244,
+              x: 0,
+              y: 0,
+              width: '100%',
               height: 400,
             }}
           >
@@ -66,13 +63,14 @@ export default function PlannerPannel() {
                 transition={{ duration: 0.25 }}
                 style={{
                   width: '100%',
-                  height: 480,
+                  height: 400,
                 }}
               >
                 <Pannel
                   onClick={handleCollapsedPannel}
                   title="작품 플래너"
                   style={{
+                    height: '100%',
                     minHeight: 400,
                     justifyContent: 'space-between',
                   }}
