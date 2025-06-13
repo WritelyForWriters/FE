@@ -130,6 +130,7 @@ export const PlannerSynopsisFormValues = {
 
     return characters.map((character) => ({
       ...character,
+      age: character.age ? Number(character.age) : undefined,
       customFields: character.customFields || [],
     }))
   },

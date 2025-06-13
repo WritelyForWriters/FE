@@ -53,14 +53,14 @@ export default function PlannerFieldWithButton({
 
   // NOTE(hajae): 삭제된 항목은 null로 반환되어 초기 렌더링 시 화면에 표시하지 않는다
   useEffect(() => {
-    if (initialValue === null) {
+    if (isDropdown && initialValue === undefined && !isDeleted) {
+      setIsShow(true)
+      return
+    }
+
+    if (initialValue === null || (!isDropdown && initialValue === undefined)) {
       setIsShow(false)
     } else if (initialValue === '' || initialValue) {
-      setIsShow(true)
-    } else if (isDropdown && initialValue === undefined && !isDeleted) {
-      // NOTE(hajae): Dropdown에 사용되는 데이터는 객체이기에 ''와 같은 빈값을 받을 수 없어 undefined로.
-      // null일때는 비표시, undefined일때는 표시
-      // 삭제일 경우도 value가 undefined가 되기때문에 삭제시 다시표시됨. 따라서 삭제일때는 비표시하기위해 isDeleted 추가
       setIsShow(true)
     }
   }, [watch, name, isDropdown, initialValue, isDeleted])
