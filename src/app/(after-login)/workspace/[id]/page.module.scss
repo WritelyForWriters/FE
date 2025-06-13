@@ -19,6 +19,10 @@
   width: 100dvw;
   height: calc(100dvh - 174px);
 
+  &__disabled {
+    pointer-events: none;
+  }
+
   // 왼쪽 영역
   &__left-section {
     width: 100%;

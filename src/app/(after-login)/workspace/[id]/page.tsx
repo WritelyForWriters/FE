@@ -13,6 +13,7 @@ import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotSessionIdAtom } from 'store/chatbotSessionIdAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
+import { isChatbotDraggingAtom } from 'store/isChatbotDraggingAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { ChatItem } from 'types/chatbot/chatbot'
@@ -59,6 +60,7 @@ export default function WorkSpacePage() {
   const { data: productDetail } = useGetProductDetail(params.id)
   const { data: memoList } = useGetMemoList(params.id) // MEMO(Sohyun): 메모 컴포넌트에서 요청하는것이 좋을까?
 
+  const isChatbotDragging = useAtomValue(isChatbotDraggingAtom)
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
   const isEditable = useAtomValue(isEditableAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
@@ -255,7 +257,11 @@ export default function WorkSpacePage() {
             <IndexPannel toc={editorIndexToc} />
           </div>
         </section>
-        <section className={cx('main-canvas__center-section')}>
+        <section
+          className={cx('main-canvas__center-section', {
+            'main-canvas__disabled': isChatbotDragging,
+          })}
+        >
           <DefaultEditor
             editorRef={editorRef}
             contents={productDetail?.content}
