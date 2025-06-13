@@ -24,6 +24,7 @@ import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
+import { isChatbotDraggingAtom } from 'store/isChatbotDraggingAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
 
@@ -60,6 +61,7 @@ export default function ChatbotWindow() {
   const [inputMode, setInputMode] = useAtom(chatInputModeAtom) // 입력 모드 | 탐색 모드
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
+  const setIsChatbotDraaging = useSetAtom(isChatbotDraggingAtom)
 
   const productId = useAtomValue(productIdAtom)
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
@@ -179,7 +181,13 @@ export default function ChatbotWindow() {
     setChatbotRelativePosition(computeRelativePosition(position.x, position.y, width, height))
   }
 
+  const handleDragStart = () => {
+    setIsChatbotDraaging(true)
+  }
+
   const handleDragStop = (_: DraggableEvent, data: DraggableData) => {
+    setIsChatbotDraaging(false)
+
     const { width, height } = windowSize
 
     setChatbotAbsolutePosition({
@@ -226,6 +234,7 @@ export default function ChatbotWindow() {
             minWidth={CHATBOT_DEFAULT_SIZE.width}
             minHeight={CHATBOT_DEFAULT_SIZE.height}
             onResizeStop={handleResizeStop}
+            onDragStart={handleDragStart}
             onDragStop={handleDragStop}
             style={{
               pointerEvents: 'auto',
