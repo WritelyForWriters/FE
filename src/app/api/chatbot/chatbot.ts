@@ -113,7 +113,11 @@ export const submitDefaultChatMessage = async (formData: ChatbotFormData) => {
 
 // 자유 대화 메시지 전송(웹 검색 모드)
 export const submitWebSearchChatMessage = async (formData: ChatbotFormData) => {
-  await authInstance.post('/assistant/chat/research', formData, {
+  const res = await authInstance.post('/assistant/chat/research', formData, {
     timeout: 120000,
   })
+
+  const { id } = res.data.result
+
+  return id
 }
