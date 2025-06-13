@@ -7,11 +7,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Editor } from '@tiptap/react'
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME } from 'constants/workspace/number'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
 import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
+import { isChatbotDraggingAtom } from 'store/isChatbotDraggingAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
 import { ChatItem } from 'types/chatbot/chatbot'
@@ -58,7 +59,9 @@ export default function WorkSpacePage() {
   const { data: productDetail } = useGetProductDetail(params.id)
   const { data: memoList } = useGetMemoList(params.id) // MEMO(Sohyun): 메모 컴포넌트에서 요청하는것이 좋을까?
 
+  const isChatbotDragging = useAtomValue(isChatbotDraggingAtom)
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
+  const isEditable = useAtomValue(isEditableAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
   const editorContent = editorContentAtom(params.id)
   const setEditorContent = useSetAtom(editorContent)
@@ -242,29 +245,38 @@ export default function WorkSpacePage() {
       />
       <div className={cx('header-space')}></div>
 
-      <main className={cx('main-section')}>
-        <IndexPannel toc={editorIndexToc} />
-
-        <div className={cx('index-space')}></div>
-
-        <div className={cx('main-section__contents')}>
+      <main className={cx('main-canvas')}>
+        <section className={cx('main-canvas__left-section')}>
+          <div className={cx('main-canvas__left-section__wrapper')}>
+            <IndexPannel toc={editorIndexToc} />
+          </div>
+        </section>
+        <section
+          className={cx('main-canvas__center-section', {
+            'main-canvas__disabled': isChatbotDragging,
+          })}
+        >
           <DefaultEditor
             editorRef={editorRef}
             contents={productDetail?.content}
             isSavedRef={isSavedRef}
           />
-        </div>
+        </section>
+        {isEditable && (
+          <section className={cx('main-canvas__right-section')}>
+            <div className={cx('main-canvas__right-section__wrapper')}>
+              <MemoPannel memoList={memoList} editor={editorRef.current?.getEditor() as Editor} />
+              <PlannerPannel />
+            </div>
+          </section>
+        )}
+      </main>
 
-        <div>
-          <div className={cx('main-section__pannel')}>
-            <MemoPannel memoList={memoList} editor={editorRef.current?.getEditor() as Editor} />
-            <PlannerPannel />
-          </div>
-        </div>
-        <div className={cx('main-section__chatbot-wrapper')}>
+      {isEditable && (
+        <div className={cx('chatbot-canvas')}>
           <ChatbotLauncher />
         </div>
-      </main>
+      )}
 
       <Modal
         ref={modalRef}

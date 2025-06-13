@@ -13,16 +13,20 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { Direction } from 're-resizable/lib/resizer'
+import { DraggableEvent } from 'react-draggable'
 import { FiInfo } from 'react-icons/fi'
 import { IoIosArrowBack } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
-import { Position, Rnd } from 'react-rnd'
+import { DraggableData, Position, Rnd } from 'react-rnd'
+import { Tooltip } from 'react-tooltip'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
+import { chatLifecycleSessionId } from 'store/chatLifecycleSessionId'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
+import { isChatbotDraggingAtom } from 'store/isChatbotDraggingAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
 
@@ -59,12 +63,19 @@ export default function ChatbotWindow() {
   const [inputMode, setInputMode] = useAtom(chatInputModeAtom) // 입력 모드 | 탐색 모드
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
+  const setIsChatbotDraaging = useSetAtom(isChatbotDraggingAtom)
+  const setChatLifecycleSessionId = useSetAtom(chatLifecycleSessionId)
 
   const productId = useAtomValue(productIdAtom)
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
   const isAssistantResponding = useAtomValue(isAssistantRespondingAtom)
 
   const { fetchNextPage, hasNextPage } = useGetInfiniteAssistantHistory(productId)
+
+  useEffect(() => {
+    const sessionId = new Date().getTime().toString()
+    setChatLifecycleSessionId(sessionId)
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
@@ -178,6 +189,23 @@ export default function ChatbotWindow() {
     setChatbotRelativePosition(computeRelativePosition(position.x, position.y, width, height))
   }
 
+  const handleDragStart = () => {
+    setIsChatbotDraaging(true)
+  }
+
+  const handleDragStop = (_: DraggableEvent, data: DraggableData) => {
+    setIsChatbotDraaging(false)
+
+    const { width, height } = windowSize
+
+    setChatbotAbsolutePosition({
+      x: data.x,
+      y: data.y,
+    })
+
+    setChatbotRelativePosition(computeRelativePosition(data.x, data.y, width, height))
+  }
+
   const handleCloseClick = () => setIsChatbotOpen(false)
 
   const handleBackClick = () => {
@@ -188,82 +216,100 @@ export default function ChatbotWindow() {
   return (
     <>
       {isChatbotOpen && (
-        <Rnd
-          bounds="parent"
-          dragAxis="none"
-          enableResizing
-          disableDragging={true}
-          position={chatbotAbsolutePosition}
-          size={{
-            width: chatbotAbsoluteSize.width,
-            height: chatbotAbsoluteSize.height,
-          }}
-          default={{
-            x: chatbotAbsolutePosition.x,
-            y: chatbotAbsolutePosition.y,
-            width: chatbotAbsoluteSize.width,
-            height: chatbotAbsoluteSize.height,
-          }}
-          minWidth={CHATBOT_DEFAULT_SIZE.width}
-          minHeight={CHATBOT_DEFAULT_SIZE.height}
-          onResizeStop={handleResizeStop}
+        <div
           style={{
-            pointerEvents: 'auto',
+            width: '100%',
+            height: '100%',
+            position: 'relative',
           }}
         >
-          <AnimatePresence>
-            <motion.div
-              className={cx('chatbot-window')}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.25 }}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <div className={cx('chatbot-window__header')}>
-                <div className={cx('chatbot-window__header-content')}>
-                  {inputMode === 'input' ? (
-                    <>
-                      <p>챗봇</p>
-                      <button
-                        type="button"
-                        onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
-                      >
-                        <FiInfo size={20} color="#CCCCCC" />
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button type="button" onClick={handleBackClick}>
-                        <IoIosArrowBack size={20} color="#1A1A1A" />
-                      </button>
-                      <p>탐색 모드</p>
-                    </>
-                  )}
-                </div>
-                <button type="button" onClick={handleCloseClick}>
-                  <IoClose size={20} color="#1A1A1A" />
-                </button>
-              </div>
-              <div ref={containerRef} className={cx('chatbot-window__body')}>
-                {chatbotFixedMessage && (
-                  <ExpandableContentBox
-                    leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}
+          <Rnd
+            bounds="parent"
+            dragAxis="both"
+            dragHandleClassName="drag-handle"
+            enableResizing
+            position={chatbotAbsolutePosition}
+            size={{
+              width: chatbotAbsoluteSize.width,
+              height: chatbotAbsoluteSize.height,
+            }}
+            default={{
+              x: chatbotAbsolutePosition.x,
+              y: chatbotAbsolutePosition.y,
+              width: chatbotAbsoluteSize.width,
+              height: chatbotAbsoluteSize.height,
+            }}
+            minWidth={CHATBOT_DEFAULT_SIZE.width}
+            minHeight={CHATBOT_DEFAULT_SIZE.height}
+            onResizeStop={handleResizeStop}
+            onDragStart={handleDragStart}
+            onDragStop={handleDragStop}
+            style={{
+              pointerEvents: 'auto',
+            }}
+          >
+            <AnimatePresence>
+              <motion.div
+                className={cx('chatbot-window')}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.25 }}
+              >
+                <div className={cx('chatbot-window__header', { 'drag-handle': true })}>
+                  <div className={cx('chatbot-window__header-content')}>
+                    {inputMode === 'input' ? (
+                      <>
+                        <p>챗봇</p>
+                        <button
+                          type="button"
+                          onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
+                        >
+                          <FiInfo size={20} color="#CCCCCC" />
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button type="button" onClick={handleBackClick}>
+                          <IoIosArrowBack size={20} color="#1A1A1A" />
+                        </button>
+                        <p>탐색 모드</p>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCloseClick}
+                    data-tooltip-id="close-description-tooltip"
                   >
-                    <p>{chatbotFixedMessage.content}</p>
-                  </ExpandableContentBox>
-                )}
-                <ChatbotMessageList />
-              </div>
-              <div className={cx('chatbot-window__footer')}>
-                <ChatbotChatInput />
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </Rnd>
+                    <IoClose size={20} color="#1A1A1A" />
+                  </button>
+                  <Tooltip
+                    id="close-description-tooltip"
+                    className={cx('tooltip')}
+                    positionStrategy="fixed"
+                  >
+                    대화창을 닫으면 대화 내역은 유지되지만,
+                    <br /> 다음 대화 시 이전 대화의 맥락이 유지되지 않습니다.
+                  </Tooltip>
+                </div>
+                <div ref={containerRef} className={cx('chatbot-window__body')}>
+                  {chatbotFixedMessage && (
+                    <ExpandableContentBox
+                      leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}
+                    >
+                      <p>{chatbotFixedMessage.content}</p>
+                    </ExpandableContentBox>
+                  )}
+                  <ChatbotMessageList />
+                </div>
+                <div className={cx('chatbot-window__footer')}>
+                  <ChatbotChatInput />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </Rnd>
+        </div>
       )}
     </>
   )
