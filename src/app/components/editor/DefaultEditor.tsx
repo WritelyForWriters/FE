@@ -1,6 +1,6 @@
 'use client'
 
-import { Ref, RefObject, useCallback, useEffect, useImperativeHandle } from 'react'
+import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
@@ -13,12 +13,13 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { activeMenuAtom, isEditableAtom } from 'store/editorAtoms'
+import { isEditableAtom } from 'store/editorAtoms'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
 
 import { useMemos } from '@hooks/editor/useMemos'
+import useResetMode from '@hooks/editor/useResetMode'
 import { useTextEditor } from '@hooks/editor/useTextEditor'
 
 import BackgroundHighlight from '@extensions/BackgroundHighlight'
@@ -46,7 +47,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   const isChatbotOpen = useAtomValue(isChatbotOpenAtom)
 
   const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
-  const setActiveMenu = useSetAtom(activeMenuAtom)
 
   const editor = useEditor({
     editable,
@@ -121,37 +121,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
   const { handleChange, handleSavedMemos } = useMemos(editor)
 
-  // 메모 툴바 초기화 함수
-  const resetMemoMenu = useCallback(() => {
-    if (editor && activeMenu === 'memo') {
-      // TODO MEMO(Sohyun): 재형님께서 작업중이신 초기화 함수 사용하기
-      editor.commands.unsetBackgroundHighlight()
-      setActiveMenu('defaultToolbar')
-    }
-  }, [editor, activeMenu, setActiveMenu])
-
-  useEffect(() => {
-    // 메모 모드가 아니면 이벤트 등록하지 않음
-    if (activeMenu !== 'memo') return undefined
-
-    const handleMouseDown = (e: MouseEvent) => {
-      // 버블 메뉴 요소 (tippy-box 클래스를 가진 첫 번째 요소)
-      const bubbleMenu = document.querySelector('.tippy-box')
-
-      // 클릭된 요소가 버블 메뉴 내부인지 확인
-      const isClickInsideBubbleMenu = bubbleMenu ? bubbleMenu.contains(e.target as Node) : false
-
-      // 버블 메뉴 외부 클릭 시 메모 모드 초기화
-      if (!isClickInsideBubbleMenu) {
-        resetMemoMenu()
-      }
-    }
-    document.addEventListener('mousedown', handleMouseDown, true)
-
-    return () => {
-      document.removeEventListener('mousedown', handleMouseDown, true)
-    }
-  }, [activeMenu, resetMemoMenu])
+  // 메모 모드 하이라이트 및 툴바 모드 초기화 훅 사용
+  useResetMode({ editor, mode: 'memo' })
 
   useEffect(() => {
     if (!editor) {
