@@ -230,7 +230,7 @@ export default function WorkSpacePage() {
 
   useEffect(() => {
     setIsChatbotOpen(false)
-    setFaviconRelativePosition({ xRatio: 0.9, yRatio: 0.7 })
+    setFaviconRelativePosition({ xRatio: 0.85, yRatio: 0.55 })
   }, [productId])
 
   return (
