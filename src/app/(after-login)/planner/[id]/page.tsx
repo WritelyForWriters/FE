@@ -78,9 +78,8 @@ export default function PlannerPage({ params }: { params: Params }) {
     if (templates && formValues) {
       // NOTE(hajae): fetch된 데이터가 하나라도 있으면 이미 저장된 상태로 간주
       setMode(templates.isSaved ? 'view' : 'edit')
-      const inInitalized = formValues.isInitialized
 
-      if (!inInitalized) {
+      if (!formValues.isInitialized) {
         const newCharacters =
           templates.characters.length === 0 ? [NEW_PLANNER_CHARACTER] : templates.characters
 
