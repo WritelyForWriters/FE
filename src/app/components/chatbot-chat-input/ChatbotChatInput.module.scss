@@ -18,6 +18,29 @@
 
   position: relative;
 
+  max-height: 40rem;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
   &__quote {
     padding: 0.8rem 0.8rem;
 
@@ -35,7 +58,8 @@
     border: none;
     background-color: color.$alert-secondary-50;
     width: 100%;
-    max-height: 20rem; // TODO: 최대 높이 수정 필요할 수도
+
+    flex-shrink: 0;
   }
 
   &__buttons {
