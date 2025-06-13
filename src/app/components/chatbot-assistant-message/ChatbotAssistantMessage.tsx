@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { QueryClient } from '@tanstack/react-query'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import 'highlight.js/styles/github.css'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { BsFillPinFill } from 'react-icons/bs'
 import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
 import ReactMarkdown from 'react-markdown'
@@ -51,8 +51,8 @@ export default function ChatbotAssistantMessage({
 
   const [selectedIndex, setSelectedIndex] = useAtom(chatbotSelectedIndexAtom)
   const [fixedMessage, setFixedMessage] = useAtom(chatbotFixedMessageAtom)
+  const [inputMode, setInputMode] = useAtom(chatInputModeAtom)
   const productId = useAtomValue(productIdAtom)
-  const setInputMode = useSetAtom(chatInputModeAtom)
 
   const { mutate: submitFeedback } = useSubmitFeedback()
 
@@ -108,7 +108,7 @@ export default function ChatbotAssistantMessage({
       <div
         onClick={() => handleChatMessageSelect(index)}
         className={cx('assistant-message__body', {
-          'assistant-message__body--hover': isMouseOver || selectedIndex === index,
+          'assistant-message__body--selected': selectedIndex === index,
         })}
       >
         {quote && (
@@ -123,7 +123,7 @@ export default function ChatbotAssistantMessage({
         </div>
       </div>
       <div className={cx('assistant-message__footer')}>
-        {isMouseOver && (
+        {isMouseOver && inputMode === 'input' && (
           <>
             <button type="button" onClick={handlePin}>
               <BsFillPinFill color="#CCCCCC" size={20} />
