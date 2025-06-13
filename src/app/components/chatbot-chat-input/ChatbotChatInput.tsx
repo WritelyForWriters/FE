@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 
-import { KeyboardEvent, useEffect, useRef, useState } from 'react'
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 
 import { getAssistantHistoryById } from 'api/chatbot/chatbot'
 import { CHAT_ERROR_MESSAGE } from 'constants/chatbot/message'
@@ -16,12 +16,14 @@ import { MdLanguage, MdOutlineLightbulb } from 'react-icons/md'
 import { Tooltip } from 'react-tooltip'
 import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
+import { chatLifecycleSessionId } from 'store/chatLifecycleSessionId'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotIsDelayAtom } from 'store/chatbotIsDelayAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
-import { chatbotSessionIdAtom } from 'store/chatbotSessionIdAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
+import { prevContentAtom } from 'store/prevContentAtom'
 import { productIdAtom } from 'store/productsAtoms'
+import { sectionSessionIdAtom } from 'store/sectionSessionIdAtom'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { ChatbotFormData, RecommendPrompt } from 'types/chatbot/chatbot'
@@ -48,12 +50,14 @@ export default function ChatbotChatInput() {
 
   const [content, setContent] = useAtom(selectedRangeAtom)
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
+  const [sectionSessionId, setSectionSessionId] = useAtom(sectionSessionIdAtom)
+  const [prevContent, setPrevContent] = useAtom(prevContentAtom)
 
   const inputMode = useAtomValue(chatInputModeAtom) // 입력 모드 | 탐색 모드
   const chatbotHistory = useAtomValue(chatbotHistoryAtom)
   const productId = useAtomValue(productIdAtom)
   const shouldApplySetting = useAtomValue(applyProductSettingsAtom)
-  const sessionId = useAtomValue(chatbotSessionIdAtom)
+  const chatLifeCycleSessionId = useAtomValue(chatLifecycleSessionId)
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
   const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
@@ -141,6 +145,23 @@ export default function ChatbotChatInput() {
   }, [content, setValue])
 
   const handleSubmitChatMessage = (data: ChatbotFormData) => {
+    const { content: currentContent } = data
+
+    let sessionId: string
+
+    if (currentContent) {
+      if (prevContent === currentContent) {
+        sessionId = sectionSessionId
+      } else {
+        const newSectionSessionId = new Date().getTime().toString()
+        sessionId = newSectionSessionId
+        setPrevContent(currentContent)
+        setSectionSessionId(newSectionSessionId)
+      }
+    } else {
+      sessionId = chatLifeCycleSessionId as string
+    }
+
     if (isWebSearchMode) {
       submitWebSearchChatMessage({ ...data, sessionId, shouldApplySetting })
     } else {
@@ -155,10 +176,17 @@ export default function ChatbotChatInput() {
     setIsAssistantResponding(isDefaultPending || isWebSearchPending)
   }, [isDefaultPending, isWebSearchPending])
 
+  const onSubmit = useCallback(handleSubmit(handleSubmitChatMessage), [
+    handleSubmit,
+    handleSubmitChatMessage,
+  ])
+
   const handleChatInputKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.nativeEvent.isComposing) return
+
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(handleSubmitChatMessage)()
+      onSubmit() // 안정적인 콜백 호출
     }
   }
 
@@ -281,10 +309,14 @@ export default function ChatbotChatInput() {
                     ))}
                   </SelectMenu>
                 ) : (
-                  <Tooltip id="favorite-prompt-tooltip" className={cx('tooltip')}>
-                    아직 즐겨찾기한 메시지가 없습니다. <br />
-                    보낸 메시지 아래 별표 모양 버튼으로 <br />
-                    메시지를 즐겨찾기 해보세요.
+                  <Tooltip
+                    id="favorite-prompt-tooltip"
+                    className={cx('tooltip')}
+                    positionStrategy="fixed"
+                  >
+                    아직 즐겨찾기한 메시지가 없습니다.
+                    <br />
+                    보낸 메시지 아래 ☆ 버튼으로 메시지를 즐겨찾기 해보세요.
                   </Tooltip>
                 )}
                 <OutLinedButton

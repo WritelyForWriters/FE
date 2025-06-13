@@ -44,6 +44,12 @@
       cursor: move;
     }
 
+    .tooltip {
+      background-color: #ffeaea;
+      color: #d32f2f;
+      font-size: small;
+    }
+
     &-content {
       @include mixin.display-flex();
       align-items: center;

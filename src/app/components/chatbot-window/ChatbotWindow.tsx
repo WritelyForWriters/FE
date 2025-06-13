@@ -18,7 +18,9 @@ import { FiInfo } from 'react-icons/fi'
 import { IoIosArrowBack } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
 import { DraggableData, Position, Rnd } from 'react-rnd'
+import { Tooltip } from 'react-tooltip'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
+import { chatLifecycleSessionId } from 'store/chatLifecycleSessionId'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
@@ -62,12 +64,18 @@ export default function ChatbotWindow() {
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
   const setIsChatbotDraaging = useSetAtom(isChatbotDraggingAtom)
+  const setChatLifecycleSessionId = useSetAtom(chatLifecycleSessionId)
 
   const productId = useAtomValue(productIdAtom)
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
   const isAssistantResponding = useAtomValue(isAssistantRespondingAtom)
 
   const { fetchNextPage, hasNextPage } = useGetInfiniteAssistantHistory(productId)
+
+  useEffect(() => {
+    const sessionId = new Date().getTime().toString()
+    setChatLifecycleSessionId(sessionId)
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
@@ -269,9 +277,21 @@ export default function ChatbotWindow() {
                       </>
                     )}
                   </div>
-                  <button type="button" onClick={handleCloseClick}>
+                  <button
+                    type="button"
+                    onClick={handleCloseClick}
+                    data-tooltip-id="close-description-tooltip"
+                  >
                     <IoClose size={20} color="#1A1A1A" />
                   </button>
+                  <Tooltip
+                    id="close-description-tooltip"
+                    className={cx('tooltip')}
+                    positionStrategy="fixed"
+                  >
+                    대화창을 닫으면 대화 내역은 유지되지만,
+                    <br /> 다음 대화 시 이전 대화의 맥락이 유지되지 않습니다.
+                  </Tooltip>
                 </div>
                 <div ref={containerRef} className={cx('chatbot-window__body')}>
                   {chatbotFixedMessage && (
