@@ -150,7 +150,8 @@ export function useTextEditor(editor: Editor | null) {
     if (!selection) return
 
     // 선택한 원본 text 저장
-    const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
+    // const originPhrase = editor.getText().slice(selection?.from, selection?.to) // 기존코드 참고용
+    const originPhrase = editor.state.doc.textBetween(selection?.from, selection?.to, ' ')
     setOriginalText(originPhrase)
 
     if (type === 'auto-modify' && originPhrase) {
