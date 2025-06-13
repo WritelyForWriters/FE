@@ -95,20 +95,13 @@ export const submitFeedback = async ({
 
 // 자유 대화 메시지 전송
 export const submitDefaultChatMessage = async (formData: ChatbotFormData) => {
-  const res = await authInstance.post('/assistant/chat/messages', formData, {
+  const res = await authInstance.post('/assistant/chat', formData, {
     timeout: 120000,
   })
 
-  const { assistantId } = res.data.result
+  const { id } = res.data.result
 
-  await authInstance.get(
-    `/assistant/chat/stream?assistantId=${assistantId}&sessionId=${formData.sessionId}`,
-    {
-      timeout: 120000,
-    },
-  )
-
-  return assistantId
+  return id
 }
 
 // 자유 대화 메시지 전송(웹 검색 모드)
