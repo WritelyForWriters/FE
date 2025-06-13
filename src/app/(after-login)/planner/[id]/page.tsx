@@ -108,7 +108,7 @@ export default function PlannerPage({ params }: { params: Params }) {
     if (isSuccess) {
       showToast('success', '저장이 완료되었습니다.')
     }
-  }, [isSuccess, showToast])
+  }, [isSuccess])
 
   useEffect(() => {
     if (autoSaveTimer === 0) {
