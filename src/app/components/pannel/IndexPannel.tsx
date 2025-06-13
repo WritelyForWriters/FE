@@ -53,7 +53,7 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
         }
       },
       {
-        rootMargin: `-124px 0px -40% 0px`, // 고정된 헤더 높이만큼 위로올리고, 뷰포트 하단 60% 만큼 유효한 영역으로 설정
+        rootMargin: `-174px 0px -40% 0px`, // 고정된 헤더 높이만큼 위로올리고, 뷰포트 하단 60% 만큼 유효한 영역으로 설정
         threshold: [0], // 요소가 1픽셀이라도 화면에 보이면 감지
       },
     )

@@ -256,13 +256,11 @@ export default function WorkSpacePage() {
           </div>
         </section>
         <section className={cx('main-canvas__center-section')}>
-          <div className={cx('main-canvas__center-section__wrapper')}>
-            <DefaultEditor
-              editorRef={editorRef}
-              contents={productDetail?.content}
-              isSavedRef={isSavedRef}
-            />
-          </div>
+          <DefaultEditor
+            editorRef={editorRef}
+            contents={productDetail?.content}
+            isSavedRef={isSavedRef}
+          />
         </section>
         {isEditable && (
           <section className={cx('main-canvas__right-section')}>
