@@ -1,10 +1,5 @@
 import { Editor } from '@tiptap/react'
-
-interface HighlightRange {
-  from: number
-  to: number
-  text?: string
-}
+import { TextSelectionRangeType } from 'types/common/editor'
 
 /**
  * MEMO(Sohyun)
@@ -18,7 +13,7 @@ export default function removeMemosHighlight(editor: Editor, memoId: string) {
   if (!editor) return null
 
   let isFound = false
-  let highlightRange: HighlightRange | null = null
+  let highlightRange: TextSelectionRangeType | null = null
 
   // Tiptap 에디터(ProseMirror 기반)에서 제공하는 문서 노드 탐색 메소드
   // descendants 메소드는 문서의 모든 자식 노드를 순회하면서 각 노드에 대해 콜백 함수를 실행
