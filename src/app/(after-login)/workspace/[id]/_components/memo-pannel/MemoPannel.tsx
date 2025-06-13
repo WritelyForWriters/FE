@@ -44,7 +44,7 @@ export default function MemoPannel({ memoList, editor }: MemoPannelProps) {
               <Tab.Button value="all">전체</Tab.Button>
             </div>
 
-            <MemoList memoList={memoList} />
+            <MemoList memoList={memoList} editor={editor} />
           </Tab>
         </Pannel>
       ) : (

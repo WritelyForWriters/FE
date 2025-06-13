@@ -1,6 +1,7 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 
 import { useQueryClient } from '@tanstack/react-query'
+import { Editor } from '@tiptap/react'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { useAtomValue } from 'jotai'
 import { FaCheck } from 'react-icons/fa6'
@@ -11,6 +12,7 @@ import { MemosDto } from 'types/memos/memosResponseType'
 import SelectMenu from '@components/select-menu/SelectMenu'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
+import removeMemosHighlight from '@hooks/editor/removeMemosHighlight'
 import {
   useDeleteMemosById,
   useUpdateMemos,
@@ -28,13 +30,14 @@ const cx = classNames.bind(styles)
 interface MemoItemProps {
   memoList: MemosDto
   activeTab: string
+  editor: Editor
 }
 
 /**
  * TODO
  * [ ] 커스텀 훅으로 리팩토링
  */
-export default function MemoItem({ memoList, activeTab }: MemoItemProps) {
+export default function MemoItem({ memoList, activeTab, editor }: MemoItemProps) {
   const { id: memoId, title, content, updatedAt, isCompleted } = memoList
   const { selectedText, startIndex, endIndex } = memoList
 
@@ -76,6 +79,7 @@ export default function MemoItem({ memoList, activeTab }: MemoItemProps) {
       },
       {
         onSuccess: () => {
+          removeMemosHighlight(editor, memoId)
           queryClient.invalidateQueries({
             queryKey: [QUERY_KEY.MEMO_LIST],
           })
