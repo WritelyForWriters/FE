@@ -1,4 +1,5 @@
 import { default as authInstance } from 'api/core/AuthInstance'
+import { AiassistantResponseType } from 'types/ai-assistant'
 
 interface PromptData {
   productId: string
@@ -23,7 +24,7 @@ export const postAutoModify = async (promptData: Omit<PromptData, 'prompt'>) => 
 
 // 수동 수정
 export const postUserModify = async (promptData: PromptData) => {
-  const res = await authInstance.post('/assistant/user-modify', promptData)
+  const res = await authInstance.post<AiassistantResponseType>('/assistant/user-modify', promptData)
   return res.data.result
 }
 
