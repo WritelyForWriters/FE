@@ -40,7 +40,7 @@ export type CharacterFormValues = {
   id?: string
   intro?: string
   name?: string
-  age?: number
+  age?: string
   gender?: string
   occupation?: string
   appearance?: string
@@ -130,7 +130,6 @@ export const PlannerSynopsisFormValues = {
 
     return characters.map((character) => ({
       ...character,
-      age: character.age ? Number(character.age) : undefined,
       customFields: character.customFields || [],
     }))
   },

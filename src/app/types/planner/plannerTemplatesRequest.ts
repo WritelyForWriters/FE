@@ -1,7 +1,13 @@
 import { CharacterFormValues, PlannerSynopsisFormValues } from './plannerSynopsisFormValues'
-import { PlannerTemplatesResponse } from './plannerTemplatesResponse'
+import { Character, IdeaNote, Plot, Synopsis, Worldview } from './plannerTemplatesResponse'
 
-export type PlannerTemplatesRequest = Omit<PlannerTemplatesResponse['result'], 'id'>
+export type PlannerTemplatesRequest = {
+  characters: Array<Omit<Character, 'age'> & { age?: number }>
+  ideaNote: IdeaNote
+  plot: Plot
+  synopsis: Synopsis
+  worldview: Worldview
+}
 
 export const PlannerTemplatesRequest = {
   from: (
@@ -47,7 +53,7 @@ export const PlannerTemplatesRequest = {
         id: character.id,
         intro: character.intro,
         name: character.name || '',
-        age: Number(character.age) ? Number(character.age) : undefined,
+        age: character.age ? Number(character.age) : undefined,
         gender: character.gender,
         occupation: character.occupation,
         appearance: character.appearance,
