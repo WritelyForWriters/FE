@@ -72,7 +72,7 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
           response: { status },
         } = error
 
-        if (status !== 401 || status !== 404) {
+        if (status !== 401 && status !== 404) {
           if (error.code === 'ERR_NETWORK') {
             showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
           }
