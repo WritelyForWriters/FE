@@ -20,6 +20,14 @@ interface AuthInterceptorProps {
   children: ReactNode
 }
 
+let isTokenRefreshing = false
+let refreshSubscribers: ((newAccessToken: string) => void)[] = []
+
+const onTokenRefreshed = (newAccessToken: string) => {
+  refreshSubscribers.forEach((callback) => callback(newAccessToken))
+  refreshSubscribers = []
+}
+
 export default function AuthInterceptor({ children }: AuthInterceptorProps) {
   const router = useRouter()
   const showToast = useToast()
@@ -42,14 +50,16 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
   useEffect(() => {
     const requestInterceptorId = AuthAxios.interceptors.request.use(
       (config) => {
+        if (config.headers.Authorization) {
+          return config
+        }
+
         if (accessToken) {
           config.headers.Authorization = `Bearer ${accessToken}`
         }
         return config
       },
-      (error) => {
-        return Promise.reject(error)
-      },
+      (error) => Promise.reject(error),
     )
 
     return () => {
@@ -62,30 +72,42 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
       (response) => response,
       async (error) => {
         const {
-          code,
-          config,
+          config: originalRequest,
           response: { status },
         } = error
 
-        if (code === 'ERR_NETWORK') {
-          showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
+        if (status !== 401 && status !== 404) {
+          if (error.code === 'ERR_NETWORK') {
+            showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
+          }
           return Promise.reject(error)
         }
 
-        if (status === 401 || status === 404) {
-          try {
-            const newAccessToken = await refresh()
+        if (isTokenRefreshing) {
+          return new Promise((resolve) => {
+            refreshSubscribers.push((newAccessToken: string) => {
+              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+              resolve(AuthAxios(originalRequest))
+            })
+          })
+        }
 
-            if (newAccessToken) {
-              setAccessToken(newAccessToken)
+        isTokenRefreshing = true
 
-              config.headers.Authorization = `Bearer ${newAccessToken}`
+        try {
+          const newAccessToken = await refresh()
 
-              return AuthAxios(config)
-            }
-          } catch (refreshError) {
-            return Promise.reject(refreshError)
+          if (newAccessToken) {
+            setAccessToken(newAccessToken)
+            onTokenRefreshed(newAccessToken)
+
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+            return AuthAxios(originalRequest)
           }
+        } catch (refreshError) {
+          return Promise.reject(refreshError)
+        } finally {
+          isTokenRefreshing = false
         }
 
         return Promise.reject(error)
@@ -95,7 +117,7 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
     return () => {
       AuthAxios.interceptors.response.eject(responseInterceptorId)
     }
-  }, [refresh, router, showToast, setAccessToken, accessToken])
+  }, [refresh, router, showToast, setAccessToken])
 
   return <>{children}</>
 }
