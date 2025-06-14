@@ -50,6 +50,10 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
   useEffect(() => {
     const requestInterceptorId = AuthAxios.interceptors.request.use(
       (config) => {
+        if (config.headers.Authorization) {
+          return config
+        }
+
         if (accessToken) {
           config.headers.Authorization = `Bearer ${accessToken}`
         }
