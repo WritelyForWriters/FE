@@ -31,10 +31,15 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
       setAccessToken(data.result.accessToken! as string)
 
       if (isRememberMe) {
-        setCookie('isRememberMe', true, { expires: date, path: '/' })
+        setCookie('isRememberMe', true, { expires: date, path: '/', sameSite: 'lax', secure: true })
       }
 
-      setCookie('isLoggedIn', true, isRememberMe ? { expires: date, path: '/' } : {})
+      setCookie('isLoggedIn', true, {
+        path: '/',
+        ...(isRememberMe && { expires: date }),
+        sameSite: 'lax',
+        secure: true,
+      })
       trackEvent('login_complete', {
         user_id: email,
       })

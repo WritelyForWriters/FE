@@ -39,7 +39,12 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
     onSuccessHandler: () => {
       const date = new Date()
       date.setTime(date.getTime() + NUMERICS.COOKIE_EXPIRE)
-      setCookie('isLoggedIn', true, isRememberMe ? { expires: date, path: '/' } : {})
+      setCookie('isLoggedIn', true, {
+        path: '/',
+        ...(isRememberMe && { expires: date }),
+        sameSite: 'lax',
+        secure: true,
+      })
     },
     onErrorHandler: () => {
       showToast('warning', TOAST_MESSAGE.SESSION_DONE)
