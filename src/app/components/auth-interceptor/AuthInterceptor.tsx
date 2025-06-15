@@ -10,7 +10,7 @@ import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { setCookie } from 'cookies-next/client'
 import { useAtom, useAtomValue } from 'jotai'
 import { accessTokenAtom } from 'store/accessTokenAtom'
-import { isRemberMeAtom } from 'store/isRemberMeAtom'
+import { isRememberMeAtom } from 'store/isRememberMeAtom'
 
 import { useToast } from '@components/toast/ToastProvider'
 
@@ -33,7 +33,7 @@ export default function AuthInterceptor({ children }: AuthInterceptorProps) {
   const showToast = useToast()
 
   const [accessToken, setAccessToken] = useAtom(accessTokenAtom)
-  const isRememberMe = useAtomValue(isRemberMeAtom)
+  const isRememberMe = useAtomValue(isRememberMeAtom)
 
   const { mutateAsync: refresh } = useRefresh({
     onSuccessHandler: () => {
