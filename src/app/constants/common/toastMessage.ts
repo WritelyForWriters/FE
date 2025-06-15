@@ -11,4 +11,5 @@ export const TOAST_MESSAGE = Object.freeze({
   ACCOUNT_ACTIVATION_SUCCESS: '계정이 활성화 되었어요. 로그인 해주세요',
   UNKNOWN_ERROR: '알 수 없는 오류가 발생했어요.',
   FAIL_SUBMIT_FEEDBACK: '이미 평가되었어요.',
+  SUCCESS_SUBMIT_FEEDBACK: '응답 평가가 성공적으로 완료되었습니다.',
 })
