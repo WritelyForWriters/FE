@@ -49,6 +49,8 @@ export default function PdfExportPreview({ ref, children }: PdfExportPreviewProp
       html2pdf().set(option).from(contentElement).save()
     } catch (error) {
       console.error(error)
+    } finally {
+      handleModalClose()
     }
   }
 

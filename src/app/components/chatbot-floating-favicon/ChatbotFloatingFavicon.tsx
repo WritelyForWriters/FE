@@ -61,7 +61,7 @@ export default function ChatbotFloatingFavicon() {
 
     setChatbotAbsolutePosition({ x: chatbotX, y: chatbotY })
     setChatbotRelativePosition(computeRelativePosition(chatbotX, chatbotY, width, height))
-  }, [faviconRelativePosition, windowSize, setChatbotAbsolutePosition, setChatbotRelativePosition])
+  }, [faviconRelativePosition, windowSize])
 
   const handleDragStop = (_: DraggableEvent, data: { x: number; y: number }) => {
     const { width, height } = windowSize
@@ -92,8 +92,11 @@ export default function ChatbotFloatingFavicon() {
       position={faviconAbsolutePosition}
       onDragStop={handleDragStop}
       enableResizing={false}
-      bounds="window"
+      bounds="parent"
       dragHandleClassName="drag-handle"
+      style={{
+        pointerEvents: 'auto',
+      }}
     >
       <div className={cx('favicon-wrapper')}>
         <Favicon onClick={handleChatbotOpen}>

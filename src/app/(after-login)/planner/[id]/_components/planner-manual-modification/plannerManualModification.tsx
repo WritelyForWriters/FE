@@ -17,6 +17,7 @@ interface PlannerManualModificationProps {
   value: string
   promptClose: () => void
   handleConfirm: () => void
+  handleRetry: () => void
   handleCancel: () => void
   handleManualModification?: (value: string, inputValue: string) => Promise<boolean>
 }
@@ -25,6 +26,7 @@ export default function PlannerManualModification({
   value,
   promptClose,
   handleConfirm,
+  handleRetry,
   handleCancel,
   handleManualModification,
 }: PlannerManualModificationProps) {
@@ -94,6 +96,7 @@ export default function PlannerManualModification({
               <SelectMenu.Option
                 option={{
                   handleAction: () => {
+                    handleRetry()
                     onClose()
                   },
                 }}

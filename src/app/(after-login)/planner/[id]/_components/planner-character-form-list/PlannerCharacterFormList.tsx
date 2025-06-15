@@ -28,6 +28,7 @@ interface PlannerCharacterFormListProps {
   handleRemoveCharacter: (index: number) => void
   handleManualModification: (
     name: string,
+    section: string,
   ) => (value: string, inputValue: string) => Promise<boolean>
 }
 
@@ -98,7 +99,10 @@ export default function PlannerCharacterFormList({
               <PlannerFieldWithButton
                 key={`planner-character-item-${index}`}
                 name={getTextFieldName(item.name)}
-                handleManualModification={handleManualModification(getTextFieldName(item.name))}
+                handleManualModification={handleManualModification(
+                  getTextFieldName(item.name),
+                  item.name,
+                )}
                 manualModifiable={item.manualModifiable}
               >
                 <TextField

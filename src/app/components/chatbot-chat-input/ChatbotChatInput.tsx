@@ -2,26 +2,28 @@
 
 import Image from 'next/image'
 
-import { KeyboardEvent, useEffect, useState } from 'react'
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 
-import { useQueryClient } from '@tanstack/react-query'
 import { getAssistantHistoryById } from 'api/chatbot/chatbot'
 import { CHAT_ERROR_MESSAGE } from 'constants/chatbot/message'
 import { RECOMMEND_PROMPTS } from 'constants/chatbot/recommendPrompts'
-import { QUERY_KEY } from 'constants/common/queryKeys'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FaRegStar } from 'react-icons/fa'
 import { FaCircleArrowUp } from 'react-icons/fa6'
 import { MdLanguage, MdOutlineLightbulb } from 'react-icons/md'
+import { Tooltip } from 'react-tooltip'
+import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
-import { chatModeAtom } from 'store/chatModeAtom'
+import { chatLifecycleSessionId } from 'store/chatLifecycleSessionId'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
+import { chatbotIsDelayAtom } from 'store/chatbotIsDelayAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
-import { clickedButtonAtom } from 'store/clickedButtonAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
-import { newChatMessagesAtom } from 'store/newChatMessagesAtom'
+import { prevContentAtom } from 'store/prevContentAtom'
 import { productIdAtom } from 'store/productsAtoms'
+import { sectionSessionIdAtom } from 'store/sectionSessionIdAtom'
 import { selectedPromptAtom } from 'store/selectedPromptAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { ChatbotFormData, RecommendPrompt } from 'types/chatbot/chatbot'
@@ -43,30 +45,33 @@ import styles from './ChatbotChatInput.module.scss'
 const cx = classNames.bind(styles)
 
 export default function ChatbotChatInput() {
-  const queryClient = useQueryClient()
-
-  const [isFavoriteMenuOpen, setIsFavoriteMenuOpen] = useState(false)
-  const [isRecommendMenuOpen, setIsRecommendMenuOpen] = useState(false)
-
-  const inputMode = useAtomValue(chatInputModeAtom) // 입력 모드 | 탐색 모드
+  const [isWebSearchMode, setIsWebSearchMode] = useState(false)
+  const [clickedButton, setClickedButton] = useState<'favorite' | 'recommend' | null>(null)
 
   const [content, setContent] = useAtom(selectedRangeAtom)
-  const [chatMode, setChatMode] = useAtom(chatModeAtom) // 일반 모드 | 웹 검색 모드
   const [prompt, setPrompt] = useAtom(selectedPromptAtom)
-  const [clickedButton, setClickedButton] = useAtom(clickedButtonAtom)
-  const chatbotHistory = useAtomValue(chatbotHistoryAtom)
+  const [sectionSessionId, setSectionSessionId] = useAtom(sectionSessionIdAtom)
+  const [prevContent, setPrevContent] = useAtom(prevContentAtom)
 
+  const inputMode = useAtomValue(chatInputModeAtom) // 입력 모드 | 탐색 모드
+  const chatbotHistory = useAtomValue(chatbotHistoryAtom)
   const productId = useAtomValue(productIdAtom)
+  const shouldApplySetting = useAtomValue(applyProductSettingsAtom)
+  const chatLifeCycleSessionId = useAtomValue(chatLifecycleSessionId)
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
   const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
-  const setNewChatMessages = useSetAtom(newChatMessagesAtom)
+  const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
+  const setIsDelay = useSetAtom(chatbotIsDelayAtom)
 
   const showToast = useToast()
 
   const { data } = useGetFavoritePrompts(productId)
 
   const favoritePrompts = data?.result ?? []
+  const hasFavoritePrompt = favoritePrompts.length > 0
+
+  const timerIdRef = useRef<NodeJS.Timeout>(undefined)
 
   const method = useForm<ChatbotFormData>({
     defaultValues: {
@@ -80,18 +85,58 @@ export default function ChatbotChatInput() {
 
   const { mutate: submitDefaultChatMessage, isPending: isDefaultPending } =
     useSubmitDefaultChatMessage({
+      onMutate: () => {
+        timerIdRef.current = setTimeout(() => {
+          setIsDelay(true)
+        }, 10000)
+      },
       onSuccess: async (data) => {
         try {
           const newMessage = await getAssistantHistoryById(productId, data as string)
-          setNewChatMessages((prev) => [newMessage.result.contents[0], ...prev])
-        } catch {}
+          setChatbotHistory((prev) => [...prev, newMessage.result.contents[0]])
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      onError: (error) => {
+        console.log(error)
+        setIsAssistantResponding(false)
+        showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
+      },
+      onSettled: () => {
+        if (timerIdRef.current) {
+          clearTimeout(timerIdRef.current)
+          timerIdRef.current = undefined
+        }
+        setIsDelay(false)
       },
     })
 
   const { mutate: submitWebSearchChatMessage, isPending: isWebSearchPending } =
     useSubmitWebSearchChatMessage({
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.ASSISTANT_HISTORY_LATEST, productId] })
+      onMutate: () => {
+        timerIdRef.current = setTimeout(() => {
+          setIsDelay(true)
+        }, 10000)
+      },
+      onSuccess: async (data) => {
+        try {
+          const newMessage = await getAssistantHistoryById(productId, data as string)
+          setChatbotHistory((prev) => [...prev, newMessage.result.contents[0]])
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      onError: () => {
+        setIsAssistantResponding(false)
+        showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
+      },
+      onSettled: () => {
+        if (timerIdRef.current) {
+          clearTimeout(timerIdRef.current)
+          timerIdRef.current = undefined
+        }
+        setIsDelay(false)
       },
     })
 
@@ -100,10 +145,27 @@ export default function ChatbotChatInput() {
   }, [content, setValue])
 
   const handleSubmitChatMessage = (data: ChatbotFormData) => {
-    if (chatMode === 'web') {
-      submitWebSearchChatMessage({ ...data, sessionId: productId })
+    const { content: currentContent } = data
+
+    let sessionId: string
+
+    if (currentContent) {
+      if (prevContent === currentContent) {
+        sessionId = sectionSessionId
+      } else {
+        const newSectionSessionId = new Date().getTime().toString()
+        sessionId = newSectionSessionId
+        setPrevContent(currentContent)
+        setSectionSessionId(newSectionSessionId)
+      }
     } else {
-      submitDefaultChatMessage(data)
+      sessionId = chatLifeCycleSessionId as string
+    }
+
+    if (isWebSearchMode) {
+      submitWebSearchChatMessage({ ...data, sessionId, shouldApplySetting })
+    } else {
+      submitDefaultChatMessage({ ...data, sessionId, shouldApplySetting })
     }
 
     setContent('')
@@ -114,41 +176,41 @@ export default function ChatbotChatInput() {
     setIsAssistantResponding(isDefaultPending || isWebSearchPending)
   }, [isDefaultPending, isWebSearchPending])
 
+  const onSubmit = useCallback(handleSubmit(handleSubmitChatMessage), [
+    handleSubmit,
+    handleSubmitChatMessage,
+  ])
+
   const handleChatInputKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.nativeEvent.isComposing) return
+
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(handleSubmitChatMessage)()
+      onSubmit() // 안정적인 콜백 호출
     }
   }
 
   const handleClickButton = (type: 'web' | 'favorite' | 'recommend') => {
-    if (clickedButton === 'web' && type === 'web') {
-      setChatMode('default')
-      setClickedButton(null)
-    } else {
-      setClickedButton(type)
-    }
-
     switch (type) {
       case 'web':
-        setChatMode(type)
+        setIsWebSearchMode((prev) => !prev)
         break
       case 'favorite':
-        setIsFavoriteMenuOpen(true)
+        if (!hasFavoritePrompt) return
+        setClickedButton('favorite')
         break
       case 'recommend':
-        setIsRecommendMenuOpen(true)
+        setClickedButton('recommend')
         break
     }
   }
 
   const handleRecommendPromptSelect = (item: RecommendPrompt) => {
-    if (item.requiresSection) {
+    if (item.requiresSection && !content) {
       showToast('warning', CHAT_ERROR_MESSAGE.SELECTED_REQUIRED)
-      // TODO: 선택 구간 없으면 토스트 노출
     } else {
       setPrompt(item.prompt)
-      setIsRecommendMenuOpen(false)
+      setClickedButton(null)
     }
   }
 
@@ -195,6 +257,9 @@ export default function ChatbotChatInput() {
                   iconPosition="leading"
                   iconType={<MdLanguage color="#808080" size={16} />}
                   onClick={() => handleClickButton('web')}
+                  style={{
+                    backgroundColor: isWebSearchMode ? '#cccccc' : '',
+                  }}
                 >
                   검색
                 </OutLinedButton>
@@ -207,28 +272,53 @@ export default function ChatbotChatInput() {
                   iconPosition="leading"
                   iconType={<FaRegStar color="#808080" size={16} />}
                   onClick={() => handleClickButton('favorite')}
+                  style={{
+                    backgroundColor: clickedButton === 'favorite' ? '#cccccc' : '',
+                  }}
+                  data-tooltip-id="favorite-prompt-tooltip"
                 >
                   즐겨찾기
                 </OutLinedButton>
-                <SelectMenu
-                  handleClose={() => setIsFavoriteMenuOpen(false)}
-                  isOpen={isFavoriteMenuOpen}
-                  style={{ width: 'auto', left: 70, bottom: 35 }}
-                >
-                  {favoritePrompts.map((item: { messageId: string; prompt: string }) => (
-                    <SelectMenu.Option
-                      key={item.messageId}
-                      option={{
-                        handleAction: () => {
-                          setPrompt(item.prompt)
-                          setIsFavoriteMenuOpen(false)
-                        },
-                      }}
-                    >
-                      {item.prompt}
-                    </SelectMenu.Option>
-                  ))}
-                </SelectMenu>
+                {hasFavoritePrompt ? (
+                  <SelectMenu
+                    handleClose={() => setClickedButton(null)}
+                    isOpen={clickedButton === 'favorite'}
+                    style={{
+                      height: 'auto',
+                      left: 90,
+                      bottom: 35,
+                      position: 'fixed',
+                      zIndex: 1000,
+                      minWidth: 300,
+                      maxHeight: 292,
+                      overflowY: 'auto',
+                    }}
+                  >
+                    {favoritePrompts.map((item: { messageId: string; prompt: string }) => (
+                      <SelectMenu.Option
+                        key={item.messageId}
+                        option={{
+                          handleAction: () => {
+                            setPrompt(item.prompt)
+                            setClickedButton(null)
+                          },
+                        }}
+                      >
+                        {item.prompt}
+                      </SelectMenu.Option>
+                    ))}
+                  </SelectMenu>
+                ) : (
+                  <Tooltip
+                    id="favorite-prompt-tooltip"
+                    className={cx('tooltip')}
+                    positionStrategy="fixed"
+                  >
+                    아직 즐겨찾기한 메시지가 없습니다.
+                    <br />
+                    보낸 메시지 아래 ☆ 버튼으로 메시지를 즐겨찾기 해보세요.
+                  </Tooltip>
+                )}
                 <OutLinedButton
                   type="button"
                   name="recommend"
@@ -238,13 +328,23 @@ export default function ChatbotChatInput() {
                   iconPosition="leading"
                   iconType={<MdOutlineLightbulb color="#808080" size={16} />}
                   onClick={() => handleClickButton('recommend')}
+                  style={{
+                    backgroundColor: clickedButton === 'recommend' ? '#cccccc' : '',
+                  }}
                 >
                   추천 프롬프트
                 </OutLinedButton>
                 <SelectMenu
-                  handleClose={() => setIsRecommendMenuOpen(false)}
-                  isOpen={isRecommendMenuOpen}
-                  style={{ width: 'auto', left: 150, bottom: 35, position: 'fixed', zIndex: 1000 }}
+                  handleClose={() => setClickedButton(null)}
+                  isOpen={clickedButton === 'recommend'}
+                  style={{
+                    height: 292,
+                    left: 170,
+                    bottom: 35,
+                    position: 'fixed',
+                    zIndex: 1000,
+                    minWidth: 300,
+                  }}
                 >
                   {RECOMMEND_PROMPTS.map((item: RecommendPrompt, idx) => (
                     <SelectMenu.Option

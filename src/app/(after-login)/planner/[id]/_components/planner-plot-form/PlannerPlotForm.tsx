@@ -11,6 +11,7 @@ const cx = classNames.bind(styles)
 interface PlannerPlotFormProps {
   handleManualModification: (
     name: string,
+    section: string,
   ) => (value: string, inputValue: string) => Promise<boolean>
 }
 
@@ -20,7 +21,7 @@ export default function PlannerPlotForm({ handleManualModification }: PlannerPlo
       <div className={cx('plot-form__title')}>줄거리</div>
       <PlannerFieldWithButton
         name="plot.content"
-        handleManualModification={handleManualModification('plot.content')}
+        handleManualModification={handleManualModification('plot.content', 'plot')}
       >
         <TextField name="plot.content" label="발단-전개-위기-결말" variant="expand" />
       </PlannerFieldWithButton>

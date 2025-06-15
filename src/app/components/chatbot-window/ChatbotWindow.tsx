@@ -4,7 +4,7 @@
  */
 import Image from 'next/image'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Identify, identify } from '@amplitude/analytics-browser'
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
@@ -17,12 +17,16 @@ import { DraggableEvent } from 'react-draggable'
 import { FiInfo } from 'react-icons/fi'
 import { IoIosArrowBack } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
-import { DraggableData, Rnd } from 'react-rnd'
+import { DraggableData, Position, Rnd } from 'react-rnd'
+import { Tooltip } from 'react-tooltip'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
+import { chatLifecycleSessionId } from 'store/chatLifecycleSessionId'
 import { chatbotAbsolutePositionAtom } from 'store/chatbotAbsolutePositionAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotRelativePositionAtom } from 'store/chatbotRelativePositionAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
+import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
+import { isChatbotDraggingAtom } from 'store/isChatbotDraggingAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
 
@@ -33,9 +37,6 @@ import ExpandableContentBox from '@components/expandable-content-box/ExpandableC
 import { useGetInfiniteAssistantHistory } from '@hooks/chatbot/useGetAssistantHistoryInfinite'
 
 import { computeRelativePosition } from '@utils/computeRelativePosition'
-
-import { chatbotAbsoluteSizeAtom } from './../../store/chatbotAbsoluteSizeAtom'
-import { chatbotRelativeSizeAtom } from './../../store/chatbotRelativeSizeAtom'
 
 import classNames from 'classnames/bind'
 
@@ -53,22 +54,28 @@ export default function ChatbotWindow() {
     height: window.innerHeight,
   })
 
+  const [chatbotRelativeSize, setChatbotRelativeSize] = useState({ widthRatio: 0, heightRatio: 0 })
+  const [chatbotAbsoluteSize, setChatbotAbsoluteSize] = useState({ width: 0, height: 0 })
+
   const [isChatbotOpen, setIsChatbotOpen] = useAtom(isChatbotOpenAtom)
-
-  const [chatbotRelativeSize, setChatbotRelativeSize] = useAtom(chatbotRelativeSizeAtom)
   const [chatbotRelativePosition, setChatbotRelativePosition] = useAtom(chatbotRelativePositionAtom)
-
-  const [chatbotAbsoluteSize, setChatbotAbsoluteSize] = useAtom(chatbotAbsoluteSizeAtom)
   const [chatbotAbsolutePosition, setChatbotAbsolutePosition] = useAtom(chatbotAbsolutePositionAtom)
-
   const [inputMode, setInputMode] = useAtom(chatInputModeAtom) // 입력 모드 | 탐색 모드
 
   const setSelectedIndex = useSetAtom(chatbotSelectedIndexAtom)
+  const setIsChatbotDraaging = useSetAtom(isChatbotDraggingAtom)
+  const setChatLifecycleSessionId = useSetAtom(chatLifecycleSessionId)
 
   const productId = useAtomValue(productIdAtom)
   const chatbotFixedMessage = useAtomValue(chatbotFixedMessageAtom)
+  const isAssistantResponding = useAtomValue(isAssistantRespondingAtom)
 
-  const { fetchNextPage } = useGetInfiniteAssistantHistory(productId)
+  const { fetchNextPage, hasNextPage } = useGetInfiniteAssistantHistory(productId)
+
+  useEffect(() => {
+    const sessionId = new Date().getTime().toString()
+    setChatLifecycleSessionId(sessionId)
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
@@ -102,12 +109,35 @@ export default function ChatbotWindow() {
     setChatbotAbsoluteSize,
   ])
 
-  const handleScroll = async () => {
+  useEffect(() => {
     const container = containerRef.current
-    if (container && container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+
+    if (container) {
+      container.scrollTop = container.scrollHeight
+    }
+  }, [isAssistantResponding])
+
+  const handleScroll = useCallback(() => {
+    const container = containerRef.current
+    if (!container || !hasNextPage) return
+
+    if (container.scrollTop <= 100) {
+      const prevScrollHeight = container.scrollHeight
+
+      const observer = new MutationObserver(() => {
+        const newScrollHeight = container.scrollHeight
+        container.scrollTop = newScrollHeight - prevScrollHeight
+        observer.disconnect()
+      })
+
+      observer.observe(container, {
+        childList: true,
+        subtree: true,
+      })
+
       fetchNextPage()
     }
-  }
+  }, [fetchNextPage, hasNextPage])
 
   useEffect(() => {
     const container = containerRef.current
@@ -141,6 +171,7 @@ export default function ChatbotWindow() {
     direction: ResizeDirection,
     ref: HTMLElement,
     delta: { width: number; height: number },
+    position: Position,
   ) => {
     const { width, height } = windowSize
 
@@ -154,19 +185,17 @@ export default function ChatbotWindow() {
       heightRatio: newHeight / height,
     })
 
-    if (direction.includes('left') || direction.includes('top')) {
-      setChatbotAbsolutePosition((prev) => {
-        const newX = direction.includes('left') ? prev.x - delta.width : prev.x
-        const newY = direction.includes('top') ? prev.y - delta.height : prev.y
+    setChatbotAbsolutePosition(position)
+    setChatbotRelativePosition(computeRelativePosition(position.x, position.y, width, height))
+  }
 
-        setChatbotRelativePosition(computeRelativePosition(newX, newY, width, height))
-
-        return { x: newX, y: newY }
-      })
-    }
+  const handleDragStart = () => {
+    setIsChatbotDraaging(true)
   }
 
   const handleDragStop = (_: DraggableEvent, data: DraggableData) => {
+    setIsChatbotDraaging(false)
+
     const { width, height } = windowSize
 
     setChatbotAbsolutePosition({
@@ -187,84 +216,100 @@ export default function ChatbotWindow() {
   return (
     <>
       {isChatbotOpen && (
-        <Rnd
-          bounds="window"
-          dragAxis="both"
-          dragHandleClassName="drag-handle"
-          enableResizing
-          position={chatbotAbsolutePosition}
-          size={{
-            width: chatbotAbsoluteSize.width,
-            height: chatbotAbsoluteSize.height,
-          }}
-          default={{
-            x: chatbotAbsolutePosition.x,
-            y: chatbotAbsolutePosition.y,
-            width: chatbotAbsoluteSize.width,
-            height: chatbotAbsoluteSize.height,
-          }}
-          minWidth={CHATBOT_DEFAULT_SIZE.width}
-          minHeight={CHATBOT_DEFAULT_SIZE.height}
-          onResizeStop={handleResizeStop}
-          onDragStop={handleDragStop}
+        <div
           style={{
-            position: 'fixed',
-            zIndex: 1000,
+            width: '100%',
+            height: '100%',
+            position: 'relative',
           }}
         >
-          <AnimatePresence>
-            <motion.div
-              className={cx('chatbot-window')}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.25 }}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <div className={cx('chatbot-window__header', { 'drag-handle': true })}>
-                <div className={cx('chatbot-window__header-content')}>
-                  {inputMode === 'input' ? (
-                    <>
-                      <p>챗봇</p>
-                      <button
-                        type="button"
-                        onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
-                      >
-                        <FiInfo size={20} color="#CCCCCC" />
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button type="button" onClick={handleBackClick}>
-                        <IoIosArrowBack size={20} color="#1A1A1A" />
-                      </button>
-                      <p>탐색 모드</p>
-                    </>
-                  )}
-                </div>
-                <button type="button" onClick={handleCloseClick}>
-                  <IoClose size={20} color="#1A1A1A" />
-                </button>
-              </div>
-              <div ref={containerRef} className={cx('chatbot-window__body')}>
-                {chatbotFixedMessage && (
-                  <ExpandableContentBox
-                    leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}
+          <Rnd
+            bounds="parent"
+            dragAxis="both"
+            dragHandleClassName="drag-handle"
+            enableResizing
+            position={chatbotAbsolutePosition}
+            size={{
+              width: chatbotAbsoluteSize.width,
+              height: chatbotAbsoluteSize.height,
+            }}
+            default={{
+              x: chatbotAbsolutePosition.x,
+              y: chatbotAbsolutePosition.y,
+              width: chatbotAbsoluteSize.width,
+              height: chatbotAbsoluteSize.height,
+            }}
+            minWidth={CHATBOT_DEFAULT_SIZE.width}
+            minHeight={CHATBOT_DEFAULT_SIZE.height}
+            onResizeStop={handleResizeStop}
+            onDragStart={handleDragStart}
+            onDragStop={handleDragStop}
+            style={{
+              pointerEvents: 'auto',
+            }}
+          >
+            <AnimatePresence>
+              <motion.div
+                className={cx('chatbot-window')}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.25 }}
+              >
+                <div className={cx('chatbot-window__header', { 'drag-handle': true })}>
+                  <div className={cx('chatbot-window__header-content')}>
+                    {inputMode === 'input' ? (
+                      <>
+                        <p>챗봇</p>
+                        <button
+                          type="button"
+                          onClick={() => window.open(CHATBOT_URLS.HOW_TO_USE, '_blank')}
+                        >
+                          <FiInfo size={20} color="#CCCCCC" />
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button type="button" onClick={handleBackClick}>
+                          <IoIosArrowBack size={20} color="#1A1A1A" />
+                        </button>
+                        <p>탐색 모드</p>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCloseClick}
+                    data-tooltip-id="close-description-tooltip"
                   >
-                    <p>{chatbotFixedMessage.content}</p>
-                  </ExpandableContentBox>
-                )}
-                <ChatbotMessageList />
-              </div>
-              <div className={cx('chatbot-window__footer')}>
-                <ChatbotChatInput />
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </Rnd>
+                    <IoClose size={20} color="#1A1A1A" />
+                  </button>
+                  <Tooltip
+                    id="close-description-tooltip"
+                    className={cx('tooltip')}
+                    positionStrategy="fixed"
+                  >
+                    대화창을 닫으면 대화 내역은 유지되지만,
+                    <br /> 다음 대화 시 이전 대화의 맥락이 유지되지 않습니다.
+                  </Tooltip>
+                </div>
+                <div ref={containerRef} className={cx('chatbot-window__body')}>
+                  {chatbotFixedMessage && (
+                    <ExpandableContentBox
+                      leftIcon={<Image src="/icons/pin.svg" alt="고정" width={20} height={20} />}
+                    >
+                      <p>{chatbotFixedMessage.content}</p>
+                    </ExpandableContentBox>
+                  )}
+                  <ChatbotMessageList />
+                </div>
+                <div className={cx('chatbot-window__footer')}>
+                  <ChatbotChatInput />
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </Rnd>
+        </div>
       )}
     </>
   )

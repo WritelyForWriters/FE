@@ -73,7 +73,6 @@ export default function TextField({
           <TextFieldInput
             variant={variant}
             options={options}
-            isAiModified={getIsAiModified(name)}
             {...(props as InputProps)}
             {...register(name, options)}
           />

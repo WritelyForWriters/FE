@@ -11,7 +11,6 @@ export const useGetMemoList = (
   return useQuery({
     queryKey: [QUERY_KEY.MEMO_LIST, productId],
     queryFn: () => getMemoList(productId),
-    staleTime: 1000 * 60 * 5, // 5분
     enabled: !!productId,
     ...queryOptions,
   })

@@ -2,11 +2,11 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 
 import { useCompleteJoin } from '@hooks/index'
 
-export default function CompleteJoinPage() {
+function CompleteJoin() {
   const router = useRouter()
   const params = useSearchParams()
 
@@ -23,4 +23,12 @@ export default function CompleteJoinPage() {
   }, [joinToken])
 
   return <></>
+}
+
+export default function CompleteJoinPage() {
+  return (
+    <Suspense>
+      <CompleteJoin />
+    </Suspense>
+  )
 }

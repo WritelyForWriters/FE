@@ -13,4 +13,12 @@ export interface TextSelectionRangeType {
 
 export type ToolbarType = 'defaultToolbar' | 'auto-modify' | 'user-modify' | 'feedback' | 'memo'
 export type AiassistantOptionType = 'auto-modify' | 'user-modify' | 'feedback' | 'free-chat'
-export type ActionOptionType = 'apply' | 'recreate' | 'cancel'
+export type ActionOptionType = 'apply' | 'recreate' | 'cancel' | 'archive'
+
+// 응답 평가 타입
+export interface EvaluateStateType {
+  assistantId: string | null
+  isGoodSelected: boolean
+  isBadSelected: boolean
+  isArchived: boolean
+}

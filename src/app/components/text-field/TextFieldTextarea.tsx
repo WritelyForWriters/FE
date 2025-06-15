@@ -53,7 +53,7 @@ const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
 
     useEffect(() => {
       handleTextareaHeight()
-    }, [isExpand])
+    }, [isExpand, isAiModified])
 
     return (
       <div className={cx('text-field__fieldset__wrapper')}>
@@ -62,7 +62,6 @@ const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
           {...props}
           className={cx('text-field__fieldset__text-area', {
             'text-field__fieldset__text-area--expand': isExpand,
-            'text-field__fieldset__text-area--is-modified': isAiModified,
           })}
           rows={1}
           ref={textarea}

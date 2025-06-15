@@ -9,6 +9,7 @@ export interface ProductDto {
   title: string | null
   genre: string | null
   updatedAt: string
+  createdAt: string
 }
 
 interface MemoDto {

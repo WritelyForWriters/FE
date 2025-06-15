@@ -34,13 +34,19 @@ export default function PlannerFieldWithButton({
   manualModifiable = true,
   handleManualModification,
 }: PlannerFieldWithButtonProps) {
-  const { watch, unregister, register, setValue } = useFormContext()
+  const {
+    watch,
+    unregister,
+    register,
+    setValue,
+    formState: { isValid },
+  } = useFormContext()
   const { isOpen, onClose, onOpen } = useCollapsed(false)
   const [isShow, setIsShow] = useState(true)
   const [isDeleted, setIsDeleted] = useState(false)
   const initialValue = watch(name)
 
-  const { remove, getContent } = usePlannerTemplatesAiAssistant()
+  const { remove, getContent, setType } = usePlannerTemplatesAiAssistant()
 
   // NOTE(hajae): 삭제된 항목은 null로 반환되어 초기 렌더링 시 화면에 표시하지 않는다
   useEffect(() => {
@@ -74,6 +80,10 @@ export default function PlannerFieldWithButton({
     remove(name)
   }
 
+  const handleRetry = () => {
+    setType(name, 'retry')
+  }
+
   const handleCancel = () => {
     const originalContent = getContent(name)
     if (originalContent !== undefined) {
@@ -88,7 +98,7 @@ export default function PlannerFieldWithButton({
         <div className={cx('field-with-button')}>
           {children}
           <div className={cx('field-with-button__buttons')}>
-            {manualModifiable && (
+            {isValid && manualModifiable && (
               <FillButton
                 type="button"
                 size="small"
@@ -127,6 +137,7 @@ export default function PlannerFieldWithButton({
           promptClose={onClose}
           handleManualModification={handleManualModification}
           handleConfirm={handleConfirm}
+          handleRetry={handleRetry}
           handleCancel={handleCancel}
         />
       )}

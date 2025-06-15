@@ -9,6 +9,8 @@ export const handleAxiosError = (error: Error, showToast: ShowToastFn) => {
 
     if (code === 'ERR_NETWORK') {
       showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
+    } else if (response?.status === 400) {
+      showToast('warning', TOAST_MESSAGE.LOGIN_FAIL)
     } else {
       showToast('warning', response?.data.message || TOAST_MESSAGE.UNKNOWN_ERROR)
     }
