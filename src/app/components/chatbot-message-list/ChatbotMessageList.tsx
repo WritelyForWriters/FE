@@ -5,6 +5,7 @@ import { chatbotIsDelayAtom } from 'store/chatbotIsDelayAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
 
 import ChatbotChatItems from '@components/chatbot-chat-items/ChatbotChatItems'
+import ChatbotPendingMessage from '@components/chatbot-pending-message/ChatbotPendingMessage'
 
 import classNames from 'classnames/bind'
 
@@ -20,20 +21,23 @@ export default function ChatbotMessageList() {
     <ul className={cx('chatbot-message-list')}>
       <ChatbotChatItems />
       {isAssistantResponding && (
-        <div className={cx('loading-indicator')}>
-          {chatbotIsDelay
-            ? '일부 작업은 시간이 오래 걸릴 수 있습니다. 1분 내에 답변이 생성되니 조금만 기다려주세요!'
-            : '생각하는 중'}
-          <Image
-            alt="loading"
-            src="/images/loading.gif"
-            width={40}
-            height={26}
-            style={{
-              marginLeft: 8,
-            }}
-          />
-        </div>
+        <li className={cx('chatbot-message-list__pending')}>
+          <ChatbotPendingMessage />
+          <div className={cx('chatbot-message-list__pending-indicator')}>
+            {chatbotIsDelay
+              ? '일부 작업은 시간이 오래 걸릴 수 있습니다. 1분 내에 답변이 생성되니 조금만 기다려주세요!'
+              : '생각하는 중'}
+            <Image
+              alt="loading"
+              src="/images/loading.gif"
+              width={40}
+              height={26}
+              style={{
+                marginLeft: 8,
+              }}
+            />
+          </div>
+        </li>
       )}
     </ul>
   )
