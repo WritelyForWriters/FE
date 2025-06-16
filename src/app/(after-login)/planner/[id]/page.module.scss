@@ -9,6 +9,9 @@
 /* main */
 .main-section {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   padding-top: 12.4rem;
   height: 100dvh;
