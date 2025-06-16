@@ -1,11 +1,11 @@
 import Image from 'next/image'
 
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 
-import FillButton from '@components/buttons/FillButton'
+import PromptInput from '@components/editor/common/PromptInput'
 import SelectMenu from '@components/select-menu/SelectMenu'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
@@ -33,10 +33,8 @@ export default function PlannerManualModification({
   const { isOpen, onOpen, onClose } = useCollapsed(false)
   const [inputValue, setInputValue] = useState('')
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter') return
-
-    fetchUserModify()
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value)
   }
 
   const fetchUserModify = async () => {
@@ -57,28 +55,12 @@ export default function PlannerManualModification({
     <>
       <div className={styles['container']}>
         {!isOpen ? (
-          <div className={styles['prompt-menu']}>
-            <input
-              autoFocus
-              className={styles['prompt-menu__input']}
-              placeholder="프롬프트를 입력해 주세요."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <FillButton
-              type="button"
-              size="medium"
-              variant="primary"
-              style={{
-                padding: '0.8rem 1.2rem',
-                height: '100%',
-              }}
-              onClick={fetchUserModify}
-            >
-              생성하기
-            </FillButton>
-          </div>
+          <PromptInput
+            onPromptInputChange={handleChange}
+            onSubmit={fetchUserModify}
+            placeholder="프롬프트를 입력해 주세요."
+            buttonText="생성하기"
+          />
         ) : (
           <div className={styles['select-menu']}>
             <SelectMenu handleClose={onClose} isOpen={isOpen}>

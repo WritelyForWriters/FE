@@ -57,6 +57,7 @@ export default function PromptInput({
       />
       {hasButton && (
         <FillButton
+          type="button"
           size="medium"
           variant="primary"
           style={{

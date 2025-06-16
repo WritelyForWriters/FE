@@ -2,7 +2,9 @@ import Image from 'next/image'
 
 import { ReactNode, useEffect, useState } from 'react'
 
+import { useAtomValue } from 'jotai'
 import { useFormContext } from 'react-hook-form'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 
 import FillButton from '@components/buttons/FillButton'
 
@@ -44,20 +46,21 @@ export default function PlannerFieldWithButton({
   const { isOpen, onClose, onOpen } = useCollapsed(false)
   const [isShow, setIsShow] = useState(true)
   const [isDeleted, setIsDeleted] = useState(false)
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
   const initialValue = watch(name)
 
   const { remove, getContent, setType } = usePlannerTemplatesAiAssistant()
 
   // NOTE(hajae): 삭제된 항목은 null로 반환되어 초기 렌더링 시 화면에 표시하지 않는다
   useEffect(() => {
-    if (initialValue === null) {
+    if (isDropdown && initialValue === undefined && !isDeleted) {
+      setIsShow(true)
+      return
+    }
+
+    if (initialValue === null || (!isDropdown && initialValue === undefined)) {
       setIsShow(false)
     } else if (initialValue === '' || initialValue) {
-      setIsShow(true)
-    } else if (isDropdown && initialValue === undefined && !isDeleted) {
-      // NOTE(hajae): Dropdown에 사용되는 데이터는 객체이기에 ''와 같은 빈값을 받을 수 없어 undefined로.
-      // null일때는 비표시, undefined일때는 표시
-      // 삭제일 경우도 value가 undefined가 되기때문에 삭제시 다시표시됨. 따라서 삭제일때는 비표시하기위해 isDeleted 추가
       setIsShow(true)
     }
   }, [watch, name, isDropdown, initialValue, isDeleted])
@@ -97,28 +100,30 @@ export default function PlannerFieldWithButton({
       {isShow ? (
         <div className={cx('field-with-button')}>
           {children}
-          <div className={cx('field-with-button__buttons')}>
-            {isValid && manualModifiable && (
+          {mode === 'edit' && (
+            <div className={cx('field-with-button__buttons')}>
+              {isValid && manualModifiable && (
+                <FillButton
+                  type="button"
+                  size="small"
+                  variant="secondary"
+                  shape="pill"
+                  iconPosition="only"
+                  iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
+                  onClick={onOpen}
+                />
+              )}
+
               <FillButton
                 type="button"
                 size="small"
                 variant="secondary"
-                shape="pill"
-                iconPosition="only"
-                iconType={<Image src={aiIcon.src} width={16} height={16} alt="ai-icon" />}
-                onClick={onOpen}
-              />
-            )}
-
-            <FillButton
-              type="button"
-              size="small"
-              variant="secondary"
-              onClick={() => removeField(setIsShow)}
-            >
-              삭제하기
-            </FillButton>
-          </div>
+                onClick={() => removeField(setIsShow)}
+              >
+                삭제하기
+              </FillButton>
+            </div>
+          )}
         </div>
       ) : (
         <FillButton

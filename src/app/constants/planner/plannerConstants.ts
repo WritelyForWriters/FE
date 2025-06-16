@@ -4,13 +4,18 @@ export const NEW_PLANNER_CHARACTER: CharacterFormValues = {
   id: '',
   intro: '',
   name: '',
-  age: undefined,
+  age: '',
   gender: '',
   occupation: '',
   appearance: '',
   personality: '',
   relationship: '',
-  customFields: [],
+  customFields: [
+    {
+      name: '',
+      content: '',
+    },
+  ],
 }
 
 export const PLANNER_SYNOPSIS_GENRES = [

@@ -47,7 +47,7 @@ export default function TextFieldInput({ name, variant, options, ...props }: Inp
           if (props.onChange) props.onChange(e)
         }}
       />
-      {variant === 'default' && value && (
+      {variant === 'default' && Boolean(value) && (
         <IoCloseOutline
           size={20}
           className={cx('text-field__fieldset__input__icon')}
@@ -55,7 +55,7 @@ export default function TextFieldInput({ name, variant, options, ...props }: Inp
         />
       )}
       {variant === 'password' &&
-        value &&
+        Boolean(value) &&
         (!showPassword ? (
           <BiSolidHide
             size={20}

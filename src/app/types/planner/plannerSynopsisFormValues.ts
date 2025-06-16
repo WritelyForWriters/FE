@@ -40,7 +40,7 @@ export type CharacterFormValues = {
   id?: string
   intro?: string
   name?: string
-  age?: number
+  age?: string
   gender?: string
   occupation?: string
   appearance?: string
