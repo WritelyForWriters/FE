@@ -127,7 +127,7 @@ export function useTextEditor(editor: Editor | null) {
   }
 
   // 드래그한 영역 저장 및 하이라이트
-  const handleTextSelection = () => {
+  const handleTextSelection = (type: AiassistantOptionType | 'memo') => {
     if (!editor) return null
 
     const { from, to } = editor.state.selection
@@ -135,7 +135,9 @@ export function useTextEditor(editor: Editor | null) {
     if (from !== to) {
       selectionRef.current = { from, to }
       originalSelectionRef.current = { from, to }
-      editor.commands.setBackgroundHighlight({ color: '#FFFAE5' })
+      if (type !== 'free-chat') {
+        editor.commands.setBackgroundHighlight({ color: '#FFFAE5' })
+      }
       return { from, to }
     }
     return null
@@ -144,7 +146,7 @@ export function useTextEditor(editor: Editor | null) {
   const handleActiveMenu = (type: AiassistantOptionType | 'memo') => {
     if (!editor) return
 
-    const selection = handleTextSelection()
+    const selection = handleTextSelection(type)
     if (!selection) return
 
     // 선택한 원본 text 저장
@@ -167,6 +169,7 @@ export function useTextEditor(editor: Editor | null) {
     }
 
     if (type === 'free-chat') {
+      editor.commands.setTextSelection(editor.state.selection.to)
       setSelectedRangeAtom(originPhrase)
       setIsChatbotOpen(true)
     }
@@ -399,6 +402,13 @@ export function useTextEditor(editor: Editor | null) {
     }
   }
 
+  const initActiveMenu = () => {
+    setActiveMenu('defaultToolbar')
+  }
+  const initSelection = () => {
+    clearHighlight()
+  }
+
   // aiResult 변경 시 에디터에 내용 삽입
   useEffect(() => {
     if (aiResult && selectionRef.current && editor) {
@@ -428,6 +438,8 @@ export function useTextEditor(editor: Editor | null) {
     feedbackInput,
     selectionRef,
     isAutoModifyVisible,
+    initActiveMenu,
+    initSelection,
     handleActiveMenu,
     handlePromptChange,
     handleSubmitFeedback,

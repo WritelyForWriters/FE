@@ -236,20 +236,22 @@ export default function WorkspaceActionBar({
 
     return (
       <>
-        <menu className={cx('action-bar-tabs')}>
-          <EditModeSwitch
-            isSelected={!applyProductSettings}
-            onClick={() => setApplyProductSettings(false)}
-          >
-            AI에 설정 미반영
-          </EditModeSwitch>
-          <EditModeSwitch
-            isSelected={applyProductSettings}
-            onClick={() => setApplyProductSettings(true)}
-          >
-            AI에 설정 반영
-          </EditModeSwitch>
-        </menu>
+        {isContentEditing && (
+          <menu className={cx('action-bar-tabs')}>
+            <EditModeSwitch
+              isSelected={!applyProductSettings}
+              onClick={() => setApplyProductSettings(false)}
+            >
+              AI에 설정 미반영
+            </EditModeSwitch>
+            <EditModeSwitch
+              isSelected={applyProductSettings}
+              onClick={() => setApplyProductSettings(true)}
+            >
+              AI에 설정 반영
+            </EditModeSwitch>
+          </menu>
+        )}
         <menu className={cx('action-bar-tabs')}>
           <EditModeSwitch isSelected={!isContentEditing} onClick={handleSwitchReadMode}>
             읽기 모드

@@ -4,14 +4,22 @@ import { useState } from 'react'
 
 import { QueryClient } from '@tanstack/react-query'
 import { QUERY_KEY } from 'constants/common/queryKeys'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { TOAST_MESSAGE } from 'constants/common/toastMessage'
+import 'highlight.js/styles/github.css'
+import { useAtom, useAtomValue } from 'jotai'
 import { BsFillPinFill } from 'react-icons/bs'
 import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
 import ReactMarkdown from 'react-markdown'
+import rehypeHighlight from 'rehype-highlight'
+import rehypeSanitize from 'rehype-sanitize'
 import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { productIdAtom } from 'store/productsAtoms'
+import { FeedbackOptionType } from 'types/chatbot/chatbot'
+
+import NegativeFeedbackSelectMenu from '@components/negative-feedback-select-menu/NegativeFeedbackSelectMenu'
+import { useToast } from '@components/toast/ToastProvider'
 
 import { usePinMessage } from '@hooks/chatbot/usePinMessage'
 import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
@@ -35,6 +43,25 @@ interface ChatbotAssistantMessageProps {
   }
 }
 
+const NAGATIVE_FEEDBACK_MENU: { feedbackType: FeedbackOptionType; title: string }[] = [
+  {
+    feedbackType: 'AWKWARD_SENTENCE',
+    title: '어색한 문장',
+  },
+  {
+    feedbackType: 'INACCURATE_INFO',
+    title: '부정확한 정보',
+  },
+  {
+    feedbackType: 'UNAPPLIED_SETTING',
+    title: '설정 미반영',
+  },
+  {
+    feedbackType: 'ETC',
+    title: '기타 (직접 입력)',
+  },
+]
+
 export default function ChatbotAssistantMessage({
   index,
   assistantId,
@@ -44,14 +71,24 @@ export default function ChatbotAssistantMessage({
 }: ChatbotAssistantMessageProps) {
   const queryClient = new QueryClient()
 
+  const showToast = useToast()
+
   const [isMouseOver, setIsMouseOver] = useState(false)
+  const [isFeedbackMenuOpen, setIsFeedbackMenuOpen] = useState(false)
 
   const [selectedIndex, setSelectedIndex] = useAtom(chatbotSelectedIndexAtom)
   const [fixedMessage, setFixedMessage] = useAtom(chatbotFixedMessageAtom)
+  const [inputMode, setInputMode] = useAtom(chatInputModeAtom)
   const productId = useAtomValue(productIdAtom)
-  const setInputMode = useSetAtom(chatInputModeAtom)
 
-  const { mutate: submitFeedback } = useSubmitFeedback()
+  const { mutate: submitFeedback } = useSubmitFeedback({
+    onSuccess: () => {
+      showToast('success', TOAST_MESSAGE.SUCCESS_SUBMIT_FEEDBACK)
+    },
+    onError: () => {
+      showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
+    },
+  })
 
   const ellipsisQuote = quote.length > 20 ? quote.slice(0, 20) + '...' : quote
 
@@ -87,7 +124,7 @@ export default function ChatbotAssistantMessage({
         },
       })
     } else {
-      // TODO: 피드백 입력창 디자인 추가되면 수정
+      setIsFeedbackMenuOpen(!isFeedbackMenuOpen)
     }
   }
 
@@ -105,7 +142,7 @@ export default function ChatbotAssistantMessage({
       <div
         onClick={() => handleChatMessageSelect(index)}
         className={cx('assistant-message__body', {
-          'assistant-message__body--hover': isMouseOver || selectedIndex === index,
+          'assistant-message__body--selected': selectedIndex === index,
         })}
       >
         {quote && (
@@ -114,11 +151,13 @@ export default function ChatbotAssistantMessage({
           </div>
         )}
         <div className={cx('assistant-message__body-content')}>
-          <ReactMarkdown>{message.content}</ReactMarkdown>
+          <ReactMarkdown rehypePlugins={[rehypeSanitize, rehypeHighlight]}>
+            {message.content}
+          </ReactMarkdown>
         </div>
       </div>
       <div className={cx('assistant-message__footer')}>
-        {isMouseOver && (
+        {(isMouseOver || isFeedbackMenuOpen) && inputMode === 'input' && (
           <>
             <button type="button" onClick={handlePin}>
               <BsFillPinFill color="#CCCCCC" size={20} />
@@ -136,6 +175,19 @@ export default function ChatbotAssistantMessage({
           </>
         )}
       </div>
+      {inputMode === 'input' && isFeedbackMenuOpen && (
+        <NegativeFeedbackSelectMenu>
+          {NAGATIVE_FEEDBACK_MENU.map(({ feedbackType, title }, idx) => (
+            <NegativeFeedbackSelectMenu.Option
+              key={idx}
+              assistantId={assistantId}
+              feedbackType={feedbackType}
+              title={title}
+              onClick={() => setIsFeedbackMenuOpen(false)}
+            />
+          ))}
+        </NegativeFeedbackSelectMenu>
+      )}
     </div>
   )
 }

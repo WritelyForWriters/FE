@@ -14,7 +14,6 @@ import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { isEditableAtom } from 'store/editorAtoms'
-import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
 
@@ -44,7 +43,6 @@ interface DefaultEditorProps {
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
-  const isChatbotOpen = useAtomValue(isChatbotOpenAtom)
 
   const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
 
@@ -90,9 +88,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
       if (from !== to) {
         const selectedText = editor.getText().slice(from - 1, to - 1)
-        if (isChatbotOpen) {
-          setSelectedRangeAtom(selectedText)
-        }
+        setSelectedRangeAtom(selectedText)
       }
     },
   })
@@ -110,6 +106,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     feedbackInput,
     selectionRef,
     isAutoModifyVisible,
+    initActiveMenu,
+    initSelection,
     handleActiveMenu,
     handlePromptChange,
     handleSubmitFeedback,
@@ -137,6 +135,12 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       editor.commands.setContent(JSON.parse(contents))
     }
   }, [editor, contents])
+
+  // NOTE(hajae): 최초 렌더링 시 Active Menu를 초기화
+  useEffect(() => {
+    initActiveMenu()
+    initSelection()
+  }, [])
 
   if (!editor) {
     return null

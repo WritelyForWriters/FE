@@ -1,6 +1,6 @@
 import { CHATBOT_DEFAULT_SIZE } from 'constants/chatbot/number'
 
-const MAX_VIEWPORT_HEIGHT_RATIO = 0.8
+const MAX_VIEWPORT_HEIGHT_RATIO = 0.55
 
 export const computeChatbotAbsolutePosition = (
   faviconX: number,

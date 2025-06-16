@@ -18,13 +18,17 @@ interface PlannerPromptData {
 
 // 자동 수정
 export const postAutoModify = async (promptData: Omit<PromptData, 'prompt'>) => {
-  const res = await authInstance.post('/assistant/auto-modify', promptData)
+  const res = await authInstance.post('/assistant/auto-modify', promptData, {
+    timeout: 60000,
+  })
   return res.data.result
 }
 
 // 수동 수정
 export const postUserModify = async (promptData: PromptData) => {
-  const res = await authInstance.post<AiassistantResponseType>('/assistant/user-modify', promptData)
+  const res = await authInstance.post<AiassistantResponseType>('/assistant/user-modify', promptData, {
+    timeout: 60000,
+  })
   return res.data.result
 }
 
@@ -37,13 +41,17 @@ interface FeedbackResult {
 
 // 구간 피드백
 export const postFeedback = async (promptData: Omit<PromptData, 'prompt'>) => {
-  const res = await authInstance.post<FeedbackResult>('/assistant/feedback', promptData)
+  const res = await authInstance.post<FeedbackResult>('/assistant/feedback', promptData, {
+    timeout: 60000,
+  })
   return res.data.result
 }
 
 // 수동 수정 (작품 플래너)
 export const postPlannerUserModify = async (promptData: PlannerPromptData) => {
-  const res = await authInstance.post('/assistant/planner', promptData)
+  const res = await authInstance.post('/assistant/planner', promptData, {
+    timeout: 60000,
+  })
   return res.data.result
 }
 
