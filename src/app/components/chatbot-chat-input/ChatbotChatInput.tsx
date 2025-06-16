@@ -19,6 +19,7 @@ import { chatInputModeAtom } from 'store/chatInputModeAtom'
 import { chatLifecycleSessionId } from 'store/chatLifecycleSessionId'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { chatbotIsDelayAtom } from 'store/chatbotIsDelayAtom'
+import { chatbotPendingMessageAtom } from 'store/chatbotPendingMessageAtom'
 import { chatbotSelectedIndexAtom } from 'store/chatbotSelectedIndexAtom'
 import { isAssistantRespondingAtom } from 'store/isAssistantRespondingAtom'
 import { prevContentAtom } from 'store/prevContentAtom'
@@ -63,6 +64,7 @@ export default function ChatbotChatInput() {
   const setIsAssistantResponding = useSetAtom(isAssistantRespondingAtom)
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
   const setIsDelay = useSetAtom(chatbotIsDelayAtom)
+  const setChatbotPendingMessage = useSetAtom(chatbotPendingMessageAtom)
 
   const showToast = useToast()
 
@@ -85,7 +87,8 @@ export default function ChatbotChatInput() {
 
   const { mutate: submitDefaultChatMessage, isPending: isDefaultPending } =
     useSubmitDefaultChatMessage({
-      onMutate: () => {
+      onMutate: ({ prompt, content }) => {
+        setChatbotPendingMessage({ prompt, content })
         timerIdRef.current = setTimeout(() => {
           setIsDelay(true)
         }, 10000)
@@ -104,6 +107,7 @@ export default function ChatbotChatInput() {
         showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
       },
       onSettled: () => {
+        setChatbotPendingMessage(null)
         if (timerIdRef.current) {
           clearTimeout(timerIdRef.current)
           timerIdRef.current = undefined
@@ -114,7 +118,8 @@ export default function ChatbotChatInput() {
 
   const { mutate: submitWebSearchChatMessage, isPending: isWebSearchPending } =
     useSubmitWebSearchChatMessage({
-      onMutate: () => {
+      onMutate: ({ prompt, content }) => {
+        setChatbotPendingMessage({ prompt, content })
         timerIdRef.current = setTimeout(() => {
           setIsDelay(true)
         }, 10000)
@@ -132,6 +137,7 @@ export default function ChatbotChatInput() {
         showToast('warning', TOAST_MESSAGE.NETWORK_ERROR)
       },
       onSettled: () => {
+        setChatbotPendingMessage(null)
         if (timerIdRef.current) {
           clearTimeout(timerIdRef.current)
           timerIdRef.current = undefined

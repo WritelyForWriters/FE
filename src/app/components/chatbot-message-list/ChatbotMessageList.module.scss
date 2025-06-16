@@ -5,11 +5,17 @@
 .chatbot-message-list {
   min-width: 32.4rem;
 
-  .loading-indicator {
-    display: inline-block;
-    vertical-align: middle;
+  &__pending {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 1.6rem;
 
-    @extend %typo-title-medium;
+    &-indicator {
+      display: inline-block;
+      vertical-align: middle;
+
+      @extend %typo-title-medium;
+    }
   }
 
   &::-webkit-scrollbar {
