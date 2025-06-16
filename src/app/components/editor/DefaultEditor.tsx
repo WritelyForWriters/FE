@@ -105,6 +105,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     feedbackInput,
     selectionRef,
     isAutoModifyVisible,
+    initActiveMenu,
+    initSelection,
     handleActiveMenu,
     handlePromptChange,
     handleSubmitFeedback,
@@ -129,6 +131,12 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       editor.commands.setContent(JSON.parse(contents))
     }
   }, [editor, contents])
+
+  // NOTE(hajae): 최초 렌더링 시 Active Menu를 초기화
+  useEffect(() => {
+    initActiveMenu()
+    initSelection()
+  }, [])
 
   if (!editor) {
     return null
