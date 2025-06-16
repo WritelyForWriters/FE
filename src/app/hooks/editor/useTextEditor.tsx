@@ -2,12 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useMutation } from '@tanstack/react-query'
 import { Editor } from '@tiptap/react'
-import {
-  archivedAnswer,
-  postAutoModify,
-  postFeedback,
-  postUserModify,
-} from 'api/ai-assistant/aiAssistant'
+import { archivedAnswer, postAutoModify, postFeedback } from 'api/ai-assistant/aiAssistant'
 import { AxiosError } from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
@@ -27,6 +22,7 @@ import {
 
 import { useToast } from '@components/toast/ToastProvider'
 
+import { usePostUserModify } from '@hooks/ai-assistant/useAiassistantMutation'
 import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
@@ -100,6 +96,8 @@ export function useTextEditor(editor: Editor | null) {
     },
   })
 
+  const { mutate: postUserModify, isPending: userModifyPending } = usePostUserModify()
+
   // 어시스턴트 응답 피드백
   const handleSubmitFeedback = ({ isGood, feedback: value, feedbackType }: FeedbackFormData) => {
     if (!aiassistantId) return
@@ -152,7 +150,8 @@ export function useTextEditor(editor: Editor | null) {
     if (!selection) return
 
     // 선택한 원본 text 저장
-    const originPhrase = editor.getText().slice(selection?.from - 1, selection?.to)
+    // const originPhrase = editor.getText().slice(selection?.from, selection?.to) // 기존코드 참고용
+    const originPhrase = editor.state.doc.textBetween(selection?.from, selection?.to, ' ')
     setOriginalText(originPhrase)
 
     if (type === 'auto-modify' && originPhrase) {
@@ -184,6 +183,23 @@ export function useTextEditor(editor: Editor | null) {
     promptValueRef.current = value
   }
 
+  // 에러 핸들링 로직
+  // MEMO(Sohyun): 자동수정과 구간피드백의 경우 originPhrase가 저장되자마자 실행되므로 api호출 실패시,
+  // 이전 originPhrase로 복원되기 때문에 파라미터로 api호출하는 originPhrase를 함께 넘겨줌
+  const handleOnError = (onCloseMenu: () => void, originPhrase: string) => {
+    if (selectionRef.current && editor) {
+      editor.commands.insertContentAt(selectionRef.current, originPhrase)
+    }
+    setActiveMenu('defaultToolbar')
+    if (originalSelectionRef.current) {
+      clearHighlight(originalSelectionRef.current)
+      originalSelectionRef.current = null
+    }
+    onCloseMenu()
+    feedbackInput.current = null
+    showToast('warning', '다시 시도해 주세요')
+  }
+
   // TODO(Sohyun) 어시스턴트 에러처리 및 로딩처리 > react-query로 변경
   // 1. 자동 수정
   const handleAiAutoModify = async (originPhrase: string) => {
@@ -205,17 +221,7 @@ export function useTextEditor(editor: Editor | null) {
       }
     } catch (error) {
       console.log(error)
-      if (selectionRef.current && editor) {
-        editor.commands.insertContentAt(selectionRef.current, originalText)
-      }
-      setActiveMenu('defaultToolbar')
-      if (originalSelectionRef.current) {
-        clearHighlight(originalSelectionRef.current)
-        originalSelectionRef.current = null
-      }
-      onCloseAutoModifyVisible()
-      feedbackInput.current = null
-      showToast('warning', '다시 시도해 주세요')
+      handleOnError(onCloseAutoModifyVisible, originPhrase ?? originalText)
     }
   }
 
@@ -223,38 +229,32 @@ export function useTextEditor(editor: Editor | null) {
   const handleAiPrompt = async () => {
     if (!promptValueRef.current || !selectionRef.current) return
 
-    try {
-      const response = await postUserModify({
+    postUserModify(
+      {
         productId,
         content: originalText,
         prompt: promptValueRef.current,
         shouldApplySetting,
-      })
-
-      if (response.id) {
-        setAiassistantId(response.id)
-        setFeedback(INITIAL_EVALUATE_STATE)
-        // (방법 1) selection을 받아와서 대체 텍스트 삽입
-        // editor.commands.insertContentAt(selection, response.answer)
-
-        // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
-        setAiResult(response.answer)
-        onOpen()
-      }
-    } catch (error) {
-      console.log(error)
-      if (selectionRef.current && editor) {
-        editor.commands.insertContentAt(selectionRef.current, originalText)
-      }
-      setActiveMenu('defaultToolbar')
-      if (originalSelectionRef.current) {
-        clearHighlight(originalSelectionRef.current)
-        originalSelectionRef.current = null
-      }
-      onClose()
-      feedbackInput.current = null
-      showToast('warning', '다시 시도해 주세요')
-    }
+      },
+      {
+        onSuccess: (data) => {
+          const { id, answer } = data
+          if (id) {
+            setAiassistantId(id)
+            setFeedback(INITIAL_EVALUATE_STATE)
+            // (방법 1) selection을 받아와서 대체 텍스트 삽입
+            // editor.commands.insertContentAt(selection, response.answer)
+            // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
+            setAiResult(answer)
+            onOpen()
+          }
+        },
+        onError: (error) => {
+          console.log(error)
+          handleOnError(onClose, originalText)
+        },
+      },
+    )
   }
 
   // 3. 구간 피드백
@@ -275,17 +275,7 @@ export function useTextEditor(editor: Editor | null) {
       }
     } catch (error) {
       console.log(error)
-      if (selectionRef.current && editor) {
-        editor.commands.insertContentAt(selectionRef.current, originalText)
-      }
-      setActiveMenu('defaultToolbar')
-      if (originalSelectionRef.current) {
-        clearHighlight(originalSelectionRef.current)
-        originalSelectionRef.current = null
-      }
-      onCloseFeedbackPrompt()
-      feedbackInput.current = null
-      showToast('warning', '다시 시도해 주세요')
+      handleOnError(onCloseFeedbackPrompt, originPhrase)
     }
   }
 
@@ -457,5 +447,7 @@ export function useTextEditor(editor: Editor | null) {
     handleOptionClickAutoModify,
     handleOptionClickUserModify,
     handleOptionClickFeedback,
+    // MEMO(Sohyun): 추후 로딩처리를 위해 return값에 추가해 둠
+    userModifyPending,
   }
 }

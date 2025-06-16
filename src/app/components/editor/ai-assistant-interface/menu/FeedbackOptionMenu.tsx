@@ -50,6 +50,7 @@ export default function FeedbackOptionMenu({
               padding: '0.8rem 1.2rem',
               height: '100%',
               width: 50,
+              wordBreak: 'keep-all',
             }}
             onClick={onSubmitFeedback('ETC')}
           >

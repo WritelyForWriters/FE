@@ -9,6 +9,7 @@ export interface HandleEditor {
 export interface TextSelectionRangeType {
   from: number
   to: number
+  text?: string
 }
 
 export type ToolbarType = 'defaultToolbar' | 'auto-modify' | 'user-modify' | 'feedback' | 'memo'

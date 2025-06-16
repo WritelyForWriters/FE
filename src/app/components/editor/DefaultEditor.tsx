@@ -18,6 +18,7 @@ import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
 
 import { useMemos } from '@hooks/editor/useMemos'
+import useResetMode from '@hooks/editor/useResetMode'
 import { useTextEditor } from '@hooks/editor/useTextEditor'
 
 import BackgroundHighlight from '@extensions/BackgroundHighlight'
@@ -118,6 +119,9 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
   const { handleChange, handleSavedMemos } = useMemos(editor)
 
+  // 메모 모드 하이라이트 및 툴바 모드 초기화 훅 사용
+  useResetMode({ editor, mode: 'memo' })
+
   useEffect(() => {
     if (!editor) {
       return undefined
@@ -159,7 +163,6 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         )}
 
         {/* 메모 */}
-        {/* TODO 메모도 focusout or blur 시 하이라이트 사라지거나 or Portal로 UI 고정되도롣 */}
         {activeMenu === 'memo' && (
           <PromptInput
             onPromptInputChange={handleChange}
