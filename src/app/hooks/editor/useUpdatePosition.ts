@@ -13,6 +13,9 @@ interface MenuPosition {
 
 /**
  * 에디터에서 선택한 텍스트 영역 기준으로 ai-assistant 메뉴 위치를 계산하는 훅
+ *  BubbleMenu 내부에 위치하면 BubbleMenu는 에디터 내용 변경 시 초기화되는 문제로 직접 좌표를 계산한 UI를 구현하기 위함
+ * @param editor 에디터 인스턴스
+ * @param selectionRef 선택 영역 Ref
  */
 const useUpdatePosition = (
   editor: Editor,
