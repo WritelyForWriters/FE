@@ -56,6 +56,8 @@ export default function PdfExportPreview({ ref, children }: PdfExportPreviewProp
       })
     } catch (error) {
       console.error(error)
+    } finally {
+      handleModalClose()
     }
   }
 

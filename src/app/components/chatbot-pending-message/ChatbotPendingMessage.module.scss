@@ -1,0 +1,29 @@
+@use '@styles/colors' as color;
+@use '@styles/typography';
+@use '@styles/mixins' as mixin;
+
+.pending-message {
+  &__wrapper {
+    max-width: 30rem;
+
+    @include mixin.display-flex();
+    flex-direction: column;
+    align-self: flex-end;
+
+    background: color.$alert-secondary-100;
+    color: color.$core-secondary-100;
+    @extend %typo-title-medium;
+
+    padding: 0.8rem 1.2rem;
+    border-radius: 1.2rem;
+  }
+
+  &__content {
+    padding: 0.8rem 0rem 0.8rem 0rem;
+
+    blockquote {
+      border-left: 0.1rem solid black;
+      padding-left: 1rem;
+    }
+  }
+}

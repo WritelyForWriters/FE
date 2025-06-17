@@ -21,7 +21,7 @@ export function useMemos(editor: Editor | null) {
 
   const savedMemosMutation = useSavedMemos()
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value)
   }
 
@@ -30,6 +30,7 @@ export function useMemos(editor: Editor | null) {
     if (!editor) return null
 
     const { from, to } = editor.state.selection
+    const selectionRange = { from, to }
 
     // MEMO(Sohyun): textBetween(from, to, separator)은 블록 간 텍스트 추출 시 줄바꿈 대신 지정한 separator를 사용
     // 기존 원본 데이터 추출시 사용한 getText()가 에디터 전체의 plain text를 줄바꿈 포함 형태로 반환하기 때문에 불필요한 줄바꿈(/n), 공백이 포함되므로!
@@ -48,19 +49,26 @@ export function useMemos(editor: Editor | null) {
         },
       },
       {
-        onSuccess: () => {
-          editor.commands.unsetBackgroundHighlight()
-          editor.commands.setUnderlineHighlight({ color: '#FFCC00' })
+        onSuccess: (data) => {
+          const memoId = data
 
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_KEY.MEMO_LIST],
-          })
+          if (memoId) {
+            editor.commands.unsetBackgroundHighlight()
+            editor.commands.setUnderlineHighlight({ color: '#FFCC00', memoId })
+
+            queryClient.invalidateQueries({
+              queryKey: [QUERY_KEY.MEMO_LIST],
+            })
+          } else {
+            editor.chain().setTextSelection(selectionRange).unsetBackgroundHighlight().run()
+          }
         },
         onError: () => {
-          editor.chain().setTextSelection({ from, to }).unsetBackgroundHighlight().run()
+          editor.chain().setTextSelection(selectionRange).unsetBackgroundHighlight().run()
         },
         onSettled: () => {
           setActiveMenu('defaultToolbar')
+          setContent('')
         },
       },
     )

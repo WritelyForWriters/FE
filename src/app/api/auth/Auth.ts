@@ -1,3 +1,4 @@
+import { default as AuthAxios } from 'api/core/AuthInstance'
 import Axios from 'api/core/Instance'
 import {
   AuthResponse,
@@ -23,6 +24,13 @@ export const login = async (formData: LoginFormFieldValues) => {
   })
 
   return res.data
+}
+
+// 로그아웃
+export const logout = async (accessToken: string) => {
+  await AuthAxios.post<AuthResponse>('/auth/logout', {
+    accessToken,
+  })
 }
 
 // (이메일 | 닉네임) 중복 확인

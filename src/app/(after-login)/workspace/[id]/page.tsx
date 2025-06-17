@@ -12,8 +12,11 @@ import { trackEvent } from 'lib/amplitude'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
-import { newChatMessagesAtom } from 'store/newChatMessagesAtom'
+import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
+import { isChatbotDraggingAtom } from 'store/isChatbotDraggingAtom'
+import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
+import { ChatItem } from 'types/chatbot/chatbot'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 import { TocItemType } from 'types/common/pannel'
@@ -58,8 +61,9 @@ export default function WorkSpacePage() {
   const { data: productDetail } = useGetProductDetail(params.id)
   const { data: memoList } = useGetMemoList(params.id) // MEMO(Sohyun): 메모 컴포넌트에서 요청하는것이 좋을까?
 
+  const isChatbotDragging = useAtomValue(isChatbotDraggingAtom)
   const [productTitle, setProductTitle] = useAtom(productTitleAtom)
-  const newChatMessages = useAtomValue(newChatMessagesAtom)
+  const isEditable = useAtomValue(isEditableAtom)
   const setIsContentEditing = useSetAtom(isEditableAtom)
   const editorContent = editorContentAtom(params.id)
   const setEditorContent = useSetAtom(editorContent)
@@ -67,6 +71,8 @@ export default function WorkSpacePage() {
   const [productId, setProductId] = useAtom(productIdAtom)
   const setFixedMessage = useSetAtom(chatbotFixedMessageAtom)
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
+  const setFaviconRelativePosition = useSetAtom(faviconRelativePositionAtom)
+  const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
 
   const { data: previousChatbotHistory } = useGetInfiniteAssistantHistory(productId)
   const { data: fixedMessage } = useGetFixedMessage(productId)
@@ -193,18 +199,25 @@ export default function WorkSpacePage() {
   useEffect(() => {
     if (!previousChatbotHistory) return
 
-    let allChats = previousChatbotHistory.pages[0].result.contents
+    let allChats = previousChatbotHistory.pages[0].result.contents.toSorted(
+      (a: ChatItem, b: ChatItem) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    )
 
     for (let i = 1; i < previousChatbotHistory.pages.length; i++) {
-      const pageContents = previousChatbotHistory.pages[i].result.contents
+      const sortedPageContents = previousChatbotHistory.pages[i].result.contents
+        .slice(1)
+        .toSorted(
+          (a: ChatItem, b: ChatItem) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        )
 
-      if (pageContents.length > 0) {
-        allChats = [...allChats, ...pageContents.slice(1)]
+      if (sortedPageContents.length > 0) {
+        allChats = [...sortedPageContents, ...allChats]
       }
     }
-
-    setChatbotHistory([...newChatMessages, ...allChats])
-  }, [previousChatbotHistory, productId, newChatMessages, setChatbotHistory])
+    setChatbotHistory(allChats)
+  }, [previousChatbotHistory, productId])
 
   useEffect(() => {
     setFixedMessage(
@@ -221,9 +234,12 @@ export default function WorkSpacePage() {
     trackEvent('page_view', {
       page_name: 'writing',
     })
-  }, [])
-
-  usePageExitTracking('writing')
+    
+    usePageExitTracking('writing')
+    
+    setIsChatbotOpen(false)
+    setFaviconRelativePosition({ xRatio: 0.85, yRatio: 0.55 })
+  }, [productId])
 
   return (
     <div className={cx('container')}>
@@ -233,33 +249,42 @@ export default function WorkSpacePage() {
         // 처음 작업공간에 진입했을때 읽기 모드, 그 이후에는 쓰기 모드로 진입
         isInitialAccess={!productDetail?.title && !productDetail?.content}
         editorRef={editorRef}
+        isSavedRef={isSavedRef}
       />
       <div className={cx('header-space')}></div>
 
-      <main className={cx('main-section')}>
-        <IndexPannel toc={editorIndexToc} />
-
-        <div className={cx('index-space')}></div>
-
-        <div className={cx('main-section__contents')}>
+      <main className={cx('main-canvas')}>
+        <section className={cx('main-canvas__left-section')}>
+          <div className={cx('main-canvas__left-section__wrapper')}>
+            <IndexPannel toc={editorIndexToc} />
+          </div>
+        </section>
+        <section
+          className={cx('main-canvas__center-section', {
+            'main-canvas__disabled': isChatbotDragging,
+          })}
+        >
           <DefaultEditor
             editorRef={editorRef}
             contents={productDetail?.content}
             isSavedRef={isSavedRef}
           />
-        </div>
-
-        <div>
-          <div className={cx('main-section__pannel')}>
-            <MemoPannel memoList={memoList} />
-            <PlannerPannel />
-          </div>
-        </div>
+        </section>
+        {isEditable && (
+          <section className={cx('main-canvas__right-section')}>
+            <div className={cx('main-canvas__right-section__wrapper')}>
+              <MemoPannel memoList={memoList} editor={editorRef.current?.getEditor() as Editor} />
+              <PlannerPannel />
+            </div>
+          </section>
+        )}
       </main>
 
-      <div>
-        <ChatbotLauncher />
-      </div>
+      {isEditable && (
+        <div className={cx('chatbot-canvas')}>
+          <ChatbotLauncher />
+        </div>
+      )}
 
       <Modal
         ref={modalRef}

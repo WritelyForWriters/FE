@@ -1,10 +1,16 @@
-import { useMutation } from '@tanstack/react-query'
+import { UseMutationOptions, useMutation } from '@tanstack/react-query'
 import { submitDefaultChatMessage } from 'api/chatbot/chatbot'
-import { UseMutationCustomOptions } from 'types/common/reactQueryCustomOption'
 
-export const useSubmitDefaultChatMessage = (mutationOptions?: UseMutationCustomOptions) => {
+type MessagePayload = {
+  prompt: string
+  content?: string
+}
+
+export const useSubmitDefaultChatMessage = (
+  options?: UseMutationOptions<string, unknown, MessagePayload>,
+) => {
   return useMutation({
     mutationFn: submitDefaultChatMessage,
-    ...mutationOptions,
+    ...options,
   })
 }

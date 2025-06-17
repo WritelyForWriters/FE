@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 
 import { PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import { CharacterFormValues } from 'types/planner/plannerSynopsisFormValues'
 
 import FillButton from '@components/buttons/FillButton'
@@ -26,16 +27,22 @@ interface PlannerCharacterFormListProps {
   paramsId: string
   arrayIndex: number
   handleRemoveCharacter: (index: number) => void
+  handleManualModification: (
+    name: string,
+    section: string,
+  ) => (value: string, inputValue: string) => Promise<boolean>
 }
 
 export default function PlannerCharacterFormList({
   paramsId,
   arrayIndex,
   handleRemoveCharacter,
+  handleManualModification,
 }: PlannerCharacterFormListProps) {
   const { isOpen, onToggle } = useCollapsed(true)
   const { control } = useFormContext()
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(paramsId))
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
 
   const getTextFieldName = (name: string) => {
     // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
@@ -54,29 +61,31 @@ export default function PlannerCharacterFormList({
   // NOTE(hajae): local storage 저장
   useEffect(() => {
     if (!watchedValues) return
-
     setFormValues(
       formValues.characters.map((character, index) =>
         index === arrayIndex ? watchedValues : character,
       ),
+      'character',
     )
-  }, [watchedValues, arrayIndex, setFormValues])
+  }, [watchedValues])
 
   return (
     <div className={cx('list')}>
       <div className={cx('list__title')}>
         <span>등장인물 {arrayIndex + 1}</span>
         <div className={cx('list__title__buttons')}>
-          <div className={cx('list__title__buttons__delete')}>
-            <FillButton
-              size="small"
-              variant="secondary"
-              type="button"
-              onClick={() => handleRemoveCharacter(arrayIndex)}
-            >
-              삭제하기
-            </FillButton>
-          </div>
+          {mode === 'edit' && (
+            <div className={cx('list__title__buttons__delete')}>
+              <FillButton
+                size="small"
+                variant="secondary"
+                type="button"
+                onClick={() => handleRemoveCharacter(arrayIndex)}
+              >
+                삭제하기
+              </FillButton>
+            </div>
+          )}
 
           {isOpen ? (
             <IoIosArrowUp onClick={onToggle} className={cx('list__title__buttons__closed-icon')} />
@@ -94,6 +103,11 @@ export default function PlannerCharacterFormList({
               <PlannerFieldWithButton
                 key={`planner-character-item-${index}`}
                 name={getTextFieldName(item.name)}
+                handleManualModification={handleManualModification(
+                  getTextFieldName(item.name),
+                  item.name,
+                )}
+                manualModifiable={item.manualModifiable}
               >
                 <TextField
                   name={getTextFieldName(item.name)}
@@ -104,7 +118,8 @@ export default function PlannerCharacterFormList({
                       ? `characters[${arrayIndex}].customFields[0].name`
                       : ''
                   }
-                  isLabelEditable={item.name === 'customFields'}
+                  isLabelEditable={item.name === 'customFields' && mode === 'edit'}
+                  readOnly={mode === 'view'}
                 />
               </PlannerFieldWithButton>
             ) : (
@@ -113,6 +128,7 @@ export default function PlannerCharacterFormList({
                 name={getTextFieldName(item.name)}
                 label={item.label}
                 variant={expandItems.includes(item.name) ? 'expand' : undefined}
+                readOnly={mode === 'view'}
               />
             ),
           )}

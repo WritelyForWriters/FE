@@ -1,11 +1,17 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 import { ChangeEvent, KeyboardEvent, useState } from 'react'
+
+import { useAtom } from 'jotai'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 
 import ActionBar from '@components/action-bar/ActionBar'
 import styles from '@components/action-bar/ActionBar.module.scss'
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
+import { useToast } from '@components/toast/ToastProvider'
 
 import { useProducts } from '@hooks/products/useProductsMutation'
 import { useGetProductDetail } from '@hooks/products/useProductsQueries'
@@ -19,38 +25,57 @@ const cx = classNames.bind(styles)
 interface PlannerActionBarProps {
   productId: string
   isValidFormValues: boolean
-  isSaved: boolean
+  isFormDirty: boolean
   autoSaveTimer: number
   onSubmit: () => void
+  onResetForm: () => void
 }
 
 export default function PlannerActionBar({
   productId,
   isValidFormValues,
-  isSaved,
+  isFormDirty,
   autoSaveTimer,
   onSubmit,
+  onResetForm,
 }: PlannerActionBarProps) {
   const { data: productDetail } = useGetProductDetail(productId)
   const { saveProductMutation } = useProducts()
+  const [mode, setMode] = useAtom(PlannerTemplatesModeAtom)
+  const showToast = useToast()
 
   const ActionSectionContent = () => {
-    const [hasSaved, setHasSaved] = useState(isSaved)
     const handleSave = () => {
-      if (!isValidFormValues) return
+      if (!isValidFormValues) {
+        showToast('warning', '필수 항목(장르, 로그라인)을 먼저 작성해주세요')
+        return
+      }
+
       onSubmit()
-      setHasSaved(true)
+      onResetForm()
     }
 
+    /* NOTE(hajae): 저장 사양
+     * 저장 전
+     * - 작품플래너 진입 시 저장하기 버튼 표시
+     *
+     * 저장 후
+     * - 작품플래너 진입 시 and 저장 직후 수정하기 버튼 표시,
+     * - 수정하기 버튼 클릭하기 전까지 입력필드 수정 불가,
+     *
+     * 수정하기 클릭 후
+     * - 저장하기 버튼 표시
+     * - 입력필드 수정 가능
+     */
     return (
       <>
-        {!hasSaved ? (
-          <TextButton size="large" onClick={() => handleSave()} disabled={!isValidFormValues}>
+        {mode === 'edit' ? (
+          <TextButton size="large" onClick={() => handleSave()}>
             저장하기
           </TextButton>
         ) : (
           <>
-            <TextButton size="large" onClick={() => handleSave()}>
+            <TextButton size="large" onClick={() => setMode('edit')}>
               수정하기
             </TextButton>
           </>
@@ -63,10 +88,6 @@ export default function PlannerActionBar({
     const [isTitleEditing, setIsTitleEditing] = useState(false)
     const [title, setTitle] = useState(productDetail?.title || '타이틀')
 
-    // TODO(hajae):
-    // 1. productDetail fetch후 content를 가지고 있음.
-    // 2. 다른 기기 or 다른 브라우저에서 작업 후 타이틀을 저장하면 현재 가지고 있는 content로 덮어씌울 수 있음
-    // Title만 저장하는 API가 필요할 지 추후 논의 필요
     const updateTitle = () => {
       saveProductMutation.mutate({
         productId: productId,
@@ -104,7 +125,6 @@ export default function PlannerActionBar({
             {title}
           </span>
         )}
-        {/* NOTE(hajae): 현재 테스트 */}
         <span className={cx('description')}>
           {autoSaveTimer > 0
             ? `${formatMillisecondToMinute(autoSaveTimer)}분 뒤에 자동 저장됩니다.`
@@ -114,16 +134,31 @@ export default function PlannerActionBar({
     )
   }
 
-  // 액션바 내 우측 영역
   const ExtraSectionContent = () => {
-    return <FillButton size="large">집필하러 가기</FillButton>
+    const router = useRouter()
+
+    const handleClick = () => {
+      if (isFormDirty) {
+        showToast('warning', '집필하러가기 전에 먼저 저장해주세요')
+        return
+      }
+      router.push(`/workspace/${productId}`)
+    }
+
+    return (
+      <FillButton size="large" onClick={handleClick}>
+        집필하러 가기
+      </FillButton>
+    )
   }
 
+  // NOTE(hajae): 기존에 JSX 컴포넌트를 넘기던 방식(<Component />)에서
+  // 함수 실행 결과를 넘기는 방식(Component())으로 변경하여 Hook 오류 방지
   return (
     <ActionBar
-      actionSection={<ActionSectionContent />}
-      titleSection={<TitleSectionContent />}
-      extraSection={<ExtraSectionContent />}
+      actionSection={ActionSectionContent()}
+      titleSection={TitleSectionContent()}
+      extraSection={ExtraSectionContent()}
     />
   )
 }

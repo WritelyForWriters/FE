@@ -10,7 +10,7 @@ export type PlannerTemplates = {
   worldview: Worldview
 }
 
-type CustomField = {
+export type CustomField = {
   id?: string
   name: string
   content: string
@@ -20,7 +20,7 @@ export type Character = {
   id?: string
   intro?: string
   name: string
-  age?: number
+  age?: string
   gender?: string
   occupation?: string
   appearance?: string
@@ -29,12 +29,12 @@ export type Character = {
   customFields?: CustomField[]
 }
 
-type IdeaNote = {
+export type IdeaNote = {
   title: string
   content: string
 }
 
-type Plot = {
+export type Plot = {
   content?: string
 }
 
@@ -46,7 +46,7 @@ export type Synopsis = {
   example?: string
 }
 
-type Worldview = {
+export type Worldview = {
   geography?: string
   history?: string
   politics?: string

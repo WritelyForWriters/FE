@@ -1,0 +1,48 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.feedback-menu {
+  &-wrapper {
+    width: fit-content;
+    height: fit-content;
+    min-width: 20rem;
+
+    border: 0.1rem solid color.$alert-secondary-200;
+    border-radius: 1.2rem;
+
+    li {
+      width: 100%;
+      padding: 1.2rem;
+      border-bottom: 0.1rem solid color.$alert-secondary-200;
+      cursor: pointer;
+    }
+
+    li:last-child {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+
+      border-bottom: none;
+    }
+  }
+
+  &-input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 24.5rem;
+    background-color: white;
+    padding: 0.8rem 0.8rem 0.8rem 1.6rem;
+    border-radius: 1.2rem;
+
+    > textarea {
+      border: none;
+      outline: white;
+      resize: none;
+
+      @extend %typo-body-medium;
+    }
+  }
+}

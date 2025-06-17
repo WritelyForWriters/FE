@@ -8,8 +8,10 @@ import { useRouter } from 'next/navigation'
 
 import { useEffect } from 'react'
 
+import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
+import { plannerCharacterFormValuesAtom } from 'store/plannerAtoms'
 import { LoginFormFieldValues } from 'types/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
@@ -29,6 +31,7 @@ const cx = classNames.bind(styles)
 
 export default function LoginPage() {
   const router = useRouter()
+  const setPlannerFormValues = useSetAtom(plannerCharacterFormValuesAtom)
 
   useEffect(() => {
     trackEvent('page_view', {
@@ -44,6 +47,7 @@ export default function LoginPage() {
 
   const { mutate: login } = useLogin({
     onSuccessHandler: () => {
+      setPlannerFormValues([])
       router.replace('/')
     },
   })

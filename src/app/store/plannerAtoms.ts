@@ -13,6 +13,7 @@ export const plannerActiveTabAtom = atom<PlannerActiveTabType>('synopsis')
 type PlannerTemplateFormValuesType = PlannerTemplateFormValueType[]
 type PlannerTemplateFormValueType = {
   plannerId: string
+  isInitialized: boolean
 } & PlannerSynopsisFormValues
 
 // NOTE(hajae): atom with local storage
@@ -37,31 +38,35 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
     get: Getter,
     set: Setter,
     update: CharacterFormValues[] | PlannerSynopsisFormValues,
+    type: 'character' | 'form' | 'init',
   ) => {
     const formValues = get(plannerCharacterFormValuesAtom)
-    const hasExisting = formValues.some((form) => form.plannerId === plannerId)
 
-    // NOTE(hajae): 캐릭터는 실시간 저장이기때문에 로직 분리
-    if (Array.isArray(update)) {
-      const updated = formValues.map((form) =>
-        form.plannerId === plannerId ? { ...form, characters: [...update] } : form,
-      )
-      set(plannerCharacterFormValuesAtom, updated)
-      return
-    }
-
-    if (hasExisting) {
-      // NOTE(hajae): 기존 템플릿 업데이트
-      const updated = formValues.map((form) =>
-        form.plannerId === plannerId
-          ? { plannerId, ...(update as PlannerSynopsisFormValues) }
-          : form,
-      )
-      set(plannerCharacterFormValuesAtom, updated)
-    } else {
-      // NOTE(hajae): 새 템플릿 추가
-      const updated = [...formValues, { plannerId, ...(update as PlannerSynopsisFormValues) }]
-      set(plannerCharacterFormValuesAtom, updated)
+    switch (type) {
+      case 'init':
+        set(plannerCharacterFormValuesAtom, [
+          ...formValues,
+          { plannerId, ...(update as PlannerSynopsisFormValues), isInitialized: false },
+        ])
+        break
+      case 'form':
+        const updatedForm = formValues.map((form) =>
+          form.plannerId === plannerId
+            ? { plannerId, isInitialized: true, ...(update as PlannerSynopsisFormValues) }
+            : form,
+        )
+        set(plannerCharacterFormValuesAtom, updatedForm)
+        break
+      case 'character':
+        const updatedCharacters = formValues.map((form) =>
+          form.plannerId === plannerId
+            ? { ...form, characters: update as CharacterFormValues[] }
+            : form,
+        )
+        set(plannerCharacterFormValuesAtom, updatedCharacters)
+        break
+      default:
+        break
     }
   }
 
@@ -76,11 +81,13 @@ export const plannerCharacterByIdAtom = atomFamily((plannerId: string) => {
     const entry = saved.find((item) => item.plannerId === plannerId)
 
     if (!entry) {
-      set({
+      const initValue = {
         plannerId,
         ...PlannerSynopsisFormValues.from(undefined),
         characters: [NEW_PLANNER_CHARACTER],
-      } as PlannerTemplateFormValueType)
+        isInitialized: false,
+      }
+      set(initValue, 'init')
     }
   }
 

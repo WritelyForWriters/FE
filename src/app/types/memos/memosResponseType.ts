@@ -12,3 +12,5 @@ export interface MemosDto {
   isCompleted: boolean
   updatedAt: string
 }
+
+export type CreateMemosResponse = ApiResponse<string>

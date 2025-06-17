@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 import { ReactNode } from 'react'
 
@@ -25,6 +26,8 @@ export default function ActionBar({ actionSection, titleSection, extraSection }:
       button_name: '홈',
     })
   }
+  
+  const isPlanner = usePathname().includes('planner')
 
   return (
     <div className={cx('action-bar-wrapper')}>
@@ -34,6 +37,11 @@ export default function ActionBar({ actionSection, titleSection, extraSection }:
           <Link href="/" onClick={handleHomeButtonClick}>
             <MdHome size={24}></MdHome>
           </Link>
+          {isPlanner && (
+            <Link href="/">
+              <MdHome size={24}></MdHome>
+            </Link>
+          )}
           {actionSection}
         </section>
         <section className={cx('action-bar-info-section')}>

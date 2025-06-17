@@ -1,3 +1,37 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
 .chatbot-message-list {
   min-width: 32.4rem;
+
+  &__pending {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 1.6rem;
+
+    &-indicator {
+      display: inline-block;
+      vertical-align: middle;
+
+      @extend %typo-title-medium;
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
 }

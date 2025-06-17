@@ -1,5 +1,7 @@
 import { PLANNER_WORLD_VIEW_ITEMS } from 'constants/planner/plannerConstants'
+import { useAtomValue } from 'jotai'
 import { useFormContext } from 'react-hook-form'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 
 import TextButton from '@components/buttons/TextButton'
 import TextField from '@components/text-field/TextField'
@@ -18,12 +20,24 @@ type CustomField = {
   content: string
 }
 
-export default function PlannerWorldViewForm() {
+interface PlannerSynopsisFormProps {
+  handleManualModification: (
+    name: string,
+    section: string,
+  ) => (value: string, inputValue: string) => Promise<boolean>
+}
+
+export default function PlannerWorldViewForm({
+  handleManualModification,
+}: PlannerSynopsisFormProps) {
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
   const { watch, setValue } = useFormContext()
   const customFields: CustomField[] = watch('worldview.customFields') || []
 
   const handleAddCustomField = () => {
-    setValue('worldview.customFields', [...customFields, { id: '', name: '', content: '' }])
+    if (mode === 'edit') {
+      setValue('worldview.customFields', [...customFields, { id: '', name: '', content: '' }])
+    }
   }
 
   const handleDeleteCustomField = (index: number) => {
@@ -36,13 +50,18 @@ export default function PlannerWorldViewForm() {
     <div className={cx('world-view-form')} id="heading2">
       <div className={cx('world-view-form__title')}>세계관</div>
       {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
-        <PlannerFieldWithButton key={item.name} name={`worldview.${item.name}`}>
+        <PlannerFieldWithButton
+          key={item.name}
+          name={`worldview.${item.name}`}
+          handleManualModification={handleManualModification(`worldview.${item.name}`, item.name)}
+        >
           <TextField
             key={`planner-world-view-item-${index}`}
             name={`worldview.${item.name}`}
             label={item.label}
             variant="expand"
             helperText={item.helperText}
+            readOnly={mode === 'view'}
           />
         </PlannerFieldWithButton>
       ))}
@@ -57,7 +76,8 @@ export default function PlannerWorldViewForm() {
             label="커스텀 항목"
             variant="expand"
             labelName={`worldview.customFields[${index}].name`}
-            isLabelEditable={true}
+            isLabelEditable={mode === 'edit'}
+            readOnly={mode === 'view'}
           />
         </PlannerFieldWithButton>
       ))}

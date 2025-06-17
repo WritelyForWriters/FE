@@ -20,6 +20,7 @@ const cx = classNames.bind(styles)
 interface TextFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   name: string
   options?: RegisterOptions
+  isAiModified?: boolean
 }
 
 /* NOTE(hajae):
@@ -28,7 +29,7 @@ interface TextFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
  * useImperativeHandle을 사용하지 않으면 react-hook-form이 textarea의 value를 감지하지 못해 required error가 발생할 수 있음.
  */
 const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
-  ({ name, options, ...props }, ref) => {
+  ({ name, options, isAiModified, ...props }, ref) => {
     const { register, watch, setValue } = useFormContext()
     const { onChange: registerOnChange, ...rest } = register(name, options)
     const value = watch(name)
@@ -52,7 +53,7 @@ const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
 
     useEffect(() => {
       handleTextareaHeight()
-    }, [isExpand])
+    }, [isExpand, isAiModified])
 
     return (
       <div className={cx('text-field__fieldset__wrapper')}>

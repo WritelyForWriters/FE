@@ -1,10 +1,12 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { use, useEffect } from 'react'
 
-import { useAtom } from 'jotai'
+import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
+import { useAtom, useSetAtom } from 'jotai'
 import { FormProvider, useForm } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
 import { useToast } from '@components/toast/ToastProvider'
@@ -29,30 +31,27 @@ type Params = Promise<{ id: string }>
 function usePlannerData(params: Params) {
   const { id } = use(params)
   const { data: templates } = useFetchProductTemplates(id)
-  const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
   const showToast = useToast()
   const { autoSaveTimer } = useAutoSaveTimer(300000)
 
   return {
     id,
     templates,
-    formValues,
-    setFormValues,
     showToast,
     autoSaveTimer,
   }
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
-  const { id, templates, formValues, setFormValues, showToast, autoSaveTimer } =
-    usePlannerData(params)
-  const [isSaved, setIsSaved] = useState(false)
+  const { id, templates, showToast, autoSaveTimer } = usePlannerData(params)
+  const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
+  const setMode = useSetAtom(PlannerTemplatesModeAtom)
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
     reset,
     getValues,
-    formState: { isValid },
+    formState: { isValid, isDirty },
     handleSubmit,
   } = methods
 
@@ -61,51 +60,48 @@ export default function PlannerPage({ params }: { params: Params }) {
   const handleFormSubmit = handleSubmit((formValues) => {
     const request = PlannerTemplatesRequest.from(formValues, formValues.characters)
 
-    createTemplate({
-      productId: id,
-      request,
-    })
+    createTemplate(
+      {
+        productId: id,
+        request,
+      },
+      {
+        onSuccess: () => {
+          setMode('view')
+          setFormValues(formValues, 'form')
+        },
+      },
+    )
   })
 
   useEffect(() => {
-    if (templates) {
+    if (templates && formValues) {
       // NOTE(hajae): fetch된 데이터가 하나라도 있으면 이미 저장된 상태로 간주
-      setIsSaved(templates.isSaved)
+      setMode(templates.isSaved ? 'view' : 'edit')
 
-      // NOTE(hajae): 서버에 저장된 ID가 존재하고, Local Storage에 저장된 ID가 없을 경우 ID를 SET
-      // 현재 사양은 클라이언트에 저장된 데이터를 우선으로 Character를 SET
-      if (
-        templates.characters.length > 0 &&
-        formValues.characters.length > 0 &&
-        formValues.characters.some((c) => !c.id)
-      ) {
-        const updatedCharacters = formValues.characters.map((character, index) => ({
-          ...character,
-          id: templates.characters[index]?.id ?? '',
-        }))
+      if (!formValues.isInitialized) {
+        const newCharacters =
+          templates.characters.length === 0 ? [NEW_PLANNER_CHARACTER] : templates.characters
 
-        setFormValues(updatedCharacters)
-
+        setFormValues({ ...templates, characters: newCharacters }, 'form')
         reset({
           synopsis: templates.synopsis,
           worldview: templates.worldview,
-          characters: updatedCharacters,
+          characters: newCharacters,
           plot: templates.plot,
           ideaNote: templates.ideaNote,
         })
-
-        return
+      } else {
+        reset({
+          synopsis: formValues.synopsis,
+          worldview: formValues.worldview,
+          characters: formValues.characters,
+          plot: formValues.plot,
+          ideaNote: formValues.ideaNote,
+        })
       }
-
-      reset({
-        synopsis: formValues.synopsis ?? templates.synopsis,
-        worldview: formValues.worldview ?? templates.worldview,
-        characters: formValues.characters ?? templates.characters,
-        plot: formValues.plot ?? templates.plot,
-        ideaNote: formValues.ideaNote ?? templates.ideaNote,
-      })
     }
-  }, [reset, templates])
+  }, [templates])
 
   useEffect(() => {
     if (isSuccess) {
@@ -115,7 +111,7 @@ export default function PlannerPage({ params }: { params: Params }) {
 
   useEffect(() => {
     if (autoSaveTimer === 0) {
-      setFormValues(getValues())
+      setFormValues(getValues(), 'form')
     }
   }, [autoSaveTimer])
 
@@ -124,9 +120,10 @@ export default function PlannerPage({ params }: { params: Params }) {
       <PlannerActionBar
         productId={id}
         isValidFormValues={isValid}
-        isSaved={isSaved}
+        isFormDirty={isDirty}
         onSubmit={handleFormSubmit}
         autoSaveTimer={autoSaveTimer}
+        onResetForm={() => reset(getValues())}
       />
       <div className={cx('main-section')}>
         <PlannerTabs />

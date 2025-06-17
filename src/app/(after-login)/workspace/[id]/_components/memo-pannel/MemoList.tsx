@@ -1,3 +1,4 @@
+import { Editor } from '@tiptap/react'
 import { MemosDto } from 'types/memos/memosResponseType'
 
 import { useTabContext } from '@components/tab/Tab'
@@ -12,9 +13,10 @@ const cx = classNames.bind(styles)
 
 interface MemoListProps {
   memoList?: MemosDto[]
+  editor: Editor
 }
 
-export default function MemoList({ memoList }: MemoListProps) {
+export default function MemoList({ memoList, editor }: MemoListProps) {
   const { activeTab } = useTabContext()
 
   const filteredMemos =
@@ -23,7 +25,7 @@ export default function MemoList({ memoList }: MemoListProps) {
   return (
     <ul className={cx('memo-list')}>
       {filteredMemos?.map((memo) => (
-        <MemoItem key={memo.id} memoList={memo} activeTab={activeTab} />
+        <MemoItem key={memo.id} memoList={memo} activeTab={activeTab} editor={editor} />
       ))}
     </ul>
   )
