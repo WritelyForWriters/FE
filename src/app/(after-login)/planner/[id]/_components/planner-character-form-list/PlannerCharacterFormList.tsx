@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 
 import { PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
 import { useAtom, useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
@@ -106,6 +107,7 @@ export default function PlannerCharacterFormList({
               <PlannerFieldWithButton
                 key={`planner-character-item-${index}`}
                 name={getTextFieldName(item.name)}
+                itemName={`등장인물${arrayIndex + 1} ${item.label}`}
                 showConfirm={item.name === 'customFields'}
                 handleManualModification={handleManualModification(
                   getTextFieldName(item.name),
@@ -149,6 +151,10 @@ export default function PlannerCharacterFormList({
         onConfirm={async () => {
           modalRef.current?.close()
           handleRemoveCharacter(arrayIndex)
+
+          trackEvent('planner_item_delete', {
+            item_name: '등장인물',
+          })
         }}
       />
     </div>

@@ -52,6 +52,7 @@ export default function PlannerWorldViewForm({
       {PLANNER_WORLD_VIEW_ITEMS.map((item, index) => (
         <PlannerFieldWithButton
           key={item.name}
+          itemName={item.label}
           name={`worldview.${item.name}`}
           handleManualModification={handleManualModification(`worldview.${item.name}`, item.name)}
         >
@@ -69,6 +70,7 @@ export default function PlannerWorldViewForm({
         <PlannerFieldWithButton
           key={field.id || index}
           name={`worldview.customFields[${index}]`}
+          itemName="커스텀 항목"
           showConfirm={true}
           onDelete={() => handleDeleteCustomField(index)}
         >
