@@ -64,6 +64,27 @@ const useUpdatePosition = (
     updateMenuPosition()
   }, [editor, updateMenuPosition])
 
+  // 스크롤 이벤트 리스너 등록
+  useEffect(() => {
+    if (!editor) return
+
+    const handleScroll = () => {
+      updateMenuPosition()
+    }
+
+    // 에디터 컨테이너 또는 상위 요소에 스크롤 이벤트 리스너 추가
+    const parentContainer = editor.view.dom?.closest('[data-editor-parent]')
+    parentContainer?.addEventListener('scroll', handleScroll)
+
+    // 전체 페이지 스크롤 감지 > 그래야 스크롤해도 선택한 구간 밑에 위치가 고정될 수 있음
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      parentContainer?.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [editor, updateMenuPosition])
+
   return menuPosition
 }
 
