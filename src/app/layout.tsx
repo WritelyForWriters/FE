@@ -25,7 +25,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const sleekplanProductId = process.env.SLEEKPLAN_PRODUCT_ID
+  const markerProjectId = process.env.MARKER_PROJECT_ID
 
   return (
     <html lang="ko" className={pretendard.className}>
@@ -40,17 +40,32 @@ export default function RootLayout({
           </TokenRefresher>
         </Providers>
 
-        <Script id="sleekplan-widget" strategy="afterInteractive">
+        <Script id="marker-io" strategy="afterInteractive">
           {`
-            window.$sleek = [];
-            window.SLEEK_PRODUCT_ID = ${sleekplanProductId};
-            (function () {
-              var d = document;
-              var s = d.createElement('script');
-              s.src = 'https://client.sleekplan.com/sdk/e.js';
-              s.async = 1;
-              d.getElementsByTagName('head')[0].appendChild(s);
-            })();
+            window.markerConfig = {
+              project: '${markerProjectId}',
+              source: 'snippet'
+            };
+
+            !function(e,r,a){
+              if(!e.__Marker){
+                e.__Marker={};
+                var t=[],n={__cs:t};
+                ["show","hide","isVisible","capture","cancelCapture","unload","reload","isExtensionInstalled","setReporter","clearReporter","setCustomData","on","off"]
+                .forEach(function(e){
+                  n[e]=function(){
+                    var r=Array.prototype.slice.call(arguments);
+                    r.unshift(e),t.push(r)
+                  }
+                }),
+                e.Marker=n;
+                var s=r.createElement("script");
+                s.async=1;
+                s.src="https://edge.marker.io/latest/shim.js";
+                var i=r.getElementsByTagName("script")[0];
+                i.parentNode.insertBefore(s,i)
+              }
+            }(window,document);
           `}
         </Script>
       </body>
