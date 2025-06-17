@@ -429,7 +429,7 @@ export function useTextEditor(editor: Editor | null) {
   ) => {
     setFeedbackId(feedbackId)
     trackEvent('ai_feedback_given', {
-      feeback_type: feedbackType,
+      feedback_type: feedbackType,
       feedback_id: feedbackId,
       button_name: buttonName,
     })
