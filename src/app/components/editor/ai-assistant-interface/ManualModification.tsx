@@ -4,8 +4,6 @@ import { Editor } from '@tiptap/react'
 import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
 import { ActionOptionType, EvaluateStateType, TextSelectionRangeType } from 'types/common/editor'
 
-import Portal from '@components/modal/Portal'
-
 import useUpdatePosition from '@hooks/editor/useUpdatePosition'
 
 import PromptInput from '../common/PromptInput'
@@ -74,44 +72,42 @@ export default function ManualModification({
   }
 
   return (
-    <Portal>
-      <div
-        style={{
-          width: 200,
-          position: 'fixed',
-          top: `${position.top}px`,
-          left: `${position.left}px`,
-          zIndex: 100,
-        }}
-      >
-        <PromptInput
-          onPromptInputChange={handleChange}
-          onSubmit={onAiPrompt}
-          placeholder="프롬프트를 입력해 주세요."
-          buttonText="생성하기"
-        />
+    <div
+      style={{
+        width: 200,
+        position: 'absolute',
+        top: `${position.top}px`,
+        left: 10,
+        zIndex: 100,
+      }}
+    >
+      <PromptInput
+        onPromptInputChange={handleChange}
+        onSubmit={onAiPrompt}
+        placeholder="프롬프트를 입력해 주세요."
+        buttonText="생성하기"
+      />
 
-        {isPrimaryActionMenuOpen && (
-          <div className={styles['select-menu']}>
-            {isShowFeedbackMenu ? (
-              <FeedbackOptionMenu
-                onSubmitFeedback={onSubmitFeedback}
-                isShowFeedbackInput={isShowFeedbackInput}
-                setIsShowFeedbackInput={setIsShowFeedbackInput}
-                feedbackInput={feedbackInput}
-                onFeedbackInputChange={handleChangeFeedbackInput}
-              />
-            ) : (
-              <PrimaryActionMenu
-                onOptionClick={onOptionClick}
-                feedback={feedback}
-                onFeedbackClick={handleFeedbackClick}
-                onBadFeedbackClick={handleBadFeedbackClick}
-              />
-            )}
-          </div>
-        )}
-      </div>
-    </Portal>
+      {isPrimaryActionMenuOpen && (
+        <div className={styles['select-menu']}>
+          {isShowFeedbackMenu ? (
+            <FeedbackOptionMenu
+              onSubmitFeedback={onSubmitFeedback}
+              isShowFeedbackInput={isShowFeedbackInput}
+              setIsShowFeedbackInput={setIsShowFeedbackInput}
+              feedbackInput={feedbackInput}
+              onFeedbackInputChange={handleChangeFeedbackInput}
+            />
+          ) : (
+            <PrimaryActionMenu
+              onOptionClick={onOptionClick}
+              feedback={feedback}
+              onFeedbackClick={handleFeedbackClick}
+              onBadFeedbackClick={handleBadFeedbackClick}
+            />
+          )}
+        </div>
+      )}
+    </div>
   )
 }

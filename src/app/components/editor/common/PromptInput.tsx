@@ -40,6 +40,9 @@ export default function PromptInput({
   }
 
   useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus({ preventScroll: true })
+    }
     adjustTextareaHeight()
   }, [])
 
@@ -47,7 +50,6 @@ export default function PromptInput({
     <div className={styles['prompt-menu']}>
       <textarea
         readOnly={!hasButton}
-        autoFocus
         className={styles['prompt-menu__input']}
         ref={textareaRef}
         placeholder={placeholder}

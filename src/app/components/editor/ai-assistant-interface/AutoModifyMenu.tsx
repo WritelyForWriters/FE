@@ -4,8 +4,6 @@ import { Editor } from '@tiptap/react'
 import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
 import { ActionOptionType, EvaluateStateType, TextSelectionRangeType } from 'types/common/editor'
 
-import Portal from '@components/modal/Portal'
-
 import useUpdatePosition from '@hooks/editor/useUpdatePosition'
 
 import FeedbackOptionMenu from './menu/FeedbackOptionMenu'
@@ -69,35 +67,33 @@ export default function AutoModifyMenu({
   if (!isVisible) return null
 
   return (
-    <Portal>
-      <div
-        ref={menuRef}
-        // 스타일 위치를 동적으로 계산해야 하므로 인라인 스타일 적용
-        style={{
-          width: 200,
-          position: 'fixed',
-          top: `${position.top}px`,
-          left: `${position.left}px`,
-          zIndex: 100,
-        }}
-      >
-        {isShowFeedbackMenu ? (
-          <FeedbackOptionMenu
-            onSubmitFeedback={onSubmitFeedback}
-            isShowFeedbackInput={isShowFeedbackInput}
-            setIsShowFeedbackInput={setIsShowFeedbackInput}
-            feedbackInput={feedbackInput}
-            onFeedbackInputChange={handleChange}
-          />
-        ) : (
-          <PrimaryActionMenu
-            onOptionClick={onOptionClick}
-            feedback={feedback}
-            onFeedbackClick={handleFeedbackClick}
-            onBadFeedbackClick={handleBadFeedbackClick}
-          />
-        )}
-      </div>
-    </Portal>
+    <div
+      ref={menuRef}
+      // 스타일 위치를 동적으로 계산해야 하므로 인라인 스타일 적용
+      style={{
+        width: 200,
+        position: 'absolute',
+        top: `${position.top}px`,
+        left: `${position.left}px`,
+        zIndex: 100,
+      }}
+    >
+      {isShowFeedbackMenu ? (
+        <FeedbackOptionMenu
+          onSubmitFeedback={onSubmitFeedback}
+          isShowFeedbackInput={isShowFeedbackInput}
+          setIsShowFeedbackInput={setIsShowFeedbackInput}
+          feedbackInput={feedbackInput}
+          onFeedbackInputChange={handleChange}
+        />
+      ) : (
+        <PrimaryActionMenu
+          onOptionClick={onOptionClick}
+          feedback={feedback}
+          onFeedbackClick={handleFeedbackClick}
+          onBadFeedbackClick={handleBadFeedbackClick}
+        />
+      )}
+    </div>
   )
 }
