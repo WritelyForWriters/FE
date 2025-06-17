@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
 import { useAtom, useAtomValue } from 'jotai'
@@ -6,9 +6,11 @@ import { useFormContext, useWatch } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
+import { ModalHandler } from 'types/common/modalRef'
 import { CharacterFormValues } from 'types/planner/plannerSynopsisFormValues'
 
 import FillButton from '@components/buttons/FillButton'
+import Modal from '@components/modal/Modal'
 import TextField from '@components/text-field/TextField'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
@@ -43,6 +45,7 @@ export default function PlannerCharacterFormList({
   const { control } = useFormContext()
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(paramsId))
   const mode = useAtomValue(PlannerTemplatesModeAtom)
+  const modalRef = useRef<ModalHandler | null>(null)
 
   const getTextFieldName = (name: string) => {
     // NOTE(hajae): customFields는 배열이나, 디자인상 Character Fields에서는 하나의 필드를 사용 중
@@ -80,7 +83,7 @@ export default function PlannerCharacterFormList({
                 size="small"
                 variant="secondary"
                 type="button"
-                onClick={() => handleRemoveCharacter(arrayIndex)}
+                onClick={() => modalRef.current?.open()}
               >
                 삭제하기
               </FillButton>
@@ -103,6 +106,7 @@ export default function PlannerCharacterFormList({
               <PlannerFieldWithButton
                 key={`planner-character-item-${index}`}
                 name={getTextFieldName(item.name)}
+                showConfirm={item.name === 'customFields'}
                 handleManualModification={handleManualModification(
                   getTextFieldName(item.name),
                   item.name,
@@ -134,6 +138,19 @@ export default function PlannerCharacterFormList({
           )}
         </div>
       )}
+      <Modal
+        ref={modalRef}
+        title="정말 삭제하시겠습니까? 이작업은 되돌릴 수 없습니다."
+        cancelText="취소하기"
+        confirmText="삭제하기"
+        onCancel={() => {
+          modalRef.current?.close()
+        }}
+        onConfirm={async () => {
+          modalRef.current?.close()
+          handleRemoveCharacter(arrayIndex)
+        }}
+      />
     </div>
   )
 }

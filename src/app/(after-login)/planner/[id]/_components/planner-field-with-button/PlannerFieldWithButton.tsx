@@ -1,12 +1,14 @@
 import Image from 'next/image'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 
 import { useAtomValue } from 'jotai'
 import { useFormContext } from 'react-hook-form'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
+import { ModalHandler } from 'types/common/modalRef'
 
 import FillButton from '@components/buttons/FillButton'
+import Modal from '@components/modal/Modal'
 
 import { useCollapsed } from '@hooks/common/useCollapsed'
 import { usePlannerTemplatesAiAssistant } from '@hooks/products/usePlannerTemplatesAiAssistant'
@@ -23,6 +25,7 @@ interface PlannerFieldWithButtonProps {
   children: ReactNode
   name: string
   isDropdown?: boolean
+  showConfirm?: boolean
   onDelete?: () => void
   manualModifiable?: boolean
   handleManualModification?: (value: string, inputValue: string) => Promise<boolean>
@@ -32,6 +35,7 @@ export default function PlannerFieldWithButton({
   children,
   name,
   isDropdown = false,
+  showConfirm = false,
   onDelete,
   manualModifiable = true,
   handleManualModification,
@@ -46,6 +50,7 @@ export default function PlannerFieldWithButton({
   const { isOpen, onClose, onOpen } = useCollapsed(false)
   const [isShow, setIsShow] = useState(true)
   const [isDeleted, setIsDeleted] = useState(false)
+  const modalRef = useRef<ModalHandler | null>(null)
   const mode = useAtomValue(PlannerTemplatesModeAtom)
   const initialValue = watch(name)
 
@@ -65,18 +70,19 @@ export default function PlannerFieldWithButton({
     }
   }, [watch, name, isDropdown, initialValue, isDeleted])
 
-  const removeField = (setter: (v: boolean) => void) => {
+  const removeField = () => {
     setIsDeleted(true)
-    setter(false)
+    setIsShow(false)
     unregister(name)
+
     if (onDelete) onDelete()
   }
 
-  const restoreField = (setter: (v: boolean) => void) => {
+  const restoreField = () => {
     setIsDeleted(false)
     register(name)
     setValue(name, '')
-    setter(true)
+    setIsShow(true)
   }
 
   const handleConfirm = () => {
@@ -118,7 +124,13 @@ export default function PlannerFieldWithButton({
                 type="button"
                 size="small"
                 variant="secondary"
-                onClick={() => removeField(setIsShow)}
+                onClick={() => {
+                  if (showConfirm) {
+                    modalRef.current?.open()
+                  } else {
+                    removeField()
+                  }
+                }}
               >
                 삭제하기
               </FillButton>
@@ -126,12 +138,7 @@ export default function PlannerFieldWithButton({
           )}
         </div>
       ) : (
-        <FillButton
-          type="button"
-          size="small"
-          variant="secondary"
-          onClick={() => restoreField(setIsShow)}
-        >
+        <FillButton type="button" size="small" variant="secondary" onClick={() => restoreField()}>
           삭제된 항목 추가
         </FillButton>
       )}
@@ -146,6 +153,19 @@ export default function PlannerFieldWithButton({
           handleCancel={handleCancel}
         />
       )}
+      <Modal
+        ref={modalRef}
+        title="정말 삭제하시겠습니까? 이작업은 되돌릴 수 없습니다."
+        cancelText="취소하기"
+        confirmText="삭제하기"
+        onCancel={() => {
+          modalRef.current?.close()
+        }}
+        onConfirm={async () => {
+          modalRef.current?.close()
+          removeField()
+        }}
+      />
     </div>
   )
 }
