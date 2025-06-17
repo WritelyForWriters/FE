@@ -121,6 +121,9 @@ export default function WorkspaceActionBar({
     const handleHomeButtonClick = () => {
       if (isSavedRef.current) {
         router.push('/')
+        trackEvent('home_button_click', {
+          button_name: '홈',
+        })
       } else {
         modalRef.current?.open()
         history.pushState(null, '', '')
