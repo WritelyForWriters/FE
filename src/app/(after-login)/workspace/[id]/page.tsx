@@ -235,7 +235,6 @@ export default function WorkSpacePage() {
 
   useEffect(() => {
     trackEvent('page_view', { page_name: 'writing' })
-  }, [productId])
     setIsChatbotOpen(false)
     setFaviconRelativePosition({ xRatio: 0.85, yRatio: 0.55 })
   }, [productId])

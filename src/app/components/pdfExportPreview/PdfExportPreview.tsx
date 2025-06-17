@@ -47,19 +47,13 @@ export default function PdfExportPreview({ ref, children }: PdfExportPreviewProp
     }
 
     try {
+      trackEvent('export_complete', {
+        button_name: '내보내기',
+        export_type: '작품 전체',
+        file_type: '단일 파일',
+        file_format: 'PDF',
+      })
       html2pdf().set(option).from(contentElement).save()
-      html2pdf()
-        .set(option)
-        .from(contentElement)
-        .save()
-        .then(() =>
-          trackEvent('export_complete', {
-            button_name: '내보내기',
-            export_type: '작품 전체',
-            file_type: '단일 파일',
-            file_format: 'PDF',
-          }),
-        )
     } catch (error) {
       console.error(error)
     } finally {

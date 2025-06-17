@@ -2,24 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useMutation } from '@tanstack/react-query'
 import { Editor } from '@tiptap/react'
-import { postAutoModify, postFeedback, postUserModify } from 'api/ai-assistant/aiAssistant'
-import { useAtom, useAtomValue } from 'jotai'
-import { trackEvent } from 'lib/amplitude'
-import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
-import { feedbackIdAtom } from 'store/feedbackIdAtom'
-import { productIdAtom } from 'store/productsAtoms'
-import { MemberMessageType } from 'types/chatbot/chatbot'
 import { archivedAnswer, postAutoModify, postFeedback } from 'api/ai-assistant/aiAssistant'
 import { AxiosError } from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
+import { feedbackIdAtom } from 'store/feedbackIdAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
-import { FeedbackFormData } from 'types/chatbot/chatbot'
+import { FeedbackFormData, MemberMessageType } from 'types/chatbot/chatbot'
 import {
   ActionOptionType,
   AiassistantOptionType,
@@ -256,7 +251,7 @@ export function useTextEditor(editor: Editor | null) {
             // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
             setAiResult(answer)
             onOpen()
-            handleEventTracking('user modify', response.id, '수동 수정')
+            handleEventTracking('user modify', id, '수동 수정')
           }
         },
         onError: (error) => {

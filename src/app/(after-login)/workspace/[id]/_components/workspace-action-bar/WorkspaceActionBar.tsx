@@ -62,12 +62,12 @@ export default function WorkspaceActionBar({
   const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
 
   const [applyProductSettings, setApplyProductSettings] = useAtom(applyProductSettingsAtom)
-  
+
   const handleChangeMode = () => {
     trackEvent(isContentEditing ? 'enter_reading_mode' : 'enter_writing_mode', {
       button_name: isContentEditing ? '읽기 모드' : '쓰기 모드',
     })
-    setIsContentEditing((prev) => !prev)
+    setIsContentEditing(false)
   }
 
   // 저장 버튼 클릭 트리거 이벤트

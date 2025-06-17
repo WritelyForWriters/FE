@@ -1,11 +1,12 @@
 'use client'
 
-import { MouseEvent, useState } from 'react'
-import { trackEvent } from 'lib/amplitude'
 import { useRouter } from 'next/navigation'
-import { MouseEvent } from 'react'
+
+import { MouseEvent, useState } from 'react'
+
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { MdArrowOutward } from 'react-icons/md'
 import { Rnd } from 'react-rnd'
 import { productIdAtom } from 'store/productsAtoms'
@@ -40,19 +41,17 @@ export default function PlannerPannel() {
     onClose()
   }
 
-
   const handleButtonClick = () => {
     setStartTime(Date.now())
     trackEvent('panel_open', {
       panel_name: '작품 플래너',
     })
-      
+
     onOpen()
   }
 
   const handleRedirectPlanner = () => {
     router.push(`/planner/${productId}`)
-
   }
 
   return (
