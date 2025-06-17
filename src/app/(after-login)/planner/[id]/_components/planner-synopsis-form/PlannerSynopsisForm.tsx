@@ -46,7 +46,12 @@ export default function PlannerSynopsisForm({
         isRequired={true}
         readOnly={mode === 'view'}
       />
-      <PlannerFieldWithButton name="synopsis.length" isDropdown={true} manualModifiable={false}>
+      <PlannerFieldWithButton
+        name="synopsis.length"
+        itemName="분량"
+        isDropdown={true}
+        manualModifiable={false}
+      >
         <Dropdown
           name="synopsis.length"
           type="outlined"
@@ -58,7 +63,7 @@ export default function PlannerSynopsisForm({
         />
       </PlannerFieldWithButton>
 
-      <PlannerFieldWithButton name="synopsis.purpose" manualModifiable={false}>
+      <PlannerFieldWithButton name="synopsis.purpose" itemName="기획 의도" manualModifiable={false}>
         <TextField
           name="synopsis.purpose"
           label="기획 의도"
@@ -83,6 +88,7 @@ export default function PlannerSynopsisForm({
       />
       <PlannerFieldWithButton
         name="synopsis.example"
+        itemName="예시 문장"
         handleManualModification={handleManualModification('synopsis.example', 'example')}
       >
         <TextField

@@ -25,6 +25,7 @@ export default function PlannerPlotForm({ handleManualModification }: PlannerPlo
       <div className={cx('plot-form__title')}>줄거리</div>
       <PlannerFieldWithButton
         name="plot.content"
+        itemName="줄거리"
         handleManualModification={handleManualModification('plot.content', 'plot')}
       >
         <TextField

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 
 import { ReactNode } from 'react'
 
+import { trackEvent } from 'lib/amplitude'
 import { MdHome } from 'react-icons/md'
 
 import classNames from 'classnames/bind'
@@ -27,7 +28,14 @@ export default function ActionBar({ actionSection, titleSection, extraSection }:
       <div className={cx('action-bar-inner-container')}>
         <section className={cx('action-bar-action-section')}>
           {isPlanner && (
-            <Link href="/">
+            <Link
+              href="/"
+              onClick={() => {
+                trackEvent('home_button_click', {
+                  button_name: '홈',
+                })
+              }}
+            >
               <MdHome size={24}></MdHome>
             </Link>
           )}

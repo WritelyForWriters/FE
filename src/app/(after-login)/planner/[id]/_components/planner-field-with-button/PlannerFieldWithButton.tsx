@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 
 import { useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { useFormContext } from 'react-hook-form'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import { ModalHandler } from 'types/common/modalRef'
@@ -24,6 +25,7 @@ const cx = classNames.bind(styles)
 interface PlannerFieldWithButtonProps {
   children: ReactNode
   name: string
+  itemName: string
   isDropdown?: boolean
   showConfirm?: boolean
   onDelete?: () => void
@@ -34,6 +36,7 @@ interface PlannerFieldWithButtonProps {
 export default function PlannerFieldWithButton({
   children,
   name,
+  itemName,
   isDropdown = false,
   showConfirm = false,
   onDelete,
@@ -74,6 +77,10 @@ export default function PlannerFieldWithButton({
     setIsDeleted(true)
     setIsShow(false)
     unregister(name)
+
+    trackEvent('planner_item_delete', {
+      item_name: itemName,
+    })
 
     if (onDelete) onDelete()
   }

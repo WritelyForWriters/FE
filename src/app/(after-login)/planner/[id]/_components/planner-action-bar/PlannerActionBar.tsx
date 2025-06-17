@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ChangeEvent, KeyboardEvent, useState } from 'react'
 
 import { useAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 
 import ActionBar from '@components/action-bar/ActionBar'
@@ -53,6 +54,10 @@ export default function PlannerActionBar({
 
       onSubmit()
       onResetForm()
+
+      trackEvent('save_button_click', {
+        button_name: '저장하기',
+      })
     }
 
     /* NOTE(hajae): 저장 사양
@@ -142,6 +147,11 @@ export default function PlannerActionBar({
         showToast('warning', '집필하러가기 전에 먼저 저장해주세요')
         return
       }
+
+      trackEvent('go_to_writing_click', {
+        button_name: '집필하러 가기',
+      })
+
       router.push(`/workspace/${productId}`)
     }
 
