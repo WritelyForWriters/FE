@@ -3,8 +3,8 @@
  * @author 선우
  */
 import { KEYBOARD_SHORTCUTS } from 'constants/workspace/keyboardShortcuts'
-import { trackEvent } from 'lib/amplitude'
 import { useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { FiInfo } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
 import { Tooltip } from 'react-tooltip'
@@ -57,29 +57,12 @@ export default function KeyboardShortcutsHelper() {
 
   return (
     <>
-      <button
-        data-tooltip-id="shortcut-help-tooltip"
-        data-tooltip-place="bottom-end"
-        onClick={handleTooltipOpen}
-      >
-        <FiInfo size={20} color="#CCCCCC" />
-      </button>
-      <Tooltip
-        noArrow
-        openOnClick
-        clickable
-        isOpen={isOpen}
-        id="shortcut-help-tooltip"
-        className={cx('tooltip')}
-      >
-        <ShortcutHelp />
-      </Tooltip>
       {isEditable && (
         <>
           <button
             data-tooltip-id="shortcut-help-tooltip"
             data-tooltip-place="bottom-end"
-            onClick={onOpen}
+            onClick={handleTooltipOpen}
           >
             <FiInfo size={20} color="#CCCCCC" />
           </button>
