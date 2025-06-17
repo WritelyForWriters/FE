@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
+import Script from 'next/script'
 
 import AmplitudeInitializer from '@components/amplitude-initializer/AmplitudeInitializer'
 import AuthInterceptor from '@components/auth-interceptor/AuthInterceptor'
@@ -36,6 +37,24 @@ export default function RootLayout({
             </AuthInterceptor>
           </TokenRefresher>
         </Providers>
+
+        <Script
+          id="sleekplan-widget"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.$sleek = [];
+              window.SLEEK_PRODUCT_ID = 43883917;
+              (function(){
+                var d = document;
+                var s = d.createElement("script");
+                s.src = "https://client.sleekplan.com/sdk/e.js";
+                s.async = 1;
+                d.getElementsByTagName("head")[0].appendChild(s);
+              })();
+            `,
+          }}
+        />
       </body>
     </html>
   )
