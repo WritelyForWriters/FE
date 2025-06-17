@@ -5,9 +5,10 @@ import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useFormContext } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 
 import FillButton from '@components/buttons/FillButton'
 
@@ -31,6 +32,7 @@ export default function PlannerCharacterForm({
 }: PlannerCharacterFormProps) {
   const params = useParams<{ id: string }>()
   const { setValue } = useFormContext()
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(params.id))
 
   const handleAddCharacter = () => {
@@ -51,9 +53,11 @@ export default function PlannerCharacterForm({
     <div className={cx('character-form')} id="heading3">
       <div className={cx('character-form__title')}>
         <span>등장 인물</span>
-        <FillButton size="small" variant="secondary" onClick={handleAddCharacter} type="button">
-          추가하기
-        </FillButton>
+        {mode === 'edit' && (
+          <FillButton size="small" variant="secondary" onClick={handleAddCharacter} type="button">
+            추가하기
+          </FillButton>
+        )}
       </div>
 
       {formValues.characters &&

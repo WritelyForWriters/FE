@@ -69,6 +69,7 @@ export default function PlannerWorldViewForm({
         <PlannerFieldWithButton
           key={field.id || index}
           name={`worldview.customFields[${index}]`}
+          showConfirm={true}
           onDelete={() => handleDeleteCustomField(index)}
         >
           <TextField
