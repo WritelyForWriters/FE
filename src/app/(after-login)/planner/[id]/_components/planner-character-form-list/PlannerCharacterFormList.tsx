@@ -106,6 +106,7 @@ export default function PlannerCharacterFormList({
               <PlannerFieldWithButton
                 key={`planner-character-item-${index}`}
                 name={getTextFieldName(item.name)}
+                showConfirm={item.name === 'customFields'}
                 handleManualModification={handleManualModification(
                   getTextFieldName(item.name),
                   item.name,
