@@ -25,6 +25,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const sleekplanProductId = process.env.SLEEKPLAN_PRODUCT_ID
+
   return (
     <html lang="ko" className={pretendard.className}>
       <body>
@@ -38,23 +40,19 @@ export default function RootLayout({
           </TokenRefresher>
         </Providers>
 
-        <Script
-          id="sleekplan-widget"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.$sleek = [];
-              window.SLEEK_PRODUCT_ID = 43883917;
-              (function(){
-                var d = document;
-                var s = d.createElement("script");
-                s.src = "https://client.sleekplan.com/sdk/e.js";
-                s.async = 1;
-                d.getElementsByTagName("head")[0].appendChild(s);
-              })();
-            `,
-          }}
-        />
+        <Script id="sleekplan-widget" strategy="afterInteractive">
+          {`
+            window.$sleek = [];
+            window.SLEEK_PRODUCT_ID = ${sleekplanProductId};
+            (function () {
+              var d = document;
+              var s = d.createElement('script');
+              s.src = 'https://client.sleekplan.com/sdk/e.js';
+              s.async = 1;
+              d.getElementsByTagName('head')[0].appendChild(s);
+            })();
+          `}
+        </Script>
       </body>
     </html>
   )
