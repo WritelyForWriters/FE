@@ -4,6 +4,7 @@ import { use, useEffect } from 'react'
 
 import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
 import { useAtom, useSetAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
@@ -114,6 +115,24 @@ export default function PlannerPage({ params }: { params: Params }) {
       setFormValues(getValues(), 'form')
     }
   }, [autoSaveTimer])
+
+  useEffect(() => {
+    const enterTime = Date.now()
+
+    trackEvent('page_view', {
+      page_name: 'planner',
+    })
+
+    return () => {
+      const exitTime = Date.now()
+      const timeSpent = Math.floor((exitTime - enterTime) / 1000)
+
+      trackEvent('page_exit', {
+        page_name: 'planner',
+        time_spent: timeSpent,
+      })
+    }
+  }, [])
 
   return (
     <div className={cx('container')}>
