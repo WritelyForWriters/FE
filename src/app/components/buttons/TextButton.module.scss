@@ -1,0 +1,57 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography';
+
+.text-button {
+  @include mixin.flex();
+  @extend %typo-label-large;
+  color: color.$alert-secondary-900;
+  gap: 0.4rem;
+
+  border-radius: 0.8rem;
+
+  &.square {
+    &.primary {
+      &.large {
+        padding: 1.2rem;
+      }
+
+      &.medium {
+        padding: 0.8rem 1.2rem;
+        border-radius: 1rem;
+      }
+
+      &.small {
+        padding: 0.4rem 0.8rem;
+        border-radius: 1rem;
+
+        &.leading,
+        &.only {
+          padding: 0.4rem;
+        }
+
+        &.trailing {
+          padding: 0.4rem 0.4rem 0.4rem 0.8rem;
+        }
+      }
+    }
+  }
+
+  &:active {
+    background-color: color.$alert-secondary-200 !important;
+  }
+
+  &:focus {
+    background-color: color.$alert-secondary-50;
+    border-radius: 1rem;
+    outline: none;
+  }
+
+  &:hover {
+    background-color: color.$alert-secondary-50;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}

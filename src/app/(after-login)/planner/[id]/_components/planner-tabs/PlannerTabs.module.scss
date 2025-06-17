@@ -1,0 +1,14 @@
+@use '@styles/colors' as color;
+
+.tab-wrapper {
+  position: relative;
+  padding-top: 1.6rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 212px;
+
+  z-index: 1;
+}

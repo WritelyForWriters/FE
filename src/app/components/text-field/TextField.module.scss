@@ -1,0 +1,145 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.text-field {
+  @include mixin.flex(column, null, space-between);
+  gap: 0.8rem;
+
+  width: 100%;
+
+  &__fieldset {
+    @include mixin.display-flex();
+    position: relative;
+
+    margin: 0;
+    padding: 0;
+    min-height: 4.8rem;
+
+    background-color: transparent;
+    border: 0;
+
+    &__label {
+      @extend %typo-label-large;
+
+      position: absolute;
+      top: 1.8rem;
+      left: 0;
+
+      background-color: transparent;
+      color: color.$alert-secondary-500;
+
+      transition: all 0.2s ease;
+      pointer-events: none;
+
+      &--active {
+        @extend %typo-label-medium;
+
+        top: 0;
+      }
+
+      &--required {
+        position: inherit;
+        display: inline-block;
+
+        margin-left: 0.2rem;
+        width: 0.4rem;
+        height: 0.4rem;
+
+        border-radius: 0.2rem;
+        background-color: color.$alert-failure;
+      }
+    }
+
+    // NOTE(hajae): 해당 디자인이 없어서 임시 추가...
+    &__label-input {
+      position: absolute;
+
+      width: 12rem;
+      height: fit-content;
+
+      outline: 0;
+      border: 0;
+
+      background-color: color.$alert-secondary-50;
+
+      &--empty {
+        @extend %typo-label-large;
+
+        top: 1.8rem;
+      }
+    }
+
+    &__wrapper {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: solid 1px color.$alert-secondary-50;
+      width: 100%;
+
+      &:focus-within {
+        border-color: color.$alert-secondary-900;
+      }
+    }
+
+    &__input,
+    &__text-area {
+      @extend %typo-body-medium;
+
+      margin: 1.6rem 0 0.7rem 0;
+      width: calc(100% - 3rem);
+
+      background-color: transparent;
+      border: 0;
+      outline: 0;
+      font-weight: 400;
+
+      // NOTE(hajae): caret(커서)크기는 css 조절 불가.
+      // 브라우저별로 다르나 line-height, font-size 등을 수정해야함
+
+      &__icon {
+        position: absolute;
+        top: 1.6rem;
+        right: 0;
+        height: calc(100% - 3rem);
+
+        color: color.$alert-secondary-300;
+        cursor: pointer;
+      }
+
+      &--is-modified {
+        // NOTE(hajae): 현재 input 내에 있는 글자에만 배경색상을 넣는 것은 css만으로 불가.
+        // 글자에만 배경 색상을 넣기위해서는 구조적으로 수정을 해야함. 스코프가 너무 커서 일단 임시로 글자그림자로 작업
+        text-shadow: 0 0 7px #ffe47a;
+      }
+    }
+
+    &__text-area {
+      line-height: 2.4rem;
+
+      overflow: hidden;
+      resize: none;
+
+      &--expand {
+        padding-right: 3rem;
+        height: 2.4rem !important; // NOTE(hajae): 비동기로 적용되는 height가 우선되기때문에 important 추가 필요
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  &__helper-text {
+    @extend %typo-body-small;
+    @include mixin.flex(column, flex-start, center);
+    gap: 2.5px;
+
+    min-height: 2.4rem;
+
+    color: color.$alert-secondary-300;
+
+    &--error {
+      color: color.$alert-failure;
+    }
+  }
+}

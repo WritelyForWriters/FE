@@ -1,0 +1,27 @@
+.preview-content {
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  p {
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 3.6rem;
+  }
+
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 3.6rem;
+  }
+
+  blockquote {
+    border-left: 3px solid lightgray;
+    margin: 1.6rem 0;
+    padding-left: 1.6rem;
+  }
+
+  mark {
+    border-bottom: initial !important;
+    background-color: transparent !important;
+  }
+}

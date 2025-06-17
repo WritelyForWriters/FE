@@ -1,0 +1,44 @@
+@use '@styles/typography' as typo;
+@use '@styles/colors' as color;
+
+.section {
+  padding: 0 1.6rem;
+  width: 600px;
+
+  // TODO(hajae): 소현님계서 수정하신 Editor를 fetch 후, 추가 수정
+  p {
+    @include typo.typo(1.6rem, 400, 3.6rem, 0);
+  }
+
+  p,
+  h1,
+  blockquote,
+  strong,
+  em,
+  u {
+    > div > div {
+      // NOTE(hajae): border이 잘리는 현상 수정을 위해
+      box-sizing: content-box;
+
+      > div {
+        // NOTE(hajae): 강제로 표시되던 이미지 정렬 div를 표시하지 않기 위해
+        &:nth-child(2) {
+          display: none !important;
+          opacity: 0;
+        }
+      }
+    }
+  }
+}
+
+.is-editor-empty:first-child::before {
+  @include typo.typo(1.6rem, 400, 3.6rem, 0);
+
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+
+  color: color.$alert-secondary-500;
+  font-weight: 400;
+}

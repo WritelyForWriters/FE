@@ -1,0 +1,40 @@
+@use "@styles/mixins" as mixin;
+@use "@styles/typography" as typo;
+@use "@styles/colors" as color;
+
+.toast-wrapper {
+  @include mixin.flex();
+
+  position: fixed;
+  top: 8rem;
+
+  width: 100dvw;
+  opacity: 1;
+
+  animation: fadeIn 0.3s ease-out;
+}
+
+.toast {
+  @extend %typo-title-small;
+  @include mixin.flex();
+
+  gap: 0.8rem;
+
+  padding: 0.8rem 1.6rem 0.8rem 1.2rem;
+  height: 4rem;
+
+  background-color: color.$alert-secondary-800;
+  border-radius: 1.2rem;
+
+  color: color.$alert-secondary-0;
+  box-shadow: 0 0 2rem rgba(#121212, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

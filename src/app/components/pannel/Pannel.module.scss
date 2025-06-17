@@ -1,0 +1,28 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.pannel {
+  padding: 1.6rem;
+
+  border-radius: 1.6rem;
+  background-color: color.$alert-secondary-20;
+
+  @include mixin.flex(column, flex-start, null);
+  gap: 1.6rem;
+  align-self: stretch;
+
+  &--variant {
+    padding: 1.6rem 2rem;
+  }
+}
+
+.title {
+  @include mixin.flex(row, center, space-between);
+  align-self: stretch;
+
+  h2 {
+    @extend %typo-label-large;
+    color: color.$alert-secondary-900;
+  }
+}

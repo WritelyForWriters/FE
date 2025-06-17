@@ -1,0 +1,95 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.chatbot-window {
+  @include mixin.display-flex();
+  flex-direction: column;
+  padding: 1.6rem;
+  gap: 1.6rem;
+
+  min-width: 37.5rem;
+  max-height: 100%;
+
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  background-color: color.$alert-secondary-20;
+  border-radius: 1.6rem;
+
+  box-shadow: 0px 0px 23px rgba(0, 0, 0, 0.08);
+
+  &__header {
+    @include mixin.display-flex();
+    justify-content: space-between;
+    align-items: center;
+
+    &:global(.drag-handle) {
+      cursor: move;
+    }
+
+    .tooltip {
+      background-color: #ffeaea;
+      color: #d32f2f;
+      font-size: small;
+    }
+
+    &-content {
+      @include mixin.display-flex();
+      align-items: center;
+      gap: 0.4rem;
+
+      @include typo.typo(14px, 600, 16px, 0);
+      color: color.$core-secondary-100;
+    }
+  }
+
+  &__body {
+    width: 100%;
+    min-height: 19.5rem;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    > div {
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  &__footer {
+    width: 100%;
+    margin-top: auto;
+  }
+}

@@ -1,0 +1,39 @@
+@use '@styles/typography';
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+.select-menu {
+  position: absolute;
+  left: 0;
+
+  min-width: 100%;
+  padding: 1.2rem 0.8rem;
+
+  @include mixin.flex(column, flex-start, center);
+  gap: 1.2rem;
+
+  border-radius: 1.2rem;
+  background: color.$alert-secondary-0;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.15);
+
+  button {
+    @extend %typo-label-large;
+
+    width: 100%;
+    padding: 0.4rem 0.8rem;
+    text-align: start;
+    border-radius: 1rem;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &:hover {
+      background-color: color.$alert-secondary-50;
+    }
+
+    &.is-active {
+      background-color: color.$alert-secondary-50;
+    }
+  }
+}

@@ -1,0 +1,86 @@
+@use '@styles/typography';
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+@use '@styles/typography' as typo;
+
+.chatbox {
+  @include mixin.display-flex();
+  flex-direction: column;
+  gap: 1rem;
+
+  padding: 0.6rem 1.2rem;
+  border-radius: 1.2rem;
+
+  background-color: color.$alert-secondary-50;
+  color: color.$core-secondary-100;
+
+  @include typo.typo(1.6rem, 400, 2.4rem, 0);
+
+  position: relative;
+
+  max-height: 40rem;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+  &__quote {
+    padding: 0.8rem 0.8rem;
+
+    blockquote {
+      padding-left: 1rem;
+      border-left: 1px solid black;
+    }
+  }
+
+  &__message {
+    @include typo.typo(1.6rem, 400, 2.4rem, 0);
+
+    resize: none;
+    outline: none;
+    border: none;
+    background-color: color.$alert-secondary-50;
+    width: 100%;
+
+    flex-shrink: 0;
+  }
+
+  &__buttons {
+    @include mixin.display-flex();
+    justify-content: space-between;
+
+    &-left {
+      @include mixin.display-flex();
+      align-items: center;
+      gap: 0.4rem;
+
+      .tooltip {
+        background-color: #f9fafb;
+        color: #6b7280;
+        font-size: small;
+      }
+    }
+
+    &-right {
+      @include mixin.display-flex();
+      gap: 0.4rem;
+    }
+  }
+}

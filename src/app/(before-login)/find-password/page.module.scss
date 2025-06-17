@@ -1,0 +1,36 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography' as typo;
+
+.wrapper {
+  @include mixin.display-flex();
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  .form {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 4.8rem;
+    width: 25.8rem;
+
+    &__input-section {
+      @include mixin.display-flex();
+      flex-direction: column;
+      gap: 3.2rem;
+
+      &__title {
+        @include typo.typo(2.4rem, 700, 3.6rem, 0);
+      }
+    }
+
+    &__action-section {
+      @include mixin.display-flex();
+      flex-direction: column;
+      gap: 1.6rem;
+
+      &__login-btn {
+        margin: 0 auto;
+      }
+    }
+  }
+}

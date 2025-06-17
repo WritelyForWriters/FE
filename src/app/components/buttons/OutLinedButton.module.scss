@@ -1,0 +1,55 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+@use '@styles/typography';
+
+.outlined-button {
+  @include mixin.flex();
+  gap: 0.4rem;
+
+  &.large {
+    &.square {
+      &.primary {
+        @extend %typo-label-large;
+        color: color.$alert-secondary-900;
+        border: 1px solid color.$alert-secondary-900;
+        border-radius: 1rem;
+        padding: 1.2rem;
+
+        &:active {
+          background-color: color.$alert-secondary-100 !important;
+        }
+
+        &:focus {
+          background-color: color.$alert-secondary-50;
+          outline: none;
+        }
+
+        &:hover {
+          background-color: color.$alert-secondary-50;
+        }
+      }
+    }
+  }
+
+  &.small {
+    &.pill {
+      &.secondary {
+        padding: 0.4rem 0.8rem 0.4rem 0.6rem;
+        border: 1px solid color.$alert-secondary-100;
+        border-radius: 4rem;
+
+        @extend %typo-label-medium;
+        color: color.$alert-secondary-600;
+      }
+
+      &:active {
+        border: none;
+        background-color: color.$alert-secondary-200;
+      }
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}

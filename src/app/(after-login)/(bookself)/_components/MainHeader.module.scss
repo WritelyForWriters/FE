@@ -1,0 +1,21 @@
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+.header {
+  width: 100%;
+  padding: 1.6rem;
+
+  background: color.$alert-secondary-0;
+
+  .inner-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.4rem;
+    border-radius: 1.6rem;
+
+    &__buttons {
+      position: relative;
+    }
+  }
+}

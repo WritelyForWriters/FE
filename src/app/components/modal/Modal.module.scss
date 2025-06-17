@@ -1,0 +1,56 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+
+.root-modal[open] {
+  @include mixin.flex(column, flex-start, null, null);
+  gap: 2.4rem;
+  min-width: 400px;
+  border: none;
+  border-radius: 2.4rem;
+  padding: 2.4rem 1.6rem 1.6rem;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  color: color.$alert-secondary-900;
+  animation: slide-in-from-top 0.35s ease-out;
+
+  .title-section {
+    @include mixin.flex(column, null, null, null);
+    gap: 0.8rem;
+    width: 100%;
+    cursor: default;
+
+    h2 {
+      @extend %typo-title-medium;
+    }
+
+    p {
+      @extend %typo-body-medium;
+    }
+  }
+
+  .content-section {
+    width: 100%;
+
+    max-width: 60vw;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  .button-section {
+    @include mixin.display-flex();
+    align-self: flex-end;
+    gap: 0.8rem;
+  }
+}
+
+@keyframes slide-in-from-top {
+  0% {
+    transform: translateY(-15%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

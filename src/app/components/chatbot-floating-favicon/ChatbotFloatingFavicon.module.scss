@@ -1,0 +1,5 @@
+@use '@styles/mixins' as mixin;
+
+.favicon-wrapper {
+  @include mixin.display-flex();
+}

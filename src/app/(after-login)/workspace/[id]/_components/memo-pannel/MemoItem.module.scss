@@ -1,0 +1,85 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/typography';
+@use '@styles/colors' as color;
+
+.memo-item {
+  padding: 1.2rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  border-radius: 1.2rem;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: color.$alert-secondary-50;
+
+    div button {
+      opacity: 1;
+    }
+  }
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  h3 {
+    @extend %typo-label-medium;
+    font-weight: 700;
+    color: color.$alert-secondary-900;
+
+    // MEMO(Sohyun): h3의 부모 태그(div)에서 display: flex로 스타일을 지정해두었기 때문에 div의 하위태그 h3와 div(button들)가 그 넓이를 나눠 갖게됨
+    // 그러므로 h3가 갖게되므로 width를 지정한것 같이 적용되지만 확실히 ellipsis를 적용하기위해 h3넓이를 제한함.
+    flex: 1;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__button {
+    position: relative;
+
+    display: flex;
+    gap: 0.4rem;
+
+    > button {
+      width: 2rem;
+      height: 2rem;
+
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
+  }
+
+  p {
+    @extend %typo-body-medium;
+    font-weight: 400;
+    color: color.$alert-secondary-900;
+  }
+
+  &__textarea {
+    resize: none;
+    border: none;
+    background: transparent;
+    cursor: default;
+    outline: none;
+
+    &.editable {
+      background: white;
+      border-radius: 4px;
+      padding: 4px;
+      cursor: auto;
+    }
+  }
+
+  span {
+    @extend %typo-label-medium;
+    font-weight: 400;
+    color: color.$alert-secondary-400;
+  }
+}

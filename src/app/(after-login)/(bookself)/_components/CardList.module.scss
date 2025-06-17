@@ -1,0 +1,49 @@
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+.dashboard__contents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem;
+}
+
+.item {
+  height: 219.323px;
+  padding: 22.351px;
+
+  @include mixin.flex(column, flex-start, space-between);
+  flex: 1 0 0;
+
+  border-radius: 22.351px;
+  background: color.$alert-secondary-20;
+
+  &__container {
+    @include mixin.flex(column, flex-start, center);
+    gap: 11.176px;
+
+    h2 {
+      @extend %typo-title-large;
+      font-weight: 700;
+    }
+
+    p {
+      @extend %typo-title-medium;
+    }
+
+    button {
+      padding: 2.794px 5.588px;
+
+      @include mixin.flex(row, center, center);
+      gap: 13.97px;
+
+      border-radius: 5.588px;
+      background: color.$alert-secondary-100;
+    }
+
+    time {
+      color: #878787;
+      @extend %typo-title-small;
+      font-weight: 400;
+    }
+  }
+}

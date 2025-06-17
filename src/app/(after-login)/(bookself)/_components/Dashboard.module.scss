@@ -1,0 +1,32 @@
+@use '@styles/typography' as typo;
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+// TODO 전체적인 크기(넓이, 높이), 패딩값, 폰트 크기 수정 필요
+.dashboard {
+  &__content {
+    padding: 2.4rem 8.8rem;
+
+    @include mixin.flex(column, null, null);
+    gap: 3.2rem;
+  }
+
+  &__title {
+    @extend %typo-headline-small;
+    font-weight: 700;
+  }
+
+  &__empty,
+  &__guest {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    gap: 2rem;
+  }
+
+  &__message {
+    @include typo.typo(2rem, 500, 3rem, 0);
+  }
+}
