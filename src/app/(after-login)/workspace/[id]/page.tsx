@@ -230,13 +230,12 @@ export default function WorkSpacePage() {
     )
   }, [fixedMessage, setFixedMessage, productId])
 
+  // track page-exit once at component level
+  usePageExitTracking('writing')
+
   useEffect(() => {
-    trackEvent('page_view', {
-      page_name: 'writing',
-    })
-    
-    usePageExitTracking('writing')
-    
+    trackEvent('page_view', { page_name: 'writing' })
+  }, [productId])
     setIsChatbotOpen(false)
     setFaviconRelativePosition({ xRatio: 0.85, yRatio: 0.55 })
   }, [productId])
