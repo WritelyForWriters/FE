@@ -255,6 +255,7 @@ export default function WorkSpacePage() {
           className={cx('main-canvas__center-section', {
             'main-canvas__disabled': isChatbotDragging,
           })}
+          data-editor-parent
         >
           <DefaultEditor
             editorRef={editorRef}

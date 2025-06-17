@@ -4,8 +4,6 @@ import { Editor } from '@tiptap/react'
 import { FeedbackFormData, FeedbackOptionType } from 'types/chatbot/chatbot'
 import { ActionOptionType, EvaluateStateType, TextSelectionRangeType } from 'types/common/editor'
 
-import Portal from '@components/modal/Portal'
-
 import useUpdatePosition from '@hooks/editor/useUpdatePosition'
 
 import FeedbackOptionMenu from './menu/FeedbackOptionMenu'
@@ -79,47 +77,45 @@ export default function FeedbackMenu({
   }, [feedbackText])
 
   return (
-    <Portal>
-      <div
-        style={{
-          width: 200,
-          position: 'fixed',
-          top: `${position.top}px`,
-          left: `${position.left}px`,
-          zIndex: 100,
-        }}
-      >
-        {/* TODO 공통 컴포넌트 PromptInput을 사용하기 */}
-        <div className={promptStyles['prompt-menu']}>
-          <textarea
-            ref={textareaRef}
-            readOnly
-            value={feedbackText ? feedbackText : '선택한 구간에 대한 피드백을 생성하고 있어요.'}
-            className={promptStyles['prompt-menu__input']}
-          />
-        </div>
-
-        {isFeedbackPromptMenuOpen && (
-          <div className={styles['select-menu']}>
-            {isShowFeedbackMenu ? (
-              <FeedbackOptionMenu
-                onSubmitFeedback={onSubmitFeedback}
-                isShowFeedbackInput={isShowFeedbackInput}
-                setIsShowFeedbackInput={setIsShowFeedbackInput}
-                feedbackInput={feedbackInput}
-                onFeedbackInputChange={handleChange}
-              />
-            ) : (
-              <PrimaryActionMenu
-                onOptionClick={onOptionClick}
-                feedback={feedback}
-                onFeedbackClick={handleFeedbackClick}
-                onBadFeedbackClick={handleBadFeedbackClick}
-              />
-            )}
-          </div>
-        )}
+    <div
+      style={{
+        width: 200,
+        position: 'absolute',
+        top: `${position.top}px`,
+        left: 10,
+        zIndex: 100,
+      }}
+    >
+      {/* TODO 공통 컴포넌트 PromptInput을 사용하기 */}
+      <div className={promptStyles['prompt-menu']}>
+        <textarea
+          ref={textareaRef}
+          readOnly
+          value={feedbackText ? feedbackText : '선택한 구간에 대한 피드백을 생성하고 있어요.'}
+          className={promptStyles['prompt-menu__input']}
+        />
       </div>
-    </Portal>
+
+      {isFeedbackPromptMenuOpen && (
+        <div className={styles['select-menu']}>
+          {isShowFeedbackMenu ? (
+            <FeedbackOptionMenu
+              onSubmitFeedback={onSubmitFeedback}
+              isShowFeedbackInput={isShowFeedbackInput}
+              setIsShowFeedbackInput={setIsShowFeedbackInput}
+              feedbackInput={feedbackInput}
+              onFeedbackInputChange={handleChange}
+            />
+          ) : (
+            <PrimaryActionMenu
+              onOptionClick={onOptionClick}
+              feedback={feedback}
+              onFeedbackClick={handleFeedbackClick}
+              onBadFeedbackClick={handleBadFeedbackClick}
+            />
+          )}
+        </div>
+      )}
+    </div>
   )
 }
