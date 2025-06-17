@@ -7,12 +7,14 @@ import { AxiosError } from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { applyProductSettingsAtom } from 'store/applyProductSettings'
 import { activeMenuAtom, aiResultAtom, originalPhraseAtom } from 'store/editorAtoms'
+import { feedbackIdAtom } from 'store/feedbackIdAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom } from 'store/productsAtoms'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
-import { FeedbackFormData } from 'types/chatbot/chatbot'
+import { FeedbackFormData, MemberMessageType } from 'types/chatbot/chatbot'
 import {
   ActionOptionType,
   AiassistantOptionType,
@@ -46,6 +48,7 @@ export function useTextEditor(editor: Editor | null) {
   const promptValueRef = useRef('')
   const feedbackInput = useRef<string | null>(null)
 
+  const [feedbackId, setFeedbackId] = useAtom(feedbackIdAtom)
   const showToast = useToast()
 
   const { isOpen, onOpen, onClose } = useCollapsed()
@@ -218,6 +221,7 @@ export function useTextEditor(editor: Editor | null) {
         // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
         setAiResult(response.answer)
         onOpenAutoModifyVisible()
+        handleEventTracking('auto modify', response.id, '자동 수정')
       }
     } catch (error) {
       console.log(error)
@@ -247,6 +251,7 @@ export function useTextEditor(editor: Editor | null) {
             // (방법 2) ai 응답을 받아서 전역 상태 저장 > DefaultEditor에서 삽입
             setAiResult(answer)
             onOpen()
+            handleEventTracking('user modify', id, '수동 수정')
           }
         },
         onError: (error) => {
@@ -271,6 +276,7 @@ export function useTextEditor(editor: Editor | null) {
         setFeedback(INITIAL_EVALUATE_STATE)
         // TODO 로딩중일때
         feedbackInput.current = response.answer
+        handleEventTracking('feedback', response.id, '구간 피드백')
         onOpenFeedbackPrompt()
       }
     } catch (error) {
@@ -294,6 +300,9 @@ export function useTextEditor(editor: Editor | null) {
         setActiveMenu('defaultToolbar')
         clearHighlight()
         onCloseAutoModifyVisible()
+        trackEvent('ai_feedback_accepted', {
+          feedback_id: feedbackId,
+        })
         break
 
       case 'recreate':
@@ -329,6 +338,9 @@ export function useTextEditor(editor: Editor | null) {
         setActiveMenu('defaultToolbar')
         clearHighlight()
         onClose()
+        trackEvent('ai_feedback_accepted', {
+          feedback_id: feedbackId,
+        })
         break
 
       case 'recreate':
@@ -372,6 +384,9 @@ export function useTextEditor(editor: Editor | null) {
           setAiResult(feedbackInput.current)
         }
         feedbackInput.current = null
+        trackEvent('ai_feedback_accepted', {
+          feedback_id: feedbackId,
+        })
         break
 
       case 'recreate':
@@ -400,6 +415,19 @@ export function useTextEditor(editor: Editor | null) {
       default:
         break
     }
+  }
+
+  const handleEventTracking = (
+    feedbackType: MemberMessageType,
+    feedbackId: string,
+    buttonName: string,
+  ) => {
+    setFeedbackId(feedbackId)
+    trackEvent('ai_feedback_given', {
+      feedback_type: feedbackType,
+      feedback_id: feedbackId,
+      button_name: buttonName,
+    })
   }
 
   const initActiveMenu = () => {

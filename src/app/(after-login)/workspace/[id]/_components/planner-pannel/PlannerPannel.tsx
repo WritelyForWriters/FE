@@ -2,10 +2,11 @@
 
 import { useRouter } from 'next/navigation'
 
-import { MouseEvent } from 'react'
+import { MouseEvent, useState } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { MdArrowOutward } from 'react-icons/md'
 import { Rnd } from 'react-rnd'
 import { productIdAtom } from 'store/productsAtoms'
@@ -29,10 +30,24 @@ export default function PlannerPannel() {
   const router = useRouter()
 
   const { isOpen, onClose, onOpen } = useCollapsed(false)
+  const [startTime, setStartTime] = useState<number>(0)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
+    trackEvent('panel_close', {
+      panel_name: '작품 플래너',
+      open_duration: Date.now() - startTime,
+    })
     e.stopPropagation()
     onClose()
+  }
+
+  const handleButtonClick = () => {
+    setStartTime(Date.now())
+    trackEvent('panel_open', {
+      panel_name: '작품 플래너',
+    })
+
+    onOpen()
   }
 
   const handleRedirectPlanner = () => {
@@ -103,7 +118,7 @@ export default function PlannerPannel() {
           </Rnd>
         </div>
       ) : (
-        <button onClick={onOpen} className={cx('container')}>
+        <button onClick={handleButtonClick} className={cx('container')}>
           작품 플래너
         </button>
       )}

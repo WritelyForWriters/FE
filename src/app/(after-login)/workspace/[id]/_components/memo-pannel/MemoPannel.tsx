@@ -1,7 +1,8 @@
 'use client'
 
-import { MouseEvent } from 'react'
+import { MouseEvent, useState } from 'react'
 
+import { trackEvent } from 'lib/amplitude'
 import { Editor } from '@tiptap/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Rnd } from 'react-rnd'
@@ -28,12 +29,25 @@ interface MemoPannelProps {
 
 export default function MemoPannel({ memoList, editor }: MemoPannelProps) {
   const { isOpen, onClose, onOpen } = useCollapsed(false)
+  const [startTime, setStartTime] = useState<number>(0)
 
   useMemoTracking(editor, memoList)
 
   const handleCollapsedPannel = (e: MouseEvent<HTMLButtonElement>) => {
+    trackEvent('panel_close', {
+      panel_name: '메모',
+      open_duration: Date.now() - startTime,
+    })
     e.stopPropagation()
     onClose()
+  }
+
+  const handleButtonClick = () => {
+    setStartTime(Date.now())
+    trackEvent('panel_open', {
+      panel_name: '메모',
+    })
+    onOpen()
   }
 
   return (
@@ -85,7 +99,7 @@ export default function MemoPannel({ memoList, editor }: MemoPannelProps) {
           <div className={cx('placeholder')}></div>
         </div>
       ) : (
-        <button onClick={onOpen} className={cx('container')}>
+        <button onClick={handleButtonClick} className={cx('container')}>
           메모
         </button>
       )}

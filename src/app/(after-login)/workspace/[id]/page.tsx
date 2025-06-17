@@ -8,6 +8,7 @@ import { Editor } from '@tiptap/react'
 import { AUTO_SAVE_MESSAGE } from 'constants/workspace/message'
 import { DELAY_TIME } from 'constants/workspace/number'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { chatbotFixedMessageAtom } from 'store/chatbotFixedMessageAtom'
 import { chatbotHistoryAtom } from 'store/chatbotHistoryAtom'
 import { autoSaveMessageAtom, editorContentAtom, isEditableAtom } from 'store/editorAtoms'
@@ -25,6 +26,7 @@ import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
 
+import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
 import { useGetInfiniteAssistantHistory } from '@hooks/chatbot/useGetAssistantHistoryInfinite'
 import { useGetFixedMessage } from '@hooks/chatbot/useGetFixedMessage'
 import { useGetProductDetail, useProducts } from '@hooks/index'
@@ -228,7 +230,11 @@ export default function WorkSpacePage() {
     )
   }, [fixedMessage, setFixedMessage, productId])
 
+  // track page-exit once at component level
+  usePageExitTracking('writing')
+
   useEffect(() => {
+    trackEvent('page_view', { page_name: 'writing' })
     setIsChatbotOpen(false)
     setFaviconRelativePosition({ xRatio: 0.85, yRatio: 0.55 })
   }, [productId])

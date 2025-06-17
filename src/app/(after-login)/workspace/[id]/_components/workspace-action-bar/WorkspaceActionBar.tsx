@@ -6,6 +6,7 @@ import { ChangeEvent, KeyboardEvent, RefObject, useEffect, useRef, useState } fr
 
 import { Editor } from '@tiptap/react'
 import { useAtom, useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { MdHome } from 'react-icons/md'
 import { applyProductSettingsAtom } from 'store/applyProductSettings'
@@ -61,6 +62,13 @@ export default function WorkspaceActionBar({
   const [isContentEditing, setIsContentEditing] = useAtom(isEditableAtom)
 
   const [applyProductSettings, setApplyProductSettings] = useAtom(applyProductSettingsAtom)
+
+  const handleChangeMode = () => {
+    trackEvent(isContentEditing ? 'enter_reading_mode' : 'enter_writing_mode', {
+      button_name: isContentEditing ? '읽기 모드' : '쓰기 모드',
+    })
+    setIsContentEditing(false)
+  }
 
   // 저장 버튼 클릭 트리거 이벤트
   const handleSave = async () => {
@@ -256,7 +264,7 @@ export default function WorkspaceActionBar({
           <EditModeSwitch isSelected={!isContentEditing} onClick={handleSwitchReadMode}>
             읽기 모드
           </EditModeSwitch>
-          <EditModeSwitch isSelected={isContentEditing} onClick={() => setIsContentEditing(true)}>
+          <EditModeSwitch isSelected={isContentEditing} onClick={handleChangeMode}>
             쓰기 모드
           </EditModeSwitch>
         </menu>
