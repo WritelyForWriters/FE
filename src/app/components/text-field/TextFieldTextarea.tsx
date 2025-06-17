@@ -53,7 +53,7 @@ const TextFieldTextarea = forwardRef<HTMLTextAreaElement, TextFieldProps>(
 
     useEffect(() => {
       handleTextareaHeight()
-    }, [isExpand, isAiModified])
+    }, [isExpand, isAiModified, value])
 
     return (
       <div className={cx('text-field__fieldset__wrapper')}>
