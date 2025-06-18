@@ -3,6 +3,7 @@
 import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
 
 import Bold from '@tiptap/extension-bold'
+import CharacterCount from '@tiptap/extension-character-count'
 import Document from '@tiptap/extension-document'
 import Heading from '@tiptap/extension-heading'
 import History from '@tiptap/extension-history'
@@ -13,6 +14,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtomValue, useSetAtom } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { isEditableAtom } from 'store/editorAtoms'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
@@ -72,6 +74,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         depth: 100, // NOTE(hajae): undo, redo stack 100
         newGroupDelay: 400, // NOTE(hajae): undo, redo의 Grouping 딜레이 시간
       }),
+      CharacterCount,
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
@@ -141,6 +144,37 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     initActiveMenu()
     initSelection()
   }, [])
+
+  // 페이지 이탈 Amplitude
+  useEffect(() => {
+    const pageEnterTime = Date.now()
+    let initialTextLength = 0
+
+    if (editor) {
+      initialTextLength = editor.storage.characterCount.characters()
+    }
+
+    return () => {
+      if (editor) {
+        const currentDate = Date.now()
+        const currentTextLength = editor.storage.characterCount.characters()
+        const diffLength = currentTextLength - initialTextLength
+
+        if (diffLength < 200) {
+          trackEvent('writing_abandon', {
+            word_count: diffLength,
+            session_duration: Math.floor((currentDate - pageEnterTime) / 1000),
+          })
+        } else if (diffLength >= 700) {
+          trackEvent('writing_complete', {
+            word_count: diffLength,
+            time_spent: Math.floor((currentDate - pageEnterTime) / 1000),
+            button_name: '저장',
+          })
+        }
+      }
+    }
+  }, [editor])
 
   if (!editor) {
     return null

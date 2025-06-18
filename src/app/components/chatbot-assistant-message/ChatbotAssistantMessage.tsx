@@ -8,6 +8,7 @@ import { QUERY_KEY } from 'constants/common/queryKeys'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import 'highlight.js/styles/github.css'
 import { useAtom, useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { BsFillPinFill } from 'react-icons/bs'
 import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
 import ReactMarkdown from 'react-markdown'
@@ -84,6 +85,9 @@ export default function ChatbotAssistantMessage({
 
   const { mutate: submitFeedback } = useSubmitFeedback({
     onSuccess: () => {
+      trackEvent('ai_feedback_rating', {
+        rating_score: true,
+      })
       showToast('success', TOAST_MESSAGE.SUCCESS_SUBMIT_FEEDBACK)
     },
     onError: (error) => {

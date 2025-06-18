@@ -1,4 +1,4 @@
-import { init, track } from '@amplitude/analytics-browser'
+import { init, setUserId, track } from '@amplitude/analytics-browser'
 
 const AMPLITUDE_API_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY!
 
@@ -14,4 +14,13 @@ export const initAmplitude = () => {
 export const trackEvent = (eventName: string, eventProperties?: Record<string, unknown>) => {
   if (!isInitialized) return
   track(eventName, eventProperties)
+}
+
+export const setAmplitudeUserId = (userId: string | null) => {
+  if (!isInitialized) return
+  if (userId) {
+    setUserId(userId)
+  } else {
+    setUserId(undefined)
+  }
 }
