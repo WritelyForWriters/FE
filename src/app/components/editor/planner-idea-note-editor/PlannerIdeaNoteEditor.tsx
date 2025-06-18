@@ -15,7 +15,8 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { activeMenuAtom, isEditableAtom, selectionAtom } from 'store/editorAtoms'
+import { activeMenuAtom, selectionAtom } from 'store/editorAtoms'
+import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import ImageResize from 'tiptap-extension-resize-image'
 import { HandleEditor } from 'types/common/editor'
 import { IdeaNotePresignedUrlRequest } from 'types/planner/ideaNotePresignedUrl'
@@ -42,6 +43,7 @@ export default function PlannerIdeaNoteEditor({
   onUpdate,
   contents,
 }: PlannerIdeaNoteEditorProps) {
+  const mode = useAtomValue(PlannerTemplatesModeAtom)
   const createPresignedUrlMutation = useCreateFilesPresignedUrl({
     // NOTE(hajae): 이미지 업로드 순서는 useIdeaNoteImageUpload.ts 참고
     onSuccess: (fileGetUrl) => {
@@ -60,7 +62,7 @@ export default function PlannerIdeaNoteEditor({
 
   const [activeMenu, setActiveMenu] = useAtom(activeMenuAtom)
   const setSelection = useSetAtom(selectionAtom)
-  const editable = useAtomValue(isEditableAtom)
+  const editable = mode === 'edit'
 
   const editor = useEditor({
     extensions: [
