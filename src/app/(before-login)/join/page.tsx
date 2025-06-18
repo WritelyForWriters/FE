@@ -108,7 +108,7 @@ export default function JoinPage() {
         <form className={cx('form')} onSubmit={handleSubmit(handleJoin)}>
           <section className={cx('form__input-section')}>
             <h3 className={cx('form__input-section--title')}>
-              라이틀리를
+              라이트온을
               <br />
               시작해볼까요?
             </h3>
