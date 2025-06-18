@@ -118,7 +118,7 @@ export default function PlannerIdeaNoteEditor({
     if (editor && contents && contents !== null) {
       editor.commands.setContent(JSON.parse(contents))
     }
-  }, [editor, contents])
+  }, [editor])
 
   useEffect(() => {
     if (!editor) return
