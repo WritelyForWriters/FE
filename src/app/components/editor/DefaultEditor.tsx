@@ -168,7 +168,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         } else if (diffLength >= 700) {
           trackEvent('writing_complete', {
             word_count: diffLength,
-            session_duration: Math.floor((currentDate - pageEnterTime) / 1000),
+            time_spent: Math.floor((currentDate - pageEnterTime) / 1000),
             button_name: '저장',
           })
         }
