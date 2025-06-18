@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { MAX_PRODUCT_COUNT } from 'constants/bookself/number'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { useAtomValue } from 'jotai'
+import { setAmplitudeUserId, trackEvent } from 'lib/amplitude'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
 import FillButton from '@components/buttons/FillButton'
@@ -37,6 +38,10 @@ export default function MainHeader() {
 
   const onClickOpenDropdown = () => {
     if (!isLoggedIn) {
+      trackEvent('writing_start', {
+        button_name: '글쓰기',
+        user_id: null,
+      })
       router.push(`/login`)
     } else {
       if (data?.length && data?.length >= MAX_PRODUCT_COUNT) {
@@ -59,10 +64,19 @@ export default function MainHeader() {
 
   const handleAuthButtonClick = (type: 'logout' | 'login') => {
     if (type === 'logout') {
+      setAmplitudeUserId(null)
       logout()
     } else {
       router.push('/login')
     }
+  }
+
+  const handleActionButtonClick = (direction: 'workspace' | 'planner') => {
+    trackEvent('writing_start', {
+      button_name: '글쓰기',
+    })
+
+    onClickWriting(direction)
   }
 
   return (
@@ -90,10 +104,12 @@ export default function MainHeader() {
             글쓰기
           </FillButton>
           <SelectMenu handleClose={onClose} isOpen={isOpen} style={{ width: '109px' }}>
-            <SelectMenu.Option option={{ handleAction: () => onClickWriting('workspace') }}>
+            <SelectMenu.Option
+              option={{ handleAction: () => handleActionButtonClick('workspace') }}
+            >
               바로 집필하기
             </SelectMenu.Option>
-            <SelectMenu.Option option={{ handleAction: () => onClickWriting('planner') }}>
+            <SelectMenu.Option option={{ handleAction: () => handleActionButtonClick('planner') }}>
               작품 기획하기
             </SelectMenu.Option>
           </SelectMenu>

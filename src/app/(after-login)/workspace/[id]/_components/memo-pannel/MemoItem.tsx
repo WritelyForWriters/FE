@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Editor } from '@tiptap/react'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { FaCheck } from 'react-icons/fa6'
 import { TfiMoreAlt } from 'react-icons/tfi'
 import { productIdAtom } from 'store/productsAtoms'
@@ -63,6 +64,10 @@ export default function MemoItem({ memoList, activeTab, editor }: MemoItemProps)
       },
       {
         onSuccess: () => {
+          trackEvent('panel_interaction', {
+            panel_name: '메모',
+            action_type: '메모 완료 처리',
+          })
           queryClient.invalidateQueries({
             queryKey: [QUERY_KEY.MEMO_LIST],
           })
@@ -79,6 +84,10 @@ export default function MemoItem({ memoList, activeTab, editor }: MemoItemProps)
       },
       {
         onSuccess: () => {
+          trackEvent('panel_interaction', {
+            panel_name: '메모',
+            action_type: '메모 삭제',
+          })
           removeMemosHighlight(editor, memoId)
           queryClient.invalidateQueries({
             queryKey: [QUERY_KEY.MEMO_LIST],
@@ -103,6 +112,10 @@ export default function MemoItem({ memoList, activeTab, editor }: MemoItemProps)
   }
 
   const handleInputEdit = () => {
+    trackEvent('panel_interaction', {
+      panel_name: '메모',
+      action_type: '메모 수정',
+    })
     setIsEdit(true)
     onClose()
   }

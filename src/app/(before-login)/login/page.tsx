@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { useSetAtom } from 'jotai'
-import { trackEvent } from 'lib/amplitude'
+import { setAmplitudeUserId, trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { plannerCharacterFormValuesAtom } from 'store/plannerAtoms'
 import { LoginFormFieldValues } from 'types/auth/auth'
@@ -57,6 +57,8 @@ export default function LoginPage() {
     trackEvent('login_attempt', {
       user_id: data.email,
     })
+
+    setAmplitudeUserId(data.email)
 
     login(data)
   }
