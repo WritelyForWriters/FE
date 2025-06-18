@@ -53,7 +53,7 @@ export const PlannerTemplatesRequest = {
         id: character.id,
         intro: character.intro,
         name: character.name || '',
-        age: character.age ? Number(character.age) : undefined,
+        age: character.age ? Number(character.age) : character.age === '' ? 0 : undefined,
         gender: character.gender,
         occupation: character.occupation,
         appearance: character.appearance,

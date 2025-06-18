@@ -2,8 +2,8 @@
 
 import { MouseEvent, useEffect, useState } from 'react'
 
-import { trackEvent } from 'lib/amplitude'
 import { AnimatePresence, motion } from 'framer-motion'
+import { trackEvent } from 'lib/amplitude'
 import { Rnd } from 'react-rnd'
 import { TocItemType } from 'types/common/pannel'
 
@@ -79,6 +79,10 @@ export default function IndexPannel({ toc }: IndexPannelProps) {
   }, [toc])
 
   const scrollToSection = (sectionId: string) => {
+    trackEvent('panel_interaction', {
+      panel_name: '목차',
+      action_type: '목차 클릭',
+    })
     const element = document.getElementById(sectionId)
     if (element) element.scrollIntoView({ behavior: 'smooth' })
   }

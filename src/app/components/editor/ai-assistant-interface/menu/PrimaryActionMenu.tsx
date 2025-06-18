@@ -1,6 +1,7 @@
 import Image from 'next/image'
 
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
+import { trackEvent } from 'lib/amplitude'
 import { FaCheck } from 'react-icons/fa6'
 import { IoClose } from 'react-icons/io5'
 import { ActionOptionType, EvaluateStateType } from 'types/common/editor'
@@ -31,6 +32,9 @@ export default function PrimaryActionMenu({
       return
     }
     onBadFeedbackClick()
+    trackEvent('ai_feedback_rating', {
+      rating_score: false,
+    })
   }
 
   return (
@@ -49,7 +53,16 @@ export default function PrimaryActionMenu({
       </SelectMenuContent.Option>
       <div className={styles['divide-line']}></div>
 
-      <SelectMenuContent.Option option={{ handleAction: () => onFeedbackClick({ isGood: true }) }}>
+      <SelectMenuContent.Option
+        option={{
+          handleAction: () => {
+            trackEvent('ai_feedback_rating', {
+              rating_score: true,
+            })
+            onFeedbackClick({ isGood: true })
+          },
+        }}
+      >
         <Image
           src={
             feedback.isGoodSelected

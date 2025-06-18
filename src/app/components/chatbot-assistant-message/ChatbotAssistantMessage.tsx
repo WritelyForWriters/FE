@@ -3,10 +3,12 @@
 import { useState } from 'react'
 
 import { QueryClient } from '@tanstack/react-query'
+import axios from 'axios'
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import 'highlight.js/styles/github.css'
 import { useAtom, useAtomValue } from 'jotai'
+import { trackEvent } from 'lib/amplitude'
 import { BsFillPinFill } from 'react-icons/bs'
 import { LuThumbsDown, LuThumbsUp } from 'react-icons/lu'
 import ReactMarkdown from 'react-markdown'
@@ -83,10 +85,15 @@ export default function ChatbotAssistantMessage({
 
   const { mutate: submitFeedback } = useSubmitFeedback({
     onSuccess: () => {
+      trackEvent('ai_feedback_rating', {
+        rating_score: true,
+      })
       showToast('success', TOAST_MESSAGE.SUCCESS_SUBMIT_FEEDBACK)
     },
-    onError: () => {
-      showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        showToast('warning', error.response?.data.message)
+      }
     },
   })
 
@@ -117,6 +124,7 @@ export default function ChatbotAssistantMessage({
 
   const handleSubmitFeedback = (isGood: boolean) => {
     if (isGood) {
+      setIsFeedbackMenuOpen(false)
       submitFeedback({
         assistantId,
         formData: {

@@ -1,6 +1,8 @@
 import { ReactNode, useState } from 'react'
 
+import axios from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
+import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FeedbackOptionType } from 'types/chatbot/chatbot'
 
@@ -36,10 +38,15 @@ function NegativeFeedbackSelectMenuOption({
 
   const { mutate: submitFeedback } = useSubmitFeedback({
     onSuccess: () => {
+      trackEvent('ai_feedback_rating', {
+        rating_score: false,
+      })
       showToast('success', TOAST_MESSAGE.SUCCESS_SUBMIT_FEEDBACK)
     },
-    onError: () => {
-      showToast('warning', TOAST_MESSAGE.FAIL_SUBMIT_FEEDBACK)
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        showToast('warning', error.response?.data.message)
+      }
     },
   })
 
