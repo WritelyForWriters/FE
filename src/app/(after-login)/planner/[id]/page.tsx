@@ -16,7 +16,10 @@ import { useAutoSaveTimer } from '@hooks/products/useAutoSaveTimer'
 import { useCreateProductTemplates } from '@hooks/products/useProductsMutation'
 import { useFetchProductTemplates } from '@hooks/products/useProductsQueries'
 
-import { PlannerSynopsisFormValues } from '../../../types/planner/plannerSynopsisFormValues'
+import {
+  CharacterFormValues,
+  PlannerSynopsisFormValues,
+} from '../../../types/planner/plannerSynopsisFormValues'
 import PlannerActionBar from './_components/planner-action-bar/PlannerActionBar'
 import PlannerSynopsisFormContainer from './_components/planner-synopsis-form-container/PlannerSynopsisFormContainer'
 import PlannerTabs from './_components/planner-tabs/PlannerTabs'
@@ -58,8 +61,8 @@ export default function PlannerPage({ params }: { params: Params }) {
 
   const { mutate: createTemplate, isSuccess } = useCreateProductTemplates()
 
-  const handleFormSubmit = handleSubmit((formValues) => {
-    const request = PlannerTemplatesRequest.from(formValues, formValues.characters)
+  const handleFormSubmit = handleSubmit((formData) => {
+    const request = PlannerTemplatesRequest.from(formData, formValues.characters)
 
     createTemplate(
       {
@@ -69,7 +72,7 @@ export default function PlannerPage({ params }: { params: Params }) {
       {
         onSuccess: () => {
           setMode('view')
-          setFormValues(formValues, 'form')
+          setFormValues(formData, 'form')
         },
       },
     )
@@ -93,13 +96,35 @@ export default function PlannerPage({ params }: { params: Params }) {
           ideaNote: templates.ideaNote,
         })
       } else {
-        reset({
-          synopsis: formValues.synopsis,
-          worldview: formValues.worldview,
-          characters: formValues.characters,
-          plot: formValues.plot,
-          ideaNote: formValues.ideaNote,
-        })
+        if (
+          templates.characters.length > 0 &&
+          formValues.characters.length > 0 &&
+          formValues.characters.some((c) => !c.id)
+        ) {
+          const updatedCharacters: CharacterFormValues[] = formValues.characters.map(
+            (character, index) => ({
+              ...character,
+              id: templates.characters[index]?.id ?? '',
+            }),
+          )
+          setFormValues(updatedCharacters, 'character')
+
+          reset({
+            synopsis: formValues.synopsis,
+            worldview: formValues.worldview,
+            characters: updatedCharacters,
+            plot: formValues.plot,
+            ideaNote: formValues.ideaNote,
+          })
+        } else {
+          reset({
+            synopsis: formValues.synopsis,
+            worldview: formValues.worldview,
+            characters: formValues.characters,
+            plot: formValues.plot,
+            ideaNote: formValues.ideaNote,
+          })
+        }
       }
     }
   }, [templates])

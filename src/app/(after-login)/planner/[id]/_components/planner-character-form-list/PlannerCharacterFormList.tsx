@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
 
-import { PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
+import { NEW_PLANNER_CHARACTER, PLANNER_CHARACTER_ITEMS } from 'constants/planner/plannerConstants'
 import { useAtom, useAtomValue } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
+import isEqual from 'lodash/isEqual'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
@@ -64,7 +65,7 @@ export default function PlannerCharacterFormList({
 
   // NOTE(hajae): local storage 저장
   useEffect(() => {
-    if (!watchedValues) return
+    if (!watchedValues || isEqual(watchedValues, NEW_PLANNER_CHARACTER)) return
     setFormValues(
       formValues.characters.map((character, index) =>
         index === arrayIndex ? watchedValues : character,
