@@ -118,6 +118,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     handleOptionClickAutoModify,
     handleOptionClickUserModify,
     handleOptionClickFeedback,
+    userModifyPending,
+    feedbackPending,
   } = useTextEditor(editor)
 
   const { handleChange, handleSavedMemos } = useMemos(editor)
@@ -230,6 +232,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           onOptionClick={handleOptionClickUserModify}
           feedback={feedback}
           handleSubmitFeedback={handleSubmitFeedback}
+          isPending={userModifyPending}
         />
       )}
 
@@ -243,6 +246,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
           onOptionClick={handleOptionClickFeedback}
           feedback={feedback}
           handleSubmitFeedback={handleSubmitFeedback}
+          isPending={feedbackPending}
         />
       )}
 

@@ -21,6 +21,7 @@ interface ManualModificationProps {
   onOptionClick: (option: ActionOptionType) => () => void
   feedback: EvaluateStateType
   handleSubmitFeedback: ({ isGood, feedback, feedbackType }: FeedbackFormData) => void
+  isPending: boolean
 }
 
 // MEMO(Sohyun): ai-assistant 인터페이스 수동 수정 UI
@@ -33,6 +34,7 @@ export default function ManualModification({
   onAiPrompt,
   onOptionClick,
   handleSubmitFeedback,
+  isPending,
 }: ManualModificationProps) {
   const position = useUpdatePosition(editor, selectionRef)
   const [feedbackInput, setFeedbackInput] = useState('')
@@ -86,6 +88,7 @@ export default function ManualModification({
         onSubmit={onAiPrompt}
         placeholder="프롬프트를 입력해 주세요."
         buttonText="생성하기"
+        isPending={isPending}
       />
 
       {isPrimaryActionMenuOpen && (
