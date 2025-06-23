@@ -64,8 +64,7 @@ export default function PromptInput({
       {hasButton &&
         (isPending ? (
           <button disabled className={styles['pending-button']}>
-            {/* TODO: 흰색타원 gif파일로 변경 필요 */}
-            <Image alt="loading" src="/images/loading.gif" width={32} height={20} />
+            <Image alt="loading" src="/images/loading-white.gif" width={32} height={20} />
           </button>
         ) : (
           <FillButton
