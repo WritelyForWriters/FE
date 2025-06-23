@@ -13,6 +13,7 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
+import { EDITOR_CONTENTS } from 'constants/workspace/placeholder'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { isEditableAtom } from 'store/editorAtoms'
@@ -77,7 +78,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       CharacterCount,
     ],
     immediatelyRender: false,
-    content: contents ? JSON.parse(contents) : '내용을 입력해주세요.',
+    content: contents ? JSON.parse(contents) : EDITOR_CONTENTS,
     onUpdate: () => {
       // 에디터에 변경사항이 생기면 저장 상태 false로 변경
       isSavedRef.current = false
