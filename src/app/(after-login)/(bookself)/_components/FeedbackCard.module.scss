@@ -1,0 +1,35 @@
+@use '@styles/typography';
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+.feedback-card {
+  &__wrapper {
+    @include mixin.display-flex();
+    flex-direction: column;
+    align-items: center;
+    gap: 5.6rem;
+  }
+
+  &__content {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 4rem;
+
+    &-top {
+      @include mixin.display-flex();
+      flex-direction: column;
+      gap: 1.6rem;
+
+      h1 {
+        @extend %typo-headline-small;
+      }
+
+      h3 {
+        @extend %typo-title-medium;
+      }
+    }
+  }
+
+  &__button-wrapper {
+  }
+}
