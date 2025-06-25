@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { notFound } from 'next/navigation'
+import { notFound, useRouter } from 'next/navigation'
 
 import { useEffect } from 'react'
 
@@ -13,6 +13,7 @@ import { isLoggedInAtom } from 'store/isLoggedInAtom'
 import { useGetMeProfile, useGetProductList } from '@hooks/index'
 
 import CardList from './CardList'
+import FeedbackCard from './FeedbackCard'
 
 import classNames from 'classnames/bind'
 
@@ -21,6 +22,8 @@ import styles from './Dashboard.module.scss'
 const cx = classNames.bind(styles)
 
 export default function Dashboard() {
+  const router = useRouter()
+
   const { data: profile } = useGetMeProfile()
   const { data: productList, isError: isErrorFetchProductList } = useGetProductList()
 
@@ -61,10 +64,20 @@ export default function Dashboard() {
           </div>
         )
       ) : (
-        <div className={cx('dashboard__guest')}>
-          <Image src="/images/pen.png" alt="pen" width={300} height={300} />
-          <p className={cx('dashboard__message')}>로그인하고 집필을 시작해보세요!</p>
-        </div>
+        <FeedbackCard
+          imageSrc="/images/pen.png"
+          imageAlt="pen"
+          imageWidth={300}
+          imageHeight={300}
+          title="회원가입 완료!"
+          subTitle="이메일을 확인하고 계정을 활성화해 주세요"
+          buttonText="로그인하러 가기"
+          onClick={() => router.push('/login')}
+        />
+        // <div className={cx('dashboard__guest')}>
+        //   <Image src="/images/pen.png" alt="pen" width={300} height={300} />
+        //   <p className={cx('dashboard__message')}>로그인하고 집필을 시작해보세요!</p>
+        // </div>
       )}
     </main>
   )
