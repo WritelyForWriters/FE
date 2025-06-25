@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react'
 
 import { Editor } from '@tiptap/react'
@@ -20,6 +22,7 @@ interface FeedbackMenuProps {
   feedback: EvaluateStateType
   isFeedbackPromptMenuOpen: boolean
   handleSubmitFeedback: ({ isGood, feedback, feedbackType }: FeedbackFormData) => void
+  isPending: boolean
 }
 
 // MEMO(Sohyun): ai-assistant 인터페이스 구간 피드백 UI
@@ -31,6 +34,7 @@ export default function FeedbackMenu({
   onOptionClick,
   isFeedbackPromptMenuOpen,
   handleSubmitFeedback,
+  isPending,
 }: FeedbackMenuProps) {
   const position = useUpdatePosition(editor, selectionRef)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -88,12 +92,16 @@ export default function FeedbackMenu({
     >
       {/* TODO 공통 컴포넌트 PromptInput을 사용하기 */}
       <div className={promptStyles['prompt-menu']}>
-        <textarea
-          ref={textareaRef}
-          readOnly
-          value={feedbackText ? feedbackText : '선택한 구간에 대한 피드백을 생성하고 있어요.'}
-          className={promptStyles['prompt-menu__input']}
-        />
+        {isPending ? (
+          <Image alt="loading" src="/images/loading.gif" width={32} height={20} />
+        ) : (
+          <textarea
+            ref={textareaRef}
+            readOnly
+            value={feedbackText ? feedbackText : ''}
+            className={promptStyles['prompt-menu__input']}
+          />
+        )}
       </div>
 
       {isFeedbackPromptMenuOpen && (

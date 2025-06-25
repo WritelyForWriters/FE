@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { ChangeEvent, useEffect, useRef } from 'react'
 
 import FillButton from '@components/buttons/FillButton'
@@ -11,6 +13,7 @@ interface PromptInputProps {
   buttonText?: string
   initialValue?: string
   hasButton?: boolean
+  isPending?: boolean
 }
 
 /**
@@ -22,6 +25,7 @@ export default function PromptInput({
   placeholder,
   buttonText,
   hasButton = true,
+  isPending,
 }: PromptInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -57,20 +61,26 @@ export default function PromptInput({
         rows={1}
         style={{ overflow: 'hidden' }}
       />
-      {hasButton && (
-        <FillButton
-          type="button"
-          size="medium"
-          variant="primary"
-          style={{
-            padding: '0.8rem 1.2rem',
-            height: '100%',
-          }}
-          onClick={onSubmit}
-        >
-          {buttonText}
-        </FillButton>
-      )}
+      {hasButton &&
+        (isPending ? (
+          <button disabled className={styles['pending-button']}>
+            <Image alt="loading" src="/images/loading-white-cut.gif" width={28} height={20} />
+          </button>
+        ) : (
+          <FillButton
+            type="button"
+            size="medium"
+            variant="primary"
+            style={{
+              padding: '0.8rem 1.2rem',
+              width: 76,
+              height: '100%',
+            }}
+            onClick={onSubmit}
+          >
+            {buttonText}
+          </FillButton>
+        ))}
     </div>
   )
 }

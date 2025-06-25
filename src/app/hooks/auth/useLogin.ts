@@ -5,6 +5,7 @@ import { setCookie } from 'cookies-next/client'
 import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { accessTokenAtom } from 'store/accessTokenAtom'
+import { isCompleteJoinAtom } from 'store/isCompleteJoinAtom'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
 import { useToast } from '@components/toast/ToastProvider'
@@ -20,6 +21,7 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
 
   const setAccessToken = useSetAtom(accessTokenAtom)
   const setIsLoggedIn = useSetAtom(isLoggedInAtom)
+  const setIsCompleteJoin = useSetAtom(isCompleteJoinAtom)
 
   return useMutation({
     mutationFn: login,
@@ -29,6 +31,7 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
 
       setIsLoggedIn(true)
       setAccessToken(data.result.accessToken! as string)
+      setIsCompleteJoin(false)
 
       if (isRememberMe) {
         setCookie('isRememberMe', true, { expires: date, path: '/', sameSite: 'lax', secure: true })

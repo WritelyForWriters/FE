@@ -1,0 +1,47 @@
+@use '@styles/typography' as typo;
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+.feedback-card {
+  &__wrapper {
+    @include mixin.display-flex();
+    flex-direction: column;
+    align-items: center;
+    gap: 5.6rem;
+  }
+
+  &__content {
+    @include mixin.display-flex();
+    flex-direction: column;
+    gap: 4rem;
+
+    &-top {
+      @include mixin.display-flex();
+      flex-direction: column;
+      gap: 1.6rem;
+
+      h1 {
+        @extend %typo-headline-small;
+      }
+
+      h3 {
+        @extend %typo-title-medium;
+      }
+    }
+
+    &-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+
+      h3 {
+        @include typo.typo(2rem, 500, 3rem, 0);
+      }
+    }
+  }
+
+  &__button-wrapper {
+    width: 30rem;
+  }
+}

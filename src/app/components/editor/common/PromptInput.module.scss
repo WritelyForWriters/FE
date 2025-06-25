@@ -29,3 +29,19 @@
     cursor: default;
   }
 }
+
+.pending-button {
+  @include mixin.flex();
+  gap: 0.4rem;
+  border-radius: 1rem;
+
+  background-color: color.$alert-secondary-900;
+  padding: 0.8rem 1.2rem;
+  width: 76px;
+  height: 100%;
+
+  &:disabled {
+    background-color: color.$alert-secondary-900;
+    cursor: default;
+  }
+}

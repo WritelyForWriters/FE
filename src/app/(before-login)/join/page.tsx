@@ -12,8 +12,10 @@ import { useEffect } from 'react'
 import { AUTH_ERROR_MESSAGE } from 'constants/join/message'
 import { AUTH_PATTERN } from 'constants/join/pattern'
 import { TERMS_URLS } from 'constants/join/urls'
+import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
+import { isCompleteJoinAtom } from 'store/isCompleteJoinAtom'
 import { JoinFormFieldValues, Terms } from 'types/auth/auth'
 
 import FillButton from '@components/buttons/FillButton'
@@ -34,6 +36,7 @@ const cx = classNames.bind(styles)
 
 export default function JoinPage() {
   const router = useRouter()
+  const setIsCompleteJoin = useSetAtom(isCompleteJoinAtom)
 
   useEffect(() => {
     trackEvent('page_view', {
@@ -64,7 +67,8 @@ export default function JoinPage() {
       trackEvent('signup_start', {
         referrer: document.referrer,
       })
-      router.push('/login')
+      setIsCompleteJoin(true)
+      router.replace('/')
     },
   })
 
