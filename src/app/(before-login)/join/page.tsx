@@ -68,7 +68,7 @@ export default function JoinPage() {
         referrer: document.referrer,
       })
       setIsCompleteJoin(true)
-      router.push('/login')
+      router.push('/')
     },
   })
 
