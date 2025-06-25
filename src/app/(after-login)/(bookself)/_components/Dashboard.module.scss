@@ -15,18 +15,11 @@
     @extend %typo-headline-small;
     font-weight: 700;
   }
+}
 
-  &__empty,
-  &__guest {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 60vh;
-    gap: 2rem;
-  }
-
-  &__message {
-    @include typo.typo(2rem, 500, 3rem, 0);
-  }
+.inner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 65dvh;
 }
