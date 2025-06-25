@@ -64,7 +64,7 @@ export default function PromptInput({
       {hasButton &&
         (isPending ? (
           <button disabled className={styles['pending-button']}>
-            <Image alt="loading" src="/images/loading-white.gif" width={28} height={20} />
+            <Image alt="loading" src="/images/loading-white-cut.gif" width={28} height={20} />
           </button>
         ) : (
           <FillButton
