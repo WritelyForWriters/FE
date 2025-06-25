@@ -1,4 +1,4 @@
-@use '@styles/typography';
+@use '@styles/typography' as typo;
 @use '@styles/colors' as color;
 @use '@styles/mixins' as mixin;
 
@@ -28,8 +28,20 @@
         @extend %typo-title-medium;
       }
     }
+
+    &-bottom {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+
+      h3 {
+        @include typo.typo(2rem, 500, 3rem, 0);
+      }
+    }
   }
 
   &__button-wrapper {
+    width: 30rem;
   }
 }
