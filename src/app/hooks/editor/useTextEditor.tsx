@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useMutation } from '@tanstack/react-query'
 import { Editor } from '@tiptap/react'
-import { archivedAnswer, postAutoModify, postFeedback } from 'api/ai-assistant/aiAssistant'
+import { archivedAnswer, postAutoModify } from 'api/ai-assistant/aiAssistant'
 import { AxiosError } from 'axios'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { INITIAL_EVALUATE_STATE } from 'constants/workspace/value'
@@ -24,7 +24,7 @@ import {
 
 import { useToast } from '@components/toast/ToastProvider'
 
-import { usePostUserModify } from '@hooks/ai-assistant/useAiassistantMutation'
+import { usePostFeedback, usePostUserModify } from '@hooks/ai-assistant/useAiassistantMutation'
 import { useSubmitFeedback } from '@hooks/chatbot/useSubmitFeedback'
 import { useCollapsed } from '@hooks/common/useCollapsed'
 
@@ -100,6 +100,7 @@ export function useTextEditor(editor: Editor | null) {
   })
 
   const { mutate: postUserModify, isPending: userModifyPending } = usePostUserModify()
+  const { mutate: postFeedback, isPending: feedbackPending } = usePostFeedback()
 
   // 어시스턴트 응답 피드백
   const handleSubmitFeedback = ({ isGood, feedback: value, feedbackType }: FeedbackFormData) => {
@@ -232,6 +233,7 @@ export function useTextEditor(editor: Editor | null) {
   // 2. 수동 수정
   const handleAiPrompt = async () => {
     if (!promptValueRef.current || !selectionRef.current) return
+    if (userModifyPending) return
 
     postUserModify(
       {
@@ -264,25 +266,29 @@ export function useTextEditor(editor: Editor | null) {
 
   // 3. 구간 피드백
   const handleAiFeedback = async (originPhrase: string) => {
-    try {
-      const response = await postFeedback({
+    postFeedback(
+      {
         productId,
         content: originPhrase,
         shouldApplySetting,
-      })
-
-      if (response.id) {
-        setAiassistantId(response.id)
-        setFeedback(INITIAL_EVALUATE_STATE)
-        // TODO 로딩중일때
-        feedbackInput.current = response.answer
-        handleEventTracking('feedback', response.id, '구간 피드백')
-        onOpenFeedbackPrompt()
-      }
-    } catch (error) {
-      console.log(error)
-      handleOnError(onCloseFeedbackPrompt, originPhrase)
-    }
+      },
+      {
+        onSuccess: (data) => {
+          const { id, answer } = data
+          if (id) {
+            setAiassistantId(id)
+            setFeedback(INITIAL_EVALUATE_STATE)
+            feedbackInput.current = answer
+            handleEventTracking('feedback', id, '구간 피드백')
+            onOpenFeedbackPrompt()
+          }
+        },
+        onError: (error) => {
+          console.log(error)
+          handleOnError(onCloseFeedbackPrompt, originPhrase)
+        },
+      },
+    )
   }
 
   // 적용할 범위를 정확히 지정한 후 하이라이트 제거
@@ -475,7 +481,7 @@ export function useTextEditor(editor: Editor | null) {
     handleOptionClickAutoModify,
     handleOptionClickUserModify,
     handleOptionClickFeedback,
-    // MEMO(Sohyun): 추후 로딩처리를 위해 return값에 추가해 둠
     userModifyPending,
+    feedbackPending,
   }
 }
