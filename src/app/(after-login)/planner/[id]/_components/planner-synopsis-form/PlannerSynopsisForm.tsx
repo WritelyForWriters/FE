@@ -16,6 +16,7 @@ import styles from './PlannerSynopsisForm.module.scss'
 
 const cx = classNames.bind(styles)
 interface PlannerSynopsisFormProps {
+  isPending: boolean
   handleManualModification: (
     name: string,
     section: string,

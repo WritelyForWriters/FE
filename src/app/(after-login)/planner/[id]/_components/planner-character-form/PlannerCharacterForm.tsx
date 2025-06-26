@@ -21,6 +21,7 @@ import styles from './PlannerCharacterForm.module.scss'
 const cx = classNames.bind(styles)
 
 interface PlannerCharacterFormProps {
+  isPending: boolean
   handleManualModification: (
     name: string,
     section: string,

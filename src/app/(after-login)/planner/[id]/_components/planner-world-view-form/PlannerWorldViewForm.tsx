@@ -21,6 +21,7 @@ type CustomField = {
 }
 
 interface PlannerSynopsisFormProps {
+  isPending: boolean
   handleManualModification: (
     name: string,
     section: string,

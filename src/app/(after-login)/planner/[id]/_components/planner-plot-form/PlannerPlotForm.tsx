@@ -12,6 +12,7 @@ import styles from './PlannerPlotForm.module.scss'
 const cx = classNames.bind(styles)
 
 interface PlannerPlotFormProps {
+  isPending: boolean
   handleManualModification: (
     name: string,
     section: string,
