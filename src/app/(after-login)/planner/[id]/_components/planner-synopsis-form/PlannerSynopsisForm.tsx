@@ -24,6 +24,7 @@ interface PlannerSynopsisFormProps {
 }
 
 export default function PlannerSynopsisForm({
+  isPending,
   handleManualModification,
 }: PlannerSynopsisFormProps) {
   const mode = useAtomValue(PlannerTemplatesModeAtom)
@@ -91,6 +92,7 @@ export default function PlannerSynopsisForm({
         name="synopsis.example"
         itemName="예시 문장"
         handleManualModification={handleManualModification('synopsis.example', 'example')}
+        isPending={isPending}
       >
         <TextField
           name="synopsis.example"

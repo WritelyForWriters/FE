@@ -29,6 +29,7 @@ interface PlannerCharacterFormProps {
 }
 
 export default function PlannerCharacterForm({
+  isPending,
   handleManualModification,
 }: PlannerCharacterFormProps) {
   const params = useParams<{ id: string }>()
@@ -69,6 +70,7 @@ export default function PlannerCharacterForm({
             arrayIndex={index}
             handleRemoveCharacter={handleRemoveCharacter}
             handleManualModification={handleManualModification}
+            isPending={isPending}
           />
         ))}
     </div>

@@ -19,7 +19,10 @@ interface PlannerPlotFormProps {
   ) => (value: string, inputValue: string) => Promise<boolean>
 }
 
-export default function PlannerPlotForm({ handleManualModification }: PlannerPlotFormProps) {
+export default function PlannerPlotForm({
+  isPending,
+  handleManualModification,
+}: PlannerPlotFormProps) {
   const mode = useAtomValue(PlannerTemplatesModeAtom)
   return (
     <div className={cx('plot-form')} id="heading4">
@@ -28,6 +31,7 @@ export default function PlannerPlotForm({ handleManualModification }: PlannerPlo
         name="plot.content"
         itemName="줄거리"
         handleManualModification={handleManualModification('plot.content', 'plot')}
+        isPending={isPending}
       >
         <TextField
           name="plot.content"

@@ -7,6 +7,7 @@ import { useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { useFormContext } from 'react-hook-form'
 import { plannerActiveTabAtom } from 'store/plannerAtoms'
+import { CustomField } from 'types/planner/plannerTemplatesResponse'
 
 import IndexPannel from '@components/pannel/IndexPannel'
 
@@ -49,7 +50,7 @@ export default function PlannerSynopsisFormContainer() {
   }, [])
 
   const handleManualModification =
-    (name: string, section: string) => async (value: string, inputValue: string) => {
+    (name: string, section: string) => async (value: string | CustomField, inputValue: string) => {
       const promptData = {
         productId,
         genre: (
@@ -72,12 +73,26 @@ export default function PlannerSynopsisFormContainer() {
         if (!id) return false
 
         const aiType = getType(name)
-        setAiAssistants({ name, content: value, isAiModified: true, type: 'wait' })
+
+        if (section === 'custom_field' && typeof value !== 'string') {
+          setAiAssistants({
+            name,
+            content: (value as CustomField).content,
+            isAiModified: true,
+            type: 'wait',
+          })
+        } else {
+          setAiAssistants({ name, content: value as string, isAiModified: true, type: 'wait' })
+        }
 
         if (aiType === 'retry') {
           setValue(name, answer)
         } else {
-          setValue(name, [value, answer].filter(Boolean).join('\n'))
+          if (section === 'custom_field' && typeof value !== 'string') {
+            setValue(name, [(value as CustomField).content, answer].filter(Boolean).join('\n'))
+          } else {
+            setValue(name, [value as string, answer].filter(Boolean).join('\n'))
+          }
         }
 
         return true
