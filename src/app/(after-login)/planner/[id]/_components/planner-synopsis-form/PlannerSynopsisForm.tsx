@@ -16,6 +16,7 @@ import styles from './PlannerSynopsisForm.module.scss'
 
 const cx = classNames.bind(styles)
 interface PlannerSynopsisFormProps {
+  isPending: boolean
   handleManualModification: (
     name: string,
     section: string,
@@ -23,6 +24,7 @@ interface PlannerSynopsisFormProps {
 }
 
 export default function PlannerSynopsisForm({
+  isPending,
   handleManualModification,
 }: PlannerSynopsisFormProps) {
   const mode = useAtomValue(PlannerTemplatesModeAtom)
@@ -90,6 +92,7 @@ export default function PlannerSynopsisForm({
         name="synopsis.example"
         itemName="예시 문장"
         handleManualModification={handleManualModification('synopsis.example', 'example')}
+        isPending={isPending}
       >
         <TextField
           name="synopsis.example"

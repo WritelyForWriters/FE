@@ -4,13 +4,14 @@ import { useParams } from 'next/navigation'
 
 import { useEffect } from 'react'
 
-import { postPlannerUserModify } from 'api/ai-assistant/aiAssistant'
 import { useAtom } from 'jotai'
 import { useFormContext } from 'react-hook-form'
 import { plannerActiveTabAtom } from 'store/plannerAtoms'
+import { CustomField } from 'types/planner/plannerTemplatesResponse'
 
 import IndexPannel from '@components/pannel/IndexPannel'
 
+import { usePostPlannerUserModify } from '@hooks/ai-assistant/useAiassistantMutation'
 import { usePlannerTemplatesAiAssistant } from '@hooks/products/usePlannerTemplatesAiAssistant'
 
 import PlannerCharacterForm from '../planner-character-form/PlannerCharacterForm'
@@ -39,6 +40,8 @@ export default function PlannerSynopsisFormContainer() {
   const { setValue, getValues } = useFormContext()
   const { set: setAiAssistants, getType } = usePlannerTemplatesAiAssistant()
   const [activeTab, setActiveTab] = useAtom(plannerActiveTabAtom)
+  const { mutateAsync: postPlannerUserModifyAsync, isPending: isUserModifyPending } =
+    usePostPlannerUserModify()
 
   // NOTE(hajae): jotai는 전역상태이기 때문에 메모리에 상태가 살아있어서 아이디어 탭에서 페이지 이동후 다시 돌아올 경우
   // 아이디어 탭이 활성화되어있음. 따라서, 마운트 될때 탭을 초기화하는 과정이 필요.
@@ -47,40 +50,54 @@ export default function PlannerSynopsisFormContainer() {
   }, [])
 
   const handleManualModification =
-    (name: string, section: string) => async (value: string, inputValue: string) => {
+    (name: string, section: string) => async (value: string | CustomField, inputValue: string) => {
+      const promptData = {
+        productId,
+        genre: (
+          getValues('synopsis.genre') as {
+            label: string
+            value: string
+          }[]
+        )
+          .map((genre) => genre.value)
+          .join(', '),
+        logline: getValues('synopsis.logline'),
+        section: section,
+        prompt: inputValue,
+      }
+
       try {
-        const response = (await postPlannerUserModify({
-          productId,
-          genre: (
-            getValues('synopsis.genre') as {
-              label: string
-              value: string
-            }[]
-          )
-            .map((genre) => genre.value)
-            .join(', '),
-          logline: getValues('synopsis.logline'),
-          section: section,
-          prompt: inputValue,
-        })) as { id: string; answer: string }
+        const data = await postPlannerUserModifyAsync(promptData)
 
-        if (response.id) {
-          const aiType = getType(name)
-          setAiAssistants({ name: name, content: value, isAiModified: true, type: 'wait' })
+        const { id, answer } = data
+        if (!id) return false
 
-          // NOTE(hajae): 다시 생성하기의 경우 기존 텍스트를 덮어씌운다.
-          if (aiType === 'retry') {
-            setValue(name, response.answer)
-          } else {
-            setValue(name, [value, response.answer].filter(Boolean).join('\n'))
-          }
+        const aiType = getType(name)
 
-          return true
+        if (section === 'custom_field' && typeof value !== 'string') {
+          setAiAssistants({
+            name,
+            content: (value as CustomField).content,
+            isAiModified: true,
+            type: 'wait',
+          })
+        } else {
+          setAiAssistants({ name, content: value as string, isAiModified: true, type: 'wait' })
         }
 
-        return false
-      } catch (error) {
-        console.error('fetch user modify error: ', error)
+        if (aiType === 'retry') {
+          setValue(name, answer)
+        } else {
+          if (section === 'custom_field' && typeof value !== 'string') {
+            setValue(name, [(value as CustomField).content, answer].filter(Boolean).join('\n'))
+          } else {
+            setValue(name, [value as string, answer].filter(Boolean).join('\n'))
+          }
+        }
+
+        return true
+      } catch (err) {
+        console.error('fetch user modify error: ', err)
         return false
       }
     }
@@ -98,10 +115,22 @@ export default function PlannerSynopsisFormContainer() {
             <div className={cx('index')}>
               <IndexPannel toc={TABLE_OF_CONTENTS} />
             </div>
-            <PlannerSynopsisForm handleManualModification={handleManualModification} />
-            <PlannerWorldViewForm handleManualModification={handleManualModification} />
-            <PlannerCharacterForm handleManualModification={handleManualModification} />
-            <PlannerPlotForm handleManualModification={handleManualModification} />
+            <PlannerSynopsisForm
+              handleManualModification={handleManualModification}
+              isPending={isUserModifyPending}
+            />
+            <PlannerWorldViewForm
+              handleManualModification={handleManualModification}
+              isPending={isUserModifyPending}
+            />
+            <PlannerCharacterForm
+              handleManualModification={handleManualModification}
+              isPending={isUserModifyPending}
+            />
+            <PlannerPlotForm
+              handleManualModification={handleManualModification}
+              isPending={isUserModifyPending}
+            />
           </>
         ) : (
           <PlannerIdeaNote />

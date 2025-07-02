@@ -21,6 +21,7 @@ type CustomField = {
 }
 
 interface PlannerSynopsisFormProps {
+  isPending: boolean
   handleManualModification: (
     name: string,
     section: string,
@@ -28,6 +29,7 @@ interface PlannerSynopsisFormProps {
 }
 
 export default function PlannerWorldViewForm({
+  isPending,
   handleManualModification,
 }: PlannerSynopsisFormProps) {
   const mode = useAtomValue(PlannerTemplatesModeAtom)
@@ -55,6 +57,7 @@ export default function PlannerWorldViewForm({
           itemName={item.label}
           name={`worldview.${item.name}`}
           handleManualModification={handleManualModification(`worldview.${item.name}`, item.name)}
+          isPending={isPending}
         >
           <TextField
             key={`planner-world-view-item-${index}`}
@@ -73,6 +76,11 @@ export default function PlannerWorldViewForm({
           itemName="커스텀 항목"
           showConfirm={true}
           onDelete={() => handleDeleteCustomField(index)}
+          handleManualModification={handleManualModification(
+            `worldview.customFields[${index}].content`,
+            `custom_field`,
+          )}
+          isPending={isPending}
         >
           <TextField
             name={`worldview.customFields[${index}].content`}

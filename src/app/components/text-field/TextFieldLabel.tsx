@@ -57,7 +57,7 @@ export default function TextFieldLabel({
   const editableLabelStyle: CSSProperties = isLabelEditable
     ? {
         cursor: 'pointer',
-        zIndex: '2',
+        zIndex: '1',
         pointerEvents: 'auto',
       }
     : {}

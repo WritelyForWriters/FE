@@ -21,6 +21,7 @@ import styles from './PlannerCharacterForm.module.scss'
 const cx = classNames.bind(styles)
 
 interface PlannerCharacterFormProps {
+  isPending: boolean
   handleManualModification: (
     name: string,
     section: string,
@@ -28,6 +29,7 @@ interface PlannerCharacterFormProps {
 }
 
 export default function PlannerCharacterForm({
+  isPending,
   handleManualModification,
 }: PlannerCharacterFormProps) {
   const params = useParams<{ id: string }>()
@@ -68,6 +70,7 @@ export default function PlannerCharacterForm({
             arrayIndex={index}
             handleRemoveCharacter={handleRemoveCharacter}
             handleManualModification={handleManualModification}
+            isPending={isPending}
           />
         ))}
     </div>

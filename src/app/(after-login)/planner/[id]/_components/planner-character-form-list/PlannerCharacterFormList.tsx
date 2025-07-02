@@ -30,6 +30,7 @@ const expandItems = ['intro', 'customFields']
 interface PlannerCharacterFormListProps {
   paramsId: string
   arrayIndex: number
+  isPending: boolean
   handleRemoveCharacter: (index: number) => void
   handleManualModification: (
     name: string,
@@ -40,6 +41,7 @@ interface PlannerCharacterFormListProps {
 export default function PlannerCharacterFormList({
   paramsId,
   arrayIndex,
+  isPending,
   handleRemoveCharacter,
   handleManualModification,
 }: PlannerCharacterFormListProps) {
@@ -112,9 +114,10 @@ export default function PlannerCharacterFormList({
                 showConfirm={item.name === 'customFields'}
                 handleManualModification={handleManualModification(
                   getTextFieldName(item.name),
-                  item.name,
+                  item.name === 'customFields' ? 'custom_field' : item.name,
                 )}
                 manualModifiable={item.manualModifiable}
+                isPending={isPending}
               >
                 <TextField
                   name={getTextFieldName(item.name)}
