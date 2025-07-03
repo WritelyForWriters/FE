@@ -78,6 +78,12 @@
       }
     }
 
+    &-source {
+      a {
+        color: #006cb4;
+      }
+    }
+
     &--selected {
       background-color: color.$alert-secondary-100;
       border-radius: 1.2rem;

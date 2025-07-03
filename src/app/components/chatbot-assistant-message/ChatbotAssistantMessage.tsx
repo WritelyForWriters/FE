@@ -42,6 +42,7 @@ interface ChatbotAssistantMessageProps {
     id: string
     content: string
     isApplied: boolean
+    sources?: string[]
   }
 }
 
@@ -163,6 +164,18 @@ export default function ChatbotAssistantMessage({
             {message.content}
           </ReactMarkdown>
         </div>
+        {message.sources && message.sources.length > 0 && (
+          <div className={cx('assistant-message__body-source')}>
+            <span>출처: </span>
+            {message.sources.map((source, idx) => (
+              <>
+                <a href={source} target="_blank" onClick={(e) => e.stopPropagation()}>
+                  [{idx + 1}]
+                </a>
+              </>
+            ))}
+          </div>
+        )}
       </div>
       <div className={cx('assistant-message__footer')}>
         {(isMouseOver || isFeedbackMenuOpen) && inputMode === 'input' && (
