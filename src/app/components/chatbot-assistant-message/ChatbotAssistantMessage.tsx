@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState } from 'react'
 
 import { QueryClient } from '@tanstack/react-query'
@@ -168,11 +170,9 @@ export default function ChatbotAssistantMessage({
           <div className={cx('assistant-message__body-source')}>
             <span>출처: </span>
             {message.sources.map((source, idx) => (
-              <>
-                <a href={source} target="_blank" onClick={(e) => e.stopPropagation()}>
-                  [{idx + 1}]
-                </a>
-              </>
+              <Link key={idx} href={source} target="_blank" onClick={(e) => e.stopPropagation()}>
+                [{idx + 1}]
+              </Link>
             ))}
           </div>
         )}
