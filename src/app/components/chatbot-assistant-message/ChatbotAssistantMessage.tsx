@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState } from 'react'
 
 import { QueryClient } from '@tanstack/react-query'
@@ -42,6 +44,7 @@ interface ChatbotAssistantMessageProps {
     id: string
     content: string
     isApplied: boolean
+    sources?: string[]
   }
 }
 
@@ -163,6 +166,16 @@ export default function ChatbotAssistantMessage({
             {message.content}
           </ReactMarkdown>
         </div>
+        {message.sources && message.sources.length > 0 && (
+          <div className={cx('assistant-message__body-source')}>
+            <span>출처: </span>
+            {message.sources.map((source, idx) => (
+              <Link key={idx} href={source} target="_blank" onClick={(e) => e.stopPropagation()}>
+                [{idx + 1}]
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
       <div className={cx('assistant-message__footer')}>
         {(isMouseOver || isFeedbackMenuOpen) && inputMode === 'input' && (
