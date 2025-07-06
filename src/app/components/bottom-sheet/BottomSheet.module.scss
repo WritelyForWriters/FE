@@ -1,0 +1,39 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+
+.bottom-sheet {
+  @include mixin.display-flex();
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+
+  width: 100%;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+
+  border-top-left-radius: 2.8rem;
+  border-top-right-radius: 2.8rem;
+  padding-bottom: 4rem;
+
+  background-color: color.$alert-secondary-0;
+
+  &-wrapper {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 40;
+  }
+
+  &-handlebar {
+    width: 3.2rem;
+    height: 0.4rem;
+    border-radius: 10rem;
+    background-color: #aeaeb2;
+    opacity: 0.4;
+    margin: 1.6rem 0 1.6rem 0;
+  }
+}
