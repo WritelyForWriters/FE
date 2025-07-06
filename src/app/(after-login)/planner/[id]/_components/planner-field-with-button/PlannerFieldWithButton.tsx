@@ -26,6 +26,7 @@ interface PlannerFieldWithButtonProps {
   children: ReactNode
   name: string
   itemName: string
+  isPending?: boolean
   isDropdown?: boolean
   showConfirm?: boolean
   onDelete?: () => void
@@ -37,6 +38,7 @@ export default function PlannerFieldWithButton({
   children,
   name,
   itemName,
+  isPending = false,
   isDropdown = false,
   showConfirm = false,
   onDelete,
@@ -158,6 +160,7 @@ export default function PlannerFieldWithButton({
           handleConfirm={handleConfirm}
           handleRetry={handleRetry}
           handleCancel={handleCancel}
+          isPending={isPending}
         />
       )}
       <Modal

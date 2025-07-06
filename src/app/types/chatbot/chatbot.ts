@@ -22,6 +22,7 @@ export interface ChatItem {
     content: string
     isApplied: boolean
     isGood: boolean
+    sources?: string[]
   }
   createdAt: string
 }

@@ -26,9 +26,13 @@ export const postAutoModify = async (promptData: Omit<PromptData, 'prompt'>) => 
 
 // 수동 수정
 export const postUserModify = async (promptData: PromptData) => {
-  const res = await authInstance.post<AiassistantResponseType>('/assistant/user-modify', promptData, {
-    timeout: 60000,
-  })
+  const res = await authInstance.post<AiassistantResponseType>(
+    '/assistant/user-modify',
+    promptData,
+    {
+      timeout: 60000,
+    },
+  )
   return res.data.result
 }
 
@@ -49,7 +53,7 @@ export const postFeedback = async (promptData: Omit<PromptData, 'prompt'>) => {
 
 // 수동 수정 (작품 플래너)
 export const postPlannerUserModify = async (promptData: PlannerPromptData) => {
-  const res = await authInstance.post('/assistant/planner', promptData, {
+  const res = await authInstance.post<FeedbackResult>('/assistant/planner', promptData, {
     timeout: 60000,
   })
   return res.data.result

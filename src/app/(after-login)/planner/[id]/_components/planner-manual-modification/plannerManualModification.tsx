@@ -15,6 +15,7 @@ import styles from './plannerManualModification.module.scss'
 interface PlannerManualModificationProps {
   name: string
   value: string
+  isPending: boolean
   promptClose: () => void
   handleConfirm: () => void
   handleRetry: () => void
@@ -24,6 +25,7 @@ interface PlannerManualModificationProps {
 
 export default function PlannerManualModification({
   value,
+  isPending,
   promptClose,
   handleConfirm,
   handleRetry,
@@ -60,6 +62,7 @@ export default function PlannerManualModification({
             onSubmit={fetchUserModify}
             placeholder="프롬프트를 입력해 주세요."
             buttonText="생성하기"
+            isPending={isPending}
           />
         ) : (
           <div className={styles['select-menu']}>
