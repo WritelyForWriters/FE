@@ -45,13 +45,7 @@ export default function PlannerFieldWithButton({
   manualModifiable = true,
   handleManualModification,
 }: PlannerFieldWithButtonProps) {
-  const {
-    watch,
-    unregister,
-    register,
-    setValue,
-    formState: { isValid },
-  } = useFormContext()
+  const { watch, unregister, register, setValue } = useFormContext()
   const { isOpen, onClose, onOpen } = useCollapsed(false)
   const [isShow, setIsShow] = useState(true)
   const [isDeleted, setIsDeleted] = useState(false)
@@ -117,7 +111,7 @@ export default function PlannerFieldWithButton({
           {children}
           {mode === 'edit' && (
             <div className={cx('field-with-button__buttons')}>
-              {isValid && manualModifiable && (
+              {manualModifiable && (
                 <FillButton
                   type="button"
                   size="small"
