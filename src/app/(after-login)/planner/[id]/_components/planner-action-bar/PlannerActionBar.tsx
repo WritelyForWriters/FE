@@ -25,7 +25,6 @@ const cx = classNames.bind(styles)
 
 interface PlannerActionBarProps {
   productId: string
-  isValidFormValues: boolean
   isFormDirty: boolean
   autoSaveTimer: number
   onSubmit: () => void
@@ -34,7 +33,6 @@ interface PlannerActionBarProps {
 
 export default function PlannerActionBar({
   productId,
-  isValidFormValues,
   isFormDirty,
   autoSaveTimer,
   onSubmit,
@@ -47,11 +45,6 @@ export default function PlannerActionBar({
 
   const ActionSectionContent = () => {
     const handleSave = () => {
-      if (!isValidFormValues) {
-        showToast('warning', '필수 항목(장르, 로그라인)을 먼저 작성해주세요')
-        return
-      }
-
       onSubmit()
       onResetForm()
 
