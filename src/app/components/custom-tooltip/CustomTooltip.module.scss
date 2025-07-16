@@ -1,0 +1,15 @@
+@use '@styles/typography' as typo;
+@use '@styles/colors' as color;
+
+.tooltip {
+  &__body {
+    background-color: color.$alert-secondary-800;
+    padding: 1.2rem 1.6rem;
+    border-radius: 1.2rem;
+    color: color.$alert-secondary-0;
+
+    p {
+      @include typo.typo(1.4rem, 400, 2rem, 0);
+    }
+  }
+}
