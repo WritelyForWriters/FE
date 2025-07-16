@@ -4,18 +4,21 @@ import { useEffect } from 'react'
 
 import Dashboard from '(after-login)/(bookself)/_components/Dashboard'
 import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
+import { useAtomValue } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
+import { hasWatchedTutorialAtom } from 'store/hasWatchedTutorial'
+
+import AfterLoginTutorial from '@components/tutorial/AfterLoginTutorial'
+import BeforeLoginTutorial from '@components/tutorial/BeforeLoginTutorial'
 
 import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
 
-/**
- * TODO
- * [ ] UI 점검
- * [ ] 인가 처리 -> 로그인 기능 완료 후
- * [ ] 로그인 여부에 따른 버튼 UI -> 로그인 기능 완료 후
- */
+import { isLoggedInAtom } from './store/isLoggedInAtom'
 
 export default function Home() {
+  const isLoggedIn = useAtomValue(isLoggedInAtom)
+  const hasWatchedTutorial = useAtomValue(hasWatchedTutorialAtom)
+
   useEffect(() => {
     trackEvent('page_view', {
       page_name: 'library',
@@ -24,10 +27,17 @@ export default function Home() {
 
   usePageExitTracking('library')
 
-  return (
-    <>
-      <MainHeader />
-      <Dashboard />
-    </>
-  )
+  if (!isLoggedIn && !hasWatchedTutorial) {
+    return <BeforeLoginTutorial />
+  } else if (isLoggedIn) {
+    // TODO(선우): 첫 로그인 여부 전달받기
+    return <AfterLoginTutorial />
+  } else {
+    return (
+      <>
+        <MainHeader />
+        <Dashboard />
+      </>
+    )
+  }
 }
