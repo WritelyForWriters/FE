@@ -36,6 +36,8 @@ export default function ProductTour(props: Props) {
       hideBackButton={true}
       spotlightPadding={0}
       styles={CUSTOM_STYLES}
+      disableScrolling={true}
+      disableScrollParentFix={true}
       {...props}
     />
   )
