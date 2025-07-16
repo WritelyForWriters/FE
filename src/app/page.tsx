@@ -6,7 +6,7 @@ import Dashboard from '(after-login)/(bookself)/_components/Dashboard'
 import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 import { useAtomValue } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
-import { hasWatchedTutorialAtom } from 'store/hasWatchedTutorial'
+import { hasWatchedTutorialAtom } from 'store/hasWatchedTutoriaAtom'
 
 import AfterLoginTutorial from '@components/tutorial/AfterLoginTutorial'
 import BeforeLoginTutorial from '@components/tutorial/BeforeLoginTutorial'
