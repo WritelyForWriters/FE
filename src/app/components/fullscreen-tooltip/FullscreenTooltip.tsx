@@ -2,7 +2,8 @@ import { useRouter } from 'next/navigation'
 
 import { useSetAtom } from 'jotai'
 import { TooltipRenderProps } from 'react-joyride'
-import { hasWatchedTutorialAtom } from 'store/hasWatchedTutorial'
+import { hasWatchedTutorialAtom } from 'store/hasWatchedTutoriaAtom'
+import { isTutorialRunningAtom } from 'store/isTutorialRunningAtom'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
@@ -14,10 +15,19 @@ import styles from './FullscreenTooltip.module.scss'
 const cx = classNames.bind(styles)
 
 export default function FullscreenTooltip(props: TooltipRenderProps) {
-  const router = useRouter()
-  const setHasWatchedTutorial = useSetAtom(hasWatchedTutorialAtom)
-
   const { isLastStep, step, tooltipProps, closeProps } = props
+
+  const router = useRouter()
+
+  const setHasWatchedTutorial = useSetAtom(hasWatchedTutorialAtom)
+  const setIsTutorialRunning = useSetAtom(isTutorialRunningAtom)
+
+  const handleButtonClick = () => {
+    router.push('/login')
+    localStorage.setItem('hasWatchedTutorial', 'true')
+    setIsTutorialRunning(false)
+    setHasWatchedTutorial(true)
+  }
 
   return (
     <div className={cx('fullscreen-tooltip')} {...tooltipProps}>
@@ -27,16 +37,10 @@ export default function FullscreenTooltip(props: TooltipRenderProps) {
       </div>
       {isLastStep && (
         <div className={cx('footer')}>
-          <FillButton
-            size="large"
-            onClick={() => {
-              router.push('/login')
-              setHasWatchedTutorial(true)
-            }}
-          >
+          <FillButton size="large" onClick={handleButtonClick}>
             첫 작품 시작하기
           </FillButton>
-          <TextButton size="large" {...closeProps}>
+          <TextButton {...closeProps} size="large">
             나중에 만들게요
           </TextButton>
         </div>
