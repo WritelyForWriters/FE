@@ -47,7 +47,9 @@ interface DefaultEditorProps {
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
   const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
+
   const [initialCharCount, setInitialCharCount] = useState(0) // 초기 문자수를 저장하기 위한 state
+  const [currentCharCount, setCurrentCharCount] = useState(0) // 입력된 문자수를 저장하기 위한 state
 
   const editor = useEditor({
     editable,
@@ -79,9 +81,13 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : EDITOR_CONTENTS,
-    onUpdate: () => {
+    onUpdate: ({ editor }) => {
       // 에디터에 변경사항이 생기면 저장 상태 false로 변경
       isSavedRef.current = false
+
+      // 현재 문자수 계산
+      const count = editor.storage.characterCount.characters()
+      setCurrentCharCount(count)
     },
     onSelectionUpdate: ({ editor }) => {
       if (editor.state.selection.empty) {
@@ -181,7 +187,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }, [editor])
 
   // 초기 문자수를 제외한 새로 입력한 글자 수 계산
-  const typedCharCount = Math.max(0, editor?.storage.characterCount.characters() - initialCharCount)
+  const typedCharCount = Math.max(0, currentCharCount - initialCharCount)
 
   if (!editor) {
     return null
