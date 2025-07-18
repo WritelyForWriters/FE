@@ -1,6 +1,6 @@
 'use client'
 
-import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
+import { Ref, RefObject, useEffect, useImperativeHandle, useState } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import CharacterCount from '@tiptap/extension-character-count'
@@ -46,8 +46,8 @@ interface DefaultEditorProps {
 
 export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
-
   const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
+  const [initialCharCount, setInitialCharCount] = useState(0) // 초기 문자수를 저장하기 위한 state
 
   const editor = useEditor({
     editable,
@@ -155,6 +155,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
 
     if (editor) {
       initialTextLength = editor.storage.characterCount.characters()
+      setInitialCharCount(initialTextLength)
     }
 
     return () => {
@@ -178,6 +179,9 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       }
     }
   }, [editor])
+
+  // 초기 문자수를 제외한 새로 입력한 글자 수 계산
+  const typedCharCount = Math.max(0, editor?.storage.characterCount.characters() - initialCharCount)
 
   if (!editor) {
     return null
@@ -251,6 +255,8 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         />
       )}
 
+      {/* TODO: 퍼블리싱 수정 */}
+      <div>{typedCharCount} / 700자</div>
       <EditorContent editor={editor} className={styles.tiptap} />
     </section>
   )
