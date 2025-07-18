@@ -39,6 +39,9 @@ export default forwardRef(function Modal(
       close() {
         dialog.current?.close()
       },
+      isOpen() {
+        return dialog.current?.open
+      },
     }
   })
 
