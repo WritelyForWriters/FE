@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { Ref, RefObject, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import Bold from '@tiptap/extension-bold'
@@ -21,7 +23,7 @@ import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 
-import Modal from '@components/modal/Modal'
+import DialogWithVerticalBtn from '@components/modal/DialogWithVerticalBtn'
 
 import { useMemos } from '@hooks/editor/useMemos'
 import useResetMode from '@hooks/editor/useResetMode'
@@ -276,18 +278,19 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       <div>{typedCharCount} / 700자</div>
       <EditorContent editor={editor} className={styles.tiptap} />
 
-      {/* TODO: 모달 content 퍼블리싱 */}
-      <Modal
+      <DialogWithVerticalBtn
         ref={modalRef}
-        title="미리보기"
-        cancelText="취소"
-        confirmText="내보내기"
+        title="오늘도 700자 글쓰기 성공! 멋져요!"
+        cancelText="지금은 괜찮아요"
+        confirmText="글쓰기 목표 조정하기"
         onCancel={() => {
           // TODO: 모달 닫을 때 문자수 초기화 및 모달 상태 닫힘상태로 변경하기
           modalRef.current?.close()
         }}
         onConfirm={() => {}}
-        content={<div>모달영역</div>}
+        content={
+          <Image src="/icons/firecracker-icon.svg" alt="firecracker" width={120} height={120} />
+        }
       />
     </section>
   )
