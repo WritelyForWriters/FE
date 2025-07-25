@@ -1,0 +1,36 @@
+@use '@styles/mixins' as mixin;
+@use '@styles/colors' as color;
+
+.modal-overlay {
+  @include mixin.flex(column, center, center, null);
+
+  position: fixed;
+  inset: 0;
+  background: rgba(color.$alert-secondary-900, 0.7);
+
+  z-index: 999;
+  animation: slide-in-from-top 0.35s ease-out;
+}
+
+.modal-card {
+  @include mixin.flex(column, center, null, null);
+  background: color.$alert-secondary-0;
+  border-radius: 2.4rem;
+
+  padding: 1.6rem;
+  padding-top: 2.4rem;
+
+  min-width: 350px;
+  max-width: 400px;
+}
+
+@keyframes slide-in-from-top {
+  0% {
+    transform: translateY(-15%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
