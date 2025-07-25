@@ -4,12 +4,10 @@ import { use, useCallback, useEffect, useState } from 'react'
 
 import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
 import { PLANNER_TUTORIAL_STEPS } from 'constants/tutorial/steps'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { CallBackProps, STATUS } from 'react-joyride'
-import { hasProductAtom } from 'store/hasProductAtom'
-import { isTutorialRunningAtom } from 'store/isTutorialRunningAtom'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
@@ -52,13 +50,14 @@ function usePlannerData(params: Params) {
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
+  const hasWatchedPlannerTutorial = localStorage.getItem('hasWatchedPlannerTutorial') ?? false
+
   const [stepIndex, setStepIndex] = useState(0)
-  const [isTutorialRunning, setIsTutorialRunning] = useAtom(isTutorialRunningAtom)
+  const [run, setRun] = useState(false)
 
   const { id, templates, showToast, autoSaveTimer } = usePlannerData(params)
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
   const setMode = useSetAtom(PlannerTemplatesModeAtom)
-  const hasProduct = useAtomValue(hasProductAtom)
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
@@ -171,26 +170,37 @@ export default function PlannerPage({ params }: { params: Params }) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsTutorialRunning(false)
+        setRun(false)
       }
 
       setStepIndex((prev) => prev + 1)
     }
 
-    if (isTutorialRunning) {
+    if (run) {
       window.addEventListener('keydown', handleKeyDown)
     }
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isTutorialRunning])
+  }, [run])
+
+  useEffect(() => {
+    if (!hasWatchedPlannerTutorial) {
+      const timer = setTimeout(() => {
+        setRun(true)
+      }, 2000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [hasWatchedPlannerTutorial])
 
   const handleJoyrideCallback = useCallback((data: CallBackProps) => {
     const { status, index, type } = data
 
     if (status === STATUS.FINISHED || status === STATUS.PAUSED) {
-      setIsTutorialRunning(false)
+      localStorage.setItem('hasWatchedPlannerTutorial', 'true')
+      setRun(false)
     }
 
     if (type === 'step:after') {
@@ -200,9 +210,9 @@ export default function PlannerPage({ params }: { params: Params }) {
 
   return (
     <>
-      {!hasProduct && (
+      {!hasWatchedPlannerTutorial && (
         <ProductTour
-          run={isTutorialRunning}
+          run={run}
           callback={handleJoyrideCallback}
           stepIndex={stepIndex}
           steps={PLANNER_TUTORIAL_STEPS}
