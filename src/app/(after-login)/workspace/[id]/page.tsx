@@ -25,6 +25,7 @@ import ChatbotLauncher from '@components/chatbot-launcher/ChatbotLauncher'
 import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
+import WorkspaceSliderModal from '@components/slider/WorkspaceSliderModal'
 
 import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
 import { useGetInfiniteAssistantHistory } from '@hooks/chatbot/useGetAssistantHistoryInfinite'
@@ -54,6 +55,7 @@ export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
   const modalRef = useRef<ModalHandler | null>(null)
+  const tutorialModalRef = useRef<ModalHandler | null>(null)
   const isSavedRef = useRef(false)
   const router = useRouter()
 
@@ -299,6 +301,12 @@ export default function WorkSpacePage() {
           modalRef.current?.close()
           history.pushState(null, '', '') // 뒤로가기 무효화 (다시 머무르게)
         }}
+      />
+
+      <WorkspaceSliderModal
+        ref={tutorialModalRef}
+        confirmText="시작하기"
+        onConfirm={() => tutorialModalRef.current?.close()}
       />
     </div>
   )
