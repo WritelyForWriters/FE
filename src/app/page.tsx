@@ -28,16 +28,17 @@ export default function Home() {
   usePageExitTracking('library')
 
   if (!isLoggedIn && !hasWatchedTutorial) {
+    // CASE 1: 유저가 로그인하지 않았고 튜토리얼을 시청하지 않은 경우
     return <BeforeLoginTutorial />
   } else if (isLoggedIn) {
-    // TODO(선우): 첫 로그인 여부 전달받기
+    // CASE 2: 첫 로그인인 경우(TODO: 첫 로그인 여부 조건 추가)
     return <AfterLoginTutorial />
-  } else {
-    return (
-      <>
-        <MainHeader />
-        <Dashboard />
-      </>
-    )
   }
+
+  return (
+    <>
+      <MainHeader />
+      <Dashboard />
+    </>
+  )
 }
