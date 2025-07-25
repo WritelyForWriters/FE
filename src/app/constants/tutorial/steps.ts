@@ -80,7 +80,7 @@ export const PLANNER_TUTORIAL_STEPS = [
   {
     target: '.planner-step-2',
     content:
-      '한 문장으로 쓰고 싶은 이야기를 들려주세요. \n 아이디어가 필요하면 오른쪽의 AI 버튼을 눌러 보세요.',
+      '한 문장으로 쓰고 싶은 이야기를 들려주세요. \n 아이디어가 필요하면 호버하여 오른쪽의 AI 버튼을 눌러 보세요.',
     placement: 'bottom' as Placement,
     disableBeacon: true,
   },
@@ -95,6 +95,5 @@ export const PLANNER_TUTORIAL_STEPS = [
     content: '이제 집필하러 가볼까요?',
     placement: 'bottom' as Placement,
     disableBeacon: true,
-    spotlightClicks: true,
   },
 ]
