@@ -13,7 +13,8 @@
 }
 
 .modal-card {
-  @include mixin.flex(column, center, null, null);
+  @include mixin.flex(column, flex-start, null, null);
+  gap: 2.4rem;
   background: color.$alert-secondary-0;
   border-radius: 2.4rem;
 
@@ -22,6 +23,23 @@
 
   min-width: 350px;
   max-width: 400px;
+
+  section {
+    width: 100%;
+  }
+
+  &__title {
+    @include mixin.flex(column, flex-start, null, null);
+    gap: 0.8rem;
+
+    h2 {
+      @extend %typo-title-medium;
+    }
+
+    p {
+      @extend %typo-body-medium;
+    }
+  }
 }
 
 @keyframes slide-in-from-top {
