@@ -8,7 +8,7 @@
   inset: 0;
   background: rgba(color.$alert-secondary-900, 0.7);
 
-  z-index: 999;
+  z-index: 1100; // MEMO(Sohyun): chatbot z-inde가 1000임
   animation: slide-in-from-top 0.35s ease-out;
 }
 
@@ -38,6 +38,9 @@
 
     p {
       @extend %typo-body-medium;
+      font-weight: 400;
+      line-height: 20px;
+      white-space: pre-wrap; // 텍스트에 포함된 개행 문자를 인식하여 줄바꿈을 적용
     }
   }
 }
