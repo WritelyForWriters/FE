@@ -75,7 +75,7 @@ export default function PlannerActionBar({
     return (
       <>
         {mode === 'edit' ? (
-          <TextButton size="large" onClick={() => handleSave()}>
+          <TextButton className="planner-step-3" size="large" onClick={() => handleSave()}>
             저장하기
           </TextButton>
         ) : (
@@ -156,7 +156,7 @@ export default function PlannerActionBar({
     }
 
     return (
-      <FillButton size="large" onClick={handleClick}>
+      <FillButton className="planner-step-4" size="large" onClick={handleClick}>
         집필하러 가기
       </FillButton>
     )

@@ -1,15 +1,20 @@
 'use client'
 
-import { use, useEffect } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 
 import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
-import { useAtom, useSetAtom } from 'jotai'
+import { PLANNER_TUTORIAL_STEPS } from 'constants/tutorial/steps'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
+import { CallBackProps, STATUS } from 'react-joyride'
+import { hasProductAtom } from 'store/hasProductAtom'
+import { isTutorialRunningAtom } from 'store/isTutorialRunningAtom'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
+import ProductTour from '@components/product-tour/ProductTour'
 import { useToast } from '@components/toast/ToastProvider'
 
 import { useAutoSaveTimer } from '@hooks/products/useAutoSaveTimer'
@@ -47,9 +52,13 @@ function usePlannerData(params: Params) {
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
+  const [stepIndex, setStepIndex] = useState(0)
+  const [isTutorialRunning, setIsTutorialRunning] = useAtom(isTutorialRunningAtom)
+
   const { id, templates, showToast, autoSaveTimer } = usePlannerData(params)
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
   const setMode = useSetAtom(PlannerTemplatesModeAtom)
+  const hasProduct = useAtomValue(hasProductAtom)
 
   const methods = useForm<PlannerSynopsisFormValues>()
   const {
@@ -159,22 +168,62 @@ export default function PlannerPage({ params }: { params: Params }) {
     }
   }, [])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsTutorialRunning(false)
+      }
+
+      setStepIndex((prev) => prev + 1)
+    }
+
+    if (isTutorialRunning) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isTutorialRunning])
+
+  const handleJoyrideCallback = useCallback((data: CallBackProps) => {
+    const { status, index, type } = data
+
+    if (status === STATUS.FINISHED || status === STATUS.PAUSED) {
+      setIsTutorialRunning(false)
+    }
+
+    if (type === 'step:after') {
+      setStepIndex(index + 1)
+    }
+  }, [])
+
   return (
-    <div className={cx('container')}>
-      <PlannerActionBar
-        productId={id}
-        isValidFormValues={isValid}
-        isFormDirty={isDirty}
-        onSubmit={handleFormSubmit}
-        autoSaveTimer={autoSaveTimer}
-        onResetForm={() => reset(getValues())}
-      />
-      <div className={cx('main-section')}>
-        <PlannerTabs />
-        <FormProvider {...methods}>
-          <PlannerSynopsisFormContainer />
-        </FormProvider>
+    <>
+      {!hasProduct && (
+        <ProductTour
+          run={isTutorialRunning}
+          callback={handleJoyrideCallback}
+          stepIndex={stepIndex}
+          steps={PLANNER_TUTORIAL_STEPS}
+        />
+      )}
+      <div className={cx('container')}>
+        <PlannerActionBar
+          productId={id}
+          isValidFormValues={isValid}
+          isFormDirty={isDirty}
+          onSubmit={handleFormSubmit}
+          autoSaveTimer={autoSaveTimer}
+          onResetForm={() => reset(getValues())}
+        />
+        <div className={cx('main-section')}>
+          <PlannerTabs />
+          <FormProvider {...methods}>
+            <PlannerSynopsisFormContainer />
+          </FormProvider>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
