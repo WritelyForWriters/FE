@@ -57,6 +57,7 @@
     "rehype-highlight": "^7.0.2",
     "rehype-sanitize": "^6.0.0",
     "sass": "^1.83.4",
+    "swiper": "^11.2.10",
     "tiptap-extension-resize-image": "^1.2.1",
     "uuid": "^11.1.0"
   },
