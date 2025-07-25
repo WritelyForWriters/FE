@@ -10,6 +10,8 @@
 
     p {
       @include typo.typo(1.4rem, 400, 2rem, 0);
+
+      white-space: pre-line;
     }
   }
 }

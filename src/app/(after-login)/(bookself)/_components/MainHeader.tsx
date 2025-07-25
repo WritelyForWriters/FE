@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation'
 
 import { MAX_PRODUCT_COUNT } from 'constants/bookself/number'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { setAmplitudeUserId, trackEvent } from 'lib/amplitude'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
+import { isTutorialRunningAtom } from 'store/isTutorialRunningAtom'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
@@ -25,11 +26,12 @@ import styles from './MainHeader.module.scss'
 
 const cx = classNames.bind(styles)
 
-export default function MainHeader() {
+export default function MainHeader({ stepIndex }: { stepIndex?: number }) {
   const router = useRouter()
   const { isOpen, onToggle, onClose } = useCollapsed()
   const showToast = useToast()
 
+  const setIsTutorialRunning = useSetAtom(isTutorialRunningAtom)
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
   const { data } = useGetProductList()
@@ -75,7 +77,7 @@ export default function MainHeader() {
     trackEvent('writing_start', {
       button_name: '글쓰기',
     })
-
+    setIsTutorialRunning(false)
     onClickWriting(direction)
   }
 
@@ -95,6 +97,7 @@ export default function MainHeader() {
             {isLoggedIn ? '로그아웃' : '로그인'}
           </TextButton>
           <FillButton
+            className="library-step-0"
             size="medium"
             style={{
               display: 'inline',
@@ -103,13 +106,25 @@ export default function MainHeader() {
           >
             글쓰기
           </FillButton>
-          <SelectMenu handleClose={onClose} isOpen={isOpen} style={{ width: '109px' }}>
+          <SelectMenu
+            handleClose={onClose}
+            isOpen={isOpen || stepIndex === 1 || stepIndex === 2}
+            style={{ width: '109px' }}
+          >
             <SelectMenu.Option
-              option={{ handleAction: () => handleActionButtonClick('workspace') }}
+              option={{
+                className: 'library-step-1',
+                handleAction: () => handleActionButtonClick('workspace'),
+              }}
             >
               바로 집필하기
             </SelectMenu.Option>
-            <SelectMenu.Option option={{ handleAction: () => handleActionButtonClick('planner') }}>
+            <SelectMenu.Option
+              option={{
+                className: 'library-step-2',
+                handleAction: () => handleActionButtonClick('planner'),
+              }}
+            >
               작품 기획하기
             </SelectMenu.Option>
           </SelectMenu>
