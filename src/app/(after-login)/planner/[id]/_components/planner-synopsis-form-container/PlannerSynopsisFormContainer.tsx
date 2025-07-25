@@ -53,15 +53,16 @@ export default function PlannerSynopsisFormContainer() {
     (name: string, section: string) => async (value: string | CustomField, inputValue: string) => {
       const promptData = {
         productId,
-        genre: (
-          getValues('synopsis.genre') as {
-            label: string
-            value: string
-          }[]
-        )
-          .map((genre) => genre.value)
-          .join(', '),
-        logline: getValues('synopsis.logline'),
+        genre:
+          (
+            getValues('synopsis.genre') as {
+              label: string
+              value: string
+            }[]
+          )
+            .map((genre) => genre.value)
+            .join(', ') || '',
+        logline: getValues('synopsis.logline') || '',
         section: section,
         prompt: inputValue,
       }

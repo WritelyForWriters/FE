@@ -64,7 +64,7 @@ export default function PlannerPage({ params }: { params: Params }) {
   const {
     reset,
     getValues,
-    formState: { isValid, isDirty },
+    formState: { isDirty },
     handleSubmit,
   } = methods
 
@@ -211,7 +211,6 @@ export default function PlannerPage({ params }: { params: Params }) {
       <div className={cx('container')}>
         <PlannerActionBar
           productId={id}
-          isValidFormValues={isValid}
           isFormDirty={isDirty}
           onSubmit={handleFormSubmit}
           autoSaveTimer={autoSaveTimer}

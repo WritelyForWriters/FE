@@ -39,14 +39,8 @@ export default function PlannerSynopsisForm({
         placeholder="장르"
         label="장르"
         options={PLANNER_SYNOPSIS_GENRES}
-        rules={{
-          required: {
-            value: true,
-            message: '필수 입력 사항입니다.',
-          },
-        }}
+        isRequired={false}
         isMulti={true}
-        isRequired={true}
         readOnly={mode === 'view'}
       />
       <PlannerFieldWithButton
@@ -80,14 +74,6 @@ export default function PlannerSynopsisForm({
         name="synopsis.logline"
         label="로그 라인"
         variant="expand"
-        options={{
-          required: { value: true, message: 'required' },
-          validate: (value) => {
-            if (value.trim() === '') {
-              return false
-            }
-          },
-        }}
         readOnly={mode === 'view'}
       />
       <PlannerFieldWithButton
