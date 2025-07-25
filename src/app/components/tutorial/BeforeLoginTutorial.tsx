@@ -12,9 +12,8 @@ import { CallBackProps, STATUS } from 'react-joyride'
 import { hasWatchedTutorialAtom } from 'store/hasWatchedTutoriaAtom'
 import { isTutorialRunningAtom } from 'store/isTutorialRunningAtom'
 
+import OnboardingBookSelf from '@components/onboarding/OnboardingBookSelf'
 import ProductTour from '@components/product-tour/ProductTour'
-
-import LibraryBackground from './LibraryBackground'
 
 export default function BeforeLoginTutorial() {
   const [stepIndex, setStepIndex] = useState(0)
@@ -41,24 +40,12 @@ export default function BeforeLoginTutorial() {
   }, [isTutorialRunning])
 
   const handleJoyrideCallback = useCallback((data: CallBackProps) => {
-    const writeButton = document.querySelector<HTMLButtonElement>('.library-step-1')
-
     const { status, index, type } = data
 
     if (status === STATUS.FINISHED || status === STATUS.PAUSED) {
       setIsTutorialRunning(false)
       localStorage.setItem('hasWatchedTutorial', 'true')
       setHasWatchedTutorial(true)
-    }
-
-    if (type === 'step:after' && index === 1) {
-      writeButton?.click()
-      setStepIndex(index + 1)
-    }
-
-    if (type === 'error:target_not_found') {
-      writeButton?.click()
-      setStepIndex(index + 1)
     }
 
     if (type === 'step:after') {
@@ -81,7 +68,7 @@ export default function BeforeLoginTutorial() {
           <Dashboard />
         </>
       ) : (
-        <LibraryBackground />
+        <OnboardingBookSelf stepIndex={stepIndex} />
       )}
     </>
   )
