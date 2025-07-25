@@ -70,7 +70,6 @@ export default function PlannerSynopsisForm({
       </PlannerFieldWithButton>
 
       <TextField
-        className="planner-step-2"
         name="synopsis.logline"
         label="로그 라인"
         variant="expand"
@@ -83,6 +82,7 @@ export default function PlannerSynopsisForm({
         isPending={isPending}
       >
         <TextField
+          className="planner-step-2"
           name="synopsis.example"
           label="예시 문장"
           variant="expand"
