@@ -6,9 +6,8 @@ import { notFound, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { Identify, identify } from '@amplitude/analytics-browser'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
-import { hasProductAtom } from 'store/hasProductAtom'
 import { isCompleteJoinAtom } from 'store/isCompleteJoinAtom'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
@@ -32,8 +31,6 @@ export default function Dashboard() {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const isCompleteJoin = useAtomValue(isCompleteJoinAtom)
 
-  const setHasProductAtom = useSetAtom(hasProductAtom)
-
   useEffect(() => {
     if (productList) {
       const workCount = productList.length
@@ -45,8 +42,6 @@ export default function Dashboard() {
       const identifyObj = new Identify()
       identifyObj.set('work_count', workCount)
       identify(identifyObj)
-
-      setHasProductAtom(!!workCount)
     }
   }, [productList])
 
