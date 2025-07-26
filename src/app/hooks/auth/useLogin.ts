@@ -6,6 +6,7 @@ import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { accessTokenAtom } from 'store/accessTokenAtom'
 import { isCompleteJoinAtom } from 'store/isCompleteJoinAtom'
+import { isFirstLoginAtom } from 'store/isFirstLoginAtom'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
 
 import { useToast } from '@components/toast/ToastProvider'
@@ -22,6 +23,7 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
   const setAccessToken = useSetAtom(accessTokenAtom)
   const setIsLoggedIn = useSetAtom(isLoggedInAtom)
   const setIsCompleteJoin = useSetAtom(isCompleteJoinAtom)
+  const setIsFirstLogin = useSetAtom(isFirstLoginAtom)
 
   return useMutation({
     mutationFn: login,
@@ -46,6 +48,8 @@ export const useLogin = ({ onSuccessHandler }: UseLoginProps) => {
       trackEvent('login_complete', {
         user_id: email,
       })
+
+      setIsFirstLogin(!data.result.previousTokenIssuedAt)
 
       onSuccessHandler()
     },
