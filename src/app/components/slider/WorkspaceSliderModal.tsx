@@ -1,7 +1,3 @@
-import { Ref, useImperativeHandle, useRef } from 'react'
-
-import { ModalHandler } from 'types/common/modalRef'
-
 import FillButton from '@components/buttons/FillButton'
 import Portal from '@components/modal/Portal'
 import WorkspaceSlider from '@components/slider/WorkspaceSlider'
@@ -15,33 +11,17 @@ const cx = classNames.bind(styles)
 interface DialogWithVerticalBtnProps {
   confirmText: string
   onConfirm: () => void
-  ref: Ref<ModalHandler>
 }
 
+// MEMO(Sohyun): 작업공간 튜토리얼 모달 컴포넌트
+// dialog+useRef는 tutorialShownAtom atom가 false여도 초기 페이지로드 시, ref.current가 null인 경우 모달이 안열리는 문제가 있어 제거
 export default function WorkspaceSliderModal({
   confirmText,
   onConfirm,
-  ref,
 }: DialogWithVerticalBtnProps) {
-  const dialog = useRef<HTMLDialogElement | null>(null)
-
-  useImperativeHandle(ref, () => {
-    return {
-      open() {
-        dialog.current?.showModal()
-      },
-      close() {
-        dialog.current?.close()
-      },
-      // isOpen() {
-      //   return !!dialog.current?.open
-      // },
-    }
-  })
-
   return (
     <Portal>
-      <dialog ref={dialog} className={cx('modal-overlay')}>
+      <div className={cx('modal-overlay')}>
         <div className={cx('modal-card')}>
           <WorkspaceSlider />
           <section>
@@ -50,7 +30,7 @@ export default function WorkspaceSliderModal({
             </FillButton>
           </section>
         </div>
-      </dialog>
+      </div>
     </Portal>
   )
 }
