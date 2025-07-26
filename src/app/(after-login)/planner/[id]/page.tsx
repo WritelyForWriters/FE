@@ -4,10 +4,11 @@ import { use, useCallback, useEffect, useState } from 'react'
 
 import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
 import { PLANNER_TUTORIAL_STEPS } from 'constants/tutorial/steps'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { CallBackProps, STATUS } from 'react-joyride'
+import { isFirstWorkAtom } from 'store/isFirstWorkAtom'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
@@ -50,6 +51,7 @@ function usePlannerData(params: Params) {
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
+  const isFisrtWork = useAtomValue(isFirstWorkAtom)
   const hasWatchedPlannerTutorial = localStorage.getItem('hasWatchedPlannerTutorial') ?? false
 
   const [stepIndex, setStepIndex] = useState(0)
@@ -185,15 +187,16 @@ export default function PlannerPage({ params }: { params: Params }) {
     }
   }, [run])
 
+  // 첫 작품이고 튜토리얼 시청하지 않은 경우
   useEffect(() => {
-    if (!hasWatchedPlannerTutorial) {
+    if (isFisrtWork && !hasWatchedPlannerTutorial) {
       const timer = setTimeout(() => {
         setRun(true)
       }, 2000)
 
       return () => clearTimeout(timer)
     }
-  }, [hasWatchedPlannerTutorial])
+  }, [isFisrtWork, hasWatchedPlannerTutorial])
 
   const handleJoyrideCallback = useCallback((data: CallBackProps) => {
     const { status, index, type } = data
@@ -210,14 +213,12 @@ export default function PlannerPage({ params }: { params: Params }) {
 
   return (
     <>
-      {!hasWatchedPlannerTutorial && (
-        <ProductTour
-          run={run}
-          callback={handleJoyrideCallback}
-          stepIndex={stepIndex}
-          steps={PLANNER_TUTORIAL_STEPS}
-        />
-      )}
+      <ProductTour
+        run={run}
+        callback={handleJoyrideCallback}
+        stepIndex={stepIndex}
+        steps={PLANNER_TUTORIAL_STEPS}
+      />
       <div className={cx('container')}>
         <PlannerActionBar
           productId={id}
