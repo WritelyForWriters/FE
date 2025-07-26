@@ -9,7 +9,7 @@ import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 import { BEFORE_LOGIN_TUTORIAL_STEPS } from 'constants/tutorial/steps'
 import { useAtom, useSetAtom } from 'jotai'
 import { CallBackProps, STATUS } from 'react-joyride'
-import { hasWatchedTutorialAtom } from 'store/hasWatchedTutoriaAtom'
+import { hasWatchedTutorialAtom } from 'store/hasWatchedTutorialAtom'
 import { isTutorialRunningAtom } from 'store/isTutorialRunningAtom'
 
 import OnboardingBookSelf from '@components/onboarding/OnboardingBookSelf'
