@@ -3,7 +3,7 @@ import { createProductsTemplates, postProducts, saveProduct } from 'api/products
 import { QUERY_KEY } from 'constants/common/queryKeys'
 import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { FIRST_PRODUCT_COUNT } from 'constants/workspace/number'
-import { useSetAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import { tutorialShownAtom } from 'store/workspaceTutorialAtom'
 import { UseMutationCustomOptions } from 'types/common/reactQueryCustomOption'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
@@ -28,7 +28,7 @@ const useCreateProductId = (mutationOptions?: UseMutationCustomOptions) => {
 export const useProducts = () => {
   const queryClient = useQueryClient()
   const showToast = useToast()
-  const setTutorialShown = useSetAtom(tutorialShownAtom)
+  const [tutorialShown, setTutorialShown] = useAtom(tutorialShownAtom)
 
   // 작품 생성
   const createProductIdMutation = useCreateProductId({
@@ -39,7 +39,7 @@ export const useProducts = () => {
       })
 
       // 첫 작품인 경우 튜토리얼 표시 설정
-      if (productList && productList.length === FIRST_PRODUCT_COUNT) {
+      if (productList && productList.length === FIRST_PRODUCT_COUNT && !tutorialShown) {
         setTutorialShown(false)
       }
 
