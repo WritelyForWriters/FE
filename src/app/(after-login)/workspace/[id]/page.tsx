@@ -16,6 +16,7 @@ import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
 import { isChatbotDraggingAtom } from 'store/isChatbotDraggingAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
+import { tutorialShownAtom } from 'store/workspaceTutorialAtom'
 import { ChatItem } from 'types/chatbot/chatbot'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
@@ -75,6 +76,7 @@ export default function WorkSpacePage() {
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
   const setFaviconRelativePosition = useSetAtom(faviconRelativePositionAtom)
   const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
+  const [tutorialShown, setTutorialShown] = useAtom(tutorialShownAtom)
 
   const { data: previousChatbotHistory } = useGetInfiniteAssistantHistory(productId)
   const { data: fixedMessage } = useGetFixedMessage(productId)
@@ -232,6 +234,12 @@ export default function WorkSpacePage() {
     )
   }, [fixedMessage, setFixedMessage, productId])
 
+  useEffect(() => {
+    if (!tutorialShown) {
+      tutorialModalRef.current?.open()
+    }
+  }, [tutorialShown])
+
   // track page-exit once at component level
   usePageExitTracking('writing')
 
@@ -303,11 +311,9 @@ export default function WorkSpacePage() {
         }}
       />
 
-      <WorkspaceSliderModal
-        ref={tutorialModalRef}
-        confirmText="시작하기"
-        onConfirm={() => tutorialModalRef.current?.close()}
-      />
+      {!tutorialShown && (
+        <WorkspaceSliderModal confirmText="시작하기" onConfirm={() => setTutorialShown(true)} />
+      )}
     </div>
   )
 }
