@@ -73,7 +73,7 @@ export default function PlannerActionBar({
           </TextButton>
         ) : (
           <>
-            <TextButton size="large" onClick={() => setMode('edit')}>
+            <TextButton className="planner-step-3" size="large" onClick={() => setMode('edit')}>
               수정하기
             </TextButton>
           </>

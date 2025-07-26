@@ -95,5 +95,6 @@ export const PLANNER_TUTORIAL_STEPS = [
     content: '이제 집필하러 가볼까요?',
     placement: 'bottom' as Placement,
     disableBeacon: true,
+    spotlightClicks: true,
   },
 ]
