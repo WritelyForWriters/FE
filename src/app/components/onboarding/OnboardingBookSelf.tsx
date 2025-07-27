@@ -78,7 +78,7 @@ function OnboardingDashboard() {
   return (
     <main className={cx('dashboard')}>
       <div className={cx('dashboard__content')}>
-        <h1 className={cx('dashboard__title')}>닉네임님, 오늘도 집필을 시작해볼까요?</h1>
+        <h1 className={cx('dashboard__title')}>라이트온 님, 오늘도 집필을 시작해볼까요?</h1>
         <ul className={cx('dashboard__contents')}>
           {productList.map(({ id, title, genre, updatedAt }) => (
             <li key={id} className={cx(['item', 'library-step-4'])}>
@@ -101,7 +101,8 @@ function OnboardingDashboard() {
 export default function OnboardingBookSelf({ stepIndex }: { stepIndex: number }) {
   return (
     <>
-      <OnboardingMainHeader stepIndex={stepIndex} /> <OnboardingDashboard />
+      <OnboardingMainHeader stepIndex={stepIndex} />
+      <OnboardingDashboard />
     </>
   )
 }
