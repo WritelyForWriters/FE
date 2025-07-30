@@ -33,6 +33,7 @@ export default function PlannerSynopsisForm({
     <div className={cx('synopsis-form')} id="heading1">
       <div className={cx('synopsis-form__title')}>시놉시스</div>
       <Dropdown
+        className="planner-step-1"
         name="synopsis.genre"
         type="outlined"
         placeholder="장르"
@@ -81,6 +82,7 @@ export default function PlannerSynopsisForm({
         isPending={isPending}
       >
         <TextField
+          className="planner-step-2"
           name="synopsis.example"
           label="예시 문장"
           variant="expand"

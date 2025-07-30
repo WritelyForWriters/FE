@@ -1,0 +1,54 @@
+@use '@styles/typography' as typo;
+@use '@styles/colors' as color;
+@use '@styles/mixins' as mixin;
+
+.fullscreen-tooltip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6.4rem;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.1rem;
+
+    .title {
+      @include typo.typo(3.6rem, 500, 5.6rem, -0.01rem);
+      color: color.$alert-secondary-0;
+
+      text-align: center;
+      white-space: pre-line;
+    }
+
+    .content {
+      @include typo.typo(2.4rem, 700, 3.6rem, -0.01rem);
+      color: #fe6c3b;
+    }
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+
+    :nth-child(1) {
+      background-color: #fe6c3b;
+      color: color.$alert-secondary-900;
+
+      @extend %typo-title-large;
+    }
+
+    :nth-child(2) {
+      color: color.$alert-secondary-0;
+      @extend %typo-label-large;
+
+      &:active,
+      &:focus,
+      &:hover {
+        color: color.$core-secondary-100;
+      }
+    }
+  }
+}

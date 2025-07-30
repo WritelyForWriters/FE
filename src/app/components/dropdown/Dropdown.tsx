@@ -28,6 +28,7 @@ interface DropdownProps {
   isRequired?: boolean
   isMulti?: boolean
   readOnly?: boolean
+  className?: string
 }
 
 const Select = dynamic(() => import('react-select'), {
@@ -46,6 +47,7 @@ export default function Dropdown({
   isRequired = true,
   isMulti = false,
   readOnly = false,
+  className,
 }: DropdownProps) {
   const {
     control,
@@ -88,7 +90,10 @@ export default function Dropdown({
         name={name}
         rules={rules}
         render={({ field }) => (
-          <div className={cx('container')} style={readOnly ? { pointerEvents: 'none' } : {}}>
+          <div
+            className={cx('container', className)}
+            style={readOnly ? { pointerEvents: 'none' } : {}}
+          >
             <Select
               {...field}
               className={cx('custom-select', type, isRequired && 'required', !isOpen && 'closed')}
