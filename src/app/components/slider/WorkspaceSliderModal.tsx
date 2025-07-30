@@ -8,7 +8,7 @@ import styles from './WorkspaceSlider.module.scss'
 
 const cx = classNames.bind(styles)
 
-interface DialogWithVerticalBtnProps {
+interface WorkspaceSliderModalProps {
   confirmText: string
   onConfirm: () => void
 }
@@ -18,7 +18,7 @@ interface DialogWithVerticalBtnProps {
 export default function WorkspaceSliderModal({
   confirmText,
   onConfirm,
-}: DialogWithVerticalBtnProps) {
+}: WorkspaceSliderModalProps) {
   return (
     <Portal>
       <div className={cx('modal-overlay')}>
