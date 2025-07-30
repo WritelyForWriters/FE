@@ -9,7 +9,7 @@ import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 import { AFTER_LOGIN_TUTORIAL_STEPS } from 'constants/tutorial/steps'
 import { useSetAtom } from 'jotai'
 import { CallBackProps, STATUS } from 'react-joyride'
-import { hasWatchedBookSelfTutorialAtom } from 'store/hasWatchedBookSelfTutorialAtom'
+import { hasWatchedBookselfTutorialAtom } from 'store/tutorialAtoms'
 
 import ProductTour from '@components/product-tour/ProductTour'
 
@@ -17,7 +17,7 @@ export default function AfterLoginTutorial() {
   const [stepIndex, setStepIndex] = useState(0)
   const [run, setRun] = useState(true)
 
-  const setHasWatchedBookSelfTutorial = useSetAtom(hasWatchedBookSelfTutorialAtom)
+  const setHasWatchedBookSelfTutorial = useSetAtom(hasWatchedBookselfTutorialAtom)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

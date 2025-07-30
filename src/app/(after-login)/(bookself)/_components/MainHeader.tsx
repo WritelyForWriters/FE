@@ -8,7 +8,7 @@ import { TOAST_MESSAGE } from 'constants/common/toastMessage'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { setAmplitudeUserId, trackEvent } from 'lib/amplitude'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
-import { isTutorialRunningAtom } from 'store/isTutorialRunningAtom'
+import { isTutorialRunningAtom } from 'store/tutorialAtoms'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'

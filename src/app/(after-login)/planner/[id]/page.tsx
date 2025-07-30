@@ -8,9 +8,9 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
 import { CallBackProps, STATUS } from 'react-joyride'
-import { isFirstWorkAtom } from 'store/isFirstWorkAtom'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
+import { isFirstProductAtom } from 'store/tutorialAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
 import ProductTour from '@components/product-tour/ProductTour'
@@ -51,7 +51,7 @@ function usePlannerData(params: Params) {
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
-  const isFisrtWork = useAtomValue(isFirstWorkAtom)
+  const isFisrtWork = useAtomValue(isFirstProductAtom)
   const hasWatchedPlannerTutorial = localStorage.getItem('hasWatchedPlannerTutorial') ?? false
 
   const [stepIndex, setStepIndex] = useState(0)

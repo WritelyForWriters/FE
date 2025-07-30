@@ -6,9 +6,11 @@ import Dashboard from '(after-login)/(bookself)/_components/Dashboard'
 import MainHeader from '(after-login)/(bookself)/_components/MainHeader'
 import { useAtomValue } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
-import { hasWatchedBookSelfTutorialAtom } from 'store/hasWatchedBookSelfTutorialAtom'
-import { hasWatchedTutorialAtom } from 'store/hasWatchedTutorialAtom'
-import { isFirstLoginAtom } from 'store/isFirstLoginAtom'
+import {
+  hasWatchedBookselfTutorialAtom,
+  hasWatchedTutorialAtom,
+  isFirstLoginAtom,
+} from 'store/tutorialAtoms'
 
 import AfterLoginTutorial from '@components/tutorial/AfterLoginTutorial'
 import BeforeLoginTutorial from '@components/tutorial/BeforeLoginTutorial'
@@ -21,7 +23,7 @@ export default function Home() {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const hasWatchedTutorial = useAtomValue(hasWatchedTutorialAtom)
   const isFirstLogin = useAtomValue(isFirstLoginAtom)
-  const hasWatchedBookSelfTutorial = useAtomValue(hasWatchedBookSelfTutorialAtom)
+  const hasWatchedBookSelfTutorial = useAtomValue(hasWatchedBookselfTutorialAtom)
 
   useEffect(() => {
     trackEvent('page_view', {

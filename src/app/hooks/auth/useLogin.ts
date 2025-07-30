@@ -6,8 +6,8 @@ import { useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { accessTokenAtom } from 'store/accessTokenAtom'
 import { isCompleteJoinAtom } from 'store/isCompleteJoinAtom'
-import { isFirstLoginAtom } from 'store/isFirstLoginAtom'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
+import { isFirstLoginAtom } from 'store/tutorialAtoms'
 
 import { useToast } from '@components/toast/ToastProvider'
 

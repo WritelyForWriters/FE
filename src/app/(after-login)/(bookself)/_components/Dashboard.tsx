@@ -9,8 +9,8 @@ import { Identify, identify } from '@amplitude/analytics-browser'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { isCompleteJoinAtom } from 'store/isCompleteJoinAtom'
-import { isFirstWorkAtom } from 'store/isFirstWorkAtom'
 import { isLoggedInAtom } from 'store/isLoggedInAtom'
+import { isFirstProductAtom } from 'store/tutorialAtoms'
 
 import { useGetMeProfile, useGetProductList } from '@hooks/index'
 
@@ -31,7 +31,7 @@ export default function Dashboard() {
 
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const isCompleteJoin = useAtomValue(isCompleteJoinAtom)
-  const setIsFirstWorkAtom = useSetAtom(isFirstWorkAtom)
+  const setIsFirstProductAtom = useSetAtom(isFirstProductAtom)
 
   useEffect(() => {
     if (productList) {
@@ -45,7 +45,7 @@ export default function Dashboard() {
       identifyObj.set('work_count', workCount)
       identify(identifyObj)
 
-      setIsFirstWorkAtom(workCount === 1)
+      setIsFirstProductAtom(workCount === 1)
     }
   }, [productList])
 

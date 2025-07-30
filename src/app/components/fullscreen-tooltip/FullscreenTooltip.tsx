@@ -2,8 +2,7 @@ import { useRouter } from 'next/navigation'
 
 import { useSetAtom } from 'jotai'
 import { TooltipRenderProps } from 'react-joyride'
-import { hasWatchedTutorialAtom } from 'store/hasWatchedTutorialAtom'
-import { isTutorialRunningAtom } from 'store/isTutorialRunningAtom'
+import { hasWatchedTutorialAtom, isTutorialRunningAtom } from 'store/tutorialAtoms'
 
 import FillButton from '@components/buttons/FillButton'
 import TextButton from '@components/buttons/TextButton'
