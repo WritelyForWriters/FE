@@ -44,7 +44,6 @@ export default function WorkspaceSlider() {
         onSlideChange={(swiper: SwiperClass) => setActiveIndex(swiper.activeIndex)}
       >
         <SwiperSlide>
-          {/* <div style={{ background: '#C4C4C4', height: '100%' }}>슬라이드 1</div> */}
           <video
             autoPlay
             muted
@@ -52,11 +51,21 @@ export default function WorkspaceSlider() {
             playsInline
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           >
-            <source src="/videos/테스트1.mp4" type="video/mp4" />
+            <source src="/videos/tutorial_toolbar.mp4" type="video/mp4" />
           </video>
         </SwiperSlide>
         <SwiperSlide>
-          {/* <div style={{ background: '#C4C4C4', height: '100%' }}>슬라이드 2</div> */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          >
+            <source src="/videos/tutorial_ai.mp4" type="video/mp4" />
+          </video>
+        </SwiperSlide>
+        <SwiperSlide>
           <video
             autoPlay
             muted
@@ -68,7 +77,6 @@ export default function WorkspaceSlider() {
           </video>
         </SwiperSlide>
         <SwiperSlide>
-          {/* <div style={{ background: '#C4C4C4', height: '100%' }}>슬라이드 3</div> */}
           <video
             autoPlay
             muted
@@ -77,18 +85,6 @@ export default function WorkspaceSlider() {
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           >
             <source src="/videos/tutorial_memo.mp4" type="video/mp4" />
-          </video>
-        </SwiperSlide>
-        <SwiperSlide>
-          {/* <div style={{ background: '#C4C4C4', height: '100%' }}>슬라이드 3</div> */}
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          >
-            <source src="/videos/tutorial_toolbar.mp4" type="video/mp4" />
           </video>
         </SwiperSlide>
       </Swiper>
