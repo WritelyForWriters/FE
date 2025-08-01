@@ -283,7 +283,7 @@ export default function WorkSpacePage() {
           <section className={cx('main-canvas__right-section')}>
             <div className={cx('main-canvas__right-section__wrapper')}>
               <MemoPannel memoList={memoList} editor={editorRef.current?.getEditor() as Editor} />
-              <PlannerPannel />
+              <PlannerPannel modalRef={modalRef} isSavedRef={isSavedRef} />
             </div>
           </section>
         )}
