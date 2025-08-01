@@ -2,7 +2,10 @@ import { ApiResponse } from 'types/common/apiResponse'
 
 export type InputType = 'email' | 'nickname'
 
-export type AuthResponse = ApiResponse<{ accessToken: string }>
+export type AuthResponse = ApiResponse<{
+  accessToken: string
+  previousTokenIssuedAt: string | null
+}>
 
 export type CheckDuplicateResponse = ApiResponse<{
   email: string

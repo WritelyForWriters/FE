@@ -14,13 +14,14 @@ export default function FillButton({
   size,
   shape = 'square',
   variant = 'primary',
+  className,
   iconPosition,
   iconType,
   children,
   ...rest
 }: Omit<ButtonPropsBase, 'size'> & { size: ButtonSizeType }) {
   return (
-    <button className={cx('fill-button', variant, shape, size, iconPosition)} {...rest}>
+    <button className={cx('fill-button', variant, shape, size, iconPosition, className)} {...rest}>
       {iconType && iconPosition === 'leading' && iconType}
       {iconType && iconPosition === 'only' ? iconType : children}
       {iconType && iconPosition === 'trailing' && iconType}

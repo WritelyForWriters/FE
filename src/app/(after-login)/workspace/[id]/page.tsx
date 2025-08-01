@@ -16,6 +16,7 @@ import { faviconRelativePositionAtom } from 'store/faviconRelativePositionAtom'
 import { isChatbotDraggingAtom } from 'store/isChatbotDraggingAtom'
 import { isChatbotOpenAtom } from 'store/isChatbotOpenAtom'
 import { productIdAtom, productTitleAtom } from 'store/productsAtoms'
+import { tutorialShownAtom } from 'store/workspaceTutorialAtom'
 import { ChatItem } from 'types/chatbot/chatbot'
 import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
@@ -25,6 +26,7 @@ import ChatbotLauncher from '@components/chatbot-launcher/ChatbotLauncher'
 import DefaultEditor from '@components/editor/DefaultEditor'
 import Modal from '@components/modal/Modal'
 import IndexPannel from '@components/pannel/IndexPannel'
+import WorkspaceSliderModal from '@components/slider/WorkspaceSliderModal'
 
 import { usePageExitTracking } from '@hooks/amplitude/usePageExitTracking'
 import { useGetInfiniteAssistantHistory } from '@hooks/chatbot/useGetAssistantHistoryInfinite'
@@ -54,6 +56,7 @@ export default function WorkSpacePage() {
   const params = useParams<{ id: string }>()
   const editorRef = useRef<HandleEditor>(null)
   const modalRef = useRef<ModalHandler | null>(null)
+  const tutorialModalRef = useRef<ModalHandler | null>(null)
   const isSavedRef = useRef(false)
   const router = useRouter()
 
@@ -73,6 +76,7 @@ export default function WorkSpacePage() {
   const setChatbotHistory = useSetAtom(chatbotHistoryAtom)
   const setFaviconRelativePosition = useSetAtom(faviconRelativePositionAtom)
   const setIsChatbotOpen = useSetAtom(isChatbotOpenAtom)
+  const [tutorialShown, setTutorialShown] = useAtom(tutorialShownAtom)
 
   const { data: previousChatbotHistory } = useGetInfiniteAssistantHistory(productId)
   const { data: fixedMessage } = useGetFixedMessage(productId)
@@ -230,6 +234,12 @@ export default function WorkSpacePage() {
     )
   }, [fixedMessage, setFixedMessage, productId])
 
+  useEffect(() => {
+    if (!tutorialShown) {
+      tutorialModalRef.current?.open()
+    }
+  }, [tutorialShown])
+
   // track page-exit once at component level
   usePageExitTracking('writing')
 
@@ -273,7 +283,7 @@ export default function WorkSpacePage() {
           <section className={cx('main-canvas__right-section')}>
             <div className={cx('main-canvas__right-section__wrapper')}>
               <MemoPannel memoList={memoList} editor={editorRef.current?.getEditor() as Editor} />
-              <PlannerPannel />
+              <PlannerPannel modalRef={modalRef} isSavedRef={isSavedRef} />
             </div>
           </section>
         )}
@@ -300,6 +310,10 @@ export default function WorkSpacePage() {
           history.pushState(null, '', '') // 뒤로가기 무효화 (다시 머무르게)
         }}
       />
+
+      {!tutorialShown && (
+        <WorkspaceSliderModal confirmText="시작하기" onConfirm={() => setTutorialShown(true)} />
+      )}
     </div>
   )
 }

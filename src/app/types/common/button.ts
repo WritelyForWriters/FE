@@ -8,6 +8,7 @@ export type ButtonPropsBase = {
   size: Exclude<ButtonSizeType, 'xsmall'>
   shape?: ButtonShapeType
   variant?: ButtonVariantType
+  className?: string
 } & ButtonHTMLAttributes<HTMLButtonElement> &
   (
     | {

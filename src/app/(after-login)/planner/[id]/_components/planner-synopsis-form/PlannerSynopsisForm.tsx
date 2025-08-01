@@ -33,19 +33,14 @@ export default function PlannerSynopsisForm({
     <div className={cx('synopsis-form')} id="heading1">
       <div className={cx('synopsis-form__title')}>시놉시스</div>
       <Dropdown
+        className="planner-step-1"
         name="synopsis.genre"
         type="outlined"
         placeholder="장르"
         label="장르"
         options={PLANNER_SYNOPSIS_GENRES}
-        rules={{
-          required: {
-            value: true,
-            message: '필수 입력 사항입니다.',
-          },
-        }}
+        isRequired={false}
         isMulti={true}
-        isRequired={true}
         readOnly={mode === 'view'}
       />
       <PlannerFieldWithButton
@@ -78,14 +73,6 @@ export default function PlannerSynopsisForm({
         name="synopsis.logline"
         label="로그 라인"
         variant="expand"
-        options={{
-          required: { value: true, message: 'required' },
-          validate: (value) => {
-            if (value.trim() === '') {
-              return false
-            }
-          },
-        }}
         readOnly={mode === 'view'}
       />
       <PlannerFieldWithButton
@@ -95,6 +82,7 @@ export default function PlannerSynopsisForm({
         isPending={isPending}
       >
         <TextField
+          className="planner-step-2"
           name="synopsis.example"
           label="예시 문장"
           variant="expand"

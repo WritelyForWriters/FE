@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
-import { MouseEvent, useState } from 'react'
+import { MouseEvent, RefObject, useState } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAtomValue } from 'jotai'
@@ -10,6 +10,7 @@ import { trackEvent } from 'lib/amplitude'
 import { MdArrowOutward } from 'react-icons/md'
 import { Rnd } from 'react-rnd'
 import { productIdAtom } from 'store/productsAtoms'
+import { ModalHandler } from 'types/common/modalRef'
 
 import FillButton from '@components/buttons/FillButton'
 import Pannel from '@components/pannel/Pannel'
@@ -25,7 +26,12 @@ const cx = classNames.bind(styles)
 // mock data
 // const datas = ['시놉시스', '세계관', '등장인물', '줄거리', '아이디어 노트']
 
-export default function PlannerPannel() {
+interface PlannerPannelProps {
+  isSavedRef: RefObject<boolean>
+  modalRef: RefObject<ModalHandler | null>
+}
+
+export default function PlannerPannel({ isSavedRef, modalRef }: PlannerPannelProps) {
   const productId = useAtomValue(productIdAtom)
   const router = useRouter()
 
@@ -51,7 +57,11 @@ export default function PlannerPannel() {
   }
 
   const handleRedirectPlanner = () => {
-    router.push(`/planner/${productId}`)
+    if (isSavedRef.current) {
+      router.push(`/planner/${productId}`)
+    } else {
+      modalRef.current?.open()
+    }
   }
 
   return (

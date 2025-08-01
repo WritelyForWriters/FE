@@ -32,6 +32,7 @@ type TextFieldProps = {
   options?: RegisterOptions
   labelName?: string
   isLabelEditable?: boolean
+  className?: string
 } & (InputProps | TextareaProps)
 
 export default function TextField({
@@ -42,6 +43,7 @@ export default function TextField({
   options,
   labelName,
   isLabelEditable = false,
+  className,
   ...props
 }: TextFieldProps) {
   const { register } = useFormContext()
@@ -56,7 +58,7 @@ export default function TextField({
   }
 
   return (
-    <div className={cx('text-field')}>
+    <div className={cx('text-field', className)}>
       <section className={cx('text-field__fieldset')}>
         {/* Label */}
         <TextFieldLabel
