@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import Script from 'next/script'
 
+import 'swiper/css'
+import 'swiper/css/pagination'
+
 import AmplitudeInitializer from '@components/amplitude-initializer/AmplitudeInitializer'
 import AuthInterceptor from '@components/auth-interceptor/AuthInterceptor'
 import { Providers } from '@components/providers/Providers'
