@@ -23,3 +23,12 @@ export interface EvaluateStateType {
   isBadSelected: boolean
   isArchived: boolean
 }
+
+// 세션스토리지에 저장되는 에디터 글자수 카운트 타입
+export interface CharCountSession {
+  productId: string
+  initialCharCount: number // 세션 시작 시 글자 수
+  currentGoal: number // 현재 목표 글자 수
+  reachedGoals: number[] // 달성한 목표들 기록
+  sessionStartedAt: string // 세션 시작 시간
+}
