@@ -274,6 +274,7 @@ export default function WorkSpacePage() {
           data-editor-parent
         >
           <DefaultEditor
+            productId={productId}
             editorRef={editorRef}
             contents={productDetail?.content}
             isSavedRef={isSavedRef}

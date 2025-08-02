@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 
-import { Ref, RefObject, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Ref, RefObject, useEffect, useImperativeHandle, useRef } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import CharacterCount from '@tiptap/extension-character-count'
@@ -16,8 +16,9 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
 import { EDITOR_CONTENTS } from 'constants/workspace/placeholder'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
+import { charCountSessionAtomFamily, currentCharCountAtom } from 'store/charCountAtom'
 import { isEditableAtom } from 'store/editorAtoms'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
@@ -39,22 +40,29 @@ import Toolbar from './Toolbar'
 import AutoModifyMenu from './ai-assistant-interface/AutoModifyMenu'
 import FeedbackMenu from './ai-assistant-interface/FeedbackMenu'
 import ManualModification from './ai-assistant-interface/ManualModification'
+import CharCounter from './char-counter/CharCounter'
 import PromptInput from './common/PromptInput'
 
 import styles from './DefaultEditor.module.scss'
 
 interface DefaultEditorProps {
+  productId: string
   editorRef: Ref<HandleEditor>
   isSavedRef: RefObject<boolean>
   contents?: string
 }
 
-export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
+export default function DefaultEditor({
+  productId,
+  editorRef,
+  isSavedRef,
+  contents,
+}: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
   const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
 
-  const [initialCharCount, setInitialCharCount] = useState(0) // 초기 문자수를 저장하기 위한 state
-  const [currentCharCount, setCurrentCharCount] = useState(0) // 입력된 문자수를 저장하기 위한 state
+  const setCurrentCharCount = useSetAtom(currentCharCountAtom)
+  const [session, setSession] = useAtom(charCountSessionAtomFamily(productId))
 
   const modalRef = useRef<ModalHandler | null>(null)
 
@@ -149,12 +157,51 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }, [editor, editable])
 
   // 에디터 초기 content 데이터 보여주기
+  // useEffect(() => {
+  //   if (editor && contents && contents !== null) {
+  //     editor.commands.setContent(JSON.parse(contents))
+  //     // setInitialCharCount(editor.storage.characterCount.characters())
+  //   }
+  // }, [editor, contents])
+
+  // 에디터 초기 content 데이터 보여주기
   useEffect(() => {
-    if (editor && contents && contents !== null) {
+    if (editor && contents && contents !== null && productId) {
       editor.commands.setContent(JSON.parse(contents))
-      setInitialCharCount(editor.storage.characterCount.characters())
+      const initialCount = editor.storage.characterCount.characters()
+
+      // session이 있는 경우
+      if (session) {
+        // contents가 있으면 contents 글자수로 초기화
+        if (session.initialCharCount === 0) {
+          setSession({
+            ...session,
+            initialCharCount: initialCount,
+          })
+        }
+        setCurrentCharCount(initialCount)
+      } else {
+        // session이 없으면 새로 생성하여 initialCount 저장
+        if (setSession) {
+          setSession({
+            productId,
+            initialCharCount: initialCount,
+            currentGoal: 20,
+            reachedGoals: [],
+            sessionStartedAt: new Date().toISOString(),
+          })
+        }
+        setCurrentCharCount(initialCount)
+      }
     }
-  }, [editor, contents])
+  }, [editor, contents, productId, session, setSession, setCurrentCharCount])
+
+  // 목표 달성 시 모달 표시
+  const handleGoalReached = () => {
+    if (!modalRef.current?.isOpen()) {
+      modalRef.current?.open()
+    }
+  }
 
   // NOTE(hajae): 최초 렌더링 시 Active Menu를 초기화
   useEffect(() => {
@@ -194,13 +241,13 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }, [editor])
 
   // 초기 문자수를 제외한 새로 입력한 글자 수 계산
-  const typedCharCount = Math.max(0, currentCharCount - initialCharCount)
+  // const typedCharCount = Math.max(0, currentCharCount - initialCharCount)
 
-  useEffect(() => {
-    if (typedCharCount >= 10 && !modalRef.current?.isOpen()) {
-      modalRef.current?.open()
-    }
-  }, [typedCharCount])
+  // useEffect(() => {
+  //   if (typedCharCount >= 10 && !modalRef.current?.isOpen()) {
+  //     modalRef.current?.open()
+  //   }
+  // }, [typedCharCount])
 
   if (!editor) {
     return null
@@ -275,7 +322,7 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       )}
 
       {/* TODO: 퍼블리싱 수정 */}
-      <div>{typedCharCount} / 700자</div>
+      <CharCounter onGoalReached={handleGoalReached} />
       <EditorContent editor={editor} className={styles.tiptap} />
 
       <DialogWithVerticalBtn
