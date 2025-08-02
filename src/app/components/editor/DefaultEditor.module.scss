@@ -11,9 +11,6 @@
 .tiptap {
   @extend %typo-body-large;
 
-  max-width: 568px;
-  margin: auto;
-
   /* ProseMirror */
   :first-child {
     margin-top: 0;

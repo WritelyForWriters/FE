@@ -25,7 +25,6 @@ const cx = classNames.bind(styles)
 
 interface PlannerActionBarProps {
   productId: string
-  isValidFormValues: boolean
   isFormDirty: boolean
   autoSaveTimer: number
   onSubmit: () => void
@@ -34,7 +33,6 @@ interface PlannerActionBarProps {
 
 export default function PlannerActionBar({
   productId,
-  isValidFormValues,
   isFormDirty,
   autoSaveTimer,
   onSubmit,
@@ -47,11 +45,6 @@ export default function PlannerActionBar({
 
   const ActionSectionContent = () => {
     const handleSave = () => {
-      if (!isValidFormValues) {
-        showToast('warning', '필수 항목(장르, 로그라인)을 먼저 작성해주세요')
-        return
-      }
-
       onSubmit()
       onResetForm()
 
@@ -75,12 +68,12 @@ export default function PlannerActionBar({
     return (
       <>
         {mode === 'edit' ? (
-          <TextButton size="large" onClick={() => handleSave()}>
+          <TextButton className="planner-step-3" size="large" onClick={() => handleSave()}>
             저장하기
           </TextButton>
         ) : (
           <>
-            <TextButton size="large" onClick={() => setMode('edit')}>
+            <TextButton className="planner-step-3" size="large" onClick={() => setMode('edit')}>
               수정하기
             </TextButton>
           </>
@@ -156,7 +149,7 @@ export default function PlannerActionBar({
     }
 
     return (
-      <FillButton size="large" onClick={handleClick}>
+      <FillButton className="planner-step-4" size="large" onClick={handleClick}>
         집필하러 가기
       </FillButton>
     )

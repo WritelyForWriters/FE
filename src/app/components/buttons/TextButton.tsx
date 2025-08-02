@@ -17,10 +17,11 @@ export default function TextButton({
   iconPosition,
   iconType,
   children,
+  className,
   ...rest
 }: ButtonPropsBase) {
   return (
-    <button className={cx('text-button', shape, variant, size, iconPosition)} {...rest}>
+    <button className={cx('text-button', shape, variant, size, iconPosition, className)} {...rest}>
       {iconType && iconPosition === 'leading' && iconType}
       {iconType && iconPosition === 'only' ? iconType : children}
       {iconType && iconPosition === 'trailing' && iconType}

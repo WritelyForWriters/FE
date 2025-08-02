@@ -1,15 +1,19 @@
 'use client'
 
-import { use, useEffect } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 
 import { NEW_PLANNER_CHARACTER } from 'constants/planner/plannerConstants'
-import { useAtom, useSetAtom } from 'jotai'
+import { PLANNER_TUTORIAL_STEPS } from 'constants/tutorial/steps'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
 import { FormProvider, useForm } from 'react-hook-form'
+import { CallBackProps, STATUS } from 'react-joyride'
 import { plannerCharacterByIdAtom } from 'store/plannerAtoms'
 import { PlannerTemplatesModeAtom } from 'store/plannerModeAtoms'
+import { isFirstProductAtom } from 'store/tutorialAtoms'
 import { PlannerTemplatesRequest } from 'types/planner/plannerTemplatesRequest'
 
+import ProductTour from '@components/product-tour/ProductTour'
 import { useToast } from '@components/toast/ToastProvider'
 
 import { useAutoSaveTimer } from '@hooks/products/useAutoSaveTimer'
@@ -47,6 +51,12 @@ function usePlannerData(params: Params) {
 }
 
 export default function PlannerPage({ params }: { params: Params }) {
+  const isFisrtWork = useAtomValue(isFirstProductAtom)
+  const hasWatchedPlannerTutorial = localStorage.getItem('hasWatchedPlannerTutorial') ?? false
+
+  const [stepIndex, setStepIndex] = useState(0)
+  const [run, setRun] = useState(false)
+
   const { id, templates, showToast, autoSaveTimer } = usePlannerData(params)
   const [formValues, setFormValues] = useAtom(plannerCharacterByIdAtom(id))
   const setMode = useSetAtom(PlannerTemplatesModeAtom)
@@ -55,7 +65,7 @@ export default function PlannerPage({ params }: { params: Params }) {
   const {
     reset,
     getValues,
-    formState: { isValid, isDirty },
+    formState: { isDirty },
     handleSubmit,
   } = methods
 
@@ -159,22 +169,71 @@ export default function PlannerPage({ params }: { params: Params }) {
     }
   }, [])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setRun(false)
+      }
+
+      setStepIndex((prev) => prev + 1)
+    }
+
+    if (run) {
+      window.addEventListener('keydown', handleKeyDown)
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [run])
+
+  // 첫 작품이고 튜토리얼 시청하지 않은 경우
+  useEffect(() => {
+    if (isFisrtWork && !hasWatchedPlannerTutorial) {
+      const timer = setTimeout(() => {
+        setRun(true)
+      }, 2000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [isFisrtWork, hasWatchedPlannerTutorial])
+
+  const handleJoyrideCallback = useCallback((data: CallBackProps) => {
+    const { status, index, type } = data
+
+    if (status === STATUS.FINISHED || status === STATUS.PAUSED) {
+      localStorage.setItem('hasWatchedPlannerTutorial', 'true')
+      setRun(false)
+    }
+
+    if (type === 'step:after') {
+      setStepIndex(index + 1)
+    }
+  }, [])
+
   return (
-    <div className={cx('container')}>
-      <PlannerActionBar
-        productId={id}
-        isValidFormValues={isValid}
-        isFormDirty={isDirty}
-        onSubmit={handleFormSubmit}
-        autoSaveTimer={autoSaveTimer}
-        onResetForm={() => reset(getValues())}
+    <>
+      <ProductTour
+        run={run}
+        callback={handleJoyrideCallback}
+        stepIndex={stepIndex}
+        steps={PLANNER_TUTORIAL_STEPS}
       />
-      <div className={cx('main-section')}>
-        <PlannerTabs />
-        <FormProvider {...methods}>
-          <PlannerSynopsisFormContainer />
-        </FormProvider>
+      <div className={cx('container')}>
+        <PlannerActionBar
+          productId={id}
+          isFormDirty={isDirty}
+          onSubmit={handleFormSubmit}
+          autoSaveTimer={autoSaveTimer}
+          onResetForm={() => reset(getValues())}
+        />
+        <div className={cx('main-section')}>
+          <PlannerTabs />
+          <FormProvider {...methods}>
+            <PlannerSynopsisFormContainer />
+          </FormProvider>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

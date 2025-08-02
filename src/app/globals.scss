@@ -5,6 +5,7 @@ html {
 }
 
 body {
+  background-color: white;
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -40,4 +41,25 @@ button {
 
 ul {
   list-style: none;
+}
+
+/* Swiper pagination custom styles */
+.swiper-pagination {
+  padding-bottom: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #1a1a1a !important;
+  opacity: 1 !important;
 }
