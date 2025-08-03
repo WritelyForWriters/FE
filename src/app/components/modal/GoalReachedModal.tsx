@@ -19,16 +19,15 @@ const cx = classNames.bind(styles)
 interface GoalReachedModalProps {
   // cancelText: string
   // confirmText: string
+  productId: string
   onCancel: () => void
   onConfirm: () => void
   content?: ReactNode
   ref: Ref<ModalHandler>
 }
 
-// TODO 작품별 productID 업데이트!!
-const test = '01984a44-c908-7849-94cd-097ce7c6bdb8'
-
 export default function GoalReachedModal({
+  productId,
   onCancel,
   // onConfirm,
   // content,
@@ -39,7 +38,7 @@ export default function GoalReachedModal({
   const [newGoal, setNewGoal] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
-  const [session, setSession] = useAtom(charCountSessionAtomFamily(test))
+  const [session, setSession] = useAtom(charCountSessionAtomFamily(productId))
 
   useImperativeHandle(ref, () => {
     return {
@@ -62,7 +61,6 @@ export default function GoalReachedModal({
 
   const handleAdjustGoal = () => {
     const goalNumber = parseInt(newGoal, 10)
-    console.log(newGoal)
 
     // 입력창에 숫자 외 입력 시
     if (isNaN(goalNumber)) {
@@ -81,6 +79,7 @@ export default function GoalReachedModal({
       ...session,
       currentGoal: goalNumber,
     })
+    setNewGoal('')
     dialog.current?.close()
   }
 

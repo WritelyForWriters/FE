@@ -381,6 +381,7 @@ export default function DefaultEditor({
 
       <GoalReachedModal
         ref={goalReachedModalRef}
+        productId={productId}
         onCancel={() => goalReachedModalRef.current?.close()}
         onConfirm={() => {}}
       />
