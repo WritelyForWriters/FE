@@ -67,8 +67,43 @@ export const goalReachedAtom = atom((get) => {
   }
 
   const typedCount = get(typedCharCountAtom) // 입력된 글자수를 가져와서
-  return typedCount >= session.currentGoal // 입력된 글자수가 목표 글자수보다 크거나 같으면 true
+  const currentGoal = session.currentGoal
+
+  // 현재 목표가 이미 달성된 목표인지 확인
+  const isCurrentGoalReached = session.reachedGoals?.includes(currentGoal) || false
+  return typedCount >= session.currentGoal && !isCurrentGoalReached // 입력된 글자수가 목표 글자수보다 크거나 같으면 true
 })
 
 // 5. 목표 달성 모달 표시 여부 atom
 export const goalModalVisibleAtom = atom(false)
+
+// 6. 목표 업데이트 함수 - sessionStorage 직접 업데이트
+export const updateGoalAtom = atom(
+  null,
+  (get, set, { productId, newGoal }: { productId: string; newGoal: number }) => {
+    if (!productId || newGoal <= 0) return
+
+    try {
+      const sessionKey = `product-${productId}-char-count`
+      const value = sessionStorage.getItem(sessionKey)
+      const sessionData = value ? JSON.parse(value) : null
+
+      if (sessionData) {
+        const updatedSession = {
+          ...sessionData,
+          currentGoal: newGoal,
+          reachedGoals: [...sessionData.reachedGoals, sessionData.currentGoal], // 이전 목표 추가
+        }
+
+        // sessionStorage 직접 업데이트 (Jotai atom 업데이트 X)
+        sessionStorage.setItem(sessionKey, JSON.stringify(updatedSession))
+
+        // 강제 리렌더링을 위해 currentCharCountAtom 업데이트
+        const currentCount = get(currentCharCountAtom)
+        set(currentCharCountAtom, currentCount)
+      }
+    } catch (error) {
+      console.error('목표 업데이트 중 오류 발생:', error)
+    }
+  },
+)

@@ -1,8 +1,8 @@
 import { ChangeEvent, ReactNode, Ref, useImperativeHandle, useRef, useState } from 'react'
 
 import { CURRENT_GOAL } from 'constants/workspace/number'
-import { useAtom } from 'jotai'
-import { charCountSessionAtomFamily } from 'store/charCountAtom'
+import { useSetAtom } from 'jotai'
+import { updateGoalAtom } from 'store/charCountAtom'
 import { ModalHandler } from 'types/common/modalRef'
 
 import FillButton from '@components/buttons/FillButton'
@@ -38,7 +38,8 @@ export default function GoalReachedModal({
   const [newGoal, setNewGoal] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
-  const [session, setSession] = useAtom(charCountSessionAtomFamily(productId))
+  // const [session, setSession] = useAtom(charCountSessionAtomFamily(productId))
+  const updateGoal = useSetAtom(updateGoalAtom) // updateGoalAtom 추가
 
   useImperativeHandle(ref, () => {
     return {
@@ -75,10 +76,14 @@ export default function GoalReachedModal({
     }
 
     // 목표 업데이트
-    setSession({
-      ...session,
-      currentGoal: goalNumber,
-    })
+    updateGoal({ productId, newGoal: goalNumber })
+
+    // MEMO(Sohyun): jotai 세션스토리지 업데이트 시 리렌더링 문제로 직접 업데이트 함
+    // setSession({
+    //   ...session,
+    //   currentGoal: goalNumber,
+    //   reachedGoals: [...session.reachedGoals, session.currentGoal], // 이전 목표를 달성 목록에 추가
+    // })
     setNewGoal('')
     dialog.current?.close()
   }
