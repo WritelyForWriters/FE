@@ -26,6 +26,7 @@ import { HandleEditor } from 'types/common/editor'
 import { ModalHandler } from 'types/common/modalRef'
 
 import DialogWithVerticalBtn from '@components/modal/DialogWithVerticalBtn'
+import GoalReachedModal from '@components/modal/GoalReachedModal'
 
 import { useMemos } from '@hooks/editor/useMemos'
 import useResetMode from '@hooks/editor/useResetMode'
@@ -66,6 +67,7 @@ export default function DefaultEditor({
   const [session, setSession] = useAtom(charCountSessionAtomFamily(productId))
 
   const modalRef = useRef<ModalHandler | null>(null)
+  const goalReachedModalRef = useRef<ModalHandler | null>(null)
 
   const editor = useEditor({
     editable,
@@ -368,10 +370,19 @@ export default function DefaultEditor({
           modalRef.current?.close()
           setHasShownGoalModal(true)
         }}
-        onConfirm={() => {}}
+        onConfirm={() => {
+          modalRef.current?.close()
+          goalReachedModalRef.current?.open()
+        }}
         content={
           <Image src="/icons/firecracker-icon.svg" alt="firecracker" width={120} height={120} />
         }
+      />
+
+      <GoalReachedModal
+        ref={goalReachedModalRef}
+        onCancel={() => goalReachedModalRef.current?.close()}
+        onConfirm={() => {}}
       />
     </section>
   )
