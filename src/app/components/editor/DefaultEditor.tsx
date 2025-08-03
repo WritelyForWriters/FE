@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 
-import { Ref, RefObject, useEffect, useImperativeHandle, useRef } from 'react'
+import { Ref, RefObject, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import CharacterCount from '@tiptap/extension-character-count'
@@ -15,6 +15,7 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
+import { CURRENT_GOAL } from 'constants/workspace/number'
 import { EDITOR_CONTENTS } from 'constants/workspace/placeholder'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
@@ -196,12 +197,45 @@ export default function DefaultEditor({
     }
   }, [editor, contents, productId, session, setSession, setCurrentCharCount])
 
+  // 목표 달성 모달 표시 여부 상태
+  const [hasShownGoalModal, setHasShownGoalModal] = useState(false)
+
   // 목표 달성 시 모달 표시
   const handleGoalReached = () => {
-    if (!modalRef.current?.isOpen()) {
+    if (!productId || !session || hasShownGoalModal) return
+
+    // 현재 목표(700자)가 이미 달성된 목표 목록에 있는지 확인
+    const alreadyReached = session.reachedGoals.includes(CURRENT_GOAL)
+
+    if (!alreadyReached && !modalRef.current?.isOpen()) {
+      // 목표를 달성 목록에 추가
+      const updatedSession = {
+        ...session,
+        reachedGoals: [...session.reachedGoals, CURRENT_GOAL],
+      }
+
+      // 세션 업데이트 > MEMO(Sohyun): jotai 세션스토리지 업데이트 시 리렌더링 문제로 직접 업데이트 함
+      // setSession(updatedSession)
+
+      try {
+        const sessionKey = `product-${productId}-char-count`
+        sessionStorage.setItem(sessionKey, JSON.stringify(updatedSession))
+      } catch (error) {
+        console.error('세션 스토리지 업데이트 실패:', error)
+      }
       modalRef.current?.open()
+      setHasShownGoalModal(true)
     }
   }
+
+  // 작품 변경 시 모달 표시 여부 초기화
+  useEffect(() => {
+    if (productId && session) {
+      const currentGoal = 700
+      const alreadyReached = session.reachedGoals.includes(currentGoal)
+      setHasShownGoalModal(alreadyReached)
+    }
+  }, [productId, session])
 
   // NOTE(hajae): 최초 렌더링 시 Active Menu를 초기화
   useEffect(() => {
@@ -331,8 +365,8 @@ export default function DefaultEditor({
         cancelText="지금은 괜찮아요"
         confirmText="글쓰기 목표 조정하기"
         onCancel={() => {
-          // TODO: 모달 닫을 때 문자수 초기화 및 모달 상태 닫힘상태로 변경하기
           modalRef.current?.close()
+          setHasShownGoalModal(true)
         }}
         onConfirm={() => {}}
         content={

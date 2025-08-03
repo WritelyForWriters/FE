@@ -1,3 +1,4 @@
+import { CURRENT_GOAL } from 'constants/workspace/number'
 import { atom } from 'jotai'
 import { atomFamily, atomWithStorage } from 'jotai/utils'
 import { CharCountSession } from 'types/common/editor'
@@ -17,7 +18,7 @@ export const charCountSessionAtomFamily = atomFamily((productId: string) => {
     {
       productId,
       initialCharCount: 0, // 세션 시작 시 글자 수
-      currentGoal: 20, // 현재 목표 글자 수 (*TODO 700자로 수정)
+      currentGoal: CURRENT_GOAL, // 현재 목표 글자 수 (*TODO 700자로 수정)
       reachedGoals: [], // 달성한 목표들 기록
       sessionStartedAt: new Date().toISOString(), // 세션 시작 시간
     },
