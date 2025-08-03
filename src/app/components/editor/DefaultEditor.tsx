@@ -210,21 +210,6 @@ export default function DefaultEditor({
     const alreadyReached = session.reachedGoals.includes(CURRENT_GOAL)
 
     if (!alreadyReached && !modalRef.current?.isOpen()) {
-      // 목표를 달성 목록에 추가
-      const updatedSession = {
-        ...session,
-        reachedGoals: [...session.reachedGoals, CURRENT_GOAL],
-      }
-
-      // 세션 업데이트 > MEMO(Sohyun): jotai 세션스토리지 업데이트 시 리렌더링 문제로 직접 업데이트 함
-      // setSession(updatedSession)
-
-      try {
-        const sessionKey = `product-${productId}-char-count`
-        sessionStorage.setItem(sessionKey, JSON.stringify(updatedSession))
-      } catch (error) {
-        console.error('세션 스토리지 업데이트 실패:', error)
-      }
       modalRef.current?.open()
       setHasShownGoalModal(true)
     }
