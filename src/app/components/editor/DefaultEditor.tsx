@@ -206,8 +206,12 @@ export default function DefaultEditor({
   const handleGoalReached = () => {
     if (!productId || !session || hasShownGoalModal) return
 
-    // 현재 목표(700자)가 이미 달성된 목표 목록에 있는지 확인
-    const alreadyReached = session.reachedGoals.includes(CURRENT_GOAL)
+    const sessionKey = `product-${productId}-char-count`
+    const sessionData = JSON.parse(sessionStorage.getItem(sessionKey) || '{}')
+    const currentGoal = sessionData.currentGoal || CURRENT_GOAL
+
+    // 현재 목표가 이미 달성된 목표 목록에 있는지 확인
+    const alreadyReached = session.reachedGoals.includes(currentGoal) || false
 
     if (!alreadyReached && !modalRef.current?.isOpen()) {
       modalRef.current?.open()
@@ -218,8 +222,7 @@ export default function DefaultEditor({
   // 작품 변경 시 모달 표시 여부 초기화
   useEffect(() => {
     if (productId && session) {
-      const currentGoal = 700
-      const alreadyReached = session.reachedGoals.includes(currentGoal)
+      const alreadyReached = session.reachedGoals.includes(session.currentGoal || CURRENT_GOAL)
       setHasShownGoalModal(alreadyReached)
     }
   }, [productId, session])
@@ -358,6 +361,7 @@ export default function DefaultEditor({
         onConfirm={() => {
           modalRef.current?.close()
           goalReachedModalRef.current?.open()
+          // setHasShownGoalModal(true)
         }}
         content={
           <Image src="/icons/firecracker-icon.svg" alt="firecracker" width={120} height={120} />
