@@ -1,18 +1,25 @@
 import { useEffect } from 'react'
 
+import { CURRENT_GOAL } from 'constants/workspace/number'
 import { useAtomValue } from 'jotai'
-import { goalReachedAtom, typedCharCountAtom } from 'store/charCountAtom'
+import {
+  charCountSessionAtomFamily,
+  goalReachedAtom,
+  typedCharCountAtom,
+} from 'store/charCountAtom'
 
 // TODO: 스타일 수정!!
 // import styles from './CharCounter.module.scss'
 
 interface CharCounterProps {
+  productId: string
   onGoalReached?: () => void
 }
 
-export default function CharCounter({ onGoalReached }: CharCounterProps) {
+export default function CharCounter({ productId, onGoalReached }: CharCounterProps) {
   const typedCharCount = useAtomValue(typedCharCountAtom)
   const goalReached = useAtomValue(goalReachedAtom)
+  const session = useAtomValue(charCountSessionAtomFamily(productId))
 
   useEffect(() => {
     if (goalReached && onGoalReached) {
@@ -22,7 +29,7 @@ export default function CharCounter({ onGoalReached }: CharCounterProps) {
 
   return (
     <div>
-      <span>{typedCharCount}자</span> / <span>700자</span>
+      <span>{typedCharCount}자</span> / <span>{session?.currentGoal || CURRENT_GOAL}자</span>
     </div>
   )
 }

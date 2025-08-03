@@ -189,7 +189,7 @@ export default function DefaultEditor({
           setSession({
             productId,
             initialCharCount: initialCount,
-            currentGoal: 20,
+            currentGoal: CURRENT_GOAL,
             reachedGoals: [],
             sessionStartedAt: new Date().toISOString(),
           })
@@ -358,7 +358,7 @@ export default function DefaultEditor({
       )}
 
       {/* TODO: 퍼블리싱 수정 */}
-      <CharCounter onGoalReached={handleGoalReached} />
+      <CharCounter productId={productId} onGoalReached={handleGoalReached} />
       <EditorContent editor={editor} className={styles.tiptap} />
 
       <DialogWithVerticalBtn
