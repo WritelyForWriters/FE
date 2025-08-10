@@ -204,6 +204,13 @@ export default function DefaultEditor({
 
   // 목표 달성 시 모달 표시
   const handleGoalReached = () => {
+    /**
+     * Sohyun
+     * 문제: 목표 조정 후 다시 목표도달 시, 축하합니다 모달이 열리지 않음
+     * 원인: hasShownGoalModal가 여전히 true이기 때문
+     * 해결방법: 목표 변경 시 이전상태 초기화, debounce 추가(다른 문제 발생), 모달 표시 여부 로직 추적하여 수정, 조건 추가 등
+     * 여러가지 방법을 시도했지만 해결되지 않음 -> 백앤드 필요할까? or 기획 수정
+     */
     if (!productId || !session || hasShownGoalModal) return
 
     const sessionKey = `product-${productId}-char-count`
