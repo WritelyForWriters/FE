@@ -1,6 +1,8 @@
 'use client'
 
-import { Ref, RefObject, useEffect, useImperativeHandle } from 'react'
+import Image from 'next/image'
+
+import { Ref, RefObject, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import Bold from '@tiptap/extension-bold'
 import CharacterCount from '@tiptap/extension-character-count'
@@ -13,12 +15,18 @@ import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import { BubbleMenu, EditorContent, useEditor } from '@tiptap/react'
+import { CURRENT_GOAL } from 'constants/workspace/number'
 import { EDITOR_CONTENTS } from 'constants/workspace/placeholder'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { trackEvent } from 'lib/amplitude'
+import { charCountSessionAtomFamily, currentCharCountAtom } from 'store/charCountAtom'
 import { isEditableAtom } from 'store/editorAtoms'
 import { selectedRangeAtom } from 'store/selectedRangeAtom'
 import { HandleEditor } from 'types/common/editor'
+import { ModalHandler } from 'types/common/modalRef'
+
+import DialogWithVerticalBtn from '@components/modal/DialogWithVerticalBtn'
+import GoalReachedModal from '@components/modal/GoalReachedModal'
 
 import { useMemos } from '@hooks/editor/useMemos'
 import useResetMode from '@hooks/editor/useResetMode'
@@ -34,20 +42,32 @@ import Toolbar from './Toolbar'
 import AutoModifyMenu from './ai-assistant-interface/AutoModifyMenu'
 import FeedbackMenu from './ai-assistant-interface/FeedbackMenu'
 import ManualModification from './ai-assistant-interface/ManualModification'
+import CharCounter from './char-counter/CharCounter'
 import PromptInput from './common/PromptInput'
 
 import styles from './DefaultEditor.module.scss'
 
 interface DefaultEditorProps {
+  productId: string
   editorRef: Ref<HandleEditor>
   isSavedRef: RefObject<boolean>
   contents?: string
 }
 
-export default function DefaultEditor({ editorRef, isSavedRef, contents }: DefaultEditorProps) {
+export default function DefaultEditor({
+  productId,
+  editorRef,
+  isSavedRef,
+  contents,
+}: DefaultEditorProps) {
   const editable = useAtomValue(isEditableAtom)
-
   const setSelectedRangeAtom = useSetAtom(selectedRangeAtom)
+
+  const setCurrentCharCount = useSetAtom(currentCharCountAtom)
+  const [session, setSession] = useAtom(charCountSessionAtomFamily(productId))
+
+  const modalRef = useRef<ModalHandler | null>(null)
+  const goalReachedModalRef = useRef<ModalHandler | null>(null)
 
   const editor = useEditor({
     editable,
@@ -79,9 +99,13 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
     ],
     immediatelyRender: false,
     content: contents ? JSON.parse(contents) : EDITOR_CONTENTS,
-    onUpdate: () => {
+    onUpdate: ({ editor }) => {
       // 에디터에 변경사항이 생기면 저장 상태 false로 변경
       isSavedRef.current = false
+
+      // 현재 문자수 계산
+      const count = editor.storage.characterCount.characters()
+      setCurrentCharCount(count)
     },
     onSelectionUpdate: ({ editor }) => {
       if (editor.state.selection.empty) {
@@ -136,11 +160,79 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
   }, [editor, editable])
 
   // 에디터 초기 content 데이터 보여주기
+  // useEffect(() => {
+  //   if (editor && contents && contents !== null) {
+  //     editor.commands.setContent(JSON.parse(contents))
+  //     // setInitialCharCount(editor.storage.characterCount.characters())
+  //   }
+  // }, [editor, contents])
+
+  // 에디터 초기 content 데이터 보여주기
   useEffect(() => {
-    if (editor && contents && contents !== null) {
+    if (editor && contents && contents !== null && productId) {
       editor.commands.setContent(JSON.parse(contents))
+      const initialCount = editor.storage.characterCount.characters()
+
+      // session이 있는 경우
+      if (session) {
+        // contents가 있으면 contents 글자수로 초기화
+        if (session.initialCharCount === 0) {
+          setSession({
+            ...session,
+            initialCharCount: initialCount,
+          })
+        }
+        setCurrentCharCount(initialCount)
+      } else {
+        // session이 없으면 새로 생성하여 initialCount 저장
+        if (setSession) {
+          setSession({
+            productId,
+            initialCharCount: initialCount,
+            currentGoal: CURRENT_GOAL,
+            reachedGoals: [],
+            sessionStartedAt: new Date().toISOString(),
+          })
+        }
+        setCurrentCharCount(initialCount)
+      }
     }
-  }, [editor, contents])
+  }, [editor, contents, productId, session, setSession, setCurrentCharCount])
+
+  // 목표 달성 모달 표시 여부 상태
+  const [hasShownGoalModal, setHasShownGoalModal] = useState(false)
+
+  // 목표 달성 시 모달 표시
+  const handleGoalReached = () => {
+    /**
+     * Sohyun
+     * 문제: 목표 조정 후 다시 목표도달 시, 축하합니다 모달이 열리지 않음
+     * 원인: hasShownGoalModal가 여전히 true이기 때문
+     * 해결방법: 목표 변경 시 이전상태 초기화, debounce 추가(다른 문제 발생), 모달 표시 여부 로직 추적하여 수정, 조건 추가 등
+     * 여러가지 방법을 시도했지만 해결되지 않음 -> 백앤드 필요할까? or 기획 수정
+     */
+    if (!productId || !session || hasShownGoalModal) return
+
+    const sessionKey = `product-${productId}-char-count`
+    const sessionData = JSON.parse(sessionStorage.getItem(sessionKey) || '{}')
+    const currentGoal = sessionData.currentGoal || CURRENT_GOAL
+
+    // 현재 목표가 이미 달성된 목표 목록에 있는지 확인
+    const alreadyReached = session.reachedGoals.includes(currentGoal) || false
+
+    if (!alreadyReached && !modalRef.current?.isOpen()) {
+      modalRef.current?.open()
+      setHasShownGoalModal(true)
+    }
+  }
+
+  // 작품 변경 시 모달 표시 여부 초기화
+  useEffect(() => {
+    if (productId && session) {
+      const alreadyReached = session.reachedGoals.includes(session.currentGoal || CURRENT_GOAL)
+      setHasShownGoalModal(alreadyReached)
+    }
+  }, [productId, session])
 
   // NOTE(hajae): 최초 렌더링 시 Active Menu를 초기화
   useEffect(() => {
@@ -178,6 +270,15 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
       }
     }
   }, [editor])
+
+  // 초기 문자수를 제외한 새로 입력한 글자 수 계산
+  // const typedCharCount = Math.max(0, currentCharCount - initialCharCount)
+
+  // useEffect(() => {
+  //   if (typedCharCount >= 10 && !modalRef.current?.isOpen()) {
+  //     modalRef.current?.open()
+  //   }
+  // }, [typedCharCount])
 
   if (!editor) {
     return null
@@ -251,7 +352,35 @@ export default function DefaultEditor({ editorRef, isSavedRef, contents }: Defau
         />
       )}
 
+      {/* TODO: 퍼블리싱 수정 */}
+      <CharCounter productId={productId} onGoalReached={handleGoalReached} />
       <EditorContent editor={editor} className={styles.tiptap} />
+
+      <DialogWithVerticalBtn
+        ref={modalRef}
+        title="오늘도 700자 글쓰기 성공! 멋져요!"
+        cancelText="지금은 괜찮아요"
+        confirmText="글쓰기 목표 조정하기"
+        onCancel={() => {
+          modalRef.current?.close()
+          setHasShownGoalModal(true)
+        }}
+        onConfirm={() => {
+          modalRef.current?.close()
+          goalReachedModalRef.current?.open()
+          // setHasShownGoalModal(true)
+        }}
+        content={
+          <Image src="/icons/firecracker-icon.svg" alt="firecracker" width={120} height={120} />
+        }
+      />
+
+      <GoalReachedModal
+        ref={goalReachedModalRef}
+        productId={productId}
+        onCancel={() => goalReachedModalRef.current?.close()}
+        onConfirm={() => {}}
+      />
     </section>
   )
 }
